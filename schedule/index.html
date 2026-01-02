@@ -1,1 +1,43 @@
-<link rel="stylesheet" href="/schedule/calendar.css"> <div id="calendar-app"> <div id="calendar-container"> <div id="calendar-header"> <div class="calendar-header-left"> <button class="nav-btn" onclick="prevMonth()">‹</button> <span id="calendar-title"></span> <button class="nav-btn" onclick="nextMonth()">›</button> </div> <div class="calendar-header-right"> <button class="tool-btn" onclick="toggleTheme()">🌓</button> <button class="tool-btn" onclick="toggleView()">📅</button> <button class="tool-btn" onclick="clearAllEvents()">🗑</button> </div> </div> <div class="calendar-body"> <div class="calendar-panel"> <div class="calendar-grid" id="calendar-grid"></div> </div> <div class="event-panel"> <div class="event-panel-header"> <span id="event-date-label"></span> </div> <div id="event-list"></div> </div> </div> </div> <!-- 弹窗：新增 / 编辑日程 --> <div id="event-modal" class="modal hidden"> <div class="modal-content glass"> <h3 id="modal-title">添加日程</h3> <p id="modal-date"></p> <input id="event-title-input" placeholder="标题，例如：和朋友聚餐" /> <textarea id="event-desc-input" placeholder="补充描述（可选）"></textarea> <div class="modal-footer"> <button class="modal-btn cancel" onclick="closeModal()">取消</button> <button class="modal-btn confirm" onclick="saveEvent()">保存</button> </div> </div> </div> </div> <script src="/schedule/calendar.js"></script>
+<link rel="stylesheet" href="/schedule/schedule.css">
+<div id="calendar-app">
+  <div id="calendar-container">
+    <div id="calendar-header">
+      <div class="calendar-header-left">
+        <button class="nav-btn" onclick="prevMonth()">‹</button>
+        <span id="calendar-title"></span>
+        <button class="nav-btn" onclick="nextMonth()">›</button>
+      </div>
+      <div class="calendar-header-right">
+        <button class="tool-btn" onclick="toggleTheme()">🌓</button>
+        <button class="tool-btn" onclick="toggleView()">📅</button>
+        <button class="tool-btn" onclick="clearAllEvents()">🗑</button>
+      </div>
+    </div>
+<pre><code>&lt;div class=&quot;calendar-body&quot;&gt;
+  &lt;div class=&quot;calendar-panel&quot;&gt;
+    &lt;div class=&quot;calendar-grid&quot; id=&quot;calendar-grid&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;event-panel&quot;&gt;
+    &lt;div class=&quot;event-panel-header&quot;&gt;
+      &lt;span id=&quot;event-date-label&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;event-list&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+  </div>
+  <!-- 弹窗：新增 / 编辑日程 -->
+  <div id="event-modal" class="modal hidden">
+    <div class="modal-content glass">
+      <h3 id="modal-title">添加日程</h3>
+      <p id="modal-date"></p>
+      <input id="event-title-input" placeholder="标题，例如：和朋友聚餐" />
+      <textarea id="event-desc-input" placeholder="补充描述（可选）"></textarea>
+      <div class="modal-footer">
+        <button class="modal-btn cancel" onclick="closeModal()">取消</button>
+        <button class="modal-btn confirm" onclick="saveEvent()">保存</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/schedule/schedule.js"></script>
