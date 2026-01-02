@@ -1,7 +1,6 @@
 (function () {
   let current = new Date();
   let view = "month"; // month | year
-  const storageKey = "hexoScheduleEvents";
   let selectedDateStr = formatDateKey(new Date());
 
   const holidays = {
@@ -26,20 +25,47 @@
     return `${y}-${m}-${d}`;
   }
 
-  function loadEvents() {
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (!raw) return {};
-      return JSON.parse(raw);
-    } catch (e) {
-      return {};
+  /* ========== Supabase：读取事件 ========== */
+  async function loadEvents(dateStr) {
+    const { data, error } = await supabase
+      .from("events")
+      .select("*")
+      .eq("date", dateStr)
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      console.error("读取事件失败：", error);
+      return [];
+    }
+    return data;
+  }
+
+  /* ========== Supabase：添加事件 ========== */
+  async function addEvent(dateStr, title, desc) {
+    const { error } = await supabase
+      .from("events")
+      .insert([{ date: dateStr, title, desc }]);
+
+    if (error) {
+      alert("添加失败：你可能没有登录或没有写入权限");
+      console.error(error);
     }
   }
 
-  function saveEventsToStorage(events) {
-    localStorage.setItem(storageKey, JSON.stringify(events));
+  /* ========== Supabase：删除事件 ========== */
+  async function deleteEvent(id) {
+    const { error } = await supabase
+      .from("events")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      alert("删除失败：你可能没有登录或没有权限");
+      console.error(error);
+    }
   }
 
+  /* ========== 渲染日历 ========== */
   function render() {
     if (view === "month") renderMonth();
     else renderYear();
@@ -72,7 +98,6 @@
       grid.appendChild(document.createElement("div"));
     }
 
-    const events = loadEvents();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     for (let d = 1; d <= daysInMonth; d++) {
       const date = new Date(year, month, d);
@@ -86,11 +111,13 @@
         div.classList.add("holiday");
       }
 
-      if (events[dateStr] && events[dateStr].length > 0) {
-        const dot = document.createElement("div");
-        dot.className = "event-dot";
-        div.appendChild(dot);
-      }
+      loadEvents(dateStr).then(events => {
+        if (events.length > 0) {
+          const dot = document.createElement("div");
+          dot.className = "event-dot";
+          div.appendChild(dot);
+        }
+      });
 
       if (
         d === today.getDate() &&
@@ -130,18 +157,17 @@
     });
   }
 
-  function renderEventPanel(dateStr) {
-    const events = loadEvents();
+  /* ========== 渲染右侧事件列表 ========== */
+  async function renderEventPanel(dateStr) {
     const list = document.getElementById("event-list");
     const label = document.getElementById("event-date-label");
 
     label.innerText = `${dateStr} 的${i18n[lang].eventOn}`;
-
     list.innerHTML = "";
 
-    const items = events[dateStr] || [];
+    const events = await loadEvents(dateStr);
 
-    if (items.length === 0) {
+    if (events.length === 0) {
       const empty = document.createElement("div");
       empty.className = "event-item";
       empty.innerText = i18n[lang].eventsEmpty;
@@ -149,13 +175,13 @@
       return;
     }
 
-    items.forEach((ev, idx) => {
+    events.forEach(ev => {
       const div = document.createElement("div");
       div.className = "event-item";
 
       const title = document.createElement("div");
       title.className = "event-item-title";
-      title.innerText = ev.title || "未命名日程";
+      title.innerText = ev.title;
 
       const desc = document.createElement("div");
       desc.className = "event-item-desc";
@@ -163,13 +189,14 @@
 
       const time = document.createElement("div");
       time.className = "event-item-time";
-      time.innerText = `创建于：${ev.createdAt || ""}`;
+      time.innerText = `创建于：${new Date(ev.created_at).toLocaleString()}`;
 
       const del = document.createElement("button");
       del.className = "event-item-delete";
       del.innerText = "删除";
-      del.onclick = () => {
-        deleteEvent(dateStr, idx);
+      del.onclick = async () => {
+        await deleteEvent(ev.id);
+        render();
       };
 
       div.appendChild(title);
@@ -181,17 +208,7 @@
     });
   }
 
-  function deleteEvent(dateStr, index) {
-    const events = loadEvents();
-    if (!events[dateStr]) return;
-    events[dateStr].splice(index, 1);
-    if (events[dateStr].length === 0) {
-      delete events[dateStr];
-    }
-    saveEventsToStorage(events);
-    render();
-  }
-
+  /* ========== 弹窗 ========== */
   function openModal(dateStr) {
     const modal = document.getElementById("event-modal");
     const dateLabel = document.getElementById("modal-date");
@@ -208,7 +225,7 @@
     renderEventPanel(selectedDateStr);
   };
 
-  window.saveEvent = function () {
+  window.saveEvent = async function () {
     const title = document.getElementById("event-title-input").value.trim();
     const desc = document.getElementById("event-desc-input").value.trim();
 
@@ -217,18 +234,12 @@
       return;
     }
 
-    const events = loadEvents();
-    if (!events[selectedDateStr]) events[selectedDateStr] = [];
-    events[selectedDateStr].push({
-      title,
-      desc,
-      createdAt: new Date().toLocaleString()
-    });
-    saveEventsToStorage(events);
+    await addEvent(selectedDateStr, title, desc);
     closeModal();
     render();
   };
 
+  /* ========== 控制按钮 ========== */
   window.prevMonth = function () {
     if (view === "month") current.setMonth(current.getMonth() - 1);
     else current.setFullYear(current.getFullYear() - 1);
@@ -258,19 +269,8 @@
     }
   };
 
-  window.clearAllEvents = function () {
-    if (confirm("确定要清空所有日程吗？此操作不可恢复")) {
-      localStorage.removeItem(storageKey);
-      render();
-    }
-  };
-
   window.addEventListener("DOMContentLoaded", () => {
-    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      document.body.classList.add("calendar-dark");
-    } else {
-      document.body.classList.add("calendar-light");
-    }
+    document.body.classList.add("calendar-dark");
     selectedDateStr = formatDateKey(new Date());
     render();
   });
