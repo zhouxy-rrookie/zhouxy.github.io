@@ -1,47 +1,93 @@
+/* 整体容器：更大、更居中、更像组件卡片 */
 #calendar {
-  width: 320px;
-  margin: 20px auto;
-  padding: 15px;
-  border-radius: 12px;
-  background: #fafafa;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  font-family: "Segoe UI", sans-serif;
+  width: 420px;
+  margin: 40px auto;
+  padding: 25px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  font-family: "Segoe UI", "PingFang SC", sans-serif;
+  transition: all 0.3s ease;
 }
+
+#calendar:hover {
+  box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+  transform: translateY(-3px);
+}
+
+/* 顶部标题栏 */
 #calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
 }
+
+/* 上一月 / 下一月按钮 */
 #calendar-header button {
   background: #1677ff;
   color: white;
   border: none;
-  padding: 5px 10px;
-  border-radius: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 16px;
+  transition: 0.2s;
 }
+
+#calendar-header button:hover {
+  background: #0f5ed2;
+  transform: scale(1.05);
+}
+
+/* 网格布局 */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
+  gap: 10px;
   text-align: center;
 }
-.calendar-grid div {
-  padding: 8px 0;
-  border-radius: 6px;
-}
+
+/* 星期栏 */
 .weekday {
   font-weight: bold;
-  background: #f0f0f0;
+  background: #eef2f7;
+  padding: 10px 0;
+  border-radius: 10px;
+  color: #555;
 }
+
+/* 普通日期 */
 .day {
   background: #fff;
+  padding: 12px 0;
+  border-radius: 10px;
+  color: #333;
+  font-size: 15px;
+  transition: 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
+
+/* hover 效果 */
+.day:hover {
+  background: #e8f1ff;
+  transform: scale(1.05);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+
+/* 今天高亮 */
 .today {
-  background: #1677ff;
-  color: white;
+  background: #1677ff !important;
+  color: white !important;
   font-weight: bold;
+  box-shadow: 0 4px 12px rgba(22,119,255,0.4);
+  transform: scale(1.08);
+}
+
+/* 周末颜色（可选） */
+.weekend {
+  color: #d9534f;
 }
