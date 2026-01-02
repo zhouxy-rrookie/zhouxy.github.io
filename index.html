@@ -197,7 +197,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-01-02 17:41:51" itemprop="dateModified" datetime="2026-01-02T17:41:51+08:00">2026-01-02</time>
+                <time title="修改时间：2026-01-02 17:45:03" itemprop="dateModified" datetime="2026-01-02T17:45:03+08:00">2026-01-02</time>
               </span>
 
           
@@ -231,12 +231,12 @@
 <li>t: 氧化层时间</li>
 <li>A：线性常数</li>
 <li>B：抛物线常数</li>
-<li>$\tau$:初始氧化厚度修正项。<br><strong>该模型解释了氧化过程的两个阶段：</strong></li>
+<li>$ \tau $:初始氧化厚度修正项。<br><strong>该模型解释了氧化过程的两个阶段：</strong></li>
 <li><strong>反应控制阶段（薄氧化）</strong><br>氧化剂很容易到达界面，反应速率决定生长速度<br>此时：$$ x \propto t $$</li>
-<li><strong>扩散控制阶段</strong><br>氧化层变厚后，氧化剂扩散变慢，扩散成为瓶颈。<br>此时：$$x^2 \propto t $$</li>
+<li><strong>扩散控制阶段</strong><br>氧化层变厚后，氧化剂扩散变慢，扩散成为瓶颈。<br>此时：$$ x^2 \propto t $$</li>
 </ul>
 <h3 id="公式推导"><a href="#公式推导" class="headerlink" title="公式推导"></a>公式推导</h3><p><strong>Deal-Grove</strong>模型基于三个连续步骤：</p>
-<h4 id="一、氧化剂到达-SiO-2-表面"><a href="#一、氧化剂到达-SiO-2-表面" class="headerlink" title="一、氧化剂到达$SiO_2$表面"></a>一、氧化剂到达$SiO_2$表面</h4><p><strong>设气相氧化剂浓度为$C^*$,表面浓度为$C_s$</strong><br>气相到表面的通量为：<br>$$F_1 &#x3D; h(C^*-C_s)$$<br>其中：</p>
+<h4 id="一、氧化剂到达-SiO-2-表面"><a href="#一、氧化剂到达-SiO-2-表面" class="headerlink" title="一、氧化剂到达$SiO_2$表面"></a>一、氧化剂到达$SiO_2$表面</h4><p><em><em>设气相氧化剂浓度为$ C^</em> $,表面浓度为$ C_s $</em>*<br>气相到表面的通量为：<br>$$ F_1 &#x3D; h(C^*-C_s) $$<br>其中：</p>
 <ul>
 <li>h：气相传质系数</li>
 <li>$C_s$：氧化层外表面氧化剂浓度</li>
@@ -251,7 +251,7 @@
 <ul>
 <li>k：界面反应速率常数</li>
 </ul>
-<h4 id="稳态条件：三个通量相等"><a href="#稳态条件：三个通量相等" class="headerlink" title="稳态条件：三个通量相等"></a>稳态条件：三个通量相等</h4><p>$$ F_1 &#x3D; F_2 &#x3D; F_3 $$<br>得到：<br>$$ h(C^<em>-C_s) &#x3D; \frac{D(C_s-C_i)}{x}&#x3D; k_sC_i $$<br>消去$ C_s $和$ C_i: $<br>$$ C_i &#x3D; \frac{C^</em>}{1+\frac {k_s}{h}+\frac{k_sx}{D}} \approx \frac{C^*}{1+\frac{k_sx}{D}}  (h &gt;&gt; k)  $$<br><img src="https://img.cdn1.vip/i/6957859c964c2_1767343516.webp" alt="氧化模型"></p>
+<h4 id="稳态条件：三个通量相等"><a href="#稳态条件：三个通量相等" class="headerlink" title="稳态条件：三个通量相等"></a>稳态条件：三个通量相等</h4><p>$$ F_1 &#x3D; F_2 &#x3D; F_3 $$<br>得到：<br>$$ h(C^<em>-C_s) &#x3D; \frac{D(C_s-C_i)}{x}&#x3D; k_sC_i $$<br>消去$ C_s $和$ C_i: $<br>$$ C_i &#x3D; \frac{C^</em>}{1+\frac {k_s}{h}+\frac{k_sx}{D}} \approx \frac{C^*}{1+\frac{k_sx}{D}}  (h &gt;&gt; k) $$<br><img src="https://img.cdn1.vip/i/6957859c964c2_1767343516.webp" alt="氧化模型"></p>
 <p>生长速率：<br>$$ R &#x3D; \frac{dx}{dt} &#x3D; \frac{k_sC^*}{N_1[1+\frac{k_s}{h}+\frac{k_sx}{D}]} $$</p>
 <ul>
 <li>N1:是指形成单位体积$SiO_2$所需要的氧化剂分子数<br>求得生长速率：<br>$$ N1\int_{x_i}^{x_0}[1+\frac{k_s}{h}+\frac{k_sx}{D}]dx &#x3D; \int_0^tk_sC^<em>dt $$<br>令：<br>$$ B &#x3D; \frac{2DC^</em>}{N_1},A&#x3D;2D(\frac{1}{k_s}+\frac1h),\frac BA \approx \frac{C^*k_s}{N_1} $$<br>有：<br>$$ \frac{x_0^2-x_i^2}{B}+\frac{x_0-x_i}{B&#x2F;A} &#x3D; t $$<br>为了讨论方便，将上式写成：<br>$$ \frac{x_0^2}{B}+\frac{x_0}{B&#x2F;A} &#x3D; t+\tau $$<br>式中：<br>$$ \tau &#x3D; \frac{x_i^2+Ax_i}{B} $$</li>
