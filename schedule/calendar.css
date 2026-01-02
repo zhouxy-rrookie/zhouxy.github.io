@@ -1,21 +1,55 @@
-/* 整体容器：更大、更居中、更像组件卡片 */
+/* ====== 全局动画 ====== */
+.fade {
+  animation: fadeIn 0.35s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ====== 日历容器 ====== */
 #calendar {
   width: 420px;
   margin: 40px auto;
   padding: 25px;
   border-radius: 18px;
-  background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%);
+  background: var(--bg);
   box-shadow: 0 8px 25px rgba(0,0,0,0.08);
   font-family: "Segoe UI", "PingFang SC", sans-serif;
   transition: all 0.3s ease;
 }
-
 #calendar:hover {
   box-shadow: 0 12px 35px rgba(0,0,0,0.12);
   transform: translateY(-3px);
 }
 
-/* 顶部标题栏 */
+/* ====== 主题色变量 ====== */
+:root {
+  --bg: #ffffff;
+  --text: #333;
+  --subtext: #666;
+  --accent: #1677ff;
+  --weekday-bg: #eef2f7;
+  --day-bg: #fff;
+  --today-bg: #1677ff;
+  --today-text: #fff;
+  --holiday-bg: #ffefef;
+  --holiday-text: #d9534f;
+}
+.dark {
+  --bg: #1e1e1e;
+  --text: #e8e8e8;
+  --subtext: #aaa;
+  --accent: #4c9dff;
+  --weekday-bg: #2a2a2a;
+  --day-bg: #2b2b2b;
+  --today-bg: #4c9dff;
+  --today-text: #fff;
+  --holiday-bg: #3a1e1e;
+  --holiday-text: #ff8a8a;
+}
+
+/* ====== 顶部栏 ====== */
 #calendar-header {
   display: flex;
   justify-content: space-between;
@@ -23,12 +57,10 @@
   font-size: 22px;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #333;
+  color: var(--text);
 }
-
-/* 上一月 / 下一月按钮 */
 #calendar-header button {
-  background: #1677ff;
+  background: var(--accent);
   color: white;
   border: none;
   padding: 6px 14px;
@@ -37,13 +69,12 @@
   font-size: 16px;
   transition: 0.2s;
 }
-
 #calendar-header button:hover {
   background: #0f5ed2;
   transform: scale(1.05);
 }
 
-/* 网格布局 */
+/* ====== 网格布局 ====== */
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -54,40 +85,70 @@
 /* 星期栏 */
 .weekday {
   font-weight: bold;
-  background: #eef2f7;
+  background: var(--weekday-bg);
   padding: 10px 0;
   border-radius: 10px;
-  color: #555;
+  color: var(--subtext);
 }
 
-/* 普通日期 */
+/* 日期格子 */
 .day {
-  background: #fff;
+  background: var(--day-bg);
   padding: 12px 0;
   border-radius: 10px;
-  color: #333;
+  color: var(--text);
   font-size: 15px;
   transition: 0.2s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  position: relative;
 }
-
-/* hover 效果 */
 .day:hover {
   background: #e8f1ff;
   transform: scale(1.05);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
 }
 
-/* 今天高亮 */
+/* 今天 */
 .today {
-  background: #1677ff !important;
-  color: white !important;
+  background: var(--today-bg) !important;
+  color: var(--today-text) !important;
   font-weight: bold;
   box-shadow: 0 4px 12px rgba(22,119,255,0.4);
   transform: scale(1.08);
 }
 
-/* 周末颜色（可选） */
-.weekend {
-  color: #d9534f;
+/* 节假日 */
+.holiday {
+  background: var(--holiday-bg) !important;
+  color: var(--holiday-text) !important;
+  font-weight: bold;
+}
+
+/* 事件小圆点 */
+.event-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ====== 年视图 ====== */
+.year-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+.year-month {
+  padding: 15px;
+  background: var(--day-bg);
+  border-radius: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.year-month:hover {
+  background: #e8f1ff;
+  transform: scale(1.05);
 }
