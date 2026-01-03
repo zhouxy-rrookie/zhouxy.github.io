@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ffff41;
+  background: #ffff25;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2727,6 +2727,31 @@ a:hover {
   bottom: 20px !important;
   z-index: 999999 !important;
   pointer-events: none;
+}
+/* 强制覆盖 NexT 标题颜色 */
+.post-title,
+.post-title a {
+  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary)) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  opacity: 1 !important;
+}
+/* 高级玻璃卡片风格（柔光白） */
+.content-wrap {
+  background: rgba(255,255,255,0.12) !important;
+  backdrop-filter: blur(18px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(255,255,255,0.22) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
+  color: #333 !important;
+}
+/* 卡片悬浮效果（更柔和） */
+.content-wrap:hover {
+  background: rgba(255,255,255,0.18) !important;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.1);
 }
 @-moz-keyframes gradientFlow {
   0% {
