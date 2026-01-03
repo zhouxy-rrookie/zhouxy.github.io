@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ff1b79;
+  background: #ffd40d;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2725,6 +2725,13 @@ a:hover {
   z-index: -2;
   background: radial-gradient(circle at 20% 30%, #3a1c71 0%, #2e2e2e 40%, #1a1a1a 100%);
   animation: softFlow 20s ease infinite;
+}
+#live2d-widget {
+  position: fixed !important;
+  right: 20px !important;
+  bottom: 20px !important;
+  z-index: 999999 !important;
+  pointer-events: none;
 }
 @-moz-keyframes softFlow {
   0% {
