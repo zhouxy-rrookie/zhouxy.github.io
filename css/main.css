@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #e00ebf;
+  background: #29b655;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2575,33 +2575,28 @@ mjx-container + br {
   }
 }
 /* ===========================
-   0. 主题色变量（暗色卡片风）
+   0. 主题色（赛博霓虹）
    =========================== */
 :root {
-  --primary: #a18cd1;
-  --secondary: #fbc2eb;
-  --accent: #ffaf7b;
-  --text-main: #e5e5e5;
+  --primary: #00eaff;
+  --secondary: #f0f;
+  --accent: #0fa;
+  --text-main: #d8faff;
   --text-light: #fff;
-  --card-bg: #1a1a1a;
-  --card-bg-hover: #222;
-  --card-border: rgba(255,255,255,0.06);
-  --nav-bg: #111;
-  --sidebar-bg: #111;
+  --card-bg: rgba(20,20,30,0.55);
+  --card-bg-hover: rgba(30,30,45,0.65);
+  --card-border: rgba(0,255,255,0.15);
+  --nav-bg: rgba(10,10,20,0.7);
+  --sidebar-bg: rgba(10,10,20,0.7);
 }
 [data-theme='dark'] {
-  --text-main: #e5e5e5;
-  --card-bg: #1a1a1a;
-  --card-bg-hover: #222;
-  --card-border: rgba(255,255,255,0.06);
-  --nav-bg: #111;
-  --sidebar-bg: #111;
+  --text-main: #d8faff;
 }
 /* ===========================
-   1. 深色背景 + 视差
+   1. 背景：赛博网格 + 霓虹渐变
    =========================== */
 body {
-  background: radial-gradient(circle at 20% 30%, #0d0d0d 0%, #000 60%);
+  background: radial-gradient(circle at 30% 20%, #0a0a0f 0%, #000 70%);
   background-attachment: fixed;
   color: var(--text-main);
   overflow-x: hidden;
@@ -2613,12 +2608,12 @@ body {
   width: 100%;
   height: 100%;
   z-index: -2;
-  background: radial-gradient(circle at 20% 30%, #3a1c71 0%, #1a1a1a 60%);
-  transform: scale(1.2);
+  background: linear-gradient(135deg, rgba(0,255,255,0.08), rgba(255,0,255,0.08)), repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 40px);
+  filter: blur(1px);
   pointer-events: none;
 }
 /* ===========================
-   2. 粒子背景
+   2. 激光粒子背景
    =========================== */
 #particle-canvas {
   position: fixed;
@@ -2628,21 +2623,21 @@ body {
   height: 100vh;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.35;
+  opacity: 0.45;
 }
 /* ===========================
-   3. 光标光晕（精准跟随）
+   3. 鼠标赛博光圈
    =========================== */
 #cursor-light {
   position: fixed;
-  width: 120px;
-  height: 120px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%);
+  background: radial-gradient(circle, rgba(0,255,255,0.25), transparent 70%);
+  mix-blend-mode: screen;
   pointer-events: none;
   z-index: 99999;
-  transition: transform 0.05s linear;
-  transform: translate(-50%, -50%);
+  transition: transform 0.08s linear;
 }
 /* ===========================
    4. 首页淡入动画
@@ -2653,89 +2648,80 @@ body.index .content-wrap {
   transform: translateY(20px);
 }
 /* ===========================
-   5. 暗色卡片（无玻璃风）
+   5. 霓虹玻璃卡片
    =========================== */
 .content-wrap,
 .post-block,
 .post,
 .post-body {
   background: var(--card-bg);
-  border-radius: 14px;
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
   border: 1px solid var(--card-border);
-  padding: 25px;
+  padding: 28px;
   color: var(--text-main);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 8px rgba(255,255,255,0.03);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  box-shadow: 0 0 12px rgba(0,255,255,0.15), inset 0 0 20px rgba(255,0,255,0.05);
+  transition: 0.3s ease;
 }
-/* 悬浮 + 柔光边缘 */
 .content-wrap:hover,
 .post-block:hover {
   background: var(--card-bg-hover);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.55), 0 0 12px rgba(255,255,255,0.08);
+  transform: translateY(-6px);
+  box-shadow: 0 0 18px rgba(0,255,255,0.35), inset 0 0 25px rgba(255,0,255,0.1);
+  border-color: rgba(0,255,255,0.35);
 }
 /* ===========================
-   6. 侧边栏（暗色）
+   6. 侧边栏
    =========================== */
 .sidebar {
   background: var(--sidebar-bg);
-  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
   border: 1px solid var(--card-border);
   color: var(--text-main);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  box-shadow: 0 0 12px rgba(0,255,255,0.15);
 }
 /* ===========================
-   7. 顶部导航（暗色）
+   7. 顶部导航
    =========================== */
 .header-inner {
   background: var(--nav-bg);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--card-border);
   color: var(--text-main);
 }
 /* ===========================
-   8. 渐变霓虹标题 + 呼吸光效
+   8. 霓虹扫描标题
    =========================== */
 .post-title,
-.post-title a,
-.post-title-link {
-  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary));
+.post-title a {
+  font-weight: 800;
+  background: linear-gradient(90deg, #00eaff, #f0f, #00eaff);
+  background-size: 200% auto;
   -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-fill-color: transparent;
   color: transparent;
-  font-weight: 700;
-  animation: glow-breath 3s ease-in-out infinite;
+  animation: neon-scan 4s linear infinite;
 }
 /* ===========================
-   9. 链接发光
+   9. 霓虹链接
    =========================== */
 a {
-  color: var(--secondary);
-  transition: 0.3s ease;
+  color: #00eaff;
+  text-shadow: 0 0 6px rgba(0,255,255,0.6);
+  transition: 0.25s ease;
 }
 a:hover {
-  color: #fff;
-  text-shadow: 0 0 8px var(--secondary);
+  color: #f0f;
+  text-shadow: 0 0 12px rgba(255,0,255,0.8);
 }
 /* ===========================
-   10. 看板娘固定
+   10. 看板娘
    =========================== */
 #live2d-widget {
   position: fixed;
   right: 20px;
   bottom: 20px;
   z-index: 999999;
-}
-/* ===========================
-   11. 正文颜色
-   =========================== */
-.post-body,
-.post-body p,
-.post-body span,
-.post-body li,
-.post-body div {
-  color: var(--text-main);
 }
 @-moz-keyframes fade-up {
   to {
@@ -2761,47 +2747,59 @@ a:hover {
     transform: translateY(0);
   }
 }
-@-moz-keyframes glow-breath {
+@-moz-keyframes neon-scan {
   0% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.25);
+    background-position: 0% 50%;
+    text-shadow: 0 0 6px #00eaff;
   }
   50% {
-    text-shadow: 0 0 14px rgba(255,255,255,0.55);
+    background-position: 100% 50%;
+    text-shadow: 0 0 14px #f0f;
   }
   100% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.25);
+    background-position: 0% 50%;
+    text-shadow: 0 0 6px #00eaff;
   }
 }
-@-webkit-keyframes glow-breath {
+@-webkit-keyframes neon-scan {
   0% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.25);
+    background-position: 0% 50%;
+    text-shadow: 0 0 6px #00eaff;
   }
   50% {
-    text-shadow: 0 0 14px rgba(255,255,255,0.55);
+    background-position: 100% 50%;
+    text-shadow: 0 0 14px #f0f;
   }
   100% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.25);
+    background-position: 0% 50%;
+    text-shadow: 0 0 6px #00eaff;
   }
 }
-@-o-keyframes glow-breath {
+@-o-keyframes neon-scan {
   0% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.25);
+    background-position: 0% 50%;
+    text-shadow: 0 0 6px #00eaff;
   }
   50% {
-    text-shadow: 0 0 14px rgba(255,255,255,0.55);
+    background-position: 100% 50%;
+    text-shadow: 0 0 14px #f0f;
   }
   100% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.25);
+    background-position: 0% 50%;
+    text-shadow: 0 0 6px #00eaff;
   }
 }
-@keyframes glow-breath {
+@keyframes neon-scan {
   0% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.25);
+    background-position: 0% 50%;
+    text-shadow: 0 0 6px #00eaff;
   }
   50% {
-    text-shadow: 0 0 14px rgba(255,255,255,0.55);
+    background-position: 100% 50%;
+    text-shadow: 0 0 14px #f0f;
   }
   100% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.25);
+    background-position: 0% 50%;
+    text-shadow: 0 0 6px #00eaff;
   }
 }

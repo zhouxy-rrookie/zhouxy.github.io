@@ -52,6 +52,7 @@
 <!-- Mouse Follow Light -->
 <div id="cursor-light"></div>
 
+<!-- Cyber Grid Background -->
 <div id="bg-layer"></div>
 
   <title>categories | zhxy
@@ -420,7 +421,7 @@
 
   
 <script>
-console.log("UI Enhancement Script Loaded");
+console.log("Cyberpunk UI Loaded");
 
 /* -------------------------
    1. 加载动画淡出
@@ -430,26 +431,23 @@ window.addEventListener('load', function () {
   if (!loader) return;
 
   loader.style.opacity = '0';
-
-  setTimeout(() => {
-    loader.style.display = 'none';
-  }, 600);
+  setTimeout(() => loader.style.display = 'none', 600);
 });
 
 /* -------------------------
-   2. 鼠标跟随光效
+   2. 鼠标跟随光效（赛博扫描光）
 -------------------------- */
 (function () {
   const light = document.getElementById('cursor-light');
   if (!light) return;
 
   document.addEventListener('mousemove', (e) => {
-    light.style.transform = `translate(${e.clientX - 150}px, ${e.clientY - 150}px)`;
+    light.style.transform = `translate(${e.clientX - 90}px, ${e.clientY - 90}px)`;
   });
 })();
 
 /* -------------------------
-   3. 粒子背景（星空 / 气泡感）
+   3. 激光粒子背景
 -------------------------- */
 (function () {
   const canvas = document.getElementById('particle-canvas');
@@ -457,13 +455,12 @@ window.addEventListener('load', function () {
 
   const ctx = canvas.getContext('2d');
   let particles = [];
-  const particleCount = 80;
+  const particleCount = 90;
 
   function resize() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }
-
   window.addEventListener('resize', resize);
   resize();
 
@@ -473,9 +470,9 @@ window.addEventListener('load', function () {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: Math.random() * 2 + 0.5,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 1.8 + 0.6,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
         alpha: Math.random() * 0.6 + 0.2
       });
     }
@@ -483,10 +480,10 @@ window.addEventListener('load', function () {
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#ffffff';
 
     particles.forEach(p => {
       ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = `rgba(${150 + Math.random()*100}, 0, 255, ${p.alpha})`;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fill();
@@ -506,17 +503,12 @@ window.addEventListener('load', function () {
 })();
 
 /* -------------------------
-   4. 暗色模式自动切换（跟随系统）
-   - 这里主要配合 CSS :root 变量
+   4. 暗色模式自动切换
 -------------------------- */
 (function () {
   const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
   function handleDarkModeChange(e) {
-    if (e.matches) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-    }
+    document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
   }
   handleDarkModeChange(darkModeMediaQuery);
   darkModeMediaQuery.addEventListener('change', handleDarkModeChange);
