@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #cd1f32;
+  background: #ff41da;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2582,10 +2582,10 @@ mjx-container + br {
   --secondary: #fbc2eb;
   --accent: #ffaf7b;
   --text-main: #222;
-  --card-bg: rgba(255,255,255,0.15);
-  --card-border: rgba(255,255,255,0.25);
-  --nav-bg: rgba(255,255,255,0.12);
-  --sidebar-bg: rgba(255,255,255,0.12);
+  --card-bg: rgba(255,255,255,0.25);
+  --card-border: rgba(255,255,255,0.35);
+  --nav-bg: rgba(255,255,255,0.18);
+  --sidebar-bg: rgba(255,255,255,0.18);
 }
 /* 暗色模式变量 */
 [data-theme='dark'] {
@@ -2596,7 +2596,7 @@ mjx-container + br {
   --sidebar-bg: rgba(0,0,0,0.4);
 }
 /* ===========================
-   1. 深色背景 + 粒子层
+   1. 深色背景
    =========================== */
 body {
   background: radial-gradient(circle at 20% 30%, #1a1a1a 0%, #0f0f0f 40%, #000 100%) !important;
@@ -2604,6 +2604,9 @@ body {
   background-size: cover;
   color: var(--text-main) !important;
 }
+/* ===========================
+   2. 粒子背景
+   =========================== */
 #particle-canvas {
   position: fixed;
   top: 0;
@@ -2615,7 +2618,7 @@ body {
   opacity: 0.5;
 }
 /* ===========================
-   2. 鼠标跟随光效
+   3. 鼠标跟随光效
    =========================== */
 #cursor-light {
   position: fixed;
@@ -2630,7 +2633,7 @@ body {
   transition: transform 0.08s linear;
 }
 /* ===========================
-   3. 文章卡片（半透明白色）
+   4. 文章卡片（半透明白色）
    =========================== */
 .content-wrap {
   background: var(--card-bg) !important;
@@ -2649,7 +2652,7 @@ body {
   box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.08);
 }
 /* ===========================
-   4. 侧边栏玻璃风格
+   5. 侧边栏玻璃风格
    =========================== */
 .sidebar {
   background: var(--sidebar-bg) !important;
@@ -2659,7 +2662,7 @@ body {
   color: var(--text-main) !important;
 }
 /* ===========================
-   5. 顶部导航玻璃风格
+   6. 顶部导航玻璃风格
    =========================== */
 .header-inner {
   background: var(--nav-bg) !important;
@@ -2668,7 +2671,7 @@ body {
   color: var(--text-main) !important;
 }
 /* ===========================
-   6. 渐变霓虹标题
+   7. 渐变霓虹标题
    =========================== */
 .post-title {
   background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary));
@@ -2677,7 +2680,7 @@ body {
   font-weight: 700;
 }
 /* ===========================
-   7. 链接发光效果
+   8. 链接发光效果
    =========================== */
 a {
   color: var(--secondary);
@@ -2688,7 +2691,7 @@ a:hover {
   text-shadow: 0 0 8px var(--secondary);
 }
 /* ===========================
-   8. 加载动画
+   9. 加载动画
    =========================== */
 #gradient-loading {
   position: fixed;
@@ -2703,7 +2706,7 @@ a:hover {
   transition: opacity 0.6s ease;
 }
 /* ===========================
-   9. 背景层（无 blur）
+   10. 背景层
    =========================== */
 #bg-layer {
   position: fixed;
@@ -2715,7 +2718,7 @@ a:hover {
   background: radial-gradient(circle at 20% 30%, #3a1c71 0%, #2e2e2e 40%, #1a1a1a 100%);
 }
 /* ===========================
-   10. 看板娘固定位置
+   11. 看板娘固定位置
    =========================== */
 #live2d-widget {
   position: fixed !important;
