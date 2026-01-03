@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #0628ff;
+  background: #4dfc4d;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2574,47 +2574,66 @@ mjx-container + br {
     margin: 8px 0 0;
   }
 }
-/* 全站背景：柔光渐变 */
+/* ===========================
+   1. 柔和渐变背景（高级风格）
+   =========================== */
 body {
-  background: linear-gradient(135deg, #1a1a1a, #3a1c71, #d76d77, #ffaf7b) !important;
-  background-size: 400% 400%;
-  animation: bgFlow 18s ease infinite;
+  background: radial-gradient(circle at 20% 30%, #3a1c71 0%, #2e2e2e 40%, #1a1a1a 100%) !important;
+  background-attachment: fixed;
+  background-size: cover;
+  animation: softFlow 20s ease infinite;
   color: #fff !important;
 }
-/* 文章主体毛玻璃卡片 */
+/* ==========================================
+   2. 自动根据背景亮度调整文字颜色（核心）
+   ========================================== */
+.content-wrap,
+.post-body,
+.post-title,
+.post-meta {
+  mix-blend-mode: difference;
+}
+/* ===========================
+   3. 文章卡片毛玻璃 + 阴影层次
+   =========================== */
 .content-wrap {
-  background: rgba(255,255,255,0.12) !important;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(255,255,255,0.08) !important;
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
   border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
   padding: 25px;
 }
-/* 侧边栏玻璃效果 */
+/* ===========================
+   4. 侧边栏统一玻璃风格
+   =========================== */
 .sidebar {
-  background: rgba(255,255,255,0.08) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
-}
-/* 顶部菜单栏玻璃效果 */
-.header-inner {
-  background: rgba(255,255,255,0.1) !important;
+  background: rgba(255,255,255,0.06) !important;
   backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255,255,255,0.25);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.12);
 }
-/* 文章标题渐变霓虹文字 */
+/* ===========================
+   5. 顶部导航玻璃风格
+   =========================== */
+.header-inner {
+  background: rgba(255,255,255,0.06) !important;
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+/* ===========================
+   6. 渐变霓虹标题
+   =========================== */
 .post-title {
-  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fad0c4, #fbc2eb, #a18cd1);
+  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 700;
 }
-/* 链接发光效果 */
+/* ===========================
+   7. 链接发光效果
+   =========================== */
 a {
   color: #ffd6ff;
   transition: 0.3s ease;
@@ -2623,7 +2642,9 @@ a:hover {
   color: #fff;
   text-shadow: 0 0 8px #ff9dff;
 }
-/* 全屏渐变加载动画 */
+/* ===========================
+   8. 全屏渐变加载动画
+   =========================== */
 #gradient-loading {
   position: fixed;
   top: 0;
@@ -2636,48 +2657,48 @@ a:hover {
   animation: gradientFlow 6s ease infinite;
   transition: opacity 0.6s ease;
 }
-@-moz-keyframes bgFlow {
+@-moz-keyframes softFlow {
   0% {
-    background-position: 0% 50%;
+    filter: brightness(1) blur(0px);
   }
   50% {
-    background-position: 100% 50%;
+    filter: brightness(1.1) blur(2px);
   }
   100% {
-    background-position: 0% 50%;
+    filter: brightness(1) blur(0px);
   }
 }
-@-webkit-keyframes bgFlow {
+@-webkit-keyframes softFlow {
   0% {
-    background-position: 0% 50%;
+    filter: brightness(1) blur(0px);
   }
   50% {
-    background-position: 100% 50%;
+    filter: brightness(1.1) blur(2px);
   }
   100% {
-    background-position: 0% 50%;
+    filter: brightness(1) blur(0px);
   }
 }
-@-o-keyframes bgFlow {
+@-o-keyframes softFlow {
   0% {
-    background-position: 0% 50%;
+    filter: brightness(1) blur(0px);
   }
   50% {
-    background-position: 100% 50%;
+    filter: brightness(1.1) blur(2px);
   }
   100% {
-    background-position: 0% 50%;
+    filter: brightness(1) blur(0px);
   }
 }
-@keyframes bgFlow {
+@keyframes softFlow {
   0% {
-    background-position: 0% 50%;
+    filter: brightness(1) blur(0px);
   }
   50% {
-    background-position: 100% 50%;
+    filter: brightness(1.1) blur(2px);
   }
   100% {
-    background-position: 0% 50%;
+    filter: brightness(1) blur(0px);
   }
 }
 @-moz-keyframes gradientFlow {
