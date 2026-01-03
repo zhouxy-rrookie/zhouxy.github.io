@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ff41da;
+  background: #ffff41;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2636,20 +2636,21 @@ body {
    4. 文章卡片（半透明白色）
    =========================== */
 .content-wrap {
-  background: var(--card-bg) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 16px;
-  border: 1px solid var(--card-border);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.18) !important;
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.28);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.06);
   padding: 25px;
-  color: var(--text-main) !important;
+  color: #2a2a2a !important;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 /* 悬浮动效 */
 .content-wrap:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.24) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.1);
 }
 /* ===========================
    5. 侧边栏玻璃风格
@@ -2677,7 +2678,7 @@ body {
   background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: 700;
+  opacity: 1 !important;
 }
 /* ===========================
    8. 链接发光效果
