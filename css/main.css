@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ffff6a;
+  background: #d23953;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2575,7 +2575,7 @@ mjx-container + br {
   }
 }
 /* ===========================
-   0. 主题色变量（统一管理）
+   0. 主题色变量（统一管理 + 兼容兜底注释）
    =========================== */
 :root {
   --primary: #a18cd1;
@@ -2599,16 +2599,16 @@ mjx-container + br {
   --sidebar-bg: rgba(0,0,0,0.4);
 }
 /* ===========================
-   1. 深色背景 + 滚动视差
+   1. 深色背景 + 滚动视差（优化性能）
    =========================== */
 body {
-  background: radial-gradient(circle at 20% 30%, #1a1a1a 0%, #0f0f0f 40%, #000 100%) !important;
+  background: radial-gradient(circle at 20% 30%, #1a1a1a 0%, #0f0f0f 40%, #000 100%);
   background-attachment: fixed;
-  background-size: cover;
-  color: var(--text-main) !important;
-  transform: translateZ(0);
+  color: var(--text-main);
+/* 替换 3D 变换，用普通方式实现视差，降低 GPU 占用 */
+  overflow-x: hidden;
 }
-/* 视差背景层 */
+/* 视差背景层（优化性能，移除 3D 变换） */
 #bg-layer {
   position: fixed;
   top: 0;
@@ -2617,8 +2617,9 @@ body {
   height: 100%;
   z-index: -2;
   background: radial-gradient(circle at 20% 30%, #3a1c71 0%, #2e2e2e 40%, #1a1a1a 100%);
-  transform: translateZ(-1px) scale(1.2);
+  transform: scale(1.2);
   pointer-events: none;
+/* 视差滚动：通过 JS 控制 top 值实现，更兼容 */
 }
 /* ===========================
    2. 粒子背景
@@ -2634,79 +2635,99 @@ body {
   opacity: 0.5;
 }
 /* ===========================
-   3. 鼠标跟随光效（光圈减小）
+   3. 鼠标跟随光效（修复错位问题）
    =========================== */
 #cursor-light {
   position: fixed;
   top: 0;
   left: 0;
-  width: 80px;
-  height: 80px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,255,255,0.45), transparent 60%);
   pointer-events: none;
-  z-index: 1;
+  z-index: 99999 /* 提高层级，避免被遮挡 */;
   transition: transform 0.08s linear;
+  transform: translate(-50%, -50%) /* 关键：让光效中心跟随鼠标 */;
 }
 /* ===========================
    4. 首页专属淡入动画
    =========================== */
 body.index .content-wrap {
-  animation: fadeUp 0.8s ease-out forwards;
+  animation: fade-up 0.8s ease-out forwards;
   opacity: 0;
   transform: translateY(20px);
 }
 /* ===========================
-   5. 文章卡片（高级玻璃风）
+   5. 文章卡片（高级玻璃风 + 仅定义一次）
    =========================== */
-.content-wrap {
-  background: var(--card-bg) !important;
+.content-wrap,
+.post-block,
+.post,
+.post-body {
+  background: var(--card-bg);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
+/* 兼容：旧浏览器无模糊效果时，加深背景透明度 */
+  background: var(--card-bg) /* 兜底 */;
   border-radius: 18px;
   border: 1px solid var(--card-border);
   box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
   padding: 25px;
-  color: var(--text-main) !important;
+  color: var(--text-main);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 /* 卡片悬浮 + 边缘光晕 */
-.content-wrap:hover {
-  background: var(--card-bg-hover) !important;
+.content-wrap:hover,
+.post-block:hover {
+  background: var(--card-bg-hover);
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.15), 0 0 12px rgba(255,255,255,0.25);
 }
 /* ===========================
-   6. 侧边栏玻璃风格
+   6. 侧边栏玻璃风格（仅定义一次）
    =========================== */
 .sidebar {
-  background: var(--sidebar-bg) !important;
+  background: var(--sidebar-bg);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,0.2);
-  color: var(--text-main) !important;
+  color: var(--text-main);
 }
 /* ===========================
-   7. 顶部导航玻璃风格
+   7. 顶部导航玻璃风格（仅定义一次）
    =========================== */
 .header-inner {
-  background: var(--nav-bg) !important;
+  background: var(--nav-bg);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255,255,255,0.2);
-  color: var(--text-main) !important;
+  color: var(--text-main);
 }
 /* ===========================
-   8. 渐变霓虹标题 + 呼吸光效
+   8. 渐变霓虹标题 + 呼吸光效（仅定义一次 + 兼容）
    =========================== */
 .post-title,
-.post-title a {
-  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary)) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  color: transparent !important;
-  opacity: 1 !important;
-  font-weight: 700 !important;
-  animation: glowBreath 3s ease-in-out infinite;
+.post-title a,
+.post-title-link {
+  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary));
+  -webkit-background-clip: text;
+  background-clip: text /* 标准属性，兼容非 Webkit 浏览器 */;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent /* 标准属性，兼容非 Webkit 浏览器 */;
+  color: var(--text-light) /* 兜底：旧浏览器无渐变时显示浅色文字 */;
+  opacity: 1;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(255,255,255,0.4);
+  animation: glow-breath 3s ease-in-out infinite;
+}
+/* 标题 hover 效果 */
+.post-title a:hover,
+.post-title-link:hover {
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  opacity: 1;
 }
 /* ===========================
    9. 链接发光效果
@@ -2720,7 +2741,7 @@ a:hover {
   text-shadow: 0 0 8px var(--secondary);
 }
 /* ===========================
-   10. 加载动画
+   10. 加载动画（添加隐藏逻辑）
    =========================== */
 #gradient-loading {
   position: fixed;
@@ -2731,117 +2752,61 @@ a:hover {
   z-index: 9999;
   background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
   background-size: 300% 300%;
-  animation: gradientFlow 6s ease infinite;
+  animation: gradient-flow 6s ease infinite;
   transition: opacity 0.6s ease;
+  opacity: 0 /* 默认隐藏 */;
+  pointer-events: none /* 默认不遮挡鼠标事件 */;
+}
+/* 加载中状态：通过 JS 添加该类名显示动画 */
+#gradient-loading.loading {
+  opacity: 1;
+  pointer-events: auto;
 }
 /* ===========================
-   11. 看板娘固定位置
+   11. 看板娘固定位置（恢复交互性）
    =========================== */
 #live2d-widget {
-  position: fixed !important;
-  right: 20px !important;
-  bottom: 20px !important;
-  z-index: 999999 !important;
-  pointer-events: none;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 999999;
+/* 移除 pointer-events: none，恢复交互功能 */
 }
 /* ===========================
-   强制覆盖 NexT 标题样式
-   =========================== */
-.post-title,
-.post-title a,
-.post-title-link {
-  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary)) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  color: transparent !important;
-  opacity: 1 !important;
-  font-weight: 700 !important;
-  text-shadow: 0 0 8px rgba(255,255,255,0.4);
-  animation: glowBreath 3s ease-in-out infinite !important;
-}
-/* 标题 hover 也要覆盖 */
-.post-title a:hover,
-.post-title-link:hover {
-  -webkit-text-fill-color: transparent !important;
-  color: transparent !important;
-  opacity: 1 !important;
-}
-/* ===========================
-   强制覆盖 NexT 卡片背景
-   =========================== */
-.post-block,
-.post,
-.post-body,
-.content-wrap {
-  background: var(--card-bg) !important;
-  backdrop-filter: blur(16px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-  border-radius: 18px !important;
-  border: 1px solid var(--card-border) !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05) !important;
-  color: var(--text-main) !important;
-}
-/* 卡片 hover */
-.post-block:hover,
-.content-wrap:hover {
-  background: var(--card-bg-hover) !important;
-  transform: translateY(-4px) !important;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.15), 0 0 12px rgba(255,255,255,0.25) !important;
-}
-/* ===========================
-   强制覆盖 NexT 正文颜色
+   正文颜色统一设置（仅定义一次）
    =========================== */
 .post-body,
 .post-body p,
 .post-body span,
 .post-body li,
 .post-body div {
-  color: var(--text-main) !important;
+  color: var(--text-main);
 }
-/* ===========================
-   强制覆盖 NexT 侧边栏
-   =========================== */
-.sidebar {
-  background: var(--sidebar-bg) !important;
-  backdrop-filter: blur(12px) !important;
-  border-radius: 16px !important;
-  border: 1px solid rgba(255,255,255,0.2) !important;
-  color: var(--text-main) !important;
-}
-/* ===========================
-   强制覆盖 NexT 顶部导航
-   =========================== */
-.header-inner {
-  background: var(--nav-bg) !important;
-  backdrop-filter: blur(12px) !important;
-  border-bottom: 1px solid rgba(255,255,255,0.2) !important;
-  color: var(--text-main) !important;
-}
-@-moz-keyframes fadeUp {
+@-moz-keyframes fade-up {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-@-webkit-keyframes fadeUp {
+@-webkit-keyframes fade-up {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-@-o-keyframes fadeUp {
+@-o-keyframes fade-up {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-@keyframes fadeUp {
+@keyframes fade-up {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-@-moz-keyframes glowBreath {
+@-moz-keyframes glow-breath {
   0% {
     text-shadow: 0 0 4px rgba(255,255,255,0.3);
   }
@@ -2852,7 +2817,7 @@ a:hover {
     text-shadow: 0 0 4px rgba(255,255,255,0.3);
   }
 }
-@-webkit-keyframes glowBreath {
+@-webkit-keyframes glow-breath {
   0% {
     text-shadow: 0 0 4px rgba(255,255,255,0.3);
   }
@@ -2863,7 +2828,7 @@ a:hover {
     text-shadow: 0 0 4px rgba(255,255,255,0.3);
   }
 }
-@-o-keyframes glowBreath {
+@-o-keyframes glow-breath {
   0% {
     text-shadow: 0 0 4px rgba(255,255,255,0.3);
   }
@@ -2874,7 +2839,7 @@ a:hover {
     text-shadow: 0 0 4px rgba(255,255,255,0.3);
   }
 }
-@keyframes glowBreath {
+@keyframes glow-breath {
   0% {
     text-shadow: 0 0 4px rgba(255,255,255,0.3);
   }
@@ -2885,7 +2850,7 @@ a:hover {
     text-shadow: 0 0 4px rgba(255,255,255,0.3);
   }
 }
-@-moz-keyframes gradientFlow {
+@-moz-keyframes gradient-flow {
   0% {
     background-position: 0% 50%;
   }
@@ -2896,7 +2861,7 @@ a:hover {
     background-position: 0% 50%;
   }
 }
-@-webkit-keyframes gradientFlow {
+@-webkit-keyframes gradient-flow {
   0% {
     background-position: 0% 50%;
   }
@@ -2907,7 +2872,7 @@ a:hover {
     background-position: 0% 50%;
   }
 }
-@-o-keyframes gradientFlow {
+@-o-keyframes gradient-flow {
   0% {
     background-position: 0% 50%;
   }
@@ -2918,7 +2883,7 @@ a:hover {
     background-position: 0% 50%;
   }
 }
-@keyframes gradientFlow {
+@keyframes gradient-flow {
   0% {
     background-position: 0% 50%;
   }
