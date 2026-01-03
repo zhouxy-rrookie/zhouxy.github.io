@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #74ffff;
+  background: #00ffbf;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2574,21 +2574,153 @@ mjx-container + br {
     margin: 8px 0 0;
   }
 }
+/* 全站背景：柔光渐变 */
 body {
-  background: url("/images/background.jpg");
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background-size: cover;
-  background-position: 50% 50%;
-  opacity: 0.85;
+  background: linear-gradient(135deg, #1a1a1a, #3a1c71, #d76d77, #ffaf7b);
+  background-size: 400% 400%;
+  animation: bgFlow 18s ease infinite;
+  color: #fff;
 }
+/* 文章主体毛玻璃卡片 */
 .content-wrap {
-  background: rgba(0,0,0,0.4);
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  padding: 25px;
 }
+/* 侧边栏玻璃效果 */
 .sidebar {
-  background-color: transparent;
-  opacity: 0.8;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
+/* 顶部菜单栏玻璃效果 */
 .header-inner {
-  background: rgba(255,255,255,0.4) none repeat scroll !important;
+  background: rgba(255,255,255,0.1) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+/* 文章标题渐变霓虹文字 */
+.post-title {
+  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fad0c4, #fbc2eb, #a18cd1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+/* 链接发光效果 */
+a {
+  color: #ffd6ff;
+  transition: 0.3s ease;
+}
+a:hover {
+  color: #fff;
+  text-shadow: 0 0 8px #ff9dff;
+}
+/* 全屏渐变加载动画 */
+#gradient-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
+  background-size: 300% 300%;
+  animation: gradientFlow 6s ease infinite;
+  transition: opacity 0.6s ease;
+}
+@-moz-keyframes bgFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-webkit-keyframes bgFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-o-keyframes bgFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes bgFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-moz-keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-webkit-keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@-o-keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
