@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ffd40d;
+  background: #cd1f32;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2581,30 +2581,29 @@ mjx-container + br {
   --primary: #a18cd1;
   --secondary: #fbc2eb;
   --accent: #ffaf7b;
-  --card-bg: rgba(255,255,255,0.08);
-  --card-border: rgba(255,255,255,0.15);
-  --nav-bg: rgba(255,255,255,0.06);
-  --sidebar-bg: rgba(255,255,255,0.06);
-  --text-main: #fff;
+  --text-main: #222;
+  --card-bg: rgba(255,255,255,0.15);
+  --card-border: rgba(255,255,255,0.25);
+  --nav-bg: rgba(255,255,255,0.12);
+  --sidebar-bg: rgba(255,255,255,0.12);
 }
-/* 暗色模式变量（可根据需要调整） */
+/* 暗色模式变量 */
 [data-theme='dark'] {
+  --text-main: #f5f5f5;
   --card-bg: rgba(0,0,0,0.35);
+  --card-border: rgba(255,255,255,0.2);
   --nav-bg: rgba(0,0,0,0.4);
   --sidebar-bg: rgba(0,0,0,0.4);
-  --text-main: #f5f5f5;
 }
 /* ===========================
-   1. 柔和渐变背景 + 粒子层
+   1. 深色背景 + 粒子层
    =========================== */
 body {
-  background: transparent !important;
+  background: radial-gradient(circle at 20% 30%, #1a1a1a 0%, #0f0f0f 40%, #000 100%) !important;
   background-attachment: fixed;
   background-size: cover;
-  animation: softFlow 20s ease infinite;
   color: var(--text-main) !important;
 }
-/* 粒子背景画布 */
 #particle-canvas {
   position: fixed;
   top: 0;
@@ -2626,63 +2625,50 @@ body {
   height: 300px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,255,255,0.65), transparent 60%);
-  mix-blend-mode: soft-light;
   pointer-events: none;
   z-index: 1;
   transition: transform 0.08s linear;
 }
-/* ==========================================
-   3. 自动根据背景亮度调整文字可读性
-   ========================================== */
-.content-wrap,
-.post-body,
-.post-title,
-.post-meta {
-  mix-blend-mode: normal;
-  color: var(--text-main);
-}
 /* ===========================
-   4. 文章卡片毛玻璃 + 悬浮动效
+   3. 文章卡片（半透明白色）
    =========================== */
 .content-wrap {
   background: var(--card-bg) !important;
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-  border-radius: 18px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
   border: 1px solid var(--card-border);
   box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
   padding: 25px;
+  color: var(--text-main) !important;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
-/* 卡片悬浮动效：轻微抬起 + 阴影加深 */
+/* 悬浮动效 */
 .content-wrap:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.08);
-  background: rgba(255,255,255,0.12);
 }
 /* ===========================
-   5. 侧边栏统一玻璃风格
+   4. 侧边栏玻璃风格
    =========================== */
 .sidebar {
   background: var(--sidebar-bg) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(10px);
   border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: var(--text-main) !important;
 }
 /* ===========================
-   6. 顶部导航玻璃风格
+   5. 顶部导航玻璃风格
    =========================== */
 .header-inner {
   background: var(--nav-bg) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  color: var(--text-main) !important;
 }
 /* ===========================
-   7. 渐变霓虹标题
+   6. 渐变霓虹标题
    =========================== */
 .post-title {
   background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary));
@@ -2691,7 +2677,7 @@ body {
   font-weight: 700;
 }
 /* ===========================
-   8. 链接发光效果
+   7. 链接发光效果
    =========================== */
 a {
   color: var(--secondary);
@@ -2702,7 +2688,7 @@ a:hover {
   text-shadow: 0 0 8px var(--secondary);
 }
 /* ===========================
-   9. 全屏渐变加载动画
+   8. 加载动画
    =========================== */
 #gradient-loading {
   position: fixed;
@@ -2716,6 +2702,9 @@ a:hover {
   animation: gradientFlow 6s ease infinite;
   transition: opacity 0.6s ease;
 }
+/* ===========================
+   9. 背景层（无 blur）
+   =========================== */
 #bg-layer {
   position: fixed;
   top: 0;
@@ -2724,58 +2713,16 @@ a:hover {
   height: 100%;
   z-index: -2;
   background: radial-gradient(circle at 20% 30%, #3a1c71 0%, #2e2e2e 40%, #1a1a1a 100%);
-  animation: softFlow 20s ease infinite;
 }
+/* ===========================
+   10. 看板娘固定位置
+   =========================== */
 #live2d-widget {
   position: fixed !important;
   right: 20px !important;
   bottom: 20px !important;
   z-index: 999999 !important;
   pointer-events: none;
-}
-@-moz-keyframes softFlow {
-  0% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.05);
-  }
-  100% {
-    filter: brightness(1);
-  }
-}
-@-webkit-keyframes softFlow {
-  0% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.05);
-  }
-  100% {
-    filter: brightness(1);
-  }
-}
-@-o-keyframes softFlow {
-  0% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.05);
-  }
-  100% {
-    filter: brightness(1);
-  }
-}
-@keyframes softFlow {
-  0% {
-    filter: brightness(1);
-  }
-  50% {
-    filter: brightness(1.05);
-  }
-  100% {
-    filter: brightness(1);
-  }
 }
 @-moz-keyframes gradientFlow {
   0% {
