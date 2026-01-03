@@ -264,7 +264,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-01-03 12:56:35" itemprop="dateModified" datetime="2026-01-03T12:56:35+08:00">2026-01-03</time>
+                <time title="修改时间：2026-01-03 13:40:12" itemprop="dateModified" datetime="2026-01-03T13:40:12+08:00">2026-01-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -503,6 +503,46 @@ $$ B = C_1exp(\frac{-E_1}{kT}) $$</p>
 </ul>
 <h3 id="热氧化时杂质在界面上再分布的诱因">热氧化时杂质在界面上再分布的诱因</h3>
 <p>杂质在 $SiO_2$和Si中的溶解度不同，扩散系数不同，热氧化是，杂质在$SiO_2-Si$两边要重新分布，这种规律由<strong>分凝系数</strong>来描述</p>
+<p>$$m=\frac{C_1}{C_2}$$</p>
+<p>$C_1$:杂质在硅中的平衡浓度<br>
+$C_2$:杂质在二氧化硅中的平衡浓度</p>
+<p><img src="https://img.cdn1.vip/i/6958a25704360_1767416407.webp" alt="杂质分布"></p>
+<p><img src="https://img.cdn1.vip/i/6958a33868fbc_1767416632.webp" alt="A"><br>
+m&gt;1且杂质在氧化物中扩散慢（左），例如P,As,Sb杂质在硅界面处堆积。<br>
+m&gt;1且杂质在氧化物中扩散快（右），例如Ga，硅界面处的杂质浓度低于体浓度。</p>
+<p><img src="https://img.cdn1.vip/i/6958a2aeb2c4b_1767416494.webp" alt="B"><br>
+m&lt;1且杂质在氧化物中扩散很慢（左），杂质在$SiO_2$界面处浓度很高。<br>
+m&lt;1且杂质在氧化物中扩散很快（右），杂质在$SiO_2$界面处浓度趋于零。</p>
+<h1>2D热氧化与应力机制</h1>
+<p><strong>2D热氧化</strong>——由于受到转角处对于热氧化时体积膨胀的限制，2D热氧化不同于平面的热氧化。</p>
+<p><img src="https://img.cdn1.vip/i/6958a6519e217_1767417425.webp" alt="2D热氧化"></p>
+<p><img src="https://img.cdn1.vip/i/6958a6407225c_1767417408.webp" alt="2D热氧化"></p>
+<ul>
+<li><strong>氧化硅在凸角和凹角处均比平坦处薄</strong></li>
+<li><strong>凹角比凸角影响更大</strong></li>
+<li><strong>氧化滞后与转角的曲率半径 r 相关：r越小，滞后越严重</strong></li>
+<li><strong>低温下氧化滞后更严重，1200 ℃未见滞后。</strong></li>
+<li></li>
+</ul>
+<p><img src="https://img.cdn1.vip/i/6958a7440fef9_1767417668.webp" alt="凹凸角"></p>
+<h3 id="氧化膨胀诱发的应力">氧化膨胀诱发的应力</h3>
+<ul>
+<li>晶向：在薄氧化层区域对氧化速率的作用</li>
+<li>2D氧化扩散-2D扩散方程及仿真技术</li>
+<li>体积膨胀带来应力：非平坦表面应力更大</li>
+</ul>
+<h3 id="应力的影响">应力的影响</h3>
+<p><strong>应力对于$k_s$的作用：</strong></p>
+<p>$$k_s(stress)=k_sexp(-\frac{\sigma_nV_R}{kT})exp(-\frac{\sigma_tV_T}{kT})$$</p>
+<p>$\sigma_n$和$\sigma_t$分别为氧化生长点的发现和切线方向的应力。$V_R$和$V_T$分别为$\sigma_n$和$\sigma_t$的体积拟合系数。</p>
+<p><strong>应力对于D的作用：</strong></p>
+<p>$$D(stress)=Dexp(-\frac{pV_D}{kT})$$</p>
+<p><strong>应力对于$C^*$的作用：</strong></p>
+<p>$$C^*(stress)=C^*exp(-\frac{pV_S}{kT})$$</p>
+<p>P为生长的$SiO_2$所受到的压力，$V_D$， $V_S$为与P相关的体积拟合系数。$V_S-&gt;0$，C*与应力基本无关。</p>
+<p><strong>应力对于$SiO_2$粘度（流动性）的作用：</strong></p>
+<p>$$\eta(stress) = \eta(T)\frac{\sigma_S\frac{V_C}{2kT}}{\sinh(\sigma_S\frac{V_C}{2kT})}$$</p>
+<h3 id="热氧化方法">热氧化方法</h3>
 
       
     </div>
