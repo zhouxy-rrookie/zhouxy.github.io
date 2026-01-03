@@ -41,10 +41,14 @@
     lang   : 'zh-CN'
   };
 </script>
-<!-- TEST_HEAD -->
-
-
+<!-- Gradient Loading Layer -->
 <div id="gradient-loading"></div>
+
+<!-- Particle Background Layer -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- Mouse Follow Light -->
+<div id="cursor-light"></div>
 
   <title>分类: 半导体 | zhxy</title>
   
@@ -437,8 +441,11 @@
 
   
 <script>
-console.log("TEST_SCRIPT_LOADED");
+console.log("UI Enhancement Script Loaded");
 
+/* -------------------------
+   1. 加载动画淡出
+-------------------------- */
 window.addEventListener('load', function () {
   const loader = document.getElementById('gradient-loading');
   if (!loader) return;
@@ -449,6 +456,92 @@ window.addEventListener('load', function () {
     loader.style.display = 'none';
   }, 600);
 });
+
+/* -------------------------
+   2. 鼠标跟随光效
+-------------------------- */
+(function () {
+  const light = document.getElementById('cursor-light');
+  if (!light) return;
+
+  document.addEventListener('mousemove', (e) => {
+    light.style.transform = `translate(${e.clientX - 150}px, ${e.clientY - 150}px)`;
+  });
+})();
+
+/* -------------------------
+   3. 粒子背景（星空 / 气泡感）
+-------------------------- */
+(function () {
+  const canvas = document.getElementById('particle-canvas');
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  const particleCount = 80;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  function initParticles() {
+    particles = [];
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2 + 0.5,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        alpha: Math.random() * 0.6 + 0.2
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ffffff';
+
+    particles.forEach(p => {
+      ctx.globalAlpha = p.alpha;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  initParticles();
+  draw();
+})();
+
+/* -------------------------
+   4. 暗色模式自动切换（跟随系统）
+   - 这里主要配合 CSS :root 变量
+-------------------------- */
+(function () {
+  const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  function handleDarkModeChange(e) {
+    if (e.matches) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  }
+  handleDarkModeChange(darkModeMediaQuery);
+  darkModeMediaQuery.addEventListener('change', handleDarkModeChange);
+})();
 </script>
 
 <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body>

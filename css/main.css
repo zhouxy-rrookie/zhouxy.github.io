@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #4dfc4d;
+  background: #ffb3ff;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2575,75 +2575,134 @@ mjx-container + br {
   }
 }
 /* ===========================
-   1. 柔和渐变背景（高级风格）
+   0. 主题色变量（统一管理）
+   =========================== */
+:root {
+  --primary: #a18cd1;
+  --secondary: #fbc2eb;
+  --accent: #ffaf7b;
+  --card-bg: rgba(255,255,255,0.08);
+  --card-border: rgba(255,255,255,0.15);
+  --nav-bg: rgba(255,255,255,0.06);
+  --sidebar-bg: rgba(255,255,255,0.06);
+  --text-main: #fff;
+}
+/* 暗色模式变量（可根据需要调整） */
+[data-theme='dark'] {
+  --card-bg: rgba(0,0,0,0.35);
+  --nav-bg: rgba(0,0,0,0.4);
+  --sidebar-bg: rgba(0,0,0,0.4);
+  --text-main: #f5f5f5;
+}
+/* ===========================
+   1. 柔和渐变背景 + 粒子层
    =========================== */
 body {
   background: radial-gradient(circle at 20% 30%, #3a1c71 0%, #2e2e2e 40%, #1a1a1a 100%) !important;
   background-attachment: fixed;
   background-size: cover;
   animation: softFlow 20s ease infinite;
-  color: #fff !important;
+  color: var(--text-main) !important;
+}
+/* 粒子背景画布 */
+#particle-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+}
+/* ===========================
+   2. 鼠标跟随光效
+   =========================== */
+#cursor-light {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.65), transparent 60%);
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+  z-index: 1;
+  transition: transform 0.08s linear;
 }
 /* ==========================================
-   2. 自动根据背景亮度调整文字颜色（核心）
+   3. 自动根据背景亮度调整文字可读性
    ========================================== */
 .content-wrap,
 .post-body,
 .post-title,
 .post-meta {
-  mix-blend-mode: difference;
+  mix-blend-mode: normal;
+  color: var(--text-main);
 }
 /* ===========================
-   3. 文章卡片毛玻璃 + 阴影层次
+   4. 文章卡片毛玻璃 + 悬浮动效
    =========================== */
 .content-wrap {
-  background: rgba(255,255,255,0.08) !important;
+  background: var(--card-bg) !important;
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
   border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid var(--card-border);
   box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
   padding: 25px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+/* 卡片悬浮动效：轻微抬起 + 阴影加深 */
+.content-wrap:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.12);
 }
 /* ===========================
-   4. 侧边栏统一玻璃风格
+   5. 侧边栏统一玻璃风格
    =========================== */
 .sidebar {
-  background: rgba(255,255,255,0.06) !important;
+  background: var(--sidebar-bg) !important;
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
 /* ===========================
-   5. 顶部导航玻璃风格
+   6. 顶部导航玻璃风格
    =========================== */
 .header-inner {
-  background: rgba(255,255,255,0.06) !important;
+  background: var(--nav-bg) !important;
   backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
 }
 /* ===========================
-   6. 渐变霓虹标题
+   7. 渐变霓虹标题
    =========================== */
 .post-title {
-  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, #a18cd1);
+  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 700;
 }
 /* ===========================
-   7. 链接发光效果
+   8. 链接发光效果
    =========================== */
 a {
-  color: #ffd6ff;
+  color: var(--secondary);
   transition: 0.3s ease;
 }
 a:hover {
   color: #fff;
-  text-shadow: 0 0 8px #ff9dff;
+  text-shadow: 0 0 8px var(--secondary);
 }
 /* ===========================
-   8. 全屏渐变加载动画
+   9. 全屏渐变加载动画
    =========================== */
 #gradient-loading {
   position: fixed;
@@ -2662,7 +2721,7 @@ a:hover {
     filter: brightness(1) blur(0px);
   }
   50% {
-    filter: brightness(1.1) blur(2px);
+    filter: brightness(1.05) blur(1.5px);
   }
   100% {
     filter: brightness(1) blur(0px);
@@ -2673,7 +2732,7 @@ a:hover {
     filter: brightness(1) blur(0px);
   }
   50% {
-    filter: brightness(1.1) blur(2px);
+    filter: brightness(1.05) blur(1.5px);
   }
   100% {
     filter: brightness(1) blur(0px);
@@ -2684,7 +2743,7 @@ a:hover {
     filter: brightness(1) blur(0px);
   }
   50% {
-    filter: brightness(1.1) blur(2px);
+    filter: brightness(1.05) blur(1.5px);
   }
   100% {
     filter: brightness(1) blur(0px);
@@ -2695,7 +2754,7 @@ a:hover {
     filter: brightness(1) blur(0px);
   }
   50% {
-    filter: brightness(1.1) blur(2px);
+    filter: brightness(1.05) blur(1.5px);
   }
   100% {
     filter: brightness(1) blur(0px);
