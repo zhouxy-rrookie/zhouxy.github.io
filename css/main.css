@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #05b82f;
+  background: #2953f5;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2582,15 +2582,18 @@ mjx-container + br {
   --secondary: #fbc2eb;
   --accent: #ffaf7b;
   --text-main: #222;
-  --card-bg: rgba(255,255,255,0.25);
-  --card-border: rgba(255,255,255,0.35);
-  --nav-bg: rgba(255,255,255,0.18);
-  --sidebar-bg: rgba(255,255,255,0.18);
+  --text-light: #f5f5f5;
+  --card-bg: rgba(255,255,255,0.15);
+  --card-bg-hover: rgba(255,255,255,0.22);
+  --card-border: rgba(255,255,255,0.28);
+  --nav-bg: rgba(255,255,255,0.12);
+  --sidebar-bg: rgba(255,255,255,0.12);
 }
 /* 暗色模式变量 */
 [data-theme='dark'] {
   --text-main: #f5f5f5;
   --card-bg: rgba(0,0,0,0.35);
+  --card-bg-hover: rgba(0,0,0,0.45);
   --card-border: rgba(255,255,255,0.2);
   --nav-bg: rgba(0,0,0,0.4);
   --sidebar-bg: rgba(0,0,0,0.4);
@@ -2633,23 +2636,22 @@ body {
   transition: transform 0.08s linear;
 }
 /* ===========================
-   4. 文章卡片（半透明白色）
+   4. 文章卡片（统一玻璃风）
    =========================== */
 .content-wrap {
-  background: rgba(255,255,255,0.18) !important;
+  background: var(--card-bg) !important;
   backdrop-filter: blur(14px) saturate(160%);
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.28);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.06);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
   padding: 25px;
-  color: #2a2a2a !important;
+  color: var(--text-main) !important;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
-/* 悬浮动效 */
 .content-wrap:hover {
+  background: var(--card-bg-hover) !important;
   transform: translateY(-4px);
-  background: rgba(255,255,255,0.24) !important;
   box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.1);
 }
 /* ===========================
@@ -2672,13 +2674,16 @@ body {
   color: var(--text-main) !important;
 }
 /* ===========================
-   7. 渐变霓虹标题
+   7. 渐变霓虹标题（强制覆盖）
    =========================== */
-.post-title {
-  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.post-title,
+.post-title a {
+  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary)) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
   opacity: 1 !important;
+  font-weight: 700 !important;
 }
 /* ===========================
    8. 链接发光效果
@@ -2727,31 +2732,6 @@ a:hover {
   bottom: 20px !important;
   z-index: 999999 !important;
   pointer-events: none;
-}
-/* 强制覆盖 NexT 标题颜色 */
-.post-title,
-.post-title a {
-  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary)) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  color: transparent !important;
-  opacity: 1 !important;
-}
-/* 高级玻璃卡片风格（柔光白） */
-.content-wrap {
-  background: rgba(255,255,255,0.12) !important;
-  backdrop-filter: blur(18px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(180%) !important;
-  border-radius: 18px !important;
-  border: 1px solid rgba(255,255,255,0.22) !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
-  color: #333 !important;
-}
-/* 卡片悬浮效果（更柔和） */
-.content-wrap:hover {
-  background: rgba(255,255,255,0.18) !important;
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.1);
 }
 @-moz-keyframes gradientFlow {
   0% {
