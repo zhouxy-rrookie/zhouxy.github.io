@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #9d79b5;
+  background: #ffff2b;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2743,6 +2743,79 @@ a:hover {
   bottom: 20px !important;
   z-index: 999999 !important;
   pointer-events: none;
+}
+/* ===========================
+   强制覆盖 NexT 标题样式
+   =========================== */
+.post-title,
+.post-title a,
+.post-title-link {
+  background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary)) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  opacity: 1 !important;
+  font-weight: 700 !important;
+  text-shadow: 0 0 8px rgba(255,255,255,0.4);
+  animation: glowBreath 3s ease-in-out infinite !important;
+}
+/* 标题 hover 也要覆盖 */
+.post-title a:hover,
+.post-title-link:hover {
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  opacity: 1 !important;
+}
+/* ===========================
+   强制覆盖 NexT 卡片背景
+   =========================== */
+.post-block,
+.post,
+.post-body,
+.content-wrap {
+  background: var(--card-bg) !important;
+  backdrop-filter: blur(16px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+  border-radius: 18px !important;
+  border: 1px solid var(--card-border) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05) !important;
+  color: var(--text-main) !important;
+}
+/* 卡片 hover */
+.post-block:hover,
+.content-wrap:hover {
+  background: var(--card-bg-hover) !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.15), 0 0 12px rgba(255,255,255,0.25) !important;
+}
+/* ===========================
+   强制覆盖 NexT 正文颜色
+   =========================== */
+.post-body,
+.post-body p,
+.post-body span,
+.post-body li,
+.post-body div {
+  color: var(--text-main) !important;
+}
+/* ===========================
+   强制覆盖 NexT 侧边栏
+   =========================== */
+.sidebar {
+  background: var(--sidebar-bg) !important;
+  backdrop-filter: blur(12px) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+  color: var(--text-main) !important;
+}
+/* ===========================
+   强制覆盖 NexT 顶部导航
+   =========================== */
+.header-inner {
+  background: var(--nav-bg) !important;
+  backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.2) !important;
+  color: var(--text-main) !important;
 }
 @-moz-keyframes fadeUp {
   to {
