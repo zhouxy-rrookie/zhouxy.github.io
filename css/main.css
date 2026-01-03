@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ffff2b;
+  background: #ffff6a;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2640,8 +2640,8 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 180px;
-  height: 180px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255,255,255,0.45), transparent 60%);
   pointer-events: none;
