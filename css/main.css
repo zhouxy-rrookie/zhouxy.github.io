@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #c829ff;
+  background: #0628ff;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2576,14 +2576,14 @@ mjx-container + br {
 }
 /* 全站背景：柔光渐变 */
 body {
-  background: linear-gradient(135deg, #1a1a1a, #3a1c71, #d76d77, #ffaf7b);
+  background: linear-gradient(135deg, #1a1a1a, #3a1c71, #d76d77, #ffaf7b) !important;
   background-size: 400% 400%;
   animation: bgFlow 18s ease infinite;
-  color: #fff;
+  color: #fff !important;
 }
 /* 文章主体毛玻璃卡片 */
 .content-wrap {
-  background: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.12) !important;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border-radius: 18px;
@@ -2592,7 +2592,7 @@ body {
 }
 /* 侧边栏玻璃效果 */
 .sidebar {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.08) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 16px;
