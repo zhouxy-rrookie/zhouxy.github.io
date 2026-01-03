@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #d23953;
+  background: #e31bf0;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2575,40 +2575,38 @@ mjx-container + br {
   }
 }
 /* ===========================
-   0. 主题色变量（统一管理 + 兼容兜底注释）
+   0. 主题色变量（深色柔光风格）
    =========================== */
 :root {
   --primary: #a18cd1;
   --secondary: #fbc2eb;
   --accent: #ffaf7b;
-  --text-main: #2a2a2a;
-  --text-light: #f5f5f5;
-  --card-bg: rgba(255,255,255,0.15);
-  --card-bg-hover: rgba(255,255,255,0.22);
-  --card-border: rgba(255,255,255,0.28);
-  --nav-bg: rgba(255,255,255,0.12);
-  --sidebar-bg: rgba(255,255,255,0.12);
+  --text-main: #e8e8e8;
+  --text-light: #fff;
+  --card-bg: rgba(20,20,20,0.55);
+  --card-bg-hover: rgba(30,30,30,0.65);
+  --card-border: rgba(255,255,255,0.08);
+  --nav-bg: rgba(20,20,20,0.45);
+  --sidebar-bg: rgba(20,20,20,0.45);
 }
 /* 暗色模式变量 */
 [data-theme='dark'] {
-  --text-main: #f5f5f5;
-  --card-bg: rgba(0,0,0,0.35);
-  --card-bg-hover: rgba(0,0,0,0.45);
-  --card-border: rgba(255,255,255,0.2);
-  --nav-bg: rgba(0,0,0,0.4);
-  --sidebar-bg: rgba(0,0,0,0.4);
+  --text-main: #e8e8e8;
+  --card-bg: rgba(20,20,20,0.55);
+  --card-bg-hover: rgba(30,30,30,0.65);
+  --card-border: rgba(255,255,255,0.08);
+  --nav-bg: rgba(20,20,20,0.45);
+  --sidebar-bg: rgba(20,20,20,0.45);
 }
 /* ===========================
-   1. 深色背景 + 滚动视差（优化性能）
+   1. 深色背景 + 视差
    =========================== */
 body {
-  background: radial-gradient(circle at 20% 30%, #1a1a1a 0%, #0f0f0f 40%, #000 100%);
+  background: radial-gradient(circle at 20% 30%, #0d0d0d 0%, #000 60%);
   background-attachment: fixed;
   color: var(--text-main);
-/* 替换 3D 变换，用普通方式实现视差，降低 GPU 占用 */
   overflow-x: hidden;
 }
-/* 视差背景层（优化性能，移除 3D 变换） */
 #bg-layer {
   position: fixed;
   top: 0;
@@ -2616,10 +2614,9 @@ body {
   width: 100%;
   height: 100%;
   z-index: -2;
-  background: radial-gradient(circle at 20% 30%, #3a1c71 0%, #2e2e2e 40%, #1a1a1a 100%);
+  background: radial-gradient(circle at 20% 30%, #3a1c71 0%, #1a1a1a 60%);
   transform: scale(1.2);
   pointer-events: none;
-/* 视差滚动：通过 JS 控制 top 值实现，更兼容 */
 }
 /* ===========================
    2. 粒子背景
@@ -2632,26 +2629,24 @@ body {
   height: 100vh;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.45;
 }
 /* ===========================
-   3. 鼠标跟随光效（修复错位问题）
+   3. 光标光晕（精准跟随）
    =========================== */
 #cursor-light {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 180px;
-  height: 180px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.45), transparent 60%);
+  background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 70%);
   pointer-events: none;
-  z-index: 99999 /* 提高层级，避免被遮挡 */;
-  transition: transform 0.08s linear;
-  transform: translate(-50%, -50%) /* 关键：让光效中心跟随鼠标 */;
+  z-index: 99999;
+  transition: transform 0.05s linear;
+  transform: translate(-50%, -50%) /* 关键：光晕中心对准鼠标 */;
 }
 /* ===========================
-   4. 首页专属淡入动画
+   4. 首页淡入动画
    =========================== */
 body.index .content-wrap {
   animation: fade-up 0.8s ease-out forwards;
@@ -2659,78 +2654,65 @@ body.index .content-wrap {
   transform: translateY(20px);
 }
 /* ===========================
-   5. 文章卡片（高级玻璃风 + 仅定义一次）
+   5. 深色柔光卡片（高级）
    =========================== */
 .content-wrap,
 .post-block,
 .post,
 .post-body {
   background: var(--card-bg);
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-/* 兼容：旧浏览器无模糊效果时，加深背景透明度 */
-  background: var(--card-bg) /* 兜底 */;
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
   border-radius: 18px;
   border: 1px solid var(--card-border);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 0 20px rgba(255,255,255,0.03);
   padding: 25px;
   color: var(--text-main);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
-/* 卡片悬浮 + 边缘光晕 */
+/* 悬浮 + 边缘光晕 */
 .content-wrap:hover,
 .post-block:hover {
   background: var(--card-bg-hover);
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.15), 0 0 12px rgba(255,255,255,0.25);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.55), 0 0 24px rgba(255,255,255,0.12), 0 0 12px rgba(255,255,255,0.18);
 }
 /* ===========================
-   6. 侧边栏玻璃风格（仅定义一次）
+   6. 侧边栏
    =========================== */
 .sidebar {
   background: var(--sidebar-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
   border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.1);
   color: var(--text-main);
 }
 /* ===========================
-   7. 顶部导航玻璃风格（仅定义一次）
+   7. 顶部导航
    =========================== */
 .header-inner {
   background: var(--nav-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
   color: var(--text-main);
 }
 /* ===========================
-   8. 渐变霓虹标题 + 呼吸光效（仅定义一次 + 兼容）
+   8. 渐变霓虹标题 + 呼吸光效
    =========================== */
 .post-title,
 .post-title a,
 .post-title-link {
   background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fbc2eb, var(--primary));
   -webkit-background-clip: text;
-  background-clip: text /* 标准属性，兼容非 Webkit 浏览器 */;
-  -webkit-text-fill-color: transparent;
-  text-fill-color: transparent /* 标准属性，兼容非 Webkit 浏览器 */;
-  color: var(--text-light) /* 兜底：旧浏览器无渐变时显示浅色文字 */;
-  opacity: 1;
-  font-weight: 700;
-  text-shadow: 0 0 8px rgba(255,255,255,0.4);
-  animation: glow-breath 3s ease-in-out infinite;
-}
-/* 标题 hover 效果 */
-.post-title a:hover,
-.post-title-link:hover {
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   text-fill-color: transparent;
-  opacity: 1;
+  color: transparent;
+  font-weight: 700;
+  animation: glow-breath 3s ease-in-out infinite;
 }
 /* ===========================
-   9. 链接发光效果
+   9. 链接发光
    =========================== */
 a {
   color: var(--secondary);
@@ -2741,39 +2723,16 @@ a:hover {
   text-shadow: 0 0 8px var(--secondary);
 }
 /* ===========================
-   10. 加载动画（添加隐藏逻辑）
-   =========================== */
-#gradient-loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-  background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b);
-  background-size: 300% 300%;
-  animation: gradient-flow 6s ease infinite;
-  transition: opacity 0.6s ease;
-  opacity: 0 /* 默认隐藏 */;
-  pointer-events: none /* 默认不遮挡鼠标事件 */;
-}
-/* 加载中状态：通过 JS 添加该类名显示动画 */
-#gradient-loading.loading {
-  opacity: 1;
-  pointer-events: auto;
-}
-/* ===========================
-   11. 看板娘固定位置（恢复交互性）
+   10. 看板娘固定
    =========================== */
 #live2d-widget {
   position: fixed;
   right: 20px;
   bottom: 20px;
   z-index: 999999;
-/* 移除 pointer-events: none，恢复交互功能 */
 }
 /* ===========================
-   正文颜色统一设置（仅定义一次）
+   11. 正文颜色
    =========================== */
 .post-body,
 .post-body p,
@@ -2808,89 +2767,45 @@ a:hover {
 }
 @-moz-keyframes glow-breath {
   0% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+    text-shadow: 0 0 4px rgba(255,255,255,0.25);
   }
   50% {
-    text-shadow: 0 0 12px rgba(255,255,255,0.6);
+    text-shadow: 0 0 14px rgba(255,255,255,0.55);
   }
   100% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+    text-shadow: 0 0 4px rgba(255,255,255,0.25);
   }
 }
 @-webkit-keyframes glow-breath {
   0% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+    text-shadow: 0 0 4px rgba(255,255,255,0.25);
   }
   50% {
-    text-shadow: 0 0 12px rgba(255,255,255,0.6);
+    text-shadow: 0 0 14px rgba(255,255,255,0.55);
   }
   100% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+    text-shadow: 0 0 4px rgba(255,255,255,0.25);
   }
 }
 @-o-keyframes glow-breath {
   0% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+    text-shadow: 0 0 4px rgba(255,255,255,0.25);
   }
   50% {
-    text-shadow: 0 0 12px rgba(255,255,255,0.6);
+    text-shadow: 0 0 14px rgba(255,255,255,0.55);
   }
   100% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+    text-shadow: 0 0 4px rgba(255,255,255,0.25);
   }
 }
 @keyframes glow-breath {
   0% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+    text-shadow: 0 0 4px rgba(255,255,255,0.25);
   }
   50% {
-    text-shadow: 0 0 12px rgba(255,255,255,0.6);
+    text-shadow: 0 0 14px rgba(255,255,255,0.55);
   }
   100% {
-    text-shadow: 0 0 4px rgba(255,255,255,0.3);
-  }
-}
-@-moz-keyframes gradient-flow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-@-webkit-keyframes gradient-flow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-@-o-keyframes gradient-flow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-@keyframes gradient-flow {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
+    text-shadow: 0 0 4px rgba(255,255,255,0.25);
   }
 }
