@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #93fff4;
+  background: #f4a746;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2718,6 +2718,16 @@ a:hover {
   right: 20px;
   bottom: 20px;
   z-index: 999999;
+}
+#cyberwave {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -3;
+  pointer-events: none;
+  opacity: 0.9;
 }
 @-moz-keyframes fade-up {
   to {

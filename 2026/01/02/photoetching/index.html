@@ -45,16 +45,12 @@
     lang   : 'zh-CN'
   };
 </script>
-<!-- Loading Layer -->
 <div id="gradient-loading"></div>
 
-<!-- Particle Background -->
+<canvas id="cyberwave"></canvas>
 <canvas id="particle-canvas"></canvas>
 
-<!-- Mouse Light -->
 <div id="cursor-light"></div>
-
-<!-- Light Cyber Grid -->
 <div id="bg-layer"></div>
 
   <title>光刻技术 | zhxy</title>
@@ -545,7 +541,7 @@
 
   
 <script>
-console.log("Light Cyberpunk UI Loaded");
+console.log("Light Cyberpunk Dynamic Background Loaded");
 
 /* -------------------------
    1. 加载动画淡出
@@ -553,7 +549,6 @@ console.log("Light Cyberpunk UI Loaded");
 window.addEventListener('load', function () {
   const loader = document.getElementById('gradient-loading');
   if (!loader) return;
-
   loader.style.opacity = '0';
   setTimeout(() => loader.style.display = 'none', 600);
 });
@@ -563,20 +558,69 @@ window.addEventListener('load', function () {
 -------------------------- */
 (function () {
   const light = document.getElementById('cursor-light');
-  if (!light) return;
-
   document.addEventListener('mousemove', (e) => {
     light.style.transform = `translate(${e.clientX - 90}px, ${e.clientY - 90}px)`;
   });
 })();
 
 /* -------------------------
-   3. 浅色粒子背景
+   3. 浅色流动光幕背景
+-------------------------- */
+(function () {
+  const canvas = document.getElementById('cyberwave');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let t = 0;
+
+  function draw() {
+    t += 0.005;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    gradient.addColorStop(0, `rgba(255,255,255,0.9)`);
+    gradient.addColorStop(1, `rgba(230,245,255,0.9)`);
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 流动光带
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height * (0.3 + i * 0.2));
+
+      for (let x = 0; x < canvas.width; x++) {
+        const y =
+          Math.sin(x * 0.002 + t + i) * 20 +
+          Math.cos(x * 0.004 + t * 2 + i) * 10 +
+          canvas.height * (0.3 + i * 0.2);
+
+        ctx.lineTo(x, y);
+      }
+
+      ctx.strokeStyle = `rgba(0,150,255,0.15)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+})();
+
+/* -------------------------
+   4. 浅色粒子背景（保留）
 -------------------------- */
 (function () {
   const canvas = document.getElementById('particle-canvas');
-  if (!canvas) return;
-
   const ctx = canvas.getContext('2d');
   let particles = [];
   const particleCount = 80;
@@ -585,8 +629,8 @@ window.addEventListener('load', function () {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }
-  window.addEventListener('resize', resize);
   resize();
+  window.addEventListener('resize', resize);
 
   function initParticles() {
     particles = [];
@@ -627,7 +671,7 @@ window.addEventListener('load', function () {
 })();
 
 /* -------------------------
-   4. 跟随系统浅色模式
+   5. 跟随系统浅色模式
 -------------------------- */
 (function () {
   const mq = window.matchMedia('(prefers-color-scheme: light)');
