@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #34f4eb;
+  background: #e00ebf;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2575,28 +2575,27 @@ mjx-container + br {
   }
 }
 /* ===========================
-   0. 主题色变量（深色柔光风格）
+   0. 主题色变量（暗色卡片风）
    =========================== */
 :root {
   --primary: #a18cd1;
   --secondary: #fbc2eb;
   --accent: #ffaf7b;
-  --text-main: #e8e8e8;
+  --text-main: #e5e5e5;
   --text-light: #fff;
-  --card-bg: rgba(20,20,20,0.55);
-  --card-bg-hover: rgba(30,30,30,0.65);
-  --card-border: rgba(255,255,255,0.08);
-  --nav-bg: rgba(20,20,20,0.45);
-  --sidebar-bg: rgba(20,20,20,0.45);
+  --card-bg: #1a1a1a;
+  --card-bg-hover: #222;
+  --card-border: rgba(255,255,255,0.06);
+  --nav-bg: #111;
+  --sidebar-bg: #111;
 }
-/* 暗色模式变量 */
 [data-theme='dark'] {
-  --text-main: #e8e8e8;
-  --card-bg: rgba(20,20,20,0.55);
-  --card-bg-hover: rgba(30,30,30,0.65);
-  --card-border: rgba(255,255,255,0.08);
-  --nav-bg: rgba(20,20,20,0.45);
-  --sidebar-bg: rgba(20,20,20,0.45);
+  --text-main: #e5e5e5;
+  --card-bg: #1a1a1a;
+  --card-bg-hover: #222;
+  --card-border: rgba(255,255,255,0.06);
+  --nav-bg: #111;
+  --sidebar-bg: #111;
 }
 /* ===========================
    1. 深色背景 + 视差
@@ -2629,7 +2628,7 @@ body {
   height: 100vh;
   z-index: -1;
   pointer-events: none;
-  opacity: 0.45;
+  opacity: 0.35;
 }
 /* ===========================
    3. 光标光晕（精准跟随）
@@ -2639,11 +2638,11 @@ body {
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 70%);
+  background: radial-gradient(circle, rgba(255,255,255,0.25), transparent 70%);
   pointer-events: none;
   z-index: 99999;
   transition: transform 0.05s linear;
-  transform: translate(-50%, -50%) /* 关键：光晕中心对准鼠标 */;
+  transform: translate(-50%, -50%);
 }
 /* ===========================
    4. 首页淡入动画
@@ -2654,46 +2653,43 @@ body.index .content-wrap {
   transform: translateY(20px);
 }
 /* ===========================
-   5. 深色柔光卡片（高级）
+   5. 暗色卡片（无玻璃风）
    =========================== */
 .content-wrap,
 .post-block,
 .post,
 .post-body {
   background: var(--card-bg);
-  backdrop-filter: blur(18px) saturate(160%);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-  border-radius: 18px;
+  border-radius: 14px;
   border: 1px solid var(--card-border);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 0 20px rgba(255,255,255,0.03);
   padding: 25px;
   color: var(--text-main);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 8px rgba(255,255,255,0.03);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
-/* 悬浮 + 边缘光晕 */
+/* 悬浮 + 柔光边缘 */
 .content-wrap:hover,
 .post-block:hover {
   background: var(--card-bg-hover);
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.55), 0 0 24px rgba(255,255,255,0.12), 0 0 12px rgba(255,255,255,0.18);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.55), 0 0 12px rgba(255,255,255,0.08);
 }
 /* ===========================
-   6. 侧边栏
+   6. 侧边栏（暗色）
    =========================== */
 .sidebar {
   background: var(--sidebar-bg);
-  backdrop-filter: blur(14px);
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  border: 1px solid var(--card-border);
   color: var(--text-main);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
 }
 /* ===========================
-   7. 顶部导航
+   7. 顶部导航（暗色）
    =========================== */
 .header-inner {
   background: var(--nav-bg);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid var(--card-border);
   color: var(--text-main);
 }
 /* ===========================
