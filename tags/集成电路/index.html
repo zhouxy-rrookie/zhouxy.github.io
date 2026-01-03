@@ -41,16 +41,16 @@
     lang   : 'zh-CN'
   };
 </script>
-<!-- Gradient Loading Layer -->
+<!-- Loading Layer -->
 <div id="gradient-loading"></div>
 
-<!-- Particle Background Layer -->
+<!-- Particle Background -->
 <canvas id="particle-canvas"></canvas>
 
-<!-- Mouse Follow Light -->
+<!-- Mouse Light -->
 <div id="cursor-light"></div>
 
-<!-- Cyber Grid Background -->
+<!-- Light Cyber Grid -->
 <div id="bg-layer"></div>
 
   <title>标签: 集成电路 | zhxy</title>
@@ -421,7 +421,7 @@
 
   
 <script>
-console.log("Cyberpunk UI Loaded");
+console.log("Light Cyberpunk UI Loaded");
 
 /* -------------------------
    1. 加载动画淡出
@@ -435,7 +435,7 @@ window.addEventListener('load', function () {
 });
 
 /* -------------------------
-   2. 鼠标跟随光效（赛博扫描光）
+   2. 鼠标柔光跟随
 -------------------------- */
 (function () {
   const light = document.getElementById('cursor-light');
@@ -447,7 +447,7 @@ window.addEventListener('load', function () {
 })();
 
 /* -------------------------
-   3. 激光粒子背景
+   3. 浅色粒子背景
 -------------------------- */
 (function () {
   const canvas = document.getElementById('particle-canvas');
@@ -455,7 +455,7 @@ window.addEventListener('load', function () {
 
   const ctx = canvas.getContext('2d');
   let particles = [];
-  const particleCount = 90;
+  const particleCount = 80;
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -470,10 +470,10 @@ window.addEventListener('load', function () {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: Math.random() * 1.8 + 0.6,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-        alpha: Math.random() * 0.6 + 0.2
+        r: Math.random() * 2 + 0.8,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        alpha: Math.random() * 0.5 + 0.3
       });
     }
   }
@@ -483,7 +483,7 @@ window.addEventListener('load', function () {
 
     particles.forEach(p => {
       ctx.globalAlpha = p.alpha;
-      ctx.fillStyle = `rgba(${150 + Math.random()*100}, 0, 255, ${p.alpha})`;
+      ctx.fillStyle = `rgba(0, 180, 255, ${p.alpha})`;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fill();
@@ -503,15 +503,15 @@ window.addEventListener('load', function () {
 })();
 
 /* -------------------------
-   4. 暗色模式自动切换
+   4. 跟随系统浅色模式
 -------------------------- */
 (function () {
-  const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  function handleDarkModeChange(e) {
-    document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+  const mq = window.matchMedia('(prefers-color-scheme: light)');
+  function apply(e) {
+    document.documentElement.setAttribute('data-theme', e.matches ? 'light' : 'dark');
   }
-  handleDarkModeChange(darkModeMediaQuery);
-  darkModeMediaQuery.addEventListener('change', handleDarkModeChange);
+  apply(mq);
+  mq.addEventListener('change', apply);
 })();
 </script>
 
