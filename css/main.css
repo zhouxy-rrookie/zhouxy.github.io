@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #2953f5;
+  background: #ff876b;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2581,7 +2581,7 @@ mjx-container + br {
   --primary: #a18cd1;
   --secondary: #fbc2eb;
   --accent: #ffaf7b;
-  --text-main: #222;
+  --text-main: #2a2a2a;
   --text-light: #f5f5f5;
   --card-bg: rgba(255,255,255,0.15);
   --card-bg-hover: rgba(255,255,255,0.22);
@@ -2599,13 +2599,26 @@ mjx-container + br {
   --sidebar-bg: rgba(0,0,0,0.4);
 }
 /* ===========================
-   1. 深色背景
+   1. 深色背景 + 滚动视差
    =========================== */
 body {
   background: radial-gradient(circle at 20% 30%, #1a1a1a 0%, #0f0f0f 40%, #000 100%) !important;
   background-attachment: fixed;
   background-size: cover;
   color: var(--text-main) !important;
+  transform: translateZ(0);
+}
+/* 视差背景层 */
+#bg-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background: radial-gradient(circle at 20% 30%, #3a1c71 0%, #2e2e2e 40%, #1a1a1a 100%);
+  transform: translateZ(-1px) scale(1.2);
+  pointer-events: none;
 }
 /* ===========================
    2. 粒子背景
@@ -2621,27 +2634,35 @@ body {
   opacity: 0.5;
 }
 /* ===========================
-   3. 鼠标跟随光效
+   3. 鼠标跟随光效（光圈减小）
    =========================== */
 #cursor-light {
   position: fixed;
   top: 0;
   left: 0;
-  width: 300px;
-  height: 300px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.65), transparent 60%);
+  background: radial-gradient(circle, rgba(255,255,255,0.45), transparent 60%);
   pointer-events: none;
   z-index: 1;
   transition: transform 0.08s linear;
 }
 /* ===========================
-   4. 文章卡片（统一玻璃风）
+   4. 首页专属淡入动画
+   =========================== */
+body.index .content-wrap {
+  animation: fadeUp 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+/* ===========================
+   5. 文章卡片（高级玻璃风）
    =========================== */
 .content-wrap {
   background: var(--card-bg) !important;
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
   border-radius: 18px;
   border: 1px solid var(--card-border);
   box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 20px rgba(255,255,255,0.05);
@@ -2649,32 +2670,33 @@ body {
   color: var(--text-main) !important;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
+/* 卡片悬浮 + 边缘光晕 */
 .content-wrap:hover {
   background: var(--card-bg-hover) !important;
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.1);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35), 0 0 24px rgba(255,255,255,0.15), 0 0 12px rgba(255,255,255,0.25);
 }
 /* ===========================
-   5. 侧边栏玻璃风格
+   6. 侧边栏玻璃风格
    =========================== */
 .sidebar {
   background: var(--sidebar-bg) !important;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   border-radius: 16px;
   border: 1px solid rgba(255,255,255,0.2);
   color: var(--text-main) !important;
 }
 /* ===========================
-   6. 顶部导航玻璃风格
+   7. 顶部导航玻璃风格
    =========================== */
 .header-inner {
   background: var(--nav-bg) !important;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255,255,255,0.2);
   color: var(--text-main) !important;
 }
 /* ===========================
-   7. 渐变霓虹标题（强制覆盖）
+   8. 渐变霓虹标题 + 呼吸光效
    =========================== */
 .post-title,
 .post-title a {
@@ -2684,9 +2706,10 @@ body {
   color: transparent !important;
   opacity: 1 !important;
   font-weight: 700 !important;
+  animation: glowBreath 3s ease-in-out infinite;
 }
 /* ===========================
-   8. 链接发光效果
+   9. 链接发光效果
    =========================== */
 a {
   color: var(--secondary);
@@ -2697,7 +2720,7 @@ a:hover {
   text-shadow: 0 0 8px var(--secondary);
 }
 /* ===========================
-   9. 加载动画
+   10. 加载动画
    =========================== */
 #gradient-loading {
   position: fixed;
@@ -2712,18 +2735,6 @@ a:hover {
   transition: opacity 0.6s ease;
 }
 /* ===========================
-   10. 背景层
-   =========================== */
-#bg-layer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -2;
-  background: radial-gradient(circle at 20% 30%, #3a1c71 0%, #2e2e2e 40%, #1a1a1a 100%);
-}
-/* ===========================
    11. 看板娘固定位置
    =========================== */
 #live2d-widget {
@@ -2732,6 +2743,74 @@ a:hover {
   bottom: 20px !important;
   z-index: 999999 !important;
   pointer-events: none;
+}
+@-moz-keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-webkit-keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-o-keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-moz-keyframes glowBreath {
+  0% {
+    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(255,255,255,0.6);
+  }
+  100% {
+    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+  }
+}
+@-webkit-keyframes glowBreath {
+  0% {
+    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(255,255,255,0.6);
+  }
+  100% {
+    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+  }
+}
+@-o-keyframes glowBreath {
+  0% {
+    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(255,255,255,0.6);
+  }
+  100% {
+    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+  }
+}
+@keyframes glowBreath {
+  0% {
+    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(255,255,255,0.6);
+  }
+  100% {
+    text-shadow: 0 0 4px rgba(255,255,255,0.3);
+  }
 }
 @-moz-keyframes gradientFlow {
   0% {
