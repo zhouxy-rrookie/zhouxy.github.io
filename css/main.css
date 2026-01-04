@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #b542ff;
+  background: #053d3e;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2807,6 +2807,37 @@ a:hover {
 /* 文章正文恢复正常宽度 */
 .post-body {
   padding: 20px 20px !important;
+}
+/* ===========================
+   左上角标签 → 粉色霓虹风
+   =========================== */
+/* 通用匹配（大部分主题） */
+#header .site-meta,
+#header .site-brand-container,
+#header .site-title,
+#site-info,
+#site-author-info,
+#site-title {
+  background: transparent !important;
+  padding: 6px 14px !important;
+  border-radius: 10px;
+  border: 1px solid rgba(255,120,200,0.7) !important;
+  box-shadow: 0 0 12px rgba(255,120,200,0.7) !important;
+  color: #f5f !important;
+  text-shadow: 0 0 6px rgba(255,120,200,0.8) !important;
+  backdrop-filter: blur(6px);
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+/* 悬停时更亮 */
+#header .site-meta:hover,
+#header .site-brand-container:hover,
+#site-info:hover,
+#site-title:hover {
+  box-shadow: 0 0 18px #ff78c8 !important;
+  border-color: #ff78c8 !important;
+  color: #f8f !important;
+  text-shadow: 0 0 10px #ff78c8 !important;
 }
 @-moz-keyframes fade-up {
   to {
