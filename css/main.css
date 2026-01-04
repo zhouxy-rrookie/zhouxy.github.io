@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #70cd9d;
+  background: #fff;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2796,18 +2796,18 @@ a:hover {
   transform: scale(-1);
 }
 /* 只保留最外层卡片边框 */
-.post,
-.post-body,
-.post-block {
-  border: none !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-  background: transparent !important;
-}
+/*
+.post, .post-body, .post-block
+  border: none !important
+  padding: 0 !important
+  box-shadow: none !important
+  background: transparent !important
+*/
 /* 文章正文恢复正常宽度 */
-.post-body {
-  padding: 20px 20px !important;
-}
+/*
+.post-body
+  padding: 20px 20px !important
+*/
 /* ===========================
    左上角标签 → 粉色霓虹风
    =========================== */
@@ -2888,6 +2888,143 @@ a:hover {
   border-radius: 2px;
   animation: neon-flow 2.2s linear infinite !important;
   display: block !important;
+}
+/* ============================================================
+   NexT 主题 UI 赛博风排版整合版
+   适用于浅色赛博主题 + 玻璃拟态 + 粉蓝霓虹
+============================================================ */
+/* ===========================
+   1. 首页文章卡片（玻璃拟态）
+=========================== */
+.post-block {
+  margin: 28px 0;
+  padding: 24px 28px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,120,200,0.35);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08), inset 0 0 20px rgba(255,120,200,0.15);
+  transition: 0.3s ease;
+}
+.post-block:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.12), inset 0 0 25px rgba(255,120,200,0.25);
+  border-color: rgba(255,120,200,0.55);
+}
+/* ===========================
+   2. 文章标题（霓虹扫描）
+=========================== */
+.post-title {
+  font-size: 1.9rem;
+  font-weight: 800;
+  margin-bottom: 14px;
+  line-height: 1.3;
+}
+/* ===========================
+   3. 正文排版（更现代）
+=========================== */
+.post-body {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  letter-spacing: 0.3px;
+  padding: 20px 20px !important;
+}
+.post-body p {
+  margin: 14px 0;
+}
+.post-body h2 {
+  margin-top: 32px;
+  margin-bottom: 16px;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+.post-body h3 {
+  margin-top: 26px;
+  margin-bottom: 12px;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+/* ===========================
+   4. 代码块（赛博风）
+=========================== */
+.highlight {
+  background: rgba(0,0,0,0.55);
+  border-radius: 14px;
+  padding: 18px;
+  border: 1px solid rgba(0,150,255,0.35);
+  box-shadow: 0 0 12px rgba(0,150,255,0.35), inset 0 0 18px rgba(0,150,255,0.25);
+  color: #e0f7ff;
+  font-size: 0.95rem;
+}
+/* ===========================
+   5. 引用块（粉色霓虹）
+=========================== */
+blockquote {
+  border-left: 4px solid rgba(255,120,200,0.8);
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.35);
+  border-radius: 10px;
+  box-shadow: inset 0 0 12px rgba(255,120,200,0.25);
+}
+/* ===========================
+   6. 侧边栏（玻璃拟态）
+=========================== */
+.sidebar {
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,120,200,0.35);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+/* ===========================
+   7. 顶部导航栏（玻璃拟态）
+=========================== */
+.header-inner {
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,120,200,0.35);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+/* ===========================
+   8. 分页按钮（赛博按钮）
+=========================== */
+.pagination .page-number,
+.pagination .extend {
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(0,150,255,0.35);
+  transition: 0.25s ease;
+}
+.pagination .page-number:hover,
+.pagination .extend:hover {
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 0 12px rgba(0,150,255,0.45);
+  border-color: rgba(0,150,255,0.55);
+}
+/* ===========================
+   9. 标签（tag）赛博化
+=========================== */
+.tag-cloud a {
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.45);
+  border: 1px solid rgba(255,120,200,0.45);
+  transition: 0.25s ease;
+}
+.tag-cloud a:hover {
+  background: rgba(255,120,200,0.2);
+  box-shadow: 0 0 10px rgba(255,120,200,0.55);
+}
+/* ===========================
+   10. 全局留白优化
+=========================== */
+.content-wrap {
+  padding: 32px 40px;
+}
+.post-block {
+  margin-bottom: 40px;
 }
 @-moz-keyframes fade-up {
   to {
