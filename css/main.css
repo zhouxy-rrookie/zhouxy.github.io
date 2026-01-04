@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #f17457;
+  background: #ffd27d;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2679,7 +2679,7 @@ body.index .content-wrap {
   border-radius: 18px;
   border: 1px solid var(--card-border);
   color: var(--text-main);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 20px rgba(255,255,255,0.08);
 }
 /* ===========================
    7. 顶部导航
