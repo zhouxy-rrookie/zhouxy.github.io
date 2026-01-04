@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #053d3e;
+  background: #ff8fff;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2834,6 +2834,42 @@ a:hover {
 #header .site-brand-container:hover,
 #site-info:hover,
 #site-title:hover {
+  box-shadow: 0 0 18px #ff78c8 !important;
+  border-color: #ff78c8 !important;
+  color: #f8f !important;
+  text-shadow: 0 0 10px #ff78c8 !important;
+}
+/* ===========================
+   Butterfly 左上角标签 → 粉色霓虹风
+   =========================== */
+/* 去掉默认黑色背景 */
+.site-meta .brand {
+  background: transparent !important;
+  padding: 6px 14px !important;
+  border-radius: 10px;
+  border: 1px solid rgba(255,120,200,0.7) !important;
+  box-shadow: 0 0 12px rgba(255,120,200,0.7) !important;
+  color: #f5f !important;
+  text-shadow: 0 0 6px rgba(255,120,200,0.8) !important;
+  backdrop-filter: blur(6px);
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s ease;
+}
+/* 标题文字（h1）也变成霓虹粉色 */
+.site-meta .site-title {
+  color: #f5f !important;
+  text-shadow: 0 0 6px rgba(255,120,200,0.8) !important;
+  font-weight: 700 !important;
+}
+/* 副标题也变霓虹粉色 */
+.site-meta .site-subtitle {
+  color: #f8f !important;
+  text-shadow: 0 0 6px rgba(255,120,200,0.6) !important;
+}
+/* 悬停更亮 */
+.site-meta .brand:hover {
   box-shadow: 0 0 18px #ff78c8 !important;
   border-color: #ff78c8 !important;
   color: #f8f !important;
