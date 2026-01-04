@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #4228fc;
+  background: #ff5e41;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2623,14 +2623,14 @@ body {
   opacity: 0.35;
 }
 /* ===========================
-   3. 鼠标柔光
+   3. 鼠标柔光（粉色）
    =========================== */
 #cursor-light {
   position: fixed;
   width: 180px;
   height: 180px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,150,255,0.18), transparent 70%);
+  background: radial-gradient(circle, rgba(255,120,200,0.25), transparent 70%);
   mix-blend-mode: screen;
   pointer-events: none;
   z-index: 99999;
@@ -2654,11 +2654,13 @@ body.index .content-wrap {
   background: var(--card-bg);
   backdrop-filter: blur(14px);
   border-radius: 18px;
-  border: 1px solid var(--card-border);
+  border: 2px solid var(--card-border);
   padding: 28px;
   color: var(--text-main);
   box-shadow: 0 4px 20px rgba(0,0,0,0.08), inset 0 0 20px rgba(0,150,255,0.05);
   transition: 0.3s ease;
+  border-image-slice: 1;
+  animation: pink-border-flow 4s linear infinite;
 }
 .content-wrap:hover,
 .post-block:hover {
@@ -2667,6 +2669,7 @@ body.index .content-wrap {
   box-shadow: 0 8px 28px rgba(0,0,0,0.12), inset 0 0 25px rgba(0,150,255,0.1);
   border-color: rgba(0,150,255,0.35);
 }
+/* 粉色流光边框动画 */
 /* ===========================
    6. 侧边栏
    =========================== */
@@ -2719,16 +2722,9 @@ a:hover {
   bottom: 20px;
   z-index: 999999;
 }
-#cyberwave {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -3;
-  pointer-events: none;
-  opacity: 0.9;
-}
+/* ===========================
+   11. 动态背景 cyberwave
+   =========================== */
 #cyberwave {
   position: fixed;
   top: 0;
@@ -2739,28 +2735,9 @@ a:hover {
   pointer-events: none;
   opacity: 1;
 }
-#cursor-light {
-  position: fixed;
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,120,200,0.25), transparent 70%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-  z-index: 99999;
-  transition: transform 0.08s linear;
-}
-/* 粉色流光边框动画 */
-/* 应用到卡片 */
-.content-wrap,
-.post-block,
-.post,
-.post-body {
-  border-width: 2px;
-  border-style: solid;
-  border-image-slice: 1;
-  animation: pink-border-flow 4s linear infinite;
-}
+/* ===========================
+   12. 滚动能量波
+   =========================== */
 #scroll-wave {
   position: fixed;
   top: -100%;
@@ -2769,17 +2746,19 @@ a:hover {
   height: 120%;
   background: radial-gradient(circle at 50% 0%, rgba(255,120,200,0.35), transparent 70%);
   pointer-events: none;
-  z-index: 5;
+  z-index: 9999;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
-/* HUD 装饰元素 */
+/* ===========================
+   13. HUD 装饰元素
+   =========================== */
 .hud {
   position: fixed;
   width: 80px;
   height: 80px;
   pointer-events: none;
-  z-index: 10;
+  z-index: 9999;
   opacity: 0.6;
 }
 .hud::before,
@@ -2789,7 +2768,6 @@ a:hover {
   background: rgba(255,120,200,0.6);
   box-shadow: 0 0 8px rgba(255,120,200,0.6);
 }
-/* 角标线条 */
 .hud::before {
   width: 40px;
   height: 2px;
@@ -2798,7 +2776,6 @@ a:hover {
   width: 2px;
   height: 40px;
 }
-/* 四角定位 */
 .hud-top-left {
   top: 20px;
   left: 20px;
@@ -2840,6 +2817,50 @@ a:hover {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+@-moz-keyframes pink-border-flow {
+  0% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+  50% {
+    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
+  }
+  100% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+}
+@-webkit-keyframes pink-border-flow {
+  0% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+  50% {
+    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
+  }
+  100% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+}
+@-o-keyframes pink-border-flow {
+  0% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+  50% {
+    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
+  }
+  100% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+}
+@keyframes pink-border-flow {
+  0% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+  50% {
+    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
+  }
+  100% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
   }
 }
 @-moz-keyframes neon-scan {
@@ -2896,49 +2917,5 @@ a:hover {
   100% {
     background-position: 0% 50%;
     text-shadow: 0 0 6px #0af;
-  }
-}
-@-moz-keyframes pink-border-flow {
-  0% {
-    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
-  }
-  50% {
-    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
-  }
-  100% {
-    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
-  }
-}
-@-webkit-keyframes pink-border-flow {
-  0% {
-    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
-  }
-  50% {
-    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
-  }
-  100% {
-    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
-  }
-}
-@-o-keyframes pink-border-flow {
-  0% {
-    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
-  }
-  50% {
-    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
-  }
-  100% {
-    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
-  }
-}
-@keyframes pink-border-flow {
-  0% {
-    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
-  }
-  50% {
-    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
-  }
-  100% {
-    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
   }
 }
