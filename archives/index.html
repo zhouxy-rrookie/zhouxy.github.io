@@ -439,7 +439,7 @@
 
   
 <script>
-console.log("Light Cyberpunk Dynamic Background Loaded");
+console.log("Light Pink Cyberpunk Background Loaded");
 
 /* -------------------------
    1. 加载动画淡出
@@ -452,7 +452,7 @@ window.addEventListener('load', function () {
 });
 
 /* -------------------------
-   2. 鼠标柔光跟随
+   2. 鼠标柔光跟随（粉蓝光圈）
 -------------------------- */
 (function () {
   const light = document.getElementById('cursor-light');
@@ -462,7 +462,7 @@ window.addEventListener('load', function () {
 })();
 
 /* -------------------------
-   3. 浅色流动光幕背景
+   3. 粉色赛博流动背景（主背景）
 -------------------------- */
 (function () {
   const canvas = document.getElementById('cyberwave');
@@ -478,35 +478,46 @@ window.addEventListener('load', function () {
   let t = 0;
 
   function draw() {
-    t += 0.005;
+    t += 0.004;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    /* 柔光渐变背景（粉蓝） */
     const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, `rgba(255,255,255,0.9)`);
-    gradient.addColorStop(1, `rgba(230,245,255,0.9)`);
-
+    gradient.addColorStop(0, "rgba(255,240,250,0.95)");
+    gradient.addColorStop(1, "rgba(230,245,255,0.95)");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // 流动光带
-    for (let i = 0; i < 3; i++) {
+    /* 多层流动光带（粉色 + 蓝色） */
+    const colors = [
+      "rgba(255,120,200,0.25)",
+      "rgba(0,150,255,0.22)",
+      "rgba(255,150,230,0.18)"
+    ];
+
+    colors.forEach((color, i) => {
       ctx.beginPath();
-      ctx.moveTo(0, canvas.height * (0.3 + i * 0.2));
+      ctx.moveTo(0, canvas.height * (0.25 + i * 0.25));
 
       for (let x = 0; x < canvas.width; x++) {
         const y =
-          Math.sin(x * 0.002 + t + i) * 20 +
-          Math.cos(x * 0.004 + t * 2 + i) * 10 +
-          canvas.height * (0.3 + i * 0.2);
+          Math.sin(x * 0.002 + t * (1 + i * 0.3)) * (18 + i * 6) +
+          Math.cos(x * 0.004 + t * (2 + i * 0.5)) * (10 + i * 4) +
+          canvas.height * (0.25 + i * 0.25);
 
         ctx.lineTo(x, y);
       }
 
-      ctx.strokeStyle = `rgba(0,150,255,0.15)`;
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.2;
       ctx.stroke();
-    }
+    });
+
+    /* 粉色能量脉冲（轻微闪动） */
+    const pulse = Math.sin(t * 3) * 0.15 + 0.25;
+    ctx.fillStyle = `rgba(255,120,200,${pulse})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     requestAnimationFrame(draw);
   }
@@ -515,13 +526,13 @@ window.addEventListener('load', function () {
 })();
 
 /* -------------------------
-   4. 浅色粒子背景（保留）
+   4. 粉蓝柔光粒子
 -------------------------- */
 (function () {
   const canvas = document.getElementById('particle-canvas');
   const ctx = canvas.getContext('2d');
   let particles = [];
-  const particleCount = 80;
+  const particleCount = 90;
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -537,9 +548,12 @@ window.addEventListener('load', function () {
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         r: Math.random() * 2 + 0.8,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        alpha: Math.random() * 0.5 + 0.3
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        alpha: Math.random() * 0.5 + 0.3,
+        color: Math.random() > 0.5
+          ? "rgba(255,120,200,"  // 粉色粒子
+          : "rgba(0,150,255,"    // 蓝色粒子
       });
     }
   }
@@ -549,7 +563,7 @@ window.addEventListener('load', function () {
 
     particles.forEach(p => {
       ctx.globalAlpha = p.alpha;
-      ctx.fillStyle = `rgba(0, 180, 255, ${p.alpha})`;
+      ctx.fillStyle = p.color + p.alpha + ")";
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fill();

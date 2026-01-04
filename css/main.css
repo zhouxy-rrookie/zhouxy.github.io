@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #f4a746;
+  background: #7a11ff;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2728,6 +2728,27 @@ a:hover {
   z-index: -3;
   pointer-events: none;
   opacity: 0.9;
+}
+#cyberwave {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -3;
+  pointer-events: none;
+  opacity: 1;
+}
+#cursor-light {
+  position: fixed;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,120,200,0.25), transparent 70%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+  z-index: 99999;
+  transition: transform 0.08s linear;
 }
 @-moz-keyframes fade-up {
   to {
