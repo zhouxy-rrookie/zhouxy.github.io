@@ -1075,7 +1075,7 @@ window.addEventListener('load', function () {
   const ctx = canvas.getContext('2d');
 
   let particles = [];
-  const particleCount = 160;
+  const particleCount = 240;
 
   const mouse = { x: null, y: null, radius: 120 };
 
@@ -1102,7 +1102,7 @@ window.addEventListener('load', function () {
         y: canvas.height / 2 + Math.sin(angle) * radius,
         baseAngle: angle,
         baseRadius: radius,
-        r: Math.random() * 3 + 2,
+        r: Math.random() * 10 + 10,
         alpha: Math.random() * 0.4 + 0.4,
         color: Math.random() > 0.5
           ? "rgba(255,120,200,"
