@@ -51,6 +51,13 @@
 <div id="cursor-light"></div>
 <div id="bg-layer"></div>
 
+<div id="scroll-wave"></div>
+
+<div class="hud hud-top-left"></div>
+<div class="hud hud-top-right"></div>
+<div class="hud hud-bottom-left"></div>
+<div class="hud hud-bottom-right"></div>
+
   <title>about | zhxy
 </title>
   
@@ -562,6 +569,28 @@ window.addEventListener('load', function () {
   }
   apply(mq);
   mq.addEventListener('change', apply);
+})();
+</script>
+
+<script>
+/* 粉色能量波滚动触发 */
+(function () {
+  const wave = document.getElementById('scroll-wave');
+  let ticking = false;
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+
+      wave.style.opacity = '1';
+      wave.style.top = window.scrollY * 0.2 + 'px';
+
+      setTimeout(() => {
+        wave.style.opacity = '0';
+        ticking = false;
+      }, 200);
+    }
+  });
 })();
 </script>
 

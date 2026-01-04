@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #7a11ff;
+  background: #4228fc;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2750,6 +2750,74 @@ a:hover {
   z-index: 99999;
   transition: transform 0.08s linear;
 }
+/* 粉色流光边框动画 */
+/* 应用到卡片 */
+.content-wrap,
+.post-block,
+.post,
+.post-body {
+  border-width: 2px;
+  border-style: solid;
+  border-image-slice: 1;
+  animation: pink-border-flow 4s linear infinite;
+}
+#scroll-wave {
+  position: fixed;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  background: radial-gradient(circle at 50% 0%, rgba(255,120,200,0.35), transparent 70%);
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+/* HUD 装饰元素 */
+.hud {
+  position: fixed;
+  width: 80px;
+  height: 80px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.6;
+}
+.hud::before,
+.hud::after {
+  content: "";
+  position: absolute;
+  background: rgba(255,120,200,0.6);
+  box-shadow: 0 0 8px rgba(255,120,200,0.6);
+}
+/* 角标线条 */
+.hud::before {
+  width: 40px;
+  height: 2px;
+}
+.hud::after {
+  width: 2px;
+  height: 40px;
+}
+/* 四角定位 */
+.hud-top-left {
+  top: 20px;
+  left: 20px;
+}
+.hud-top-right {
+  top: 20px;
+  right: 20px;
+  transform: scaleX(-1);
+}
+.hud-bottom-left {
+  bottom: 20px;
+  left: 20px;
+  transform: scaleY(-1);
+}
+.hud-bottom-right {
+  bottom: 20px;
+  right: 20px;
+  transform: scale(-1);
+}
 @-moz-keyframes fade-up {
   to {
     opacity: 1;
@@ -2828,5 +2896,49 @@ a:hover {
   100% {
     background-position: 0% 50%;
     text-shadow: 0 0 6px #0af;
+  }
+}
+@-moz-keyframes pink-border-flow {
+  0% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+  50% {
+    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
+  }
+  100% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+}
+@-webkit-keyframes pink-border-flow {
+  0% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+  50% {
+    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
+  }
+  100% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+}
+@-o-keyframes pink-border-flow {
+  0% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+  50% {
+    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
+  }
+  100% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+}
+@keyframes pink-border-flow {
+  0% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
+  }
+  50% {
+    border-image-source: linear-gradient(90deg, rgba(0,150,255,0.4), rgba(255,120,200,0.8));
+  }
+  100% {
+    border-image-source: linear-gradient(90deg, rgba(255,120,200,0.8), rgba(0,150,255,0.4));
   }
 }
