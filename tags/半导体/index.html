@@ -511,14 +511,21 @@ window.addEventListener('load', function () {
 })();
 
 /* -------------------------
-   4. 粉蓝柔光粒子
+   4. 粉蓝柔光粒子（连线 + 排斥 + 更大更密集）
 -------------------------- */
-
 (function () {
   const canvas = document.getElementById('particle-canvas');
   const ctx = canvas.getContext('2d');
+
   let particles = [];
-  const particleCount = 180; // 数量翻倍
+  const particleCount = 180; // 更密集
+
+  const mouse = { x: null, y: null, radius: 120 }; // 排斥范围
+
+  window.addEventListener("mousemove", (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -533,14 +540,49 @@ window.addEventListener('load', function () {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: Math.random() * 5 + 5, // 泡泡更大（2~5）
-        vx: (Math.random() - 0.5) * 0.15, // 更慢更柔
-        vy: (Math.random() - 0.5) * 0.15,
-        alpha: Math.random() * 0.4 + 0.4, // 更亮更柔光
+        r: Math.random() * 8 + 10, // 更大
+        vx: (Math.random() - 0.5) * 0.2,
+        vy: (Math.random() - 0.5) * 0.2,
+        alpha: Math.random() * 0.4 + 0.4,
         color: Math.random() > 0.5
-          ? "rgba(255,120,200,"   // 粉色
-          : "rgba(0,150,255,"     // 蓝色
+          ? "rgba(255,120,200,"
+          : "rgba(0,150,255,"
       });
+    }
+  }
+
+  function drawLines() {
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 140) {
+          ctx.strokeStyle = "rgba(255,120,200," + (1 - dist / 140) * 0.4 + ")";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+  }
+
+  function repelParticles(p) {
+    if (mouse.x === null) return;
+
+    const dx = p.x - mouse.x;
+    const dy = p.y - mouse.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < mouse.radius) {
+      const force = (mouse.radius - dist) / mouse.radius;
+      const angle = Math.atan2(dy, dx);
+
+      p.x += Math.cos(angle) * force * 6;
+      p.y += Math.sin(angle) * force * 6;
     }
   }
 
@@ -548,11 +590,7 @@ window.addEventListener('load', function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     particles.forEach(p => {
-      ctx.globalAlpha = p.alpha;
-      ctx.fillStyle = p.color + p.alpha + ")";
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
+      repelParticles(p);
 
       p.x += p.vx;
       p.y += p.vy;
@@ -560,7 +598,15 @@ window.addEventListener('load', function () {
       // 边界反弹
       if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
       if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color + p.alpha + ")";
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
     });
+
+    drawLines(); // 画连线
 
     requestAnimationFrame(draw);
   }
@@ -568,6 +614,7 @@ window.addEventListener('load', function () {
   initParticles();
   draw();
 })();
+
 
 
 /* -------------------------
