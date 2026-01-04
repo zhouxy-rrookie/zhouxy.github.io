@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #06403b;
+  background: #b542ff;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2806,7 +2806,7 @@ a:hover {
 }
 /* 文章正文恢复正常宽度 */
 .post-body {
-  padding: 18px 0 !important;
+  padding: 20px 20px !important;
 }
 @-moz-keyframes fade-up {
   to {
