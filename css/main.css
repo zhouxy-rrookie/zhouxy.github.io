@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ff8fff;
+  background: #e28801;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2875,6 +2875,20 @@ a:hover {
   color: #f8f !important;
   text-shadow: 0 0 10px #ff78c8 !important;
 }
+/* ===========================
+   Butterfly 左上角横条 → 粉色流光霓虹
+   =========================== */
+/* 流光动画 */
+/* 横条本体 */
+.site-meta .logo-line-before i,
+.site-meta .logo-line-after i {
+  height: 2px !important;
+  width: 40px !important;
+  background: rgba(255,120,200,0.6) !important;
+  border-radius: 2px;
+  animation: neon-flow 2.2s linear infinite !important;
+  display: block !important;
+}
 @-moz-keyframes fade-up {
   to {
     opacity: 1;
@@ -2997,5 +3011,61 @@ a:hover {
   100% {
     background-position: 0% 50%;
     text-shadow: 0 0 6px #0af;
+  }
+}
+@-moz-keyframes neon-flow {
+  0% {
+    background: rgba(255,120,200,0.3);
+    box-shadow: 0 0 4px rgba(255,120,200,0.3);
+  }
+  50% {
+    background: #ff78c8;
+    box-shadow: 0 0 10px #ff78c8;
+  }
+  100% {
+    background: rgba(255,120,200,0.3);
+    box-shadow: 0 0 4px rgba(255,120,200,0.3);
+  }
+}
+@-webkit-keyframes neon-flow {
+  0% {
+    background: rgba(255,120,200,0.3);
+    box-shadow: 0 0 4px rgba(255,120,200,0.3);
+  }
+  50% {
+    background: #ff78c8;
+    box-shadow: 0 0 10px #ff78c8;
+  }
+  100% {
+    background: rgba(255,120,200,0.3);
+    box-shadow: 0 0 4px rgba(255,120,200,0.3);
+  }
+}
+@-o-keyframes neon-flow {
+  0% {
+    background: rgba(255,120,200,0.3);
+    box-shadow: 0 0 4px rgba(255,120,200,0.3);
+  }
+  50% {
+    background: #ff78c8;
+    box-shadow: 0 0 10px #ff78c8;
+  }
+  100% {
+    background: rgba(255,120,200,0.3);
+    box-shadow: 0 0 4px rgba(255,120,200,0.3);
+  }
+}
+@keyframes neon-flow {
+  0% {
+    background: rgba(255,120,200,0.3);
+    box-shadow: 0 0 4px rgba(255,120,200,0.3);
+  }
+  50% {
+    background: #ff78c8;
+    box-shadow: 0 0 10px #ff78c8;
+  }
+  100% {
+    background: rgba(255,120,200,0.3);
+    box-shadow: 0 0 4px rgba(255,120,200,0.3);
   }
 }
