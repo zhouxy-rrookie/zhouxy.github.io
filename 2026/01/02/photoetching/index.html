@@ -550,58 +550,81 @@
 <script>
 console.log("Light Pink Cyberpunk Background Loaded");
 
-/* -------------------------
+/* ============================================================
+   全局参数（统一赛博粉蓝主题）
+============================================================ */
+const CYBER = {
+  pink: "rgba(255,120,200,",
+  blue: "rgba(0,150,255,",
+  bg1: "rgba(255,240,250,0.95)",
+  bg2: "rgba(230,245,255,0.95)",
+  pulseSpeed: 3,
+  particleCount: 160,
+  repelRadius: 120
+};
+
+/* ============================================================
    1. 加载动画淡出
--------------------------- */
-window.addEventListener('load', function () {
-  const loader = document.getElementById('gradient-loading');
+============================================================ */
+window.addEventListener("load", () => {
+  const loader = document.getElementById("gradient-loading");
   if (!loader) return;
-  loader.style.opacity = '0';
-  setTimeout(() => loader.style.display = 'none', 600);
+  loader.style.opacity = "0";
+  setTimeout(() => loader.style.display = "none", 600);
 });
 
-/* -------------------------
-   2. 鼠标柔光跟随（粉蓝光圈）
--------------------------- */
-(function () {
-  const light = document.getElementById('cursor-light');
-  document.addEventListener('mousemove', (e) => {
-    light.style.transform = `translate(${e.clientX - 90}px, ${e.clientY - 90}px)`;
+/* ============================================================
+   2. 鼠标柔光（节流版）
+============================================================ */
+(() => {
+  const light = document.getElementById("cursor-light");
+  let mouseX = 0, mouseY = 0, ticking = false;
+
+  document.addEventListener("mousemove", e => {
+    mouseX = e.clientX - 90;
+    mouseY = e.clientY - 90;
+
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(() => {
+        light.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+        ticking = false;
+      });
+    }
   });
 })();
 
-/* -------------------------
+/* ============================================================
    3. 粉色赛博流动背景（主背景）
--------------------------- */
-(function () {
-  const canvas = document.getElementById('cyberwave');
-  const ctx = canvas.getContext('2d');
+============================================================ */
+(() => {
+  const canvas = document.getElementById("cyberwave");
+  const ctx = canvas.getContext("2d");
 
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
+  const resize = () => {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+  };
   resize();
-  window.addEventListener('resize', resize);
+  addEventListener("resize", resize);
 
   let t = 0;
 
   function draw() {
     t += 0.004;
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    /* 柔光渐变背景（粉蓝） */
+    // 背景渐变
     const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, "rgba(255,240,250,0.95)");
-    gradient.addColorStop(1, "rgba(230,245,255,0.95)");
+    gradient.addColorStop(0, CYBER.bg1);
+    gradient.addColorStop(1, CYBER.bg2);
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    /* 多层流动光带（粉色 + 蓝色） */
+    // 多层流动光带
     const colors = [
-      "rgba(255,120,200,0.25)",
-      "rgba(0,150,255,0.22)",
+      CYBER.pink + "0.25)",
+      CYBER.blue + "0.22)",
       "rgba(255,150,230,0.18)"
     ];
 
@@ -623,9 +646,9 @@ window.addEventListener('load', function () {
       ctx.stroke();
     });
 
-    /* 粉色能量脉冲（轻微闪动） */
-    const pulse = Math.sin(t * 3) * 0.15 + 0.25;
-    ctx.fillStyle = `rgba(255,120,200,${pulse})`;
+    // 粉色能量脉冲
+    const pulse = Math.sin(t * CYBER.pulseSpeed) * 0.15 + 0.25;
+    ctx.fillStyle = CYBER.pink + pulse + ")";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     requestAnimationFrame(draw);
@@ -634,90 +657,54 @@ window.addEventListener('load', function () {
   draw();
 })();
 
-/* -------------------------
-   4. 粉蓝柔光粒子（随机飘动 + Delaunay + 排斥）
--------------------------- */
-(function () {
-  const canvas = document.getElementById('particle-canvas');
-  const ctx = canvas.getContext('2d');
+/* ============================================================
+   4. 粉蓝柔光粒子（优化版）
+============================================================ */
+(() => {
+  const canvas = document.getElementById("particle-canvas");
+  const ctx = canvas.getContext("2d");
+
+  const resize = () => {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+  };
+  resize();
+  addEventListener("resize", resize);
 
   let particles = [];
-  const particleCount = 180; // 更密集
+  const mouse = { x: null, y: null };
 
-  const mouse = { x: null, y: null, radius: 120 };
-
-  window.addEventListener("mousemove", (e) => {
+  addEventListener("mousemove", e => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
   });
 
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
   function initParticles() {
     particles = [];
-    for (let i = 0; i < particleCount; i++) {
+    for (let i = 0; i < CYBER.particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: Math.random() * 50 , // 更大
-        vx: (Math.random() - 0.5) * 0.8, // 随机飘动
-        vy: (Math.random() - 0.5) * 0.8,
+        r: Math.random() * 40 + 10,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
         alpha: Math.random() * 0.4 + 0.4,
-        color: Math.random() > 0.5
-          ? "rgba(255,120,200,"
-          : "rgba(0,150,255,"
+        color: Math.random() > 0.5 ? CYBER.pink : CYBER.blue
       });
     }
   }
 
   function repel(p) {
     if (!mouse.x) return;
-
     const dx = p.x - mouse.x;
     const dy = p.y - mouse.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
 
-    if (dist < mouse.radius) {
-      const force = (mouse.radius - dist) / mouse.radius;
+    if (dist < CYBER.repelRadius) {
+      const force = (CYBER.repelRadius - dist) / CYBER.repelRadius;
       const angle = Math.atan2(dy, dx);
-
-      p.x += Math.cos(angle) * force * 8;
-      p.y += Math.sin(angle) * force * 8;
-    }
-  }
-
-  function drawTriangles() {
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        for (let k = j + 1; k < particles.length; k++) {
-          const p1 = particles[i];
-          const p2 = particles[j];
-          const p3 = particles[k];
-
-          const d1 = (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
-          const d2 = (p2.x - p3.x) ** 2 + (p2.y - p3.y) ** 2;
-          const d3 = (p3.x - p1.x) ** 2 + (p3.y - p1.y) ** 2;
-
-          const maxDist = 160 * 160;
-
-          if (d1 < maxDist && d2 < maxDist && d3 < maxDist) {
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.lineTo(p3.x, p3.y);
-            ctx.closePath();
-
-            ctx.strokeStyle = "rgba(255,120,200,0.15)";
-            ctx.lineWidth = 1;
-            ctx.stroke();
-          }
-        }
-      }
+      p.x += Math.cos(angle) * force * 6;
+      p.y += Math.sin(angle) * force * 6;
     }
   }
 
@@ -727,11 +714,9 @@ window.addEventListener('load', function () {
     particles.forEach(p => {
       repel(p);
 
-      // 随机飘动
       p.x += p.vx;
       p.y += p.vy;
 
-      // 边界反弹
       if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
       if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
 
@@ -742,8 +727,6 @@ window.addEventListener('load', function () {
       ctx.fill();
     });
 
-    drawTriangles();
-
     requestAnimationFrame(draw);
   }
 
@@ -751,41 +734,38 @@ window.addEventListener('load', function () {
   draw();
 })();
 
-
-
-
-/* -------------------------
+/* ============================================================
    5. 跟随系统浅色模式
--------------------------- */
-(function () {
-  const mq = window.matchMedia('(prefers-color-scheme: light)');
-  function apply(e) {
-    document.documentElement.setAttribute('data-theme', e.matches ? 'light' : 'dark');
-  }
+============================================================ */
+(() => {
+  const mq = matchMedia("(prefers-color-scheme: light)");
+  const apply = e => {
+    document.documentElement.dataset.theme = e.matches ? "light" : "dark";
+  };
   apply(mq);
-  mq.addEventListener('change', apply);
+  mq.addEventListener("change", apply);
 })();
 </script>
 
 <script>
-/* -------------------------
-   6. 粉色能量波滚动触发
--------------------------- */
-(function () {
-  const wave = document.getElementById('scroll-wave');
+/* ============================================================
+   6. 粉色能量波滚动触发（增强版）
+============================================================ */
+(() => {
+  const wave = document.getElementById("scroll-wave");
   let ticking = false;
 
-  window.addEventListener('scroll', () => {
+  addEventListener("scroll", () => {
     if (!ticking) {
       ticking = true;
 
-      wave.style.opacity = '1';
-      wave.style.transform = `translateY(${window.scrollY * 0.15}px)`;
+      wave.style.opacity = "1";
+      wave.style.transform = `translateY(${scrollY * 0.15}px) scale(1.05)`;
 
       setTimeout(() => {
-        wave.style.opacity = '0';
+        wave.style.opacity = "0";
         ticking = false;
-      }, 200);
+      }, 220);
     }
   });
 })();
