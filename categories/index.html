@@ -545,7 +545,7 @@ window.addEventListener('load', function () {
         y: canvas.height / 2 + Math.sin(angle) * radius,
         baseAngle: angle,
         baseRadius: radius,
-        r: Math.random() * 10 + 10,
+        r: Math.random() * 20 + 30,
         alpha: Math.random() * 0.4 + 0.4,
         color: Math.random() > 0.5
           ? "rgba(255,120,200,"
@@ -571,7 +571,7 @@ window.addEventListener('load', function () {
   }
 
   function rotateNebula(p, t) {
-    const speed = 0.0001;
+    const speed = 0.0002;
     const angle = p.baseAngle + t * speed;
 
     p.x = canvas.width / 2 + Math.cos(angle) * p.baseRadius;
