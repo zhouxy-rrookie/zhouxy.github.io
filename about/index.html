@@ -463,66 +463,177 @@ window.addEventListener("load", () => {
 })();
 
 /* ============================================================
-   3. 粉色赛博流动背景（主背景）
+   3. WebGL 3D Shader 赛博地平线背景
 ============================================================ */
 (() => {
   const canvas = document.getElementById("cyberwave");
-  const ctx = canvas.getContext("2d");
+  if (!canvas) return;
 
-  const resize = () => {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-  };
-  resize();
-  addEventListener("resize", resize);
-
-  let t = 0;
-
-  function draw() {
-    t += 0.004;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // 背景渐变
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, CYBER.bg1);
-    gradient.addColorStop(1, CYBER.bg2);
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // 多层流动光带
-    const colors = [
-      CYBER.pink + "0.25)",
-      CYBER.blue + "0.22)",
-      "rgba(255,150,230,0.18)"
-    ];
-
-    colors.forEach((color, i) => {
-      ctx.beginPath();
-      ctx.moveTo(0, canvas.height * (0.25 + i * 0.25));
-
-      for (let x = 0; x < canvas.width; x++) {
-        const y =
-          Math.sin(x * 0.002 + t * (1 + i * 0.3)) * (18 + i * 6) +
-          Math.cos(x * 0.004 + t * (2 + i * 0.5)) * (10 + i * 4) +
-          canvas.height * (0.25 + i * 0.25);
-
-        ctx.lineTo(x, y);
-      }
-
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 2.2;
-      ctx.stroke();
-    });
-
-    // 粉色能量脉冲
-    const pulse = Math.sin(t * CYBER.pulseSpeed) * 0.15 + 0.25;
-    ctx.fillStyle = CYBER.pink + pulse + ")";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    requestAnimationFrame(draw);
+  const gl = canvas.getContext("webgl", { antialias: true, alpha: true });
+  if (!gl) {
+    console.warn("WebGL not supported, keep 2D cyberwave or provide fallback.");
+    return;
   }
 
-  draw();
+  // ---------- resize ----------
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  // ---------- shaders ----------
+  const vertexSrc = `
+    attribute vec2 a_position;
+    varying vec2 v_uv;
+    void main() {
+      v_uv = a_position * 0.5 + 0.5;
+      gl_Position = vec4(a_position, 0.0, 1.0);
+    }
+  `;
+
+  const fragmentSrc = `
+    precision highp float;
+    varying vec2 v_uv;
+
+    uniform float u_time;
+    uniform vec2 u_resolution;
+
+    vec3 toSRGB(vec3 c) {
+      return pow(c, vec3(1.0 / 2.2));
+    }
+
+    void main() {
+      vec2 uv = (v_uv * 2.0 - 1.0);
+      uv.x *= u_resolution.x / u_resolution.y;
+
+      float time = u_time * 0.35;
+
+      vec3 skyTop = vec3(0.95, 0.97, 1.0);
+      vec3 skyBottom = vec3(1.0, 0.94, 0.98);
+      float skyMix = smoothstep(-0.4, 0.6, uv.y);
+      vec3 sky = mix(skyBottom, skyTop, skyMix);
+
+      float horizonGlow = exp(-pow(uv.y * 3.0 - 0.2, 2.0));
+      vec3 horizonColor = vec3(1.0, 0.75, 0.9);
+      sky += horizonColor * horizonGlow * 0.6;
+
+      float perspective = 1.0 / max(0.2, uv.y + 1.2);
+      vec2 gridUV = vec2(uv.x * perspective, (uv.y + 1.0) * perspective);
+      gridUV.y += time * 0.8;
+
+      float lineX = abs(fract(gridUV.x) - 0.5) / fwidth(gridUV.x);
+      float lineY = abs(fract(gridUV.y) - 0.5) / fwidth(gridUV.y);
+      float gridLine = min(lineX, lineY);
+      float gridMask = 1.0 - smoothstep(0.0, 4.0, gridLine);
+
+      vec3 gridColorX = vec3(0.0, 0.6, 1.0);
+      vec3 gridColorY = vec3(1.0, 0.4, 0.8);
+      vec3 gridColor = mix(gridColorX, gridColorY, fract(gridUV.y * 0.25 + time * 0.3));
+
+      float wave = sin(gridUV.y * 6.2831 + time * 4.0) * 0.5 + 0.5;
+      float waveBand = smoothstep(0.6, 1.0, wave) * (1.0 - smoothstep(0.0, 0.8, uv.y + 0.5));
+      vec3 waveColor = vec3(1.0, 0.6, 0.95);
+      gridColor += waveColor * waveBand * 0.8;
+
+      float groundMask = smoothstep(0.0, -0.6, uv.y);
+      vec3 ground = gridColor * gridMask * groundMask;
+
+      float pulse = sin(time * 3.0) * 0.5 + 0.5;
+      vec3 fogColor = vec3(1.0, 0.75, 0.9);
+      float fogStrength = smoothstep(-1.0, 0.3, uv.y) * 0.35;
+      sky += fogColor * fogStrength * (0.3 + pulse * 0.4);
+
+      vec3 color = sky + ground;
+
+      float vignette = smoothstep(1.1, 0.4, length(uv));
+      color *= vignette;
+
+      float noise = fract(sin(dot(v_uv * u_resolution, vec2(12.9898, 78.233)) + time) * 43758.5453);
+      color += (noise - 0.5) * 0.015;
+
+      gl_FragColor = vec4(toSRGB(color), 1.0);
+    }
+  `;
+
+  function createShader(type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.error("Shader compile error:", gl.getShaderInfoLog(shader));
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  }
+
+  function createProgram(vsSrc, fsSrc) {
+    const vs = createShader(gl.VERTEX_SHADER, vsSrc);
+    const fs = createShader(gl.FRAGMENT_SHADER, fsSrc);
+    if (!vs || !fs) return null;
+    const program = gl.createProgram();
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error("Program link error:", gl.getProgramInfoLog(program));
+      gl.deleteProgram(program);
+      return null;
+    }
+    return program;
+  }
+
+  const program = createProgram(vertexSrc, fragmentSrc);
+  if (!program) return;
+
+  gl.useProgram(program);
+
+  const positionLoc = gl.getAttribLocation(program, "a_position");
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+
+  const vertices = new Float32Array([
+    -1, -1,
+     1, -1,
+    -1,  1,
+    -1,  1,
+     1, -1,
+     1,  1,
+  ]);
+  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(positionLoc);
+  gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+
+  const timeLoc = gl.getUniformLocation(program, "u_time");
+  const resLoc = gl.getUniformLocation(program, "u_resolution");
+
+  let startTime = performance.now();
+
+  function render() {
+    const now = performance.now();
+    const t = (now - startTime) * 0.001;
+
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.clearColor(1, 1, 1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    gl.uniform1f(timeLoc, t);
+    gl.uniform2f(resLoc, canvas.width, canvas.height);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    requestAnimationFrame(render);
+  }
+
+  render();
 })();
 
 /* ============================================================
