@@ -1070,11 +1070,12 @@ window.addEventListener('load', function () {
 /* -------------------------
    4. 粉蓝柔光粒子
 -------------------------- */
+
 (function () {
   const canvas = document.getElementById('particle-canvas');
   const ctx = canvas.getContext('2d');
   let particles = [];
-  const particleCount = 90;
+  const particleCount = 180; // 数量翻倍
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -1089,13 +1090,13 @@ window.addEventListener('load', function () {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: Math.random() * 2 + 0.8,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-        alpha: Math.random() * 0.5 + 0.3,
+        r: Math.random() * 3 + 2, // 泡泡更大（2~5）
+        vx: (Math.random() - 0.5) * 0.15, // 更慢更柔
+        vy: (Math.random() - 0.5) * 0.15,
+        alpha: Math.random() * 0.4 + 0.4, // 更亮更柔光
         color: Math.random() > 0.5
-          ? "rgba(255,120,200,"
-          : "rgba(0,150,255,"
+          ? "rgba(255,120,200,"   // 粉色
+          : "rgba(0,150,255,"     // 蓝色
       });
     }
   }
@@ -1113,6 +1114,7 @@ window.addEventListener('load', function () {
       p.x += p.vx;
       p.y += p.vy;
 
+      // 边界反弹
       if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
       if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
     });
@@ -1123,6 +1125,7 @@ window.addEventListener('load', function () {
   initParticles();
   draw();
 })();
+
 
 /* -------------------------
    5. 跟随系统浅色模式
