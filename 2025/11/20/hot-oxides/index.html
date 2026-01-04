@@ -1094,8 +1094,8 @@ window.addEventListener('load', function () {
         vy: (Math.random() - 0.5) * 0.25,
         alpha: Math.random() * 0.5 + 0.3,
         color: Math.random() > 0.5
-          ? "rgba(255,120,200,"  // 粉色粒子
-          : "rgba(0,150,255,"    // 蓝色粒子
+          ? "rgba(255,120,200,"
+          : "rgba(0,150,255,"
       });
     }
   }
@@ -1148,7 +1148,7 @@ window.addEventListener('load', function () {
       ticking = true;
 
       wave.style.opacity = '1';
-      wave.style.top = window.scrollY * 0.2 + 'px';
+      wave.style.transform = `translateY(${window.scrollY * 0.15}px)`;
 
       setTimeout(() => {
         wave.style.opacity = '0';
