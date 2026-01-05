@@ -1175,7 +1175,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ff41ff;
+  background: #9cffff;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2734,21 +2734,6 @@ a:hover {
   z-index: -3;
   pointer-events: none;
   opacity: 1;
-}
-/* ===========================
-   12. 滚动能量波
-   =========================== */
-#scroll-wave {
-  position: fixed;
-  top: -100%;
-  left: 0;
-  width: 100%;
-  height: 120%;
-  background: radial-gradient(circle at 50% 0%, rgba(255,120,200,0.35), transparent 70%);
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0;
-  transition: opacity 0.3s ease;
 }
 /* ===========================
    13. HUD 装饰元素
