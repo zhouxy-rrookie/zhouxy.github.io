@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>马尔科夫决策过程</title>
+    <url>/2026/01/06/MDP/</url>
+    <content><![CDATA[MDP如何定义
+一个MDP提供了一种正式方式来描述强化学习问题中的环境，它假设环境满足马尔可夫性质，也就是未来状态和奖励只取决于当前状态和动作，而不依赖于之前的全部历史。
+一个MDP由一个包含五个组成部分的元组定义$(S,A,P,R,\gamma)$
+状态空间 (S)
+状态空间(S)是环境可能处于的所有状态的集合。
+]]></content>
+      <categories>
+        <category>强化学习</category>
+      </categories>
+      <tags>
+        <tag>强化学习</tag>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C语言模拟面向对象</title>
     <url>/2026/01/05/Cpro/</url>
     <content><![CDATA[C语言模拟面向对象
@@ -13,14 +30,9 @@
       </tags>
   </entry>
   <entry>
-    <title>马尔科夫决策过程</title>
-    <url>/2026/01/06/MDP/</url>
-    <content><![CDATA[MDP如何定义
-一个MDP提供了一种正式方式来描述强化学习问题中的环境，它假设环境满足马尔可夫性质，也就是未来状态和奖励只取决于当前状态和动作，而不依赖于之前的全部历史。
-一个MDP由一个包含五个组成部分的元组定义$(S,A,P,R,\gamma)$
-状态空间 (S)
-状态空间(S)是环境可能处于的所有状态的集合。
-]]></content>
+    <title>Q-learning</title>
+    <url>/2026/01/06/Qleaning/</url>
+    <content><![CDATA[]]></content>
       <categories>
         <category>强化学习</category>
       </categories>
@@ -617,18 +629,6 @@ PAG(photo-acid generator)
       <tags>
         <tag>微电子</tag>
         <tag>集成电路</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Q-learning</title>
-    <url>/2026/01/06/Qleaning/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>强化学习</category>
-      </categories>
-      <tags>
-        <tag>强化学习</tag>
-        <tag>算法</tag>
       </tags>
   </entry>
 </search>
