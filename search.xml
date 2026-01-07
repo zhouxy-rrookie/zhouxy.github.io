@@ -30,18 +30,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Q-learning</title>
-    <url>/2026/01/06/Qleaning/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>强化学习</category>
-      </categories>
-      <tags>
-        <tag>强化学习</tag>
-        <tag>算法</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>热氧化工艺</title>
     <url>/2025/11/20/hot-oxides/</url>
     <content><![CDATA[1.热氧化工艺介绍
@@ -629,6 +617,18 @@ PAG(photo-acid generator)
       <tags>
         <tag>微电子</tag>
         <tag>集成电路</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Q-learning</title>
+    <url>/2026/01/06/Qleaning/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>强化学习</category>
+      </categories>
+      <tags>
+        <tag>强化学习</tag>
+        <tag>算法</tag>
       </tags>
   </entry>
 </search>
