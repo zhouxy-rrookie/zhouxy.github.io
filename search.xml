@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>C语言模拟面向对象</title>
+    <url>/2026/01/05/Cpro/</url>
+    <content><![CDATA[C语言模拟面向对象
+]]></content>
+      <categories>
+        <category>嵌入式</category>
+      </categories>
+      <tags>
+        <tag>嵌入式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Q-learning</title>
     <url>/2026/01/06/Qleaning/</url>
     <content><![CDATA[]]></content>
@@ -13,28 +25,20 @@
       </tags>
   </entry>
   <entry>
-    <title>新型光刻技术</title>
-    <url>/2026/01/07/new_photoetching/</url>
-    <content><![CDATA[新型光刻技术
+    <title>马尔科夫决策过程</title>
+    <url>/2026/01/06/MDP/</url>
+    <content><![CDATA[MDP如何定义
+一个MDP提供了一种正式方式来描述强化学习问题中的环境，它假设环境满足马尔可夫性质，也就是未来状态和奖励只取决于当前状态和动作，而不依赖于之前的全部历史。
+一个MDP由一个包含五个组成部分的元组定义$(S,A,P,R,\gamma)$
+状态空间 (S)
+状态空间(S)是环境可能处于的所有状态的集合。
 ]]></content>
       <categories>
-        <category>半导体</category>
+        <category>强化学习</category>
       </categories>
       <tags>
-        <tag>微电子</tag>
-        <tag>集成电路</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>C语言模拟面向对象</title>
-    <url>/2026/01/05/Cpro/</url>
-    <content><![CDATA[C语言模拟面向对象
-]]></content>
-      <categories>
-        <category>嵌入式</category>
-      </categories>
-      <tags>
-        <tag>嵌入式</tag>
+        <tag>算法</tag>
+        <tag>强化学习</tag>
       </tags>
   </entry>
   <entry>
@@ -443,23 +447,6 @@ Si/$SiO_2$界面性质优于所有其他半导体/介质界面。（100）界面
       </tags>
   </entry>
   <entry>
-    <title>马尔科夫决策过程</title>
-    <url>/2026/01/06/MDP/</url>
-    <content><![CDATA[MDP如何定义
-一个MDP提供了一种正式方式来描述强化学习问题中的环境，它假设环境满足马尔可夫性质，也就是未来状态和奖励只取决于当前状态和动作，而不依赖于之前的全部历史。
-一个MDP由一个包含五个组成部分的元组定义$(S,A,P,R,\gamma)$
-状态空间 (S)
-状态空间(S)是环境可能处于的所有状态的集合。
-]]></content>
-      <categories>
-        <category>强化学习</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>强化学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>光刻技术</title>
     <url>/2026/01/02/photoetching/</url>
     <content><![CDATA[光刻工艺
@@ -622,6 +609,19 @@ PAG(photo-acid generator)
 总量子效率&gt;&gt;1，因此DUV胶的灵敏度有很大提高
 
 
+]]></content>
+      <categories>
+        <category>半导体</category>
+      </categories>
+      <tags>
+        <tag>微电子</tag>
+        <tag>集成电路</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>新型光刻技术</title>
+    <url>/2026/01/07/new_photoetching/</url>
+    <content><![CDATA[新型光刻技术
 ]]></content>
       <categories>
         <category>半导体</category>
