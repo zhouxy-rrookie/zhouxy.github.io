@@ -1,0 +1,18 @@
+/* 新版Butterfly文章卡片半透明（最高优先级） */
+.article-card {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  background-image: none !important;
+  border: none !important;
+}
+.article-card:hover {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+/* 深色模式适配 */
+[data-theme="dark"] .article-card {
+  background-color: rgba(30, 30, 30, 0.5) !important;
+}
+[data-theme="dark"] .article-card:hover {
+  background-color: rgba(30, 30, 30, 0.8) !important;
+}
