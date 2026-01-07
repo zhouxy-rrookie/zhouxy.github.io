@@ -30,6 +30,18 @@
       </tags>
   </entry>
   <entry>
+    <title>Q-learning</title>
+    <url>/2026/01/06/Qleaning/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>强化学习</category>
+      </categories>
+      <tags>
+        <tag>强化学习</tag>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>热氧化工艺</title>
     <url>/2025/11/20/hot-oxides/</url>
     <content><![CDATA[1.热氧化工艺介绍
@@ -435,15 +447,33 @@ Si/$SiO_2$界面性质优于所有其他半导体/介质界面。（100）界面
       </tags>
   </entry>
   <entry>
-    <title>Q-learning</title>
-    <url>/2026/01/06/Qleaning/</url>
-    <content><![CDATA[]]></content>
+    <title>新型光刻技术</title>
+    <url>/2026/01/07/new_photoetching/</url>
+    <content><![CDATA[新型光刻技术
+光刻胶的表征参数
+1.对比度： 胶区分亮区和暗区的能力
+
+对比度：
+$$\gamma = \frac{1}{lg(\frac{D_f}{D_0})}$$
+
+注：g线和i线胶那样是靠光子一个一个曝光的，DUV胶不是。DUV胶一旦反应开始，则会在催化作用下，使反应进行到底。多以DUV胶从未曝光状态到完全曝光状态的转变更为陡峭，即对比度更大。
+一般，g线和i线胶的对比度在2~3,而DUV胶的对比度为5~10。
+$\gamma依赖于工艺参数，如：显影液、前hong时间、曝光后及坚膜的温度，光源波长和硅片的表面形貌等。
+
+2.临界调制传递函数： 胶分辨图形所需的最小光学传递函数MTF
+$$CMTF = \frac{D_f-D_0}{D_f+D_0}=\frac{10^\frac{1}{\gamma}-1}{10^\frac{1}{\gamma}+1}$$
+
+空间图像与光刻胶对比度结合，直接决定潜像的质量
+CMTF&lt;=MTF,胶才能分辨空间图形
+g线和i线胶CMTF约为0.4，DUV胶为0.1~0.2
+
+]]></content>
       <categories>
-        <category>强化学习</category>
+        <category>半导体</category>
       </categories>
       <tags>
-        <tag>强化学习</tag>
-        <tag>算法</tag>
+        <tag>微电子</tag>
+        <tag>集成电路</tag>
       </tags>
   </entry>
   <entry>
@@ -608,36 +638,6 @@ PAG(photo-acid generator)
 原理：入射光子于与PAG光子反应，产生酸分子，在后续的烘烤过程中，酸分子起催化剂作用，使曝光区域光刻胶改性。
 总量子效率&gt;&gt;1，因此DUV胶的灵敏度有很大提高
 
-
-]]></content>
-      <categories>
-        <category>半导体</category>
-      </categories>
-      <tags>
-        <tag>微电子</tag>
-        <tag>集成电路</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>新型光刻技术</title>
-    <url>/2026/01/07/new_photoetching/</url>
-    <content><![CDATA[新型光刻技术
-光刻胶的表征参数
-1.对比度： 胶区分亮区和暗区的能力
-
-对比度：
-$$\gamma = \frac{1}{lg(\frac{D_f}{D_0})}$$
-
-注：g线和i线胶那样是靠光子一个一个曝光的，DUV胶不是。DUV胶一旦反应开始，则会在催化作用下，使反应进行到底。多以DUV胶从未曝光状态到完全曝光状态的转变更为陡峭，即对比度更大。
-一般，g线和i线胶的对比度在2~3,而DUV胶的对比度为5~10。
-$\gamma依赖于工艺参数，如：显影液、前hong时间、曝光后及坚膜的温度，光源波长和硅片的表面形貌等。
-
-2.临界调制传递函数： 胶分辨图形所需的最小光学传递函数MTF
-$$CMTF = \frac{D_f-D_0}{D_f+D_0}=\frac{10^\frac{1}{\gamma}-1}{10^\frac{1}{\gamma}+1}$$
-
-空间图像与光刻胶对比度结合，直接决定潜像的质量
-CMTF&lt;=MTF,胶才能分辨空间图形
-g线和i线胶CMTF约为0.4，DUV胶为0.1~0.2
 
 ]]></content>
       <categories>
