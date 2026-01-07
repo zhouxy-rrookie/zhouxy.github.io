@@ -13,18 +13,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Q-learning</title>
-    <url>/2026/01/06/Qleaning/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>强化学习</category>
-      </categories>
-      <tags>
-        <tag>算法</tag>
-        <tag>强化学习</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>马尔科夫决策过程</title>
     <url>/2026/01/06/MDP/</url>
     <content><![CDATA[MDP如何定义
@@ -37,180 +25,8 @@
         <category>强化学习</category>
       </categories>
       <tags>
-        <tag>算法</tag>
         <tag>强化学习</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>光刻技术</title>
-    <url>/2026/01/02/photoetching/</url>
-    <content><![CDATA[光刻工艺
-
-光刻的要求
-
-分辨率（高）
-曝光视场（大）
-图形对准精度（高） ——1/3最小特征尺寸
-产率（大）
-缺陷密度（低）
-
-
-掩模版制作
-CAD设计、模拟、验证后由图形发生器产生数字图形
-
-x1掩模版制作——光刻式
-x4或x5投影光刻版——投影式光刻
-x4或x5投影光刻版在制版时容易检查缺陷
-版上缺陷可以修补
-蒙膜保护防止颗粒玷污
-
-
-
-
-通过电子束在光刻胶层写入目标电路图案
-对涂覆的光刻胶进行显影，得到与目标图案对应的光刻胶掩模
-以光刻胶为掩膜，刻蚀下方的铬层，江图案转移至铬层
-剥离剩余的光刻胶，露出铬层上的图案
-检测图案的关键尺寸，确保尺寸精度符合要求
-验证图案的位置精度，保证各特征的相对位置精确
-清洁掩模版表面的残留杂质
-检测掩模版上的缺陷（如针孔、多余铬点）
-对检测处的缺陷进行修复，保留图案的完整性
-在加装防尘膜前，再次清洁掩模版表面
-安装防尘膜，避免后续使用中颗粒物污染掩模图案
-完成所有工序得到掩模版
-
-三种硅片曝光模式及系统
-
-接触式光刻机
-
-MERCURY LAMP汞灯：提供光刻所需的紫外光源，是图案转移的能量来源
-MIRROR反射镜+CONDENSER LENS聚光透镜：对汞灯发出的光进行反射、汇聚，使光线均匀、稳定的照射至掩模版区域。
-TURNING MIRROR转向镜
-EMULSION MASK乳胶掩模版：承载目标电路图案的模板
-涂胶晶圆：表面涂覆光刻胶的半导体晶圆，是图案转移的最终目标载体。
-接近式光刻机
-
-MERCURY LAMP汞灯
-ELLIPSOIDAL MIRROR椭球镜:汇聚汞灯光线，提升光强集中度
-TURNING MIRROR转向镜
-COLLIMATOR准直器：将发散光转换为平行光
-FLY’S EYE LENS复眼透镜:优化光线均匀性，使照射到掩模版的光场更稳定
-SECOND MIRROR第二反射镜
-CONDENSER LENS聚光透镜
-MASK掩模版
-RESIST-COATED WAFER涂胶晶圆
-接触式和接近式曝光系统：
-
-
-利用Fresnel衍射理论计算的间隔范围：
-$$\lambda&lt;g&lt;\frac{W^2}{\lambda}$$
-最小分辨尺寸：
-$$W_{min} = \sqrt{\lambda g}$$
-扫描投影式光刻机
-
-MERCURY LAMP汞灯
-PRIMARY MIRROR (CONCAVE)主反射镜（凹面）：汇聚照明系统的光线，优化光场的集中度与传播方向
-ILLUMINATION照明系统
-PHOTOMASK掩模版
-SECONDARY MIRROR (CONVEX)次反射镜（凸面）：辅助调整光路走向，配合主反射镜实现光线的精准导向
-TRAPEZOIDAL梯形组件：参与投影光学系统的光路整形，保障图案投影的清晰度与均匀性
-WAFER晶圆
-步进投影式光刻机
-
-LIGHT SOURCE光源
-COLLIMATIING LENS SYSTEM准直透镜：将光源的发散光转换为平行光，保障光线的方向性与均匀性
-RETICLE投影掩模板：承载目标电路图案的模板，与传统掩模版（mask）存在放大比例，适配投影系统的缩小需求
-COMPOUND LENS SYSTEM复合透镜：实现图案的比例缩小投影，是保障投影精度的核心光学组件
-RESIST-COATED WAFER涂胶晶圆：表面涂覆光刻胶的半导体基底，是电路图案转移的最终载体
-STEPPING AXES步进轴：控制晶圆在X/Y方向精准移动，实现晶圆不同区域的逐次曝光
-
-DSW（direct step on wafer）晶圆直接步进工艺，是半导体制程中光刻工序的一种晶圆曝光方式，通过逐次精准步进操作，实现电路图案在整个晶圆表面的完整覆盖。
-First Step:在晶圆局部区域完成首次曝光，确定初始图案区域，后续步进区域围绕该区域展开。
-Partially Complete: 由步进轴控制晶圆精准移动，依次在相邻区域重复曝光，逐步覆盖晶圆大部分区域，剩余少量区域待处理。
-Complete:持续执行步进与曝光操作，直至电路图案覆盖整个晶圆表面，完成单次光刻的图案转移。
-投影式——远场衍射： 像平面远离孔径，在孔径和像平面之间设置镜头
-
-
-分辨率
-点物S1的爱里斑中心恰好与另一个点物S2的爱里斑边缘（第一衍射极小）相重合时，恰可分辨两物点。
-两个艾里光斑的分辨率：
-$$R = \frac{1.22\lambda f}{d} = \frac{1.22\lambda f}{n(2fsin\alpha)} = \frac{0.61\lambda}{nsin\alpha}$$
-分辨率：
-$$R = k_1 \frac{\lambda}{NA}$$
-$NA = nsin\alpha$ ,数值孔径，表示手机衍射光的能力。
-提高分辨率：
-1.使用短波长的光
-
-2.减小 k1
-3.增大 NA
-
-  
-  
-
-焦深 DOF
-$$\lambda / 4 = \delta-\delta\cos\theta$$
-$$\lambda/4 = \delta[1-(1 - \theta^2/2)] = \delta\theta^2/2$$
-$$\theta = \sin \theta = \frac{d}{2f} = NA$$
-$$DOF = \delta = ±k_2\frac{\lambda}{(NA)^2}$$
-
-调制传递函数MTF-对比度
-
-$$MTF = \frac{I_{max} - I_{min}}{I_{max} + I_{min}}$$
-
-
-光刻胶
-光刻胶的作用：对于入射光子有化学变化，保持潜像至显影，从而实现图形转移，即空间图像-&gt;潜像。
-灵敏度：单位面积的胶曝光所需的光能量
-抗蚀性：刻蚀和离子注入
-
-  
-  
-
-正胶分辨率高于负胶
-g线和i线光刻胶的组成（正胶）
-(a)基底：树脂，是一种低分子量的酚醛树脂，本身溶于显影液，溶解速率为15nm/s
-(b)光敏材料：二氮醌（DQ）
-
-DQ不溶于显影液，光刻胶在显影液中的溶解速率为1-2nm/sec
-光照后，DQ可以自我稳定，成为溶于显影液的烃基酸
-光照后光刻胶在显影液中的溶解速度为100-200nm/s
-©溶剂是醋酸乙酯、二甲苯、乙酸溶纤剂的混合物，用于调节光刻胶的粘度。
-
-负胶
-当VLSI电路需分辨率达到2um之前，基本上是采用负性光刻胶。负胶在显影时线条会变粗，使其分辨率不能达到很高。
-但在分辨率要求不太高的情况下，负胶也有优点：
-
-对衬底表面粘附性好
-抗刻蚀能力强
-曝光时间短，产量高
-工艺宽容度较高
-价格较低（约正胶的三分之一）
-
-负胶的组成部分：
-
-基底：合成环化橡胶树脂，对光照不敏感，但在有机溶液如甲苯和二甲苯中溶解很快。
-光敏材料PAC：双芳化基，当光照后，产生交联的三维分子网络，使光刻胶在显影液中具有不溶性
-溶剂：芳香族化合物
-
-DUV深紫外光刻胶
-传统DQN胶的问题：
-
-对于&lt; i 线波长强烈吸收
-汞灯在DUV波段输出光强不如i线和g线，因此灵敏度不够
-量子效率提高有限
-PAG(photo-acid generator)
-原理：入射光子于与PAG光子反应，产生酸分子，在后续的烘烤过程中，酸分子起催化剂作用，使曝光区域光刻胶改性。
-总量子效率&gt;&gt;1，因此DUV胶的灵敏度有很大提高
-
-
-]]></content>
-      <categories>
-        <category>半导体</category>
-      </categories>
-      <tags>
-        <tag>微电子</tag>
-        <tag>集成电路</tag>
+        <tag>算法</tag>
       </tags>
   </entry>
   <entry>
@@ -616,6 +432,203 @@ Si/$SiO_2$界面性质优于所有其他半导体/介质界面。（100）界面
       <tags>
         <tag>微电子</tag>
         <tag>半导体</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Q-learning</title>
+    <url>/2026/01/06/Qleaning/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>强化学习</category>
+      </categories>
+      <tags>
+        <tag>强化学习</tag>
+        <tag>算法</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>新型光刻技术</title>
+    <url>/2026/01/07/new_photoetching/</url>
+    <content><![CDATA[新型光刻技术
+]]></content>
+      <categories>
+        <category>半导体</category>
+      </categories>
+      <tags>
+        <tag>微电子</tag>
+        <tag>集成电路</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>光刻技术</title>
+    <url>/2026/01/02/photoetching/</url>
+    <content><![CDATA[光刻工艺
+
+光刻的要求
+
+分辨率（高）
+曝光视场（大）
+图形对准精度（高） ——1/3最小特征尺寸
+产率（大）
+缺陷密度（低）
+
+
+掩模版制作
+CAD设计、模拟、验证后由图形发生器产生数字图形
+
+x1掩模版制作——光刻式
+x4或x5投影光刻版——投影式光刻
+x4或x5投影光刻版在制版时容易检查缺陷
+版上缺陷可以修补
+蒙膜保护防止颗粒玷污
+
+
+
+
+通过电子束在光刻胶层写入目标电路图案
+对涂覆的光刻胶进行显影，得到与目标图案对应的光刻胶掩模
+以光刻胶为掩膜，刻蚀下方的铬层，江图案转移至铬层
+剥离剩余的光刻胶，露出铬层上的图案
+检测图案的关键尺寸，确保尺寸精度符合要求
+验证图案的位置精度，保证各特征的相对位置精确
+清洁掩模版表面的残留杂质
+检测掩模版上的缺陷（如针孔、多余铬点）
+对检测处的缺陷进行修复，保留图案的完整性
+在加装防尘膜前，再次清洁掩模版表面
+安装防尘膜，避免后续使用中颗粒物污染掩模图案
+完成所有工序得到掩模版
+
+三种硅片曝光模式及系统
+
+接触式光刻机
+
+MERCURY LAMP汞灯：提供光刻所需的紫外光源，是图案转移的能量来源
+MIRROR反射镜+CONDENSER LENS聚光透镜：对汞灯发出的光进行反射、汇聚，使光线均匀、稳定的照射至掩模版区域。
+TURNING MIRROR转向镜
+EMULSION MASK乳胶掩模版：承载目标电路图案的模板
+涂胶晶圆：表面涂覆光刻胶的半导体晶圆，是图案转移的最终目标载体。
+接近式光刻机
+
+MERCURY LAMP汞灯
+ELLIPSOIDAL MIRROR椭球镜:汇聚汞灯光线，提升光强集中度
+TURNING MIRROR转向镜
+COLLIMATOR准直器：将发散光转换为平行光
+FLY’S EYE LENS复眼透镜:优化光线均匀性，使照射到掩模版的光场更稳定
+SECOND MIRROR第二反射镜
+CONDENSER LENS聚光透镜
+MASK掩模版
+RESIST-COATED WAFER涂胶晶圆
+接触式和接近式曝光系统：
+
+
+利用Fresnel衍射理论计算的间隔范围：
+$$\lambda&lt;g&lt;\frac{W^2}{\lambda}$$
+最小分辨尺寸：
+$$W_{min} = \sqrt{\lambda g}$$
+扫描投影式光刻机
+
+MERCURY LAMP汞灯
+PRIMARY MIRROR (CONCAVE)主反射镜（凹面）：汇聚照明系统的光线，优化光场的集中度与传播方向
+ILLUMINATION照明系统
+PHOTOMASK掩模版
+SECONDARY MIRROR (CONVEX)次反射镜（凸面）：辅助调整光路走向，配合主反射镜实现光线的精准导向
+TRAPEZOIDAL梯形组件：参与投影光学系统的光路整形，保障图案投影的清晰度与均匀性
+WAFER晶圆
+步进投影式光刻机
+
+LIGHT SOURCE光源
+COLLIMATIING LENS SYSTEM准直透镜：将光源的发散光转换为平行光，保障光线的方向性与均匀性
+RETICLE投影掩模板：承载目标电路图案的模板，与传统掩模版（mask）存在放大比例，适配投影系统的缩小需求
+COMPOUND LENS SYSTEM复合透镜：实现图案的比例缩小投影，是保障投影精度的核心光学组件
+RESIST-COATED WAFER涂胶晶圆：表面涂覆光刻胶的半导体基底，是电路图案转移的最终载体
+STEPPING AXES步进轴：控制晶圆在X/Y方向精准移动，实现晶圆不同区域的逐次曝光
+
+DSW（direct step on wafer）晶圆直接步进工艺，是半导体制程中光刻工序的一种晶圆曝光方式，通过逐次精准步进操作，实现电路图案在整个晶圆表面的完整覆盖。
+First Step:在晶圆局部区域完成首次曝光，确定初始图案区域，后续步进区域围绕该区域展开。
+Partially Complete: 由步进轴控制晶圆精准移动，依次在相邻区域重复曝光，逐步覆盖晶圆大部分区域，剩余少量区域待处理。
+Complete:持续执行步进与曝光操作，直至电路图案覆盖整个晶圆表面，完成单次光刻的图案转移。
+投影式——远场衍射： 像平面远离孔径，在孔径和像平面之间设置镜头
+
+
+分辨率
+点物S1的爱里斑中心恰好与另一个点物S2的爱里斑边缘（第一衍射极小）相重合时，恰可分辨两物点。
+两个艾里光斑的分辨率：
+$$R = \frac{1.22\lambda f}{d} = \frac{1.22\lambda f}{n(2fsin\alpha)} = \frac{0.61\lambda}{nsin\alpha}$$
+分辨率：
+$$R = k_1 \frac{\lambda}{NA}$$
+$NA = nsin\alpha$ ,数值孔径，表示手机衍射光的能力。
+提高分辨率：
+1.使用短波长的光
+
+2.减小 k1
+3.增大 NA
+
+  
+  
+
+焦深 DOF
+$$\lambda / 4 = \delta-\delta\cos\theta$$
+$$\lambda/4 = \delta[1-(1 - \theta^2/2)] = \delta\theta^2/2$$
+$$\theta = \sin \theta = \frac{d}{2f} = NA$$
+$$DOF = \delta = ±k_2\frac{\lambda}{(NA)^2}$$
+
+调制传递函数MTF-对比度
+
+$$MTF = \frac{I_{max} - I_{min}}{I_{max} + I_{min}}$$
+
+
+光刻胶
+光刻胶的作用：对于入射光子有化学变化，保持潜像至显影，从而实现图形转移，即空间图像-&gt;潜像。
+灵敏度：单位面积的胶曝光所需的光能量
+抗蚀性：刻蚀和离子注入
+
+  
+  
+
+正胶分辨率高于负胶
+g线和i线光刻胶的组成（正胶）
+(a)基底：树脂，是一种低分子量的酚醛树脂，本身溶于显影液，溶解速率为15nm/s
+(b)光敏材料：二氮醌（DQ）
+
+DQ不溶于显影液，光刻胶在显影液中的溶解速率为1-2nm/sec
+光照后，DQ可以自我稳定，成为溶于显影液的烃基酸
+光照后光刻胶在显影液中的溶解速度为100-200nm/s
+©溶剂是醋酸乙酯、二甲苯、乙酸溶纤剂的混合物，用于调节光刻胶的粘度。
+
+负胶
+当VLSI电路需分辨率达到2um之前，基本上是采用负性光刻胶。负胶在显影时线条会变粗，使其分辨率不能达到很高。
+但在分辨率要求不太高的情况下，负胶也有优点：
+
+对衬底表面粘附性好
+抗刻蚀能力强
+曝光时间短，产量高
+工艺宽容度较高
+价格较低（约正胶的三分之一）
+
+负胶的组成部分：
+
+基底：合成环化橡胶树脂，对光照不敏感，但在有机溶液如甲苯和二甲苯中溶解很快。
+光敏材料PAC：双芳化基，当光照后，产生交联的三维分子网络，使光刻胶在显影液中具有不溶性
+溶剂：芳香族化合物
+
+DUV深紫外光刻胶
+传统DQN胶的问题：
+
+对于&lt; i 线波长强烈吸收
+汞灯在DUV波段输出光强不如i线和g线，因此灵敏度不够
+量子效率提高有限
+PAG(photo-acid generator)
+原理：入射光子于与PAG光子反应，产生酸分子，在后续的烘烤过程中，酸分子起催化剂作用，使曝光区域光刻胶改性。
+总量子效率&gt;&gt;1，因此DUV胶的灵敏度有很大提高
+
+
+]]></content>
+      <categories>
+        <category>半导体</category>
+      </categories>
+      <tags>
+        <tag>微电子</tag>
+        <tag>集成电路</tag>
       </tags>
   </entry>
 </search>
