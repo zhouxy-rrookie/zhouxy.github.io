@@ -30,3 +30,49 @@
     /* 以下代表透明度为0.1*/
     background: rgba(255, 255, 255, .1);
 }
+
+
+/* 覆盖加载动画样式（CSS语法，适配Stylus编译后的效果） */
+#loading-box .configure-border-1 {
+  background: #4299e1 !important;
+  width: 150px !important;
+  height: 150px !important;
+  padding: 5px !important;
+  animation: configure-clockwise 1.5s ease-in-out 0s infinite alternate !important;
+}
+
+#loading-box .configure-border-2 {
+  background: #9f7aea !important;
+  width: 150px !important;
+  height: 150px !important;
+  padding: 5px !important;
+  left: -150px !important;
+  animation: configure-xclockwise 1.5s ease-in-out 0s infinite alternate !important;
+}
+
+#loading-box .loading-word {
+  font-size: 18px !important;
+  color: #333 !important;
+  content: "正在加载..." !important;
+}
+
+#loading-box .loading-bg,
+#loading-box .configure-core {
+  background-color: #f8f9fa !important;
+}
+
+#loading-box.loaded .loading-left-bg,
+#loading-box.loaded .loading-right-bg {
+  transition: all 1s !important;
+}
+
+/* 重写动画关键帧（如果改了旋转逻辑） */
+@keyframes configure-clockwise {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes configure-xclockwise {
+  0% { transform: rotate(45deg); }
+  100% { transform: rotate(-315deg); }
+}
