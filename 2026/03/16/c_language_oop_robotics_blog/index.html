@@ -1,0 +1,652 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>C语言模拟面向对象 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="C语言模拟面向对象 很多人第一次看到这种代码风格时，都会有一个问题：“用 C 语言写出面向对象的样子，是不是显得更专业” 我的看法是：专业不在于“像不像 C++”，而在于这套写法能不能真正解决工程问题。 对于机器人嵌入式控制系统来说，系统里往往同时存在底盘、电机、升降机构、武器机构、CAN 通信、PID 控制、任务调度等多个层次。如果继续用“满地全局变量 + 一堆 switch-case + 到处">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C语言模拟面向对象">
+<meta property="og:url" content="http://example.com/2026/03/16/c_language_oop_robotics_blog/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="C语言模拟面向对象 很多人第一次看到这种代码风格时，都会有一个问题：“用 C 语言写出面向对象的样子，是不是显得更专业” 我的看法是：专业不在于“像不像 C++”，而在于这套写法能不能真正解决工程问题。 对于机器人嵌入式控制系统来说，系统里往往同时存在底盘、电机、升降机构、武器机构、CAN 通信、PID 控制、任务调度等多个层次。如果继续用“满地全局变量 + 一堆 switch-case + 到处">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/695e790568d31_1767799045.webp">
+<meta property="article:published_time" content="2026-03-15T16:22:54.915Z">
+<meta property="article:modified_time" content="2026-03-15T16:24:11.243Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="嵌入式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/695e790568d31_1767799045.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "C语言模拟面向对象",
+  "url": "http://example.com/2026/03/16/c_language_oop_robotics_blog/",
+  "image": "https://img.cdn1.vip/i/695e790568d31_1767799045.webp",
+  "datePublished": "2026-03-15T16:22:54.915Z",
+  "dateModified": "2026-03-15T16:24:11.243Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/03/16/c_language_oop_robotics_blog/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'C语言模拟面向对象',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695e790568d31_1767799045.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">C语言模拟面向对象</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">C语言模拟面向对象</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-15T16:22:54.915Z" title="发表于 2026-03-16 00:22:54">2026-03-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-15T16:24:11.243Z" title="更新于 2026-03-16 00:24:11">2026-03-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>C语言模拟面向对象</h1>
+<p>很多人第一次看到这种代码风格时，都会有一个问题：<strong>“用 C 语言写出面向对象的样子，是不是显得更专业”</strong></p>
+<p>我的看法是：<strong>专业不在于“像不像 C++”，而在于这套写法能不能真正解决工程问题。</strong></p>
+<p>对于机器人嵌入式控制系统来说，系统里往往同时存在底盘、电机、升降机构、武器机构、CAN 通信、PID 控制、任务调度等多个层次。如果继续用“满地全局变量 + 一堆 switch-case + 到处散落的初始化函数”去组织代码，随着功能变多，系统很快就会变得难以维护。</p>
+<p>这时候，C 语言里的几个经典手段——<strong>结构体封装、函数指针、组合关系、统一初始化接口、对象注册</strong>——就能模拟出一套足够实用的“面向对象”风格。</p>
+<p>这篇文章就结合一套机器人电机控制代码，聊聊：</p>
+<ol>
+<li>为什么嵌入式系统里要用 C 模拟面向对象</li>
+<li>你的这套代码到底“对象化”在什么地方</li>
+<li>这种写法在机器人控制系统里有什么实际价值</li>
+<li>这种设计什么时候值得用，什么时候会过度设计</li>
+<li>基于现有代码，还能做哪些工程上的改进</li>
+</ol>
+<hr>
+<h2 id="1-为什么-C-语言也要“对象化”？">1. 为什么 C 语言也要“对象化”？</h2>
+<p>在桌面开发里，大家很容易直接想到 C++、Rust 这类更现代的语言；但在嵌入式世界，很多项目依旧坚持使用 C。原因很现实：</p>
+<ul>
+<li>工具链成熟，和 HAL / BSP / RTOS 集成方便</li>
+<li>运行时行为更直接，更容易控制内存与时序</li>
+<li>不依赖复杂运行时，二进制行为更可预期</li>
+<li>很多驱动、中间件和芯片厂商 SDK 本身就是 C 接口</li>
+</ul>
+<p>但“继续用 C”并不意味着“代码必须原始”。</p>
+<p>真正成熟的嵌入式项目，通常会主动引入一些<strong>面向对象思想</strong>，只是它们不会直接写成 <code>class</code>，而是写成：</p>
+<ul>
+<li>用 <code>struct</code> 保存对象状态</li>
+<li>用函数指针描述对象行为</li>
+<li>用“基类结构体 + 派生结构体”模拟继承</li>
+<li>用统一接口屏蔽不同硬件差异</li>
+<li>用注册表 / 装配函数管理对象关系</li>
+</ul>
+<p>这其实就是 <strong>C 语言版本的面向对象设计</strong>。</p>
+<p>所以，与其说它“显得专业”，不如说它是<strong>复杂嵌入式系统发展到一定规模后的自然结果</strong>。</p>
+<hr>
+<h2 id="2-在-C-里，什么叫“模拟面向对象”？">2. 在 C 里，什么叫“模拟面向对象”？</h2>
+<p>如果把面向对象最核心的几个特征拆开来看，会更容易理解。</p>
+<h3 id="2-1-封装：把数据和行为绑在一起">2.1 封装：把数据和行为绑在一起</h3>
+<p>最基础的一步，就是不再把模块状态散落在各个全局变量里，而是把它们装进一个结构体。然后所有操作都围绕这个结构体展开。</p>
+<p>例如，一个“电机对象”里通常会保存：</p>
+<ul>
+<li>电机 ID</li>
+<li>控制模式</li>
+<li>当前角度 / 转速 / 电流</li>
+<li>所属 CAN 总线</li>
+<li>PID 参数</li>
+<li>启动、停止、更新、发命令等函数入口</li>
+</ul>
+<p>这样做的好处是：<strong>对象状态有归属，行为有边界，模块之间不再彼此污染。</strong></p>
+<h3 id="2-2-继承：把公共字段抽到“父类”里">2.2 继承：把公共字段抽到“父类”里</h3>
+<p>C 没有继承语法，但可以通过“结构体嵌套”模拟。</p>
+<p>例如：</p>
+<ul>
+<li><code>baseModule</code> 作为最底层公共模块</li>
+<li><code>MotorModule</code> 在此基础上增加电机共有字段</li>
+<li><code>DJI_MotorModule</code>、<code>DM_MotorModule</code> 再继续扩展为具体实现</li>
+</ul>
+<p>这就是一种很典型的“从抽象到具体”的层级设计。</p>
+<h3 id="2-3-多态：同一个接口，背后可以是不同实现">2.3 多态：同一个接口，背后可以是不同实现</h3>
+<p>多态的关键不是“语法糖”，而是<strong>统一调用方式</strong>。</p>
+<p>在 C 里，这通常依赖函数指针来完成。比如：</p>
+<ul>
+<li>大疆电机对象绑定 <code>get_moto_measure</code></li>
+<li>达妙电机对象绑定 <code>get_motor_measure</code></li>
+<li>不同对象在创建阶段挂上不同的 <code>send_cmd</code> / <code>set_data</code> / <code>PID_Calculate</code></li>
+</ul>
+<p>这样上层代码就不必关心底层到底是哪一种电机，它只需要按照统一接口去调用。</p>
+<h3 id="2-4-组合：一个对象里拥有多个子对象">2.4 组合：一个对象里拥有多个子对象</h3>
+<p>机器人系统很少只有一个电机。更常见的是：</p>
+<ul>
+<li>一个底盘模块管理 4 个驱动电机</li>
+<li>一个升降模块管理 2 个关节电机</li>
+<li>一个武器模块同时管理 DM 电机和 DJI 电机</li>
+</ul>
+<p>这种“对象包含对象”的关系，其实就是组合（composition）。</p>
+<p>在嵌入式里，<strong>组合往往比继承更重要</strong>，因为真实系统的复杂度大多来自“模块之间如何组织”，而不是“类层级有多深”。</p>
+<hr>
+<h2 id="3-结合你的代码，看这套对象模型是怎么搭起来的">3. 结合你的代码，看这套对象模型是怎么搭起来的</h2>
+<p>你这套代码很适合作为“C 语言模拟面向对象”的案例，因为层级非常清楚：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">baseModule</span><br><span class="line">├── MotorModule</span><br><span class="line">│   ├── DJI_MotorModule</span><br><span class="line">│   └── DM_MotorModule</span><br><span class="line">└── StructureModule</span><br><span class="line">    ├── Chassis</span><br><span class="line">    ├── Kfs</span><br><span class="line">    ├── Lift</span><br><span class="line">    └── Weapon</span><br></pre></td></tr></table></figure>
+<p>这不是形式主义，而是一套很典型的机器人控制架构。</p>
+<hr>
+<h2 id="4-第一层抽象：baseModule-是所有模块的共同父类">4. 第一层抽象：baseModule 是所有模块的共同父类</h2>
+<p>从 <code>global.c</code> 来看，<code>baseModule</code> 提供了最基础的生命周期管理：初始化、运行、停止、查询状态、清除错误。它维护了模块状态和错误码，相当于所有业务对象都共享的一层“公共能力”。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">BaseModule_Init</span><span class="params">(baseModule *base)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">BaseModule_Run</span><span class="params">(baseModule *base)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">BaseModule_Stop</span><span class="params">(baseModule *base)</span>;</span><br><span class="line">ModuleState <span class="title function_">BaseModule_GetState</span><span class="params">(baseModule *base)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">BaseModule_ClearError</span><span class="params">(baseModule *base)</span>;</span><br></pre></td></tr></table></figure>
+<p>这层抽象的意义在于：<strong>无论上层是电机模块、结构模块还是其他执行机构，都能共享同一套生命周期接口。</strong></p>
+<p>如果以后你继续扩展传感器模块、云台模块、通信模块，这一层仍然可以复用。</p>
+<p>从设计角度看，这就已经具备了“基类”的味道：它不负责具体业务，但负责给所有对象提供统一基础能力。</p>
+<hr>
+<h2 id="5-第二层抽象：MotorModule-是电机世界里的公共父类">5. 第二层抽象：MotorModule 是电机世界里的公共父类</h2>
+<p>再往上一层，<code>motor.c</code> 里的 <code>MotorModule_Create()</code> 继续把“所有电机共有的属性”抽象出来：</p>
+<ul>
+<li>电机型号 <code>model</code></li>
+<li>控制模式 <code>mode</code></li>
+<li>电机 ID <code>id</code></li>
+<li>CAN 句柄</li>
+<li>继承自 <code>baseModule</code> 的函数入口</li>
+</ul>
+<p>同时在创建阶段把基类方法挂接进去：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">obj-&gt;base.Init = MotorModule_Init;</span><br><span class="line">obj-&gt;base.Run = MotorModule_Run;</span><br><span class="line">obj-&gt;base.Stop = BaseModule_Stop;</span><br><span class="line">obj-&gt;base.GetState = BaseModule_GetState;</span><br><span class="line">obj-&gt;base.ClearError = BaseModule_ClearError;</span><br></pre></td></tr></table></figure>
+<p>这段代码非常关键。它说明你的对象不是“只有数据”，而是<strong>数据 + 行为入口一起交给对象本身管理</strong>。</p>
+<p>也就是说，当我们拿到一个 <code>MotorModule</code> 对象时，不只是拿到一组电机参数，而是拿到一个具备初始化、运行、停止、错误处理能力的实体。</p>
+<p>这就是 C 版本的“对象实例”。</p>
+<hr>
+<h2 id="6-第三层抽象：DJI-与-DM-电机是具体派生类">6. 第三层抽象：DJI 与 DM 电机是具体派生类</h2>
+<h3 id="6-1-DJI-电机：在公共电机能力上叠加编码器、PID-与反馈解析">6.1 DJI 电机：在公共电机能力上叠加编码器、PID 与反馈解析</h3>
+<p><code>dji_motor.c</code> 里做的事情，本质上就是在 <code>MotorModule</code> 的基础上，扩展出一个更具体的对象：<code>DJI_MotorModule</code>。</p>
+<p>它增加了这些能力：</p>
+<ul>
+<li>编码器角度解析</li>
+<li>圈数累计与总角度计算</li>
+<li>速度、电流、温度反馈</li>
+<li>位置环 / 速度环 PID 计算</li>
+<li>大疆电机 CAN 帧打包与发送</li>
+</ul>
+<p>创建函数里，把具体行为挂到对象上：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">obj-&gt;get_moto_measure = DJIget_motor_measure;</span><br><span class="line">obj-&gt;get_moto_offset = DJIget_moto_offset;</span><br><span class="line">obj-&gt;PID_Calculate = Motor_PID_Calculate;</span><br></pre></td></tr></table></figure>
+<p>这就是一个非常典型的“派生对象绑定具体方法”的过程。</p>
+<p>尤其是 <code>Motor_PID_Calculate()</code> 里，你已经体现了分模式控制的思想：</p>
+<ul>
+<li><code>POSITION</code>：位置环套速度环</li>
+<li><code>SPEED</code>：直接速度闭环</li>
+<li><code>MIT</code>：预留模式接口</li>
+</ul>
+<p>这说明你的对象设计不只是为了“组织代码”，它已经进入了<strong>控制策略封装</strong>的层面。</p>
+<h3 id="6-2-DM-电机：同样的父类，不同的协议与控制模式">6.2 DM 电机：同样的父类，不同的协议与控制模式</h3>
+<p><code>dm_motor.c</code> 则展示了另一个具体实现：达妙电机对象。</p>
+<p>它提供了：</p>
+<ul>
+<li>使能 / 失能 / 清错 / 存零点命令</li>
+<li>位置、速度、力矩反馈解包</li>
+<li>MIT 控制报文打包</li>
+<li>位置速度控制报文打包</li>
+</ul>
+<p>在创建阶段，同样将这些行为绑定到对象：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">obj-&gt;send_cmd = DM_Motor_CMD;</span><br><span class="line">obj-&gt;set_mit_data = DMset_mit_data;</span><br><span class="line">obj-&gt;set_posvel_data = DMset_posvel_data;</span><br><span class="line">obj-&gt;get_motor_measure = DMget_motor_measure;</span><br></pre></td></tr></table></figure>
+<p>这正是多态在工程中的价值：</p>
+<ul>
+<li>它们都属于“电机对象”</li>
+<li>但不同对象的通信协议、状态解析方式、控制命令完全不同</li>
+<li>上层模块不用重复写一大堆 <code>if (is_dji) ... else if (is_dm) ...</code></li>
+</ul>
+<p>一旦对象创建完成，具体行为已经注入到对象里了。</p>
+<hr>
+<h2 id="7-第四层抽象：StructureModule-负责“管理多个电机”">7. 第四层抽象：StructureModule 负责“管理多个电机”</h2>
+<p>如果说 <code>MotorModule</code> 解决的是“一个电机怎么抽象”，那么 <code>StructureModule</code> 解决的就是“一个机器人机构如何管理多个电机”。</p>
+<p>在 <code>structure.c</code> 中，这个模块做了几件非常有代表性的事情：</p>
+<ol>
+<li>它同样继承了 <code>baseModule</code> 的公共行为</li>
+<li>它维护一个电机数组 <code>motors[]</code></li>
+<li>它记录电机 ID 数组 <code>motor_ids[]</code></li>
+<li>它通过 <code>AddMotor()</code> 完成子对象注册</li>
+<li>它负责校验空指针、重复添加、数量上限等问题</li>
+</ol>
+<p>这说明你已经不只是“给电机写驱动”，而是在做<strong>机构级对象管理</strong>。</p>
+<p>换句话说，底盘、升降、武器，不再只是一些松散函数，而是一个个真正独立的功能对象。</p>
+<p>这在机器人项目里非常重要，因为一个功能模块通常不只控制单一执行器，而是控制一组互相协同的执行器。</p>
+<hr>
+<h2 id="8-register-c：这其实就是系统装配层">8. register.c：这其实就是系统装配层</h2>
+<p>很多人写嵌入式代码时，喜欢一启动就到处 <code>Init()</code>，但缺少“系统装配”的概念。你的 <code>register.c</code> 恰好体现了这一层。</p>
+<p>例如：</p>
+<ul>
+<li><code>Chassis_Init()</code> 创建底盘结构体，再创建 4 个 DJI 底盘电机，然后逐个注册到结构模块</li>
+<li><code>Kfs_Init()</code> 创建结构模块，再创建两台 DM 电机，并发送使能命令</li>
+<li><code>Lift_Init()</code> 同时装配 DM 和 DJI 电机</li>
+<li><code>Weapon_Init()</code> 也是混合装配模式</li>
+</ul>
+<p>这说明你的系统已经具备了典型的**组合根（composition root）**思想：</p>
+<ul>
+<li>对象在这里被创建</li>
+<li>对象关系在这里被组装</li>
+<li>上层系统通过这个入口完成整体初始化</li>
+</ul>
+<p>这和桌面软件里的依赖注入、对象装配在思想上是一致的，只是你是在裸机 / RTOS / HAL 的环境里用 C 手工完成而已。</p>
+<p>从工程角度看，这种写法的一个巨大优点是：<strong>模块边界很清楚，初始化顺序也很清楚。</strong></p>
+<hr>
+<h2 id="9-这套写法在机器人嵌入式里到底好在哪？">9. 这套写法在机器人嵌入式里到底好在哪？</h2>
+<p>说到底，设计模式从来不是为了“好看”，而是为了降低复杂度。放到机器人控制系统里，这套对象化写法至少有五个非常现实的好处。</p>
+<h3 id="9-1-支持异构电机统一管理">9.1 支持异构电机统一管理</h3>
+<p>你的系统里同时用了 DJI 和 DM 两类电机，而且控制方式并不相同：</p>
+<ul>
+<li>DJI 更偏传统编码器反馈 + PID 闭环</li>
+<li>DM 支持 MIT 模式与位置速度控制模式</li>
+</ul>
+<p>如果没有对象化抽象，上层模块几乎一定会到处出现协议分支。而现在，结构模块只需要管理“电机对象”，不需要管理“电机协议细节”。</p>
+<h3 id="9-2-让控制层和驱动层解耦">9.2 让控制层和驱动层解耦</h3>
+<p>理想情况下：</p>
+<ul>
+<li>驱动层负责收发 CAN、解析反馈</li>
+<li>控制层负责位置环、速度环、状态机</li>
+<li>结构层负责组织多个执行器协同工作</li>
+</ul>
+<p>你现在的设计已经朝这个方向走了。虽然还可以继续打磨，但核心思路是对的。</p>
+<h3 id="9-3-更适合做功能扩展">9.3 更适合做功能扩展</h3>
+<p>假设明天你要加入第三种电机，甚至加入舵机、气缸、线性执行器，你并不需要把整套架构推翻。</p>
+<p>你只需要：</p>
+<ol>
+<li>定义一个新的对象结构体</li>
+<li>实现它自己的反馈解析和命令发送函数</li>
+<li>在创建函数里把行为绑定好</li>
+<li>把它注册进某个 <code>StructureModule</code></li>
+</ol>
+<p>这样扩展成本会比“直接往旧代码上堆 if-else”低很多。</p>
+<h3 id="9-4-更容易做模块级测试">9.4 更容易做模块级测试</h3>
+<p>对象边界清楚以后，测试也更容易分层。</p>
+<p>例如你可以分别验证：</p>
+<ul>
+<li><code>PID</code> 算法是否正常</li>
+<li><code>DJIget_motor_measure()</code> 的反馈解包是否正确</li>
+<li><code>DMset_mit_data()</code> 的打包是否符合协议</li>
+<li><code>StructureModule_AddMotor()</code> 是否能正确处理重复注册</li>
+</ul>
+<p>当代码组织混乱时，这些测试很难独立进行。</p>
+<h3 id="9-5-更符合长期维护的需要">9.5 更符合长期维护的需要</h3>
+<p>机器人项目最怕的不是“现在能跑”，而是“后面没人敢改”。</p>
+<p>一旦代码需要交给队友、学弟、或者未来的自己维护，面向对象风格的 C 代码会比“神秘全局变量流”更友好。因为：</p>
+<ul>
+<li>模块职责更清晰</li>
+<li>新人更容易找到入口</li>
+<li>修改某一类设备时，不必到全工程里搜索替换</li>
+</ul>
+<hr>
+<h2 id="10-那么，这样写是不是“更专业”？">10. 那么，这样写是不是“更专业”？</h2>
+<p>我的答案是：<strong>当它服务于复杂度管理时，它就是专业的；当它只是为了显得高级时，它就只是样子货。</strong></p>
+<h3 id="值得这么写的场景">值得这么写的场景</h3>
+<ul>
+<li>设备种类多，协议差异大</li>
+<li>同一类对象有多个具体实现</li>
+<li>系统需要长期迭代</li>
+<li>需要统一生命周期管理</li>
+<li>希望上层逻辑尽量不依赖底层硬件细节</li>
+</ul>
+<h3 id="不值得这么写的场景">不值得这么写的场景</h3>
+<ul>
+<li>只有一两个简单外设</li>
+<li>模块边界非常简单</li>
+<li>根本不存在扩展需求</li>
+<li>为了“像 Linux 内核”而硬上抽象层</li>
+</ul>
+<p>真正专业的工程师，追求的从来不是“抽象越多越高级”，而是<strong>抽象刚刚好</strong>。</p>
+<p>Linux 内核确实大量使用了结构体嵌套、回调函数、接口分层等技巧，但它这么做不是为了炫技，而是因为面对海量设备和复杂场景，必须依赖这种方法控制复杂度。嵌入式机器人项目也是同样的道理。</p>
+<hr>
+<h2 id="11-结合你的代码，再谈几个很有价值的工程细节">11. 结合你的代码，再谈几个很有价值的工程细节</h2>
+<p>你的设计方向是对的，但从“能工作”走向“更稳健”，还有几个点值得继续打磨。</p>
+<h3 id="11-1-Create、Init、Enable-最好彻底分层">11.1 <code>Create</code>、<code>Init</code>、<code>Enable</code> 最好彻底分层</h3>
+<p>你现在已经有这个雏形了：</p>
+<ul>
+<li><code>Create()</code>：负责构造对象、绑定函数指针、设置默认值</li>
+<li><code>base.Init()</code>：负责进入初始化后的可运行状态</li>
+<li><code>send_cmd(..., Motor_Enable)</code>：负责真正给执行器上电/使能</li>
+</ul>
+<p>这是个非常好的方向。</p>
+<p>如果继续把这三者的职责文档化，你的代码会更清晰：</p>
+<ul>
+<li><code>Create</code> 只构造，不访问硬件</li>
+<li><code>Init</code> 只做软件层初始化</li>
+<li><code>Enable</code> 才进行设备使能</li>
+</ul>
+<p>这样对象生命周期会更容易维护，也更方便调试故障。</p>
+<h3 id="11-2-尽量保存外设句柄指针，而不是复制句柄">11.2 尽量保存外设句柄指针，而不是复制句柄</h3>
+<p>当前 <code>MotorModule_Create()</code> 中把 <code>CAN_HandleTypeDef</code> 直接复制进对象，这在某些 HAL 项目里可能工作正常，但从工程习惯上看，<strong>保存句柄指针往往更稳妥</strong>。</p>
+<p>原因很简单：</p>
+<ul>
+<li>硬件句柄本来就是“共享资源”</li>
+<li>复制句柄可能造成状态不同步</li>
+<li>指针语义更明确，表明这个对象只是“挂靠在某个总线实例上”</li>
+</ul>
+<p>如果以后系统规模更大、总线资源更多，这一点会更重要。</p>
+<h3 id="11-3-面向对象不等于自动安全，边界条件还是要自己守住">11.3 面向对象不等于自动安全，边界条件还是要自己守住</h3>
+<p>对象化只是组织代码，不会自动消灭 bug。</p>
+<p>例如在 <code>StructureModule_AddMotor()</code> 这类函数里，空指针、重复注册、容量上限都必须认真处理。你已经有这个意识了，这是很好的工程习惯。</p>
+<p>再往前一步，可以考虑：</p>
+<ul>
+<li>对空指针做更严格分支处理</li>
+<li>让错误码具备更明确的枚举语义</li>
+<li>给 <code>AddMotor()</code> 返回状态码，而不只是写入 <code>error_code</code></li>
+</ul>
+<p>这样接口会更适合上层统一处理。</p>
+<h3 id="11-4-再往深一点看，源码里还有几个很典型的工程细节">11.4 再往深一点看，源码里还有几个很典型的工程细节</h3>
+<p>第一，<code>StructureModule_AddMotor()</code> 的空指针判断思路是对的，但实现上还可以更严谨。如果 <code>structure == NULL</code>，函数里再去写 <code>structure-&gt;base.error_code</code> 就会变成新的空指针访问。所以这类接口最好把 <code>structure == NULL</code> 和 <code>motor == NULL</code> 分开处理，或者直接返回错误码。</p>
+<p>第二，<code>DMset_mit_data()</code> 里有几处把 <code>float_to_uint()</code> 的上下限都传成 <code>0</code> 的写法。从抽象层面看，这是在复用统一量化函数；但从实现层面看，这种“零跨度映射”并不稳妥。更安全的做法是：对那些本来就应该恒为 0 的字段，直接写入 0，而不是再走一层通用换算。</p>
+<p>第三，<code>DJImotor_Create()</code> 同时接收 <code>command_id</code> 和 <code>feedback_id</code>，但当前对象创建时主要使用了 <code>feedback_id - 0x200</code> 这一套映射。这个设计未必一定有问题，但如果后续别人来维护，最好把“对象 ID、命令帧 ID、反馈帧 ID”三者的关系写得更清楚，否则接口虽然做了抽象，语义却可能变得模糊。</p>
+<p>这些细节很值得写进工程博客里，因为它们能说明一件事：<strong>好的架构不是把代码包装得很像对象，而是在抽象之外，仍然对协议、边界条件和硬件语义保持敏感。</strong></p>
+<h3 id="11-5-协议封装一定要警惕“魔法数字”">11.5 协议封装一定要警惕“魔法数字”</h3>
+<p>无论是 DJI 编码器圈数累计，还是 DM 的 MIT 报文打包，代码里都存在很多协议常量，例如：</p>
+<ul>
+<li><code>4096</code></li>
+<li><code>8192</code></li>
+<li><code>6.28318f</code></li>
+<li><code>3.14159f</code></li>
+<li><code>0xFC / 0xFD / 0xFE / 0xFB</code></li>
+</ul>
+<p>这些数字写在驱动里没有问题，但如果能进一步用宏、枚举、协议说明文档统一管理，代码可读性会明显提升。</p>
+<p>对于机器人项目来说，这类“协议常量”往往比算法更容易出错。</p>
+<h3 id="11-6-抽象之外，还要注意实时性与可预测性">11.6 抽象之外，还要注意实时性与可预测性</h3>
+<p>嵌入式系统不是桌面软件。你写的这些对象最终都要跑在实时控制循环里，所以除了结构优雅，还要关注：</p>
+<ul>
+<li>是否引入了不必要的函数调用开销</li>
+<li>是否有动态内存分配</li>
+<li>是否有任务与中断间的数据竞争</li>
+<li>CAN 发送是否可能冲突</li>
+<li>PID 与反馈更新是否有严格时序保证</li>
+</ul>
+<p>换句话说：<strong>嵌入式里的面向对象，一定要建立在实时性和确定性之上。</strong></p>
+<hr>
+<h2 id="12-如果让我继续优化这套架构，我会怎么做？">12. 如果让我继续优化这套架构，我会怎么做？</h2>
+<p>在不推翻现有设计的前提下，我会考虑下面几个方向。</p>
+<h3 id="12-1-把“接口表”进一步标准化">12.1 把“接口表”进一步标准化</h3>
+<p>现在你的对象方法是直接一个个挂到结构体里的，这没有问题。但如果系统继续扩大，可以进一步抽象成一张接口表（类似虚函数表）。</p>
+<p>例如：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">void</span> (*enable)(<span class="type">void</span> *obj);</span><br><span class="line">    <span class="type">void</span> (*disable)(<span class="type">void</span> *obj);</span><br><span class="line">    <span class="type">void</span> (*update_feedback)(<span class="type">void</span> *obj, <span class="type">uint8_t</span> rx[<span class="number">8</span>]);</span><br><span class="line">    <span class="type">void</span> (*set_output)(<span class="type">void</span> *obj, <span class="type">float</span> cmd);</span><br><span class="line">&#125; MotorOps;</span><br></pre></td></tr></table></figure>
+<p>然后每种电机对象持有自己的 <code>MotorOps</code> 指针。</p>
+<p>这样做的好处是：</p>
+<ul>
+<li>行为定义更集中</li>
+<li>接口缺失更容易发现</li>
+<li>更像标准驱动框架</li>
+</ul>
+<h3 id="12-2-把-PID-与电机驱动进一步解耦">12.2 把 PID 与电机驱动进一步解耦</h3>
+<p>现在 DJI 电机对象里直接包含 PID，这在工程上很常见，但从架构角度看，也可以进一步拆开：</p>
+<ul>
+<li>电机驱动对象只负责协议收发与状态反馈</li>
+<li>控制器对象只负责算控制量</li>
+<li>上层结构模块决定“哪个控制器作用于哪个执行器”</li>
+</ul>
+<p>这种写法在后续引入前馈、状态观测器、模型控制时会更灵活。</p>
+<h3 id="12-3-给模块增加统一的-Update-或-Control-周期接口">12.3 给模块增加统一的 <code>Update()</code> 或 <code>Control()</code> 周期接口</h3>
+<p>如果未来你希望整个系统更规整，可以把每个对象统一到类似这样的周期函数：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> (*Update)(baseModule *obj, <span class="type">float</span> dt);</span><br></pre></td></tr></table></figure>
+<p>这样调度器每个周期只需要遍历模块并调用 <code>Update()</code>，系统主循环会非常清楚。</p>
+<h3 id="12-4-把错误系统做得更完整">12.4 把错误系统做得更完整</h3>
+<p>当前 <code>error_code</code> 已经是一个不错的开始。继续完善的话，可以考虑：</p>
+<ul>
+<li>模块级错误</li>
+<li>总线级错误</li>
+<li>电机离线错误</li>
+<li>温度异常错误</li>
+<li>超限保护错误</li>
+<li>清错与恢复机制</li>
+</ul>
+<p>对于机器人项目来说，<strong>可靠性设计和对象设计同样重要</strong>。</p>
+<hr>
+<h2 id="13-一个最小化示例：什么叫“C-语言版本的类”？">13. 一个最小化示例：什么叫“C 语言版本的类”？</h2>
+<p>如果把你的设计思想再压缩一下，其实可以抽象成下面这个最小模型：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">Motor</span> <span class="title">Motor</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">void</span> (*enable)(Motor *m);</span><br><span class="line">    <span class="type">void</span> (*disable)(Motor *m);</span><br><span class="line">    <span class="type">void</span> (*update_feedback)(Motor *m, <span class="type">uint8_t</span> rx[<span class="number">8</span>]);</span><br><span class="line">    <span class="type">float</span> (*calc_output)(Motor *m, <span class="type">float</span> ref);</span><br><span class="line">&#125; MotorVTable;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Motor</span> &#123;</span></span><br><span class="line">    <span class="type">uint8_t</span> id;</span><br><span class="line">    <span class="type">uint8_t</span> mode;</span><br><span class="line">    <span class="type">const</span> MotorVTable *ops;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    Motor base;</span><br><span class="line">    <span class="type">float</span> speed_rpm;</span><br><span class="line">    <span class="type">float</span> total_angle;</span><br><span class="line">    PID_Info_TypeDef pid_spd;</span><br><span class="line">    PID_Info_TypeDef pid_pos;</span><br><span class="line">&#125; DJI_Motor;</span><br></pre></td></tr></table></figure>
+<p>这个例子本质上和你的工程代码是同一路思路：</p>
+<ul>
+<li><code>Motor</code> 是抽象父类</li>
+<li><code>DJI_Motor</code> 是具体子类</li>
+<li><code>MotorVTable</code> 是一张行为表</li>
+<li>上层代码只和统一接口交互</li>
+</ul>
+<p>这就是 C 版面向对象的核心。</p>
+<hr>
+<h2 id="14-总结">14. 总结</h2>
+<p>回到最开始的问题：<strong>“用 C 模拟面向对象，是不是更专业？”</strong></p>
+<p>答案不是简单的“是”或“不是”。</p>
+<p>更准确地说，<strong>当你的系统已经复杂到需要抽象层、统一接口、模块组合和长期维护时，这样写就很专业；当系统其实很简单，却硬套复杂架构时，它反而会变成负担。</strong></p>
+<p>从你这套机器人嵌入式代码来看，这种写法是有充分工程理由的：</p>
+<ul>
+<li>你面对的是异构电机与多机构协同控制</li>
+<li>你需要统一模块生命周期</li>
+<li>你需要清晰的驱动层、控制层、结构层边界</li>
+<li>你希望系统能继续扩展，而不是越写越乱</li>
+</ul>
+<p>这已经不是“为了看起来高级”的写法，而是<strong>为了让机器人控制系统在规模扩大后依旧可维护、可扩展、可调试</strong>。</p>
+<p>所以真正值得学习的，不是“把 C 写得像 C++”，而是学会背后的那套工程思维：</p>
+<ul>
+<li>先识别哪些能力是公共的</li>
+<li>再抽象出统一接口</li>
+<li>用组合关系组织复杂系统</li>
+<li>用清晰的生命周期管理对象</li>
+<li>最终让控制逻辑和硬件细节尽量解耦</li>
+</ul>
+<p>这才是 C 语言模拟面向对象最有价值的地方。</p>
+<hr>
+<h2 id="15-写在最后">15. 写在最后</h2>
+<p>如果你也在做机器人、嵌入式控制或者电机驱动，我非常建议你认真思考一个问题：</p>
+<blockquote>
+<p>你的代码到底是在“堆功能”，还是在“搭系统”？</p>
+</blockquote>
+<p>前者能让你很快把东西跑起来，后者才能让项目在半年、一年之后依然可维护。</p>
+<p>而 C 语言模拟面向对象，本质上就是从“堆功能”走向“搭系统”的那一步。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/03/16/c_language_oop_robotics_blog/">http://example.com/2026/03/16/c_language_oop_robotics_blog/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/03/15/rsl_rl_source_analysis/" title="rsl_rl库源码解读"><img class="cover" src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">rsl_rl库源码解读</div></div><div class="info-2"><div class="info-item-1">很多人第一次看 rsl_rl，会以为它只是“又一个 PPO 仓库”。但如果把源码真正拆开，你会发现它的核心价值并不只是实现了 PPO，而是把 模型结构、观测组织、采样存储、训练更新、蒸馏部署 这些环节统一进了一套非常清晰的接口里。 对于足式机器人来说，这种设计尤其重要。原因很简单：机器人强化学习不是只写一个 policy(obs) 就结束了。真实工程里你常常会同时面对这些问题：  actor 和 critic 看到的观测不一样； 训练时可以用 privileged information，部署时却不能用； 有些任务只需要 MLP，有些任务要加 CNN 或 RNN； 训练时要高效支持并行环境、PPO、多卡同步，部署时又要能导出 JIT / ONNX。  而这组源码恰好把这些问题都落到了具体实现里。 本文会围绕你给出的几个核心文件，从 理论公式 和 工程实现 两条线同时解读 rsl_rl：  MLP / MLPModel 如何构成整套模型抽象； CNNModel 和 RNNModel 如何复用这套接口； PPO 的采样、GAE、裁剪目标、KL 自适应学习率如何映射到代码； Disti...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">zhxy</div><div class="author-info-description">学微电子的破大学生</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">C语言模拟面向对象</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88-C-%E8%AF%AD%E8%A8%80%E4%B9%9F%E8%A6%81%E2%80%9C%E5%AF%B9%E8%B1%A1%E5%8C%96%E2%80%9D%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">1. 为什么 C 语言也要“对象化”？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%9C%A8-C-%E9%87%8C%EF%BC%8C%E4%BB%80%E4%B9%88%E5%8F%AB%E2%80%9C%E6%A8%A1%E6%8B%9F%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E2%80%9D%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">2. 在 C 里，什么叫“模拟面向对象”？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E5%B0%81%E8%A3%85%EF%BC%9A%E6%8A%8A%E6%95%B0%E6%8D%AE%E5%92%8C%E8%A1%8C%E4%B8%BA%E7%BB%91%E5%9C%A8%E4%B8%80%E8%B5%B7"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 封装：把数据和行为绑在一起</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E7%BB%A7%E6%89%BF%EF%BC%9A%E6%8A%8A%E5%85%AC%E5%85%B1%E5%AD%97%E6%AE%B5%E6%8A%BD%E5%88%B0%E2%80%9C%E7%88%B6%E7%B1%BB%E2%80%9D%E9%87%8C"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 继承：把公共字段抽到“父类”里</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E5%A4%9A%E6%80%81%EF%BC%9A%E5%90%8C%E4%B8%80%E4%B8%AA%E6%8E%A5%E5%8F%A3%EF%BC%8C%E8%83%8C%E5%90%8E%E5%8F%AF%E4%BB%A5%E6%98%AF%E4%B8%8D%E5%90%8C%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3 多态：同一个接口，背后可以是不同实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E7%BB%84%E5%90%88%EF%BC%9A%E4%B8%80%E4%B8%AA%E5%AF%B9%E8%B1%A1%E9%87%8C%E6%8B%A5%E6%9C%89%E5%A4%9A%E4%B8%AA%E5%AD%90%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.2.4.</span> <span class="toc-text">2.4 组合：一个对象里拥有多个子对象</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%BB%93%E5%90%88%E4%BD%A0%E7%9A%84%E4%BB%A3%E7%A0%81%EF%BC%8C%E7%9C%8B%E8%BF%99%E5%A5%97%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%9E%8B%E6%98%AF%E6%80%8E%E4%B9%88%E6%90%AD%E8%B5%B7%E6%9D%A5%E7%9A%84"><span class="toc-number">1.3.</span> <span class="toc-text">3. 结合你的代码，看这套对象模型是怎么搭起来的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%AC%AC%E4%B8%80%E5%B1%82%E6%8A%BD%E8%B1%A1%EF%BC%9AbaseModule-%E6%98%AF%E6%89%80%E6%9C%89%E6%A8%A1%E5%9D%97%E7%9A%84%E5%85%B1%E5%90%8C%E7%88%B6%E7%B1%BB"><span class="toc-number">1.4.</span> <span class="toc-text">4. 第一层抽象：baseModule 是所有模块的共同父类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%AC%AC%E4%BA%8C%E5%B1%82%E6%8A%BD%E8%B1%A1%EF%BC%9AMotorModule-%E6%98%AF%E7%94%B5%E6%9C%BA%E4%B8%96%E7%95%8C%E9%87%8C%E7%9A%84%E5%85%AC%E5%85%B1%E7%88%B6%E7%B1%BB"><span class="toc-number">1.5.</span> <span class="toc-text">5. 第二层抽象：MotorModule 是电机世界里的公共父类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%AC%AC%E4%B8%89%E5%B1%82%E6%8A%BD%E8%B1%A1%EF%BC%9ADJI-%E4%B8%8E-DM-%E7%94%B5%E6%9C%BA%E6%98%AF%E5%85%B7%E4%BD%93%E6%B4%BE%E7%94%9F%E7%B1%BB"><span class="toc-number">1.6.</span> <span class="toc-text">6. 第三层抽象：DJI 与 DM 电机是具体派生类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-DJI-%E7%94%B5%E6%9C%BA%EF%BC%9A%E5%9C%A8%E5%85%AC%E5%85%B1%E7%94%B5%E6%9C%BA%E8%83%BD%E5%8A%9B%E4%B8%8A%E5%8F%A0%E5%8A%A0%E7%BC%96%E7%A0%81%E5%99%A8%E3%80%81PID-%E4%B8%8E%E5%8F%8D%E9%A6%88%E8%A7%A3%E6%9E%90"><span class="toc-number">1.6.1.</span> <span class="toc-text">6.1 DJI 电机：在公共电机能力上叠加编码器、PID 与反馈解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-DM-%E7%94%B5%E6%9C%BA%EF%BC%9A%E5%90%8C%E6%A0%B7%E7%9A%84%E7%88%B6%E7%B1%BB%EF%BC%8C%E4%B8%8D%E5%90%8C%E7%9A%84%E5%8D%8F%E8%AE%AE%E4%B8%8E%E6%8E%A7%E5%88%B6%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.6.2.</span> <span class="toc-text">6.2 DM 电机：同样的父类，不同的协议与控制模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E7%AC%AC%E5%9B%9B%E5%B1%82%E6%8A%BD%E8%B1%A1%EF%BC%9AStructureModule-%E8%B4%9F%E8%B4%A3%E2%80%9C%E7%AE%A1%E7%90%86%E5%A4%9A%E4%B8%AA%E7%94%B5%E6%9C%BA%E2%80%9D"><span class="toc-number">1.7.</span> <span class="toc-text">7. 第四层抽象：StructureModule 负责“管理多个电机”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-register-c%EF%BC%9A%E8%BF%99%E5%85%B6%E5%AE%9E%E5%B0%B1%E6%98%AF%E7%B3%BB%E7%BB%9F%E8%A3%85%E9%85%8D%E5%B1%82"><span class="toc-number">1.8.</span> <span class="toc-text">8. register.c：这其实就是系统装配层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E8%BF%99%E5%A5%97%E5%86%99%E6%B3%95%E5%9C%A8%E6%9C%BA%E5%99%A8%E4%BA%BA%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%87%8C%E5%88%B0%E5%BA%95%E5%A5%BD%E5%9C%A8%E5%93%AA%EF%BC%9F"><span class="toc-number">1.9.</span> <span class="toc-text">9. 这套写法在机器人嵌入式里到底好在哪？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E6%94%AF%E6%8C%81%E5%BC%82%E6%9E%84%E7%94%B5%E6%9C%BA%E7%BB%9F%E4%B8%80%E7%AE%A1%E7%90%86"><span class="toc-number">1.9.1.</span> <span class="toc-text">9.1 支持异构电机统一管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E8%AE%A9%E6%8E%A7%E5%88%B6%E5%B1%82%E5%92%8C%E9%A9%B1%E5%8A%A8%E5%B1%82%E8%A7%A3%E8%80%A6"><span class="toc-number">1.9.2.</span> <span class="toc-text">9.2 让控制层和驱动层解耦</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-%E6%9B%B4%E9%80%82%E5%90%88%E5%81%9A%E5%8A%9F%E8%83%BD%E6%89%A9%E5%B1%95"><span class="toc-number">1.9.3.</span> <span class="toc-text">9.3 更适合做功能扩展</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-4-%E6%9B%B4%E5%AE%B9%E6%98%93%E5%81%9A%E6%A8%A1%E5%9D%97%E7%BA%A7%E6%B5%8B%E8%AF%95"><span class="toc-number">1.9.4.</span> <span class="toc-text">9.4 更容易做模块级测试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-5-%E6%9B%B4%E7%AC%A6%E5%90%88%E9%95%BF%E6%9C%9F%E7%BB%B4%E6%8A%A4%E7%9A%84%E9%9C%80%E8%A6%81"><span class="toc-number">1.9.5.</span> <span class="toc-text">9.5 更符合长期维护的需要</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E9%82%A3%E4%B9%88%EF%BC%8C%E8%BF%99%E6%A0%B7%E5%86%99%E6%98%AF%E4%B8%8D%E6%98%AF%E2%80%9C%E6%9B%B4%E4%B8%93%E4%B8%9A%E2%80%9D%EF%BC%9F"><span class="toc-number">1.10.</span> <span class="toc-text">10. 那么，这样写是不是“更专业”？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%80%BC%E5%BE%97%E8%BF%99%E4%B9%88%E5%86%99%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">1.10.1.</span> <span class="toc-text">值得这么写的场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8D%E5%80%BC%E5%BE%97%E8%BF%99%E4%B9%88%E5%86%99%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="toc-number">1.10.2.</span> <span class="toc-text">不值得这么写的场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E7%BB%93%E5%90%88%E4%BD%A0%E7%9A%84%E4%BB%A3%E7%A0%81%EF%BC%8C%E5%86%8D%E8%B0%88%E5%87%A0%E4%B8%AA%E5%BE%88%E6%9C%89%E4%BB%B7%E5%80%BC%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%BB%86%E8%8A%82"><span class="toc-number">1.11.</span> <span class="toc-text">11. 结合你的代码，再谈几个很有价值的工程细节</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-Create%E3%80%81Init%E3%80%81Enable-%E6%9C%80%E5%A5%BD%E5%BD%BB%E5%BA%95%E5%88%86%E5%B1%82"><span class="toc-number">1.11.1.</span> <span class="toc-text">11.1 Create、Init、Enable 最好彻底分层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-%E5%B0%BD%E9%87%8F%E4%BF%9D%E5%AD%98%E5%A4%96%E8%AE%BE%E5%8F%A5%E6%9F%84%E6%8C%87%E9%92%88%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E5%A4%8D%E5%88%B6%E5%8F%A5%E6%9F%84"><span class="toc-number">1.11.2.</span> <span class="toc-text">11.2 尽量保存外设句柄指针，而不是复制句柄</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-3-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E4%B8%8D%E7%AD%89%E4%BA%8E%E8%87%AA%E5%8A%A8%E5%AE%89%E5%85%A8%EF%BC%8C%E8%BE%B9%E7%95%8C%E6%9D%A1%E4%BB%B6%E8%BF%98%E6%98%AF%E8%A6%81%E8%87%AA%E5%B7%B1%E5%AE%88%E4%BD%8F"><span class="toc-number">1.11.3.</span> <span class="toc-text">11.3 面向对象不等于自动安全，边界条件还是要自己守住</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-4-%E5%86%8D%E5%BE%80%E6%B7%B1%E4%B8%80%E7%82%B9%E7%9C%8B%EF%BC%8C%E6%BA%90%E7%A0%81%E9%87%8C%E8%BF%98%E6%9C%89%E5%87%A0%E4%B8%AA%E5%BE%88%E5%85%B8%E5%9E%8B%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%BB%86%E8%8A%82"><span class="toc-number">1.11.4.</span> <span class="toc-text">11.4 再往深一点看，源码里还有几个很典型的工程细节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-5-%E5%8D%8F%E8%AE%AE%E5%B0%81%E8%A3%85%E4%B8%80%E5%AE%9A%E8%A6%81%E8%AD%A6%E6%83%95%E2%80%9C%E9%AD%94%E6%B3%95%E6%95%B0%E5%AD%97%E2%80%9D"><span class="toc-number">1.11.5.</span> <span class="toc-text">11.5 协议封装一定要警惕“魔法数字”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-6-%E6%8A%BD%E8%B1%A1%E4%B9%8B%E5%A4%96%EF%BC%8C%E8%BF%98%E8%A6%81%E6%B3%A8%E6%84%8F%E5%AE%9E%E6%97%B6%E6%80%A7%E4%B8%8E%E5%8F%AF%E9%A2%84%E6%B5%8B%E6%80%A7"><span class="toc-number">1.11.6.</span> <span class="toc-text">11.6 抽象之外，还要注意实时性与可预测性</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E5%A6%82%E6%9E%9C%E8%AE%A9%E6%88%91%E7%BB%A7%E7%BB%AD%E4%BC%98%E5%8C%96%E8%BF%99%E5%A5%97%E6%9E%B6%E6%9E%84%EF%BC%8C%E6%88%91%E4%BC%9A%E6%80%8E%E4%B9%88%E5%81%9A%EF%BC%9F"><span class="toc-number">1.12.</span> <span class="toc-text">12. 如果让我继续优化这套架构，我会怎么做？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#12-1-%E6%8A%8A%E2%80%9C%E6%8E%A5%E5%8F%A3%E8%A1%A8%E2%80%9D%E8%BF%9B%E4%B8%80%E6%AD%A5%E6%A0%87%E5%87%86%E5%8C%96"><span class="toc-number">1.12.1.</span> <span class="toc-text">12.1 把“接口表”进一步标准化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-2-%E6%8A%8A-PID-%E4%B8%8E%E7%94%B5%E6%9C%BA%E9%A9%B1%E5%8A%A8%E8%BF%9B%E4%B8%80%E6%AD%A5%E8%A7%A3%E8%80%A6"><span class="toc-number">1.12.2.</span> <span class="toc-text">12.2 把 PID 与电机驱动进一步解耦</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-3-%E7%BB%99%E6%A8%A1%E5%9D%97%E5%A2%9E%E5%8A%A0%E7%BB%9F%E4%B8%80%E7%9A%84-Update-%E6%88%96-Control-%E5%91%A8%E6%9C%9F%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.12.3.</span> <span class="toc-text">12.3 给模块增加统一的 Update() 或 Control() 周期接口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-4-%E6%8A%8A%E9%94%99%E8%AF%AF%E7%B3%BB%E7%BB%9F%E5%81%9A%E5%BE%97%E6%9B%B4%E5%AE%8C%E6%95%B4"><span class="toc-number">1.12.4.</span> <span class="toc-text">12.4 把错误系统做得更完整</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F%E5%8C%96%E7%A4%BA%E4%BE%8B%EF%BC%9A%E4%BB%80%E4%B9%88%E5%8F%AB%E2%80%9CC-%E8%AF%AD%E8%A8%80%E7%89%88%E6%9C%AC%E7%9A%84%E7%B1%BB%E2%80%9D%EF%BC%9F"><span class="toc-number">1.13.</span> <span class="toc-text">13. 一个最小化示例：什么叫“C 语言版本的类”？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-%E6%80%BB%E7%BB%93"><span class="toc-number">1.14.</span> <span class="toc-text">14. 总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-number">1.15.</span> <span class="toc-text">15. 写在最后</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/03/16/c_language_oop_robotics_blog/" title="C语言模拟面向对象"><img src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="C语言模拟面向对象"/></a><div class="content"><a class="title" href="/2026/03/16/c_language_oop_robotics_blog/" title="C语言模拟面向对象">C语言模拟面向对象</a><time datetime="2026-03-15T16:22:54.915Z" title="发表于 2026-03-16 00:22:54">2026-03-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/15/rsl_rl_source_analysis/" title="rsl_rl库源码解读"><img src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="rsl_rl库源码解读"/></a><div class="content"><a class="title" href="/2026/03/15/rsl_rl_source_analysis/" title="rsl_rl库源码解读">rsl_rl库源码解读</a><time datetime="2026-03-15T15:57:31.501Z" title="发表于 2026-03-15 23:57:31">2026-03-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/15/q-learning/" title="Q-learning"><img src="https://img.cdn1.vip/i/6963150bcd40b_1768101131.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Q-learning"/></a><div class="content"><a class="title" href="/2026/03/15/q-learning/" title="Q-learning">Q-learning</a><time datetime="2026-03-15T15:26:40.775Z" title="发表于 2026-03-15 23:26:40">2026-03-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/02/18/mpc/" title="无标题">无标题</a><time datetime="2026-02-18T11:56:15.698Z" title="发表于 2026-02-18 19:56:15">2026-02-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/02/photoetching/" title="光刻技术"><img src="https://img.cdn1.vip/i/695e6fb00fcf6_1767796656.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="光刻技术"/></a><div class="content"><a class="title" href="/2026/01/02/photoetching/" title="光刻技术">光刻技术</a><time datetime="2026-01-02T14:47:24.589Z" title="发表于 2026-01-02 22:47:24">2026-01-02</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
