@@ -12,17 +12,17 @@
 .layout_post>#post,
 .read-mode .layout_post>#post {
     /* 以下代表透明度为0.7 */
-    background: rgba(255, 255, 255, .7);
+    background: rgba(255, 255, 255, .3);
 }
 
 /*侧边卡片的透明度 */
 :root {
-    --card-bg: rgba(255, 255, 255, 0.5) !important;
+    --card-bg: rgba(255, 255, 255, 0.3) !important;
 }
 
 /* 暗色模式下的卡片透明度 */
 [data-theme='dark'] {
-    --card-bg: rgba(18, 18, 18, 0.5) !important;
+    --card-bg: rgba(18, 18, 18, 0.3) !important;
 }
 
 /* 页脚透明 */
