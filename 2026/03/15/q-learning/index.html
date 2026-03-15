@@ -1,0 +1,742 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Q-learning | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Q-learning：从入门到理解，再到足式机器人中的应用 Q-learning 是强化学习（Reinforcement Learning, RL）中最经典的算法之一。很多人第一次接触强化学习，都是从它开始的。它结构简单、思想清晰，而且把强化学习中几个最核心的问题都体现得很完整：状态是什么、动作怎么选、奖励如何定义、以及智能体如何通过试错逐步学会更优策略。 对于初学者来说，Q-learning 是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Q-learning">
+<meta property="og:url" content="http://example.com/2026/03/15/q-learning/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="Q-learning：从入门到理解，再到足式机器人中的应用 Q-learning 是强化学习（Reinforcement Learning, RL）中最经典的算法之一。很多人第一次接触强化学习，都是从它开始的。它结构简单、思想清晰，而且把强化学习中几个最核心的问题都体现得很完整：状态是什么、动作怎么选、奖励如何定义、以及智能体如何通过试错逐步学会更优策略。 对于初学者来说，Q-learning 是">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp">
+<meta property="article:published_time" content="2026-03-15T15:26:40.775Z">
+<meta property="article:modified_time" content="2026-03-15T15:26:57.243Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="强化学习">
+<meta property="article:tag" content="足式机器人">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Q-learning",
+  "url": "http://example.com/2026/03/15/q-learning/",
+  "image": "https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp",
+  "datePublished": "2026-03-15T15:26:40.775Z",
+  "dateModified": "2026-03-15T15:26:57.243Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/03/15/q-learning/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Q-learning',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">Q-learning</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Q-learning</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-15T15:26:40.775Z" title="发表于 2026-03-15 23:26:40">2026-03-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-15T15:26:57.243Z" title="更新于 2026-03-15 23:26:57">2026-03-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>Q-learning：从入门到理解，再到足式机器人中的应用</h1>
+<p>Q-learning 是强化学习（Reinforcement Learning, RL）中最经典的算法之一。很多人第一次接触强化学习，都是从它开始的。它结构简单、思想清晰，而且把强化学习中几个最核心的问题都体现得很完整：<strong>状态是什么、动作怎么选、奖励如何定义、以及智能体如何通过试错逐步学会更优策略</strong>。</p>
+<p>对于初学者来说，Q-learning 是理解强化学习的最佳入口；对于做机器人，尤其是<strong>足式机器人</strong>的人来说，它虽然未必直接用于高维连续控制，但它背后的思想——通过与环境交互不断更新动作价值——仍然是后续很多现代算法的基础。</p>
+<p>这篇文章会从以下几个方面展开：</p>
+<ol>
+<li>Q-learning 解决的是什么问题</li>
+<li>它的数学基础是什么</li>
+<li>它为什么能学到“更好”的动作</li>
+<li>具体更新公式如何理解</li>
+<li>一个简单的 Python 示例</li>
+<li>它在足式机器人中的意义与局限</li>
+</ol>
+<hr>
+<h2 id="1-强化学习到底在做什么？">1. 强化学习到底在做什么？</h2>
+<p>在监督学习里，我们通常有一批带标签的数据，模型要做的是拟合输入和输出之间的映射。而在强化学习里，没有人直接告诉智能体“正确答案是什么”，智能体只能通过和环境不断交互，根据环境返回的奖励（reward）来调整自己的行为。</p>
+<p>一个典型的强化学习过程如下：</p>
+<ul>
+<li>智能体（Agent）观察当前状态 $s_t$</li>
+<li>根据策略选择一个动作 $a_t$</li>
+<li>环境执行这个动作后，返回：
+<ul>
+<li>即时奖励 $r_t$</li>
+<li>下一个状态 $s_{t+1}$</li>
+</ul>
+</li>
+<li>智能体根据这次交互更新自己的决策规则</li>
+</ul>
+<p>目标是让智能体学会一种策略，使得<strong>长期累积奖励最大化</strong>。</p>
+<p>这件事看起来很像训练动物：</p>
+<ul>
+<li>做对了，给奖励</li>
+<li>做错了，给惩罚</li>
+<li>经过大量尝试，最终学会更优行为</li>
+</ul>
+<hr>
+<h2 id="2-马尔可夫决策过程（MDP）">2. 马尔可夫决策过程（MDP）</h2>
+<p>Q-learning 通常建立在马尔可夫决策过程（Markov Decision Process, MDP）框架上。</p>
+<p>一个 MDP 通常由五元组表示：</p>
+<p>$$<br>
+(S, A, P, R, \gamma)<br>
+$$</p>
+<p>其中：</p>
+<ul>
+<li>$S$：状态集合（State Space）</li>
+<li>$A$：动作集合（Action Space）</li>
+<li>$P(s’|s,a)$：状态转移概率</li>
+<li>$R(s,a,s’)$：奖励函数</li>
+<li>$\gamma$：折扣因子（Discount Factor）</li>
+</ul>
+<h3 id="2-1-马尔可夫性质">2.1 马尔可夫性质</h3>
+<p>所谓马尔可夫性质，是指：</p>
+<blockquote>
+<p>下一个状态只与当前状态和当前动作有关，而与更早之前的历史无关。</p>
+</blockquote>
+<p>用公式表示就是：</p>
+<p>$$<br>
+P(s_{t+1}|s_t, a_t, s_{t-1}, a_{t-1}, \dots) = P(s_{t+1}|s_t, a_t)<br>
+$$</p>
+<p>这让问题变得可以建模和求解。</p>
+<hr>
+<h2 id="3-什么是-Q-值？">3. 什么是 Q 值？</h2>
+<p>Q-learning 里的 “Q” 指的是 <strong>Action-Value Function</strong>，也就是<strong>动作价值函数</strong>。</p>
+<p>它回答的问题是：</p>
+<blockquote>
+<p>在状态 $s$ 下执行动作 $a$，从长期来看到底有多好？</p>
+</blockquote>
+<p>记作：</p>
+<p>$$<br>
+Q(s, a)<br>
+$$</p>
+<p>如果一个动作能带来更高的长期累计奖励，那么它的 Q 值就更大。</p>
+<h3 id="3-1-回报（Return）">3.1 回报（Return）</h3>
+<p>强化学习关注的不是只看当前奖励，而是未来一段时间的累计收益，也叫回报（return）：</p>
+<p>$$<br>
+G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \cdots<br>
+$$</p>
+<p>其中：</p>
+<ul>
+<li>$\gamma \in [0,1]$</li>
+<li>当 $\gamma$ 越接近 1，智能体越“看重未来”</li>
+<li>当 $\gamma$ 越小，智能体越“短视”</li>
+</ul>
+<p>因此，Q 值本质上是某个状态-动作对的<strong>期望长期收益</strong>。</p>
+<hr>
+<h2 id="4-贝尔曼最优方程">4. 贝尔曼最优方程</h2>
+<p>Q-learning 的核心理论基础来自贝尔曼方程（Bellman Equation）。</p>
+<p>最优动作价值函数满足：</p>
+<p>$$<br>
+Q^<em>(s,a) = \mathbb{E}\left[r + \gamma \max_{a’} Q^</em>(s’, a’) \mid s, a\right]<br>
+$$</p>
+<p>这条公式非常重要，它表达了一个递归思想：</p>
+<ul>
+<li>当前动作的价值</li>
+<li>等于当前拿到的奖励</li>
+<li>加上下一个状态里“最优动作”的未来价值</li>
+</ul>
+<p>换句话说：</p>
+<blockquote>
+<p>一个动作好不好，不只取决于眼前奖励，还取决于它把你带到了一个怎样的未来状态。</p>
+</blockquote>
+<p>这就是动态规划思想在强化学习中的体现。</p>
+<hr>
+<h2 id="5-Q-learning-的更新公式">5. Q-learning 的更新公式</h2>
+<p>Q-learning 的经典更新公式是：</p>
+<p>$$<br>
+Q(s_t, a_t) \leftarrow Q(s_t, a_t) + \alpha \left[r_t + \gamma \max_{a’} Q(s_{t+1}, a’) - Q(s_t, a_t)\right]<br>
+$$</p>
+<p>其中：</p>
+<ul>
+<li>$\alpha$：学习率（learning rate）</li>
+<li>$r_t$：当前奖励</li>
+<li>$\gamma$：折扣因子</li>
+<li>$\max_{a’}Q(s_{t+1}, a’)$：下一个状态下最优动作的估计价值</li>
+</ul>
+<p>我们把中括号里的部分称为 <strong>TD Error（时序差分误差）</strong>：</p>
+<p>$$<br>
+\delta_t = r_t + \gamma \max_{a’} Q(s_{t+1}, a’) - Q(s_t, a_t)<br>
+$$</p>
+<p>它表示：</p>
+<blockquote>
+<p>“这次实际观测到的结果” 和 “我之前对这个动作的估计” 之间的误差。</p>
+</blockquote>
+<p>如果误差为正，说明这个动作比原来想象得更好，Q 值就应该上调；<br>
+如果误差为负，说明原来高估了，Q 值就应该下调。</p>
+<p>这其实和监督学习里“根据误差修正参数”是很像的。</p>
+<hr>
+<h2 id="6-为什么-Q-learning-是-Off-policy？">6. 为什么 Q-learning 是 Off-policy？</h2>
+<p>Q-learning 常被称为 <strong>off-policy</strong> 算法。</p>
+<p>这是因为它在更新时使用的是：</p>
+<p>$$<br>
+\max_{a’} Q(s_{t+1}, a’)<br>
+$$</p>
+<p>也就是说，它假设下一个状态会选择<strong>当前估计下最优的动作</strong>，而不是智能体实际上执行的动作。</p>
+<p>这意味着：</p>
+<ul>
+<li><strong>行为策略（Behavior Policy）</strong>：用于与环境交互，例如 $\epsilon$-greedy</li>
+<li><strong>目标策略（Target Policy）</strong>：用于更新价值，通常是 greedy policy</li>
+</ul>
+<p>行为和学习目标不一致，所以它是 off-policy。</p>
+<p>与之相对，SARSA 是 on-policy，它更新时使用的是实际执行的下一个动作：</p>
+<p>$$<br>
+Q(s_t, a_t) \leftarrow Q(s_t, a_t) + \alpha [r_t + \gamma Q(s_{t+1}, a_{t+1}) - Q(s_t, a_t)]<br>
+$$</p>
+<p>简而言之：</p>
+<ul>
+<li><strong>Q-learning 更“理想主义”</strong>：总是朝着最优动作估计</li>
+<li><strong>SARSA 更“现实主义”</strong>：按照真实执行的动作更新</li>
+</ul>
+<hr>
+<h2 id="7-探索与利用：为什么不能只选当前最优动作？">7. 探索与利用：为什么不能只选当前最优动作？</h2>
+<p>如果智能体一开始就只选择当前 Q 值最大的动作，会出现一个问题：</p>
+<blockquote>
+<p>由于初始估计并不准，智能体可能过早陷入局部最优，错过更好的动作。</p>
+</blockquote>
+<p>因此强化学习中必须平衡两件事：</p>
+<ul>
+<li><strong>Exploration（探索）</strong>：尝试没怎么选过的动作</li>
+<li><strong>Exploitation（利用）</strong>：优先选择当前看起来最好的动作</li>
+</ul>
+<h3 id="7-1-epsilon-greedy-策略">7.1 $\epsilon$-greedy 策略</h3>
+<p>Q-learning 最常见的做法是 $\epsilon$-greedy：</p>
+<ul>
+<li>以概率 $\epsilon$ 随机选动作（探索）</li>
+<li>以概率 $1-\epsilon$ 选择当前 Q 值最大的动作（利用）</li>
+</ul>
+<p>公式可以写成：</p>
+<p>$$<br>
+\pi(a|s)=<br>
+\begin{cases}<br>
+1-\epsilon + \frac{\epsilon}{|A|}, &amp; a = \arg\max_{a’}Q(s,a’) \<br>
+\frac{\epsilon}{|A|}, &amp; \text{otherwise}<br>
+\end{cases}<br>
+$$</p>
+<p>在训练初期，通常会让 $\epsilon$ 大一点，鼓励更多探索；<br>
+在训练后期，再逐步减小 $\epsilon$，让策略更稳定。</p>
+<hr>
+<h2 id="8-Q-learning-的算法流程">8. Q-learning 的算法流程</h2>
+<p>下面给出一个标准的 tabular Q-learning 流程。</p>
+<h3 id="8-1-伪代码">8.1 伪代码</h3>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">初始化 Q(s, a) = 0</span><br><span class="line"></span><br><span class="line">for 每一个 episode:</span><br><span class="line">    初始化起始状态 s</span><br><span class="line">    while s 不是终止状态:</span><br><span class="line">        根据 epsilon-greedy 从 Q 中选择动作 a</span><br><span class="line">        执行动作 a，得到奖励 r 和下一状态 s&#x27;</span><br><span class="line">        Q(s, a) ← Q(s, a) + α [r + γ max_a&#x27; Q(s&#x27;, a&#x27;) - Q(s, a)]</span><br><span class="line">        s ← s&#x27;</span><br></pre></td></tr></table></figure>
+<h3 id="8-2-直观理解">8.2 直观理解</h3>
+<p>Q-learning 的训练过程可以理解成：</p>
+<ul>
+<li>用一张表记录每个状态下每个动作有多好</li>
+<li>每尝试一次，就根据结果把表里的对应数字修正一点</li>
+<li>试得越多，这张表越接近真实最优解</li>
+</ul>
+<p>当状态和动作空间都比较小的时候，这种“查表 + 更新”的方法非常直接有效。</p>
+<hr>
+<h2 id="9-一个简单例子：走迷宫">9. 一个简单例子：走迷宫</h2>
+<p>假设有一个简单网格世界：</p>
+<ul>
+<li>智能体起点在左上角</li>
+<li>终点在右下角</li>
+<li>每走一步奖励为 $-1$</li>
+<li>到达终点奖励为 $+10$</li>
+<li>撞墙可以不给移动，并额外惩罚</li>
+</ul>
+<p>那么 Q-learning 会逐渐学到：</p>
+<ul>
+<li>哪些路径更短</li>
+<li>哪些动作会导致绕远</li>
+<li>哪些状态下应该向哪个方向走</li>
+</ul>
+<p>由于每一步都要付出代价，所以算法倾向于找到<strong>总奖励更高</strong>的路径，也就是更短、更有效率的路线。</p>
+<p>这类例子虽然简单，但已经足够展示 Q-learning 的本质。</p>
+<hr>
+<h2 id="10-Python-实现一个最小-Q-learning">10. Python 实现一个最小 Q-learning</h2>
+<p>下面给一个尽量简洁的示例。为了突出 Q-learning 核心思想，这里用一个离散状态的简单环境表示。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="comment"># 假设有 6 个状态，2 个动作</span></span><br><span class="line">n_states = <span class="number">6</span></span><br><span class="line">n_actions = <span class="number">2</span></span><br><span class="line">Q = np.zeros((n_states, n_actions))</span><br><span class="line"></span><br><span class="line">alpha = <span class="number">0.1</span>      <span class="comment"># 学习率</span></span><br><span class="line">gamma = <span class="number">0.99</span>     <span class="comment"># 折扣因子</span></span><br><span class="line">epsilon = <span class="number">0.1</span>    <span class="comment"># 探索概率</span></span><br><span class="line">episodes = <span class="number">500</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 一个玩具转移函数：仅用于演示</span></span><br><span class="line"><span class="comment"># 返回 next_state, reward, done</span></span><br><span class="line">transitions = &#123;</span><br><span class="line">    <span class="number">0</span>: &#123;<span class="number">0</span>: (<span class="number">1</span>, <span class="number">0</span>, <span class="literal">False</span>), <span class="number">1</span>: (<span class="number">2</span>, <span class="number">0</span>, <span class="literal">False</span>)&#125;,</span><br><span class="line">    <span class="number">1</span>: &#123;<span class="number">0</span>: (<span class="number">3</span>, <span class="number">0</span>, <span class="literal">False</span>), <span class="number">1</span>: (<span class="number">4</span>, -<span class="number">1</span>, <span class="literal">False</span>)&#125;,</span><br><span class="line">    <span class="number">2</span>: &#123;<span class="number">0</span>: (<span class="number">4</span>, <span class="number">0</span>, <span class="literal">False</span>), <span class="number">1</span>: (<span class="number">5</span>, <span class="number">10</span>, <span class="literal">True</span>)&#125;,</span><br><span class="line">    <span class="number">3</span>: &#123;<span class="number">0</span>: (<span class="number">5</span>, <span class="number">10</span>, <span class="literal">True</span>), <span class="number">1</span>: (<span class="number">4</span>, <span class="number">0</span>, <span class="literal">False</span>)&#125;,</span><br><span class="line">    <span class="number">4</span>: &#123;<span class="number">0</span>: (<span class="number">5</span>, <span class="number">10</span>, <span class="literal">True</span>), <span class="number">1</span>: (<span class="number">0</span>, -<span class="number">1</span>, <span class="literal">False</span>)&#125;,</span><br><span class="line">    <span class="number">5</span>: &#123;<span class="number">0</span>: (<span class="number">5</span>, <span class="number">0</span>, <span class="literal">True</span>), <span class="number">1</span>: (<span class="number">5</span>, <span class="number">0</span>, <span class="literal">True</span>)&#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">choose_action</span>(<span class="params">state</span>):</span><br><span class="line">    <span class="keyword">if</span> random.random() &lt; epsilon:</span><br><span class="line">        <span class="keyword">return</span> random.randint(<span class="number">0</span>, n_actions - <span class="number">1</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">int</span>(np.argmax(Q[state]))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> episode <span class="keyword">in</span> <span class="built_in">range</span>(episodes):</span><br><span class="line">    state = <span class="number">0</span></span><br><span class="line">    done = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> done:</span><br><span class="line">        action = choose_action(state)</span><br><span class="line">        next_state, reward, done = transitions[state][action]</span><br><span class="line"></span><br><span class="line">        td_target = reward + gamma * np.<span class="built_in">max</span>(Q[next_state]) * (<span class="number">0</span> <span class="keyword">if</span> done <span class="keyword">else</span> <span class="number">1</span>)</span><br><span class="line">        td_error = td_target - Q[state, action]</span><br><span class="line">        Q[state, action] += alpha * td_error</span><br><span class="line"></span><br><span class="line">        state = next_state</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Learned Q-table:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(Q)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Greedy policy:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(np.argmax(Q, axis=<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+<h3 id="10-1-这段代码做了什么？">10.1 这段代码做了什么？</h3>
+<ul>
+<li><code>Q</code> 是一张表，行表示状态，列表示动作</li>
+<li><code>choose_action()</code> 使用 $\epsilon$-greedy 选动作</li>
+<li>每走一步，就计算一次 TD target 和 TD error</li>
+<li>然后更新对应的 $Q(s,a)$</li>
+</ul>
+<p>训练完成后，如果环境设计合理，<code>np.argmax(Q, axis=1)</code> 就表示每个状态下学到的最优动作。</p>
+<hr>
+<h2 id="11-手算一次更新，更容易理解公式">11. 手算一次更新，更容易理解公式</h2>
+<p>假设当前有：</p>
+<ul>
+<li>当前状态：$s_t = s_1$</li>
+<li>当前动作：$a_t = a_0$</li>
+<li>当前 Q 值：$Q(s_1, a_0) = 2.0$</li>
+<li>执行动作后奖励：$r_t = 1.0$</li>
+<li>下一个状态中最大 Q 值：$\max_{a’}Q(s_{t+1}, a’) = 3.0$</li>
+<li>学习率：$\alpha = 0.1$</li>
+<li>折扣因子：$\gamma = 0.9$</li>
+</ul>
+<p>那么目标值为：</p>
+<p>$$<br>
+1.0 + 0.9 \times 3.0 = 3.7<br>
+$$</p>
+<p>TD 误差为：</p>
+<p>$$<br>
+3.7 - 2.0 = 1.7<br>
+$$</p>
+<p>更新后：</p>
+<p>$$<br>
+Q(s_1, a_0) \leftarrow 2.0 + 0.1 \times 1.7 = 2.17<br>
+$$</p>
+<p>这说明：</p>
+<ul>
+<li>原来估计这个动作值 2.0</li>
+<li>这次看起来它其实值 3.7</li>
+<li>于是向更大的值修正一点点，变成 2.17</li>
+</ul>
+<p>经过大量这样的更新后，Q 值就会逐步逼近最优动作价值函数。</p>
+<hr>
+<h2 id="12-Q-learning-为什么能收敛？">12. Q-learning 为什么能收敛？</h2>
+<p>在理论上，tabular Q-learning 在满足一定条件时可以收敛到最优 Q 值：</p>
+<ol>
+<li>状态空间和动作空间有限</li>
+<li>每个状态-动作对都被充分访问</li>
+<li>学习率满足一定衰减条件</li>
+<li>环境满足马尔可夫性质</li>
+</ol>
+<p>直观上说，原因在于：</p>
+<ul>
+<li>每次更新都在朝贝尔曼最优方程靠近</li>
+<li>如果探索足够充分，就不会遗漏某些动作</li>
+<li>如果学习率逐渐减小，后期更新会越来越稳定</li>
+</ul>
+<p>不过要注意，这个收敛结论主要适用于<strong>表格型 Q-learning</strong>。一旦把 Q 函数换成深度神经网络，问题就会复杂得多，也就引出了后来的 DQN、Double DQN、Dueling DQN 等方法。</p>
+<hr>
+<h2 id="13-Q-learning-的优点与局限">13. Q-learning 的优点与局限</h2>
+<h3 id="13-1-优点">13.1 优点</h3>
+<p><strong>1. 思想清晰，入门友好</strong><br>
+Q-learning 非常适合用来理解强化学习中的核心概念。</p>
+<p><strong>2. 不需要环境模型</strong><br>
+它是 model-free 方法，不需要提前知道状态转移概率。</p>
+<p><strong>3. 实现简单</strong><br>
+对于小规模离散问题，只需要一个 Q 表即可完成训练。</p>
+<p><strong>4. 能学习最优策略</strong><br>
+在适当条件下，能够逼近最优动作价值函数。</p>
+<h3 id="13-2-局限">13.2 局限</h3>
+<p><strong>1. 只能直接处理离散动作问题</strong><br>
+标准 Q-learning 更适合有限离散动作空间，面对连续动作控制会很困难。</p>
+<p><strong>2. 状态空间一大就不行</strong><br>
+如果状态维度很高，Q 表会迅速膨胀，存储和学习都不现实。</p>
+<p><strong>3. 样本效率有限</strong><br>
+通常需要大量交互才能学到稳定策略。</p>
+<p><strong>4. 对奖励设计敏感</strong><br>
+如果奖励函数设计不合理，智能体可能学到“投机取巧”的行为。</p>
+<hr>
+<h2 id="14-Q-learning-与足式机器人">14. Q-learning 与足式机器人</h2>
+<p>既然标签里提到了<strong>足式机器人</strong>，那就很有必要讨论一个现实问题：</p>
+<blockquote>
+<p>Q-learning 能不能直接用来控制四足机器人或双足机器人？</p>
+</blockquote>
+<p>答案是：<strong>可以作为入门和局部问题求解工具，但很少直接用于原始高维关节控制。</strong></p>
+<h3 id="14-1-为什么经典-Q-learning-不适合直接做足式机器人的底层控制？">14.1 为什么经典 Q-learning 不适合直接做足式机器人的底层控制？</h3>
+<p>足式机器人控制通常具有以下特点：</p>
+<ul>
+<li>状态维度非常高：关节角、关节速度、机身姿态、足端接触状态、地形信息等</li>
+<li>动作往往是连续的：关节力矩、期望位置、期望速度、阻抗参数等</li>
+<li>动态系统强耦合、非线性明显</li>
+<li>试错成本很高，真实机器人不允许无限探索</li>
+</ul>
+<p>而经典 Q-learning 的问题在于：</p>
+<ul>
+<li>它通常依赖离散状态和离散动作</li>
+<li>需要大量探索</li>
+<li>查表方法无法扩展到高维连续空间</li>
+</ul>
+<p>所以如果直接把“机器人所有传感器状态 + 所有关节动作”塞进 Q 表，几乎不可行。</p>
+<h3 id="14-2-那它在足式机器人中还有什么意义？">14.2 那它在足式机器人中还有什么意义？</h3>
+<p>仍然有，而且很重要。</p>
+<h4 id="（1）用于简化后的高层决策">（1）用于简化后的高层决策</h4>
+<p>Q-learning 很适合解决一些<strong>离散化的高层行为选择问题</strong>，例如：</p>
+<ul>
+<li>当前地形下选择哪一种步态（walk / trot / pace / bound）</li>
+<li>遇到扰动时选择哪种恢复策略</li>
+<li>在不同能耗与速度目标之间进行模式切换</li>
+<li>脚点候选集合中选择更优落脚点</li>
+</ul>
+<p>这时，动作空间可以离散化，状态空间也可以只保留核心高层信息，Q-learning 就有实际价值。</p>
+<h4 id="（2）用于教学和原型验证">（2）用于教学和原型验证</h4>
+<p>如果你正在做机器人强化学习，Q-learning 是一个非常好的教学工具。它能帮助你先建立：</p>
+<ul>
+<li>状态设计意识</li>
+<li>奖励函数设计意识</li>
+<li>策略更新与价值评估意识</li>
+</ul>
+<p>这些想法在更复杂的算法里依然成立。</p>
+<h4 id="（3）作为现代方法的概念基础">（3）作为现代方法的概念基础</h4>
+<p>很多更适合机器人控制的方法，本质上都继承了 Q-learning 的思想，例如：</p>
+<ul>
+<li>DQN：用神经网络近似 Q 函数</li>
+<li>DDPG / TD3：处理连续动作空间的 actor-critic 方法</li>
+<li>SAC：更稳定、样本效率更高，常用于机器人控制</li>
+<li>PPO：虽然不是 Q-learning 路线，但在机器人里也非常常见</li>
+</ul>
+<p>所以理解 Q-learning，有助于理解后续几乎所有强化学习控制算法。</p>
+<hr>
+<h2 id="15-在机器人任务中如何设计状态、动作与奖励？">15. 在机器人任务中如何设计状态、动作与奖励？</h2>
+<p>即使不直接使用 tabular Q-learning，下面这些问题仍然是强化学习做机器人时必须认真思考的。</p>
+<h3 id="15-1-状态（State）">15.1 状态（State）</h3>
+<p>在足式机器人中，状态通常可能包括：</p>
+<ul>
+<li>机身位置与姿态</li>
+<li>线速度与角速度</li>
+<li>关节角与关节速度</li>
+<li>足端接触信息</li>
+<li>目标速度命令</li>
+<li>地形感知信息</li>
+</ul>
+<p>但对于 Q-learning，如果希望保留表格形式，往往需要做强烈离散化，例如：</p>
+<ul>
+<li>姿态是否稳定：稳定 / 不稳定</li>
+<li>地形类型：平地 / 斜坡 / 台阶 / 障碍</li>
+<li>前进速度等级：低 / 中 / 高</li>
+<li>接触状态模式：若干离散类</li>
+</ul>
+<h3 id="15-2-动作（Action）">15.2 动作（Action）</h3>
+<p>在高层决策里，动作可以设计成：</p>
+<ul>
+<li>选择步态模式</li>
+<li>切换控制器参数组</li>
+<li>选择恢复行为</li>
+<li>选择离散脚点</li>
+</ul>
+<h3 id="15-3-奖励（Reward）">15.3 奖励（Reward）</h3>
+<p>奖励设计通常是最难的部分之一。常见的目标包括：</p>
+<ul>
+<li>前进速度越接近期望值越好</li>
+<li>能耗越低越好</li>
+<li>姿态越稳定越好</li>
+<li>滑倒、摔倒、碰撞需要惩罚</li>
+<li>步态切换频繁可以施加平滑性惩罚</li>
+</ul>
+<p>一个简化的奖励函数可能写成：</p>
+<p>$$<br>
+r = w_1 r_{\text{velocity}} + w_2 r_{\text{stability}} - w_3 r_{\text{energy}} - w_4 r_{\text{fall}}<br>
+$$</p>
+<p>其中 $w_1, w_2, w_3, w_4$ 是权重。</p>
+<p>奖励设计得好不好，往往直接决定算法最后学出来的是“真的聪明”，还是“看起来在钻空子”。</p>
+<hr>
+<h2 id="16-从-Q-learning-到更现代的强化学习方法">16. 从 Q-learning 到更现代的强化学习方法</h2>
+<p>如果把强化学习算法的发展看成一条路线，那么 Q-learning 基本上处在很前面的核心位置。</p>
+<h3 id="16-1-DQN">16.1 DQN</h3>
+<p>当状态空间太大，Q 表存不下时，就可以用神经网络来近似：</p>
+<p>$$<br>
+Q(s,a;\theta)<br>
+$$</p>
+<p>这就是 Deep Q-Network（DQN）的基本思想。</p>
+<h3 id="16-2-连续动作控制">16.2 连续动作控制</h3>
+<p>但 DQN 仍然更适合离散动作。对于机器人这种连续控制问题，更常见的是：</p>
+<ul>
+<li>DDPG</li>
+<li>TD3</li>
+<li>SAC</li>
+<li>PPO</li>
+</ul>
+<p>其中，SAC 和 PPO 在机器人领域尤其常见。</p>
+<h3 id="16-3-为什么仍然建议先学-Q-learning？">16.3 为什么仍然建议先学 Q-learning？</h3>
+<p>因为它最能帮助你理解这些关键问题：</p>
+<ul>
+<li>什么叫价值函数</li>
+<li>什么叫 bootstrap</li>
+<li>什么叫 temporal difference</li>
+<li>什么叫 exploration vs exploitation</li>
+<li>什么叫 off-policy / on-policy</li>
+</ul>
+<p>这些概念一旦真正理解，后面学更复杂的方法会轻松很多。</p>
+<hr>
+<h2 id="17-一个常见误区">17. 一个常见误区</h2>
+<p>很多初学者会把 Q-learning 理解成：</p>
+<blockquote>
+<p>“给每个动作打分，然后选分数最高的。”</p>
+</blockquote>
+<p>这个说法不算错，但不完整。</p>
+<p>更准确地说，Q-learning 学习的是：</p>
+<blockquote>
+<p>当前动作对未来长期收益的估计。</p>
+</blockquote>
+<p>这和“当前这一步看起来好不好”不是一回事。很多动作眼前看起来吃亏，但能把系统带到更好的状态；也有些动作眼前奖励不错，但长期会导致更差结果。</p>
+<p>Q-learning 真正厉害的地方就在于：</p>
+<blockquote>
+<p>它通过 bootstrapping，把“未来最优价值”逐步传播回当前状态。</p>
+</blockquote>
+<p>这也是为什么它能做出带有“远见”的决策。</p>
+<hr>
+<h2 id="18-总结">18. 总结</h2>
+<p>Q-learning 是强化学习中最基础、最经典、也最值得认真理解的算法之一。</p>
+<p>它的核心思想可以概括为：</p>
+<ol>
+<li>用 $Q(s,a)$ 表示状态-动作对的长期价值</li>
+<li>通过与环境交互获得奖励和下一个状态</li>
+<li>利用 TD 更新不断修正价值估计</li>
+<li>通过探索与利用的平衡逐渐学到更优策略</li>
+</ol>
+<p>它的重要更新公式是：</p>
+<p>$$<br>
+Q(s_t, a_t) \leftarrow Q(s_t, a_t) + \alpha \left[r_t + \gamma \max_{a’} Q(s_{t+1}, a’) - Q(s_t, a_t)\right]<br>
+$$</p>
+<p>对于离散、小规模问题，它非常有效；对于高维连续控制问题，它又构成了很多现代强化学习算法的思想基础。</p>
+<p>放到足式机器人场景中，经典 Q-learning 更适合：</p>
+<ul>
+<li>高层离散决策</li>
+<li>原型验证</li>
+<li>教学和概念理解</li>
+</ul>
+<p>而不太适合直接做底层关节连续控制。但无论如何，<strong>理解 Q-learning，几乎是进入强化学习和机器人学习控制世界的一道必经之门。</strong></p>
+<hr>
+<h2 id="19-延伸阅读">19. 延伸阅读</h2>
+<p>如果你接下来想继续写强化学习系列博客，可以按照这个顺序展开：</p>
+<ol>
+<li>SARSA：与 Q-learning 的区别</li>
+<li>DQN：从 Q 表到神经网络</li>
+<li>Policy Gradient：直接学习策略</li>
+<li>Actor-Critic：价值与策略结合</li>
+<li>PPO / SAC：机器人中更常用的现代算法</li>
+</ol>
+<p>这样整套内容会非常自然，也很适合形成一个系列专栏。</p>
+<hr>
+<h2 id="20-参考理解">20. 参考理解</h2>
+<p>虽然本文以直观解释为主，但如果你想更系统地学习，建议配合以下内容一起看：</p>
+<ul>
+<li>Sutton &amp; Barto《Reinforcement Learning: An Introduction》</li>
+<li>David Silver 的强化学习课程</li>
+<li>OpenAI Spinning Up</li>
+<li>机器人强化学习相关论文与开源项目</li>
+</ul>
+<hr>
+<p>如果把一句话作为全文结尾，那就是：</p>
+<blockquote>
+<p>Q-learning 教会我们的，不只是一个算法，而是一种“通过交互、估计未来、不断修正决策”的思维方式。</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/03/15/q-learning/">http://example.com/2026/03/15/q-learning/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%AE%97%E6%B3%95/">算法</a><a class="post-meta__tags" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a><a class="post-meta__tags" href="/tags/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/03/08/RL/" title="强化学习理论基础"><img class="cover" src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">强化学习理论基础</div></div><div class="info-2"><div class="info-item-1">强化学习基础：Q-learning 算法详解 Q-learning 算法的核心逻辑，本质是对贝尔曼方程（Bellman Equation）的近似求解与迭代更新。贝尔曼方程，其实就是强化学习的数学翻译官，把我们直观理解的“累积奖励”，翻译成机器能计算、能迭代的数学公式。 把长远利益拆成眼前利益+未来利益的期望，是贝尔曼方程的精髓所在，不需要让智能体一下看透未来，只要一步一步更新，就能学到最优策略。 一、概念约定  状态（State）：用 $s$ 表示当前状态，$s’$ 表示执行动作后进入的下一个状态，所有可能状态构成状态空间 $S$。 动作（Action）：用 $a$ 表示当前状态下执行的动作，所有可能动作构成动作空间 $A$；策略 $\pi(a|s)$ 表示在状态 $s$ 下选择动作 $a$ 的概率（异策略场景下，策略仅用于动作选择，不参与价值更新） 动作就是能做的操作，比如在迷宫里“往前走”“往左转”；策略是选择的习惯，比如有90%的概率选择往前走，10%的概率往左转，这个90%和10%就是策略概率 $\pi(a|s)$。 奖励（Reward）：用 $r = R(s, a, s...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/08/RL/" title="强化学习理论基础"><img class="cover" src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-08</div><div class="info-item-2">强化学习理论基础</div></div><div class="info-2"><div class="info-item-1">强化学习基础：Q-learning 算法详解 Q-learning 算法的核心逻辑，本质是对贝尔曼方程（Bellman Equation）的近似求解与迭代更新。贝尔曼方程，其实就是强化学习的数学翻译官，把我们直观理解的“累积奖励”，翻译成机器能计算、能迭代的数学公式。 把长远利益拆成眼前利益+未来利益的期望，是贝尔曼方程的精髓所在，不需要让智能体一下看透未来，只要一步一步更新，就能学到最优策略。 一、概念约定  状态（State）：用 $s$ 表示当前状态，$s’$ 表示执行动作后进入的下一个状态，所有可能状态构成状态空间 $S$。 动作（Action）：用 $a$ 表示当前状态下执行的动作，所有可能动作构成动作空间 $A$；策略 $\pi(a|s)$ 表示在状态 $s$ 下选择动作 $a$ 的概率（异策略场景下，策略仅用于动作选择，不参与价值更新） 动作就是能做的操作，比如在迷宫里“往前走”“往左转”；策略是选择的习惯，比如有90%的概率选择往前走，10%的概率往左转，这个90%和10%就是策略概率 $\pi(a|s)$。 奖励（Reward）：用 $r = R(s, a, s...</div></div></div></a><a class="pagination-related" href="/2026/02/22/rsl_rl1/" title="rsl_rl库源码解读(一)——神经网络"><img class="cover" src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-22</div><div class="info-item-2">rsl_rl库源码解读(一)——神经网络</div></div><div class="info-2"><div class="info-item-1">一、通用MLP类实现 def __init__(    self,    input_dim: int,                  # 输入维度（比如18维观测）    output_dim: int | tuple[int] | list[int],  # 输出维度（int/元组/列表）    hidden_dims: tuple[int] | list[int],       # 隐藏层维度（支持-1）    activation: str = &quot;elu&quot;,         # 隐藏层激活函数（默认elu，RL常用）    last_activation: str | None = None,  # 最后一层激活函数（None=线性层）) -&gt; None:    super().__init__()  # 继承nn.Sequential，自带forward和层管理    # 1. 解析激活函数（字符串→PyTorch激活类，比如&quot;elu&quot;→nn.ELU()）    activation_mod = resolve_nn_a...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">zhxy</div><div class="author-info-description">学微电子的破大学生</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">Q-learning：从入门到理解，再到足式机器人中的应用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E5%88%B0%E5%BA%95%E5%9C%A8%E5%81%9A%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">1. 强化学习到底在做什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E5%86%B3%E7%AD%96%E8%BF%87%E7%A8%8B%EF%BC%88MDP%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">2. 马尔可夫决策过程（MDP）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB%E6%80%A7%E8%B4%A8"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 马尔可夫性质</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%BB%80%E4%B9%88%E6%98%AF-Q-%E5%80%BC%EF%BC%9F"><span class="toc-number">1.3.</span> <span class="toc-text">3. 什么是 Q 值？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%9B%9E%E6%8A%A5%EF%BC%88Return%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 回报（Return）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%B4%9D%E5%B0%94%E6%9B%BC%E6%9C%80%E4%BC%98%E6%96%B9%E7%A8%8B"><span class="toc-number">1.4.</span> <span class="toc-text">4. 贝尔曼最优方程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Q-learning-%E7%9A%84%E6%9B%B4%E6%96%B0%E5%85%AC%E5%BC%8F"><span class="toc-number">1.5.</span> <span class="toc-text">5. Q-learning 的更新公式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E4%B8%BA%E4%BB%80%E4%B9%88-Q-learning-%E6%98%AF-Off-policy%EF%BC%9F"><span class="toc-number">1.6.</span> <span class="toc-text">6. 为什么 Q-learning 是 Off-policy？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E6%8E%A2%E7%B4%A2%E4%B8%8E%E5%88%A9%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E5%8F%AA%E9%80%89%E5%BD%93%E5%89%8D%E6%9C%80%E4%BC%98%E5%8A%A8%E4%BD%9C%EF%BC%9F"><span class="toc-number">1.7.</span> <span class="toc-text">7. 探索与利用：为什么不能只选当前最优动作？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-epsilon-greedy-%E7%AD%96%E7%95%A5"><span class="toc-number">1.7.1.</span> <span class="toc-text">7.1 $\epsilon$-greedy 策略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-Q-learning-%E7%9A%84%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B"><span class="toc-number">1.8.</span> <span class="toc-text">8. Q-learning 的算法流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E4%BC%AA%E4%BB%A3%E7%A0%81"><span class="toc-number">1.8.1.</span> <span class="toc-text">8.1 伪代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E7%9B%B4%E8%A7%82%E7%90%86%E8%A7%A3"><span class="toc-number">1.8.2.</span> <span class="toc-text">8.2 直观理解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E4%BE%8B%E5%AD%90%EF%BC%9A%E8%B5%B0%E8%BF%B7%E5%AE%AB"><span class="toc-number">1.9.</span> <span class="toc-text">9. 一个简单例子：走迷宫</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-Python-%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E6%9C%80%E5%B0%8F-Q-learning"><span class="toc-number">1.10.</span> <span class="toc-text">10. Python 实现一个最小 Q-learning</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#10-1-%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.10.1.</span> <span class="toc-text">10.1 这段代码做了什么？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E6%89%8B%E7%AE%97%E4%B8%80%E6%AC%A1%E6%9B%B4%E6%96%B0%EF%BC%8C%E6%9B%B4%E5%AE%B9%E6%98%93%E7%90%86%E8%A7%A3%E5%85%AC%E5%BC%8F"><span class="toc-number">1.11.</span> <span class="toc-text">11. 手算一次更新，更容易理解公式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-Q-learning-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%83%BD%E6%94%B6%E6%95%9B%EF%BC%9F"><span class="toc-number">1.12.</span> <span class="toc-text">12. Q-learning 为什么能收敛？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-Q-learning-%E7%9A%84%E4%BC%98%E7%82%B9%E4%B8%8E%E5%B1%80%E9%99%90"><span class="toc-number">1.13.</span> <span class="toc-text">13. Q-learning 的优点与局限</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#13-1-%E4%BC%98%E7%82%B9"><span class="toc-number">1.13.1.</span> <span class="toc-text">13.1 优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-2-%E5%B1%80%E9%99%90"><span class="toc-number">1.13.2.</span> <span class="toc-text">13.2 局限</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-Q-learning-%E4%B8%8E%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA"><span class="toc-number">1.14.</span> <span class="toc-text">14. Q-learning 与足式机器人</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#14-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%BB%8F%E5%85%B8-Q-learning-%E4%B8%8D%E9%80%82%E5%90%88%E7%9B%B4%E6%8E%A5%E5%81%9A%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%9A%84%E5%BA%95%E5%B1%82%E6%8E%A7%E5%88%B6%EF%BC%9F"><span class="toc-number">1.14.1.</span> <span class="toc-text">14.1 为什么经典 Q-learning 不适合直接做足式机器人的底层控制？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-2-%E9%82%A3%E5%AE%83%E5%9C%A8%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA%E4%B8%AD%E8%BF%98%E6%9C%89%E4%BB%80%E4%B9%88%E6%84%8F%E4%B9%89%EF%BC%9F"><span class="toc-number">1.14.2.</span> <span class="toc-text">14.2 那它在足式机器人中还有什么意义？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E7%94%A8%E4%BA%8E%E7%AE%80%E5%8C%96%E5%90%8E%E7%9A%84%E9%AB%98%E5%B1%82%E5%86%B3%E7%AD%96"><span class="toc-number">1.14.2.1.</span> <span class="toc-text">（1）用于简化后的高层决策</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E7%94%A8%E4%BA%8E%E6%95%99%E5%AD%A6%E5%92%8C%E5%8E%9F%E5%9E%8B%E9%AA%8C%E8%AF%81"><span class="toc-number">1.14.2.2.</span> <span class="toc-text">（2）用于教学和原型验证</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%EF%BC%883%EF%BC%89%E4%BD%9C%E4%B8%BA%E7%8E%B0%E4%BB%A3%E6%96%B9%E6%B3%95%E7%9A%84%E6%A6%82%E5%BF%B5%E5%9F%BA%E7%A1%80"><span class="toc-number">1.14.2.3.</span> <span class="toc-text">（3）作为现代方法的概念基础</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-%E5%9C%A8%E6%9C%BA%E5%99%A8%E4%BA%BA%E4%BB%BB%E5%8A%A1%E4%B8%AD%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%8A%B6%E6%80%81%E3%80%81%E5%8A%A8%E4%BD%9C%E4%B8%8E%E5%A5%96%E5%8A%B1%EF%BC%9F"><span class="toc-number">1.15.</span> <span class="toc-text">15. 在机器人任务中如何设计状态、动作与奖励？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#15-1-%E7%8A%B6%E6%80%81%EF%BC%88State%EF%BC%89"><span class="toc-number">1.15.1.</span> <span class="toc-text">15.1 状态（State）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-2-%E5%8A%A8%E4%BD%9C%EF%BC%88Action%EF%BC%89"><span class="toc-number">1.15.2.</span> <span class="toc-text">15.2 动作（Action）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-3-%E5%A5%96%E5%8A%B1%EF%BC%88Reward%EF%BC%89"><span class="toc-number">1.15.3.</span> <span class="toc-text">15.3 奖励（Reward）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-%E4%BB%8E-Q-learning-%E5%88%B0%E6%9B%B4%E7%8E%B0%E4%BB%A3%E7%9A%84%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E6%96%B9%E6%B3%95"><span class="toc-number">1.16.</span> <span class="toc-text">16. 从 Q-learning 到更现代的强化学习方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#16-1-DQN"><span class="toc-number">1.16.1.</span> <span class="toc-text">16.1 DQN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16-2-%E8%BF%9E%E7%BB%AD%E5%8A%A8%E4%BD%9C%E6%8E%A7%E5%88%B6"><span class="toc-number">1.16.2.</span> <span class="toc-text">16.2 连续动作控制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16-3-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BB%8D%E7%84%B6%E5%BB%BA%E8%AE%AE%E5%85%88%E5%AD%A6-Q-learning%EF%BC%9F"><span class="toc-number">1.16.3.</span> <span class="toc-text">16.3 为什么仍然建议先学 Q-learning？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#17-%E4%B8%80%E4%B8%AA%E5%B8%B8%E8%A7%81%E8%AF%AF%E5%8C%BA"><span class="toc-number">1.17.</span> <span class="toc-text">17. 一个常见误区</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#18-%E6%80%BB%E7%BB%93"><span class="toc-number">1.18.</span> <span class="toc-text">18. 总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#19-%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB"><span class="toc-number">1.19.</span> <span class="toc-text">19. 延伸阅读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#20-%E5%8F%82%E8%80%83%E7%90%86%E8%A7%A3"><span class="toc-number">1.20.</span> <span class="toc-text">20. 参考理解</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/03/15/q-learning/" title="Q-learning"><img src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Q-learning"/></a><div class="content"><a class="title" href="/2026/03/15/q-learning/" title="Q-learning">Q-learning</a><time datetime="2026-03-15T15:26:40.775Z" title="发表于 2026-03-15 23:26:40">2026-03-15</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/08/RL/" title="强化学习理论基础"><img src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="强化学习理论基础"/></a><div class="content"><a class="title" href="/2026/03/08/RL/" title="强化学习理论基础">强化学习理论基础</a><time datetime="2026-03-07T16:10:26.595Z" title="发表于 2026-03-08 00:10:26">2026-03-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/02/22/rsl_rl1/" title="rsl_rl库源码解读(一)——神经网络"><img src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="rsl_rl库源码解读(一)——神经网络"/></a><div class="content"><a class="title" href="/2026/02/22/rsl_rl1/" title="rsl_rl库源码解读(一)——神经网络">rsl_rl库源码解读(一)——神经网络</a><time datetime="2026-02-21T16:15:01.932Z" title="发表于 2026-02-22 00:15:01">2026-02-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/02/18/mpc/" title="无标题">无标题</a><time datetime="2026-02-18T11:56:15.698Z" title="发表于 2026-02-18 19:56:15">2026-02-18</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/01/05/Cpro/" title="C语言模拟面向对象"><img src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="C语言模拟面向对象"/></a><div class="content"><a class="title" href="/2026/01/05/Cpro/" title="C语言模拟面向对象">C语言模拟面向对象</a><time datetime="2026-01-05T07:22:18.881Z" title="发表于 2026-01-05 15:22:18">2026-01-05</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
