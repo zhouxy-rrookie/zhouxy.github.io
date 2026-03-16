@@ -1746,9 +1746,9 @@ void (*Update)(baseModule *obj, float dt);
 对于机器人项目来说，可靠性设计和对象设计同样重要。
 
 13. 一个最小化示例：什么叫“C 语言版本的类”？
-如果把你的设计思想再压缩一下，其实可以抽象成下面这个最小模型：
+如果把设计思想再压缩一下，其实可以抽象成下面这个最小模型：
 typedef struct Motor Motor;typedef struct &#123;    void (*enable)(Motor *m);    void (*disable)(Motor *m);    void (*update_feedback)(Motor *m, uint8_t rx[8]);    float (*calc_output)(Motor *m, float ref);&#125; MotorVTable;struct Motor &#123;    uint8_t id;    uint8_t mode;    const MotorVTable *ops;&#125;;typedef struct &#123;    Motor base;    float speed_rpm;    float total_angle;    PID_Info_TypeDef pid_spd;    PID_Info_TypeDef pid_pos;&#125; DJI_Motor;
-这个例子本质上和你的工程代码是同一路思路：
+这个例子本质上和工程代码是同一路思路：
 
 Motor 是抽象父类
 DJI_Motor 是具体子类
@@ -1761,13 +1761,6 @@ MotorVTable 是一张行为表
 回到最开始的问题：“用 C 模拟面向对象，是不是更专业？”
 答案不是简单的“是”或“不是”。
 更准确地说，当你的系统已经复杂到需要抽象层、统一接口、模块组合和长期维护时，这样写就很专业；当系统其实很简单，却硬套复杂架构时，它反而会变成负担。
-从你这套机器人嵌入式代码来看，这种写法是有充分工程理由的：
-
-你面对的是异构电机与多机构协同控制
-你需要统一模块生命周期
-你需要清晰的驱动层、控制层、结构层边界
-你希望系统能继续扩展，而不是越写越乱
-
 这已经不是“为了看起来高级”的写法，而是为了让机器人控制系统在规模扩大后依旧可维护、可扩展、可调试。
 所以真正值得学习的，不是“把 C 写得像 C++”，而是学会背后的那套工程思维：
 
@@ -1779,19 +1772,409 @@ MotorVTable 是一张行为表
 
 这才是 C 语言模拟面向对象最有价值的地方。
 
-15. 写在最后
-如果你也在做机器人、嵌入式控制或者电机驱动，我非常建议你认真思考一个问题：
-
-你的代码到底是在“堆功能”，还是在“搭系统”？
-
-前者能让你很快把东西跑起来，后者才能让项目在半年、一年之后依然可维护。
-而 C 语言模拟面向对象，本质上就是从“堆功能”走向“搭系统”的那一步。
 ]]></content>
       <categories>
         <category>嵌入式</category>
       </categories>
       <tags>
         <tag>嵌入式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>C语言中的函数指针与虚函数表模拟</title>
+    <url>/2026/03/16/c_function_pointer_vtable_blog/</url>
+    <content><![CDATA[C语言中的函数指针与虚函数表模拟
+在上一篇《C语言模拟面向对象》中，我讨论了一个常见但容易被误解的话题：为什么很多嵌入式项目会把 C 语言写得“像面向对象”一样。
+这种写法并不是为了“显得高级”，而是因为当系统开始管理越来越多的设备、模块和控制逻辑时，单纯依靠一堆分散的函数和条件分支，代码会越来越难维护。
+而在所有“C 语言模拟面向对象”的技巧里，函数指针和虚函数表风格的操作表（ops table / vtable），是最核心的一层机制。
+这篇文章就专门讨论这个问题：
+
+在机器人嵌入式系统中，如何用 C 语言的函数指针模拟“对象方法”，再进一步模拟“虚函数表”和“多态调用”？
+
+我会尽量从工程实践出发，而不是停留在语法层面。
+
+一、为什么普通 C 写法会越来越难维护
+先看最朴素的写法。
+假设我们有两类电机：
+
+DJI 电机
+DM 电机
+
+一开始也许只需要做“使能”：
+if (motor_type == DJI_MOTOR) &#123;    dji_motor_enable();&#125; else if (motor_type == DM_MOTOR) &#123;    dm_motor_enable();&#125;
+后来需求变多了，还要设置目标值、解析反馈、执行控制更新：
+if (motor_type == DJI_MOTOR) &#123;    dji_motor_enable();    dji_motor_set_ref(ref);    dji_motor_decode_feedback(rx_data);    dji_motor_control_update();&#125; else if (motor_type == DM_MOTOR) &#123;    dm_motor_enable();    dm_motor_set_ref(ref);    dm_motor_decode_feedback(rx_data);    dm_motor_control_update();&#125;
+刚开始看起来没什么问题，但随着项目扩大，问题会越来越明显：
+
+
+分支越来越多
+每增加一种设备，就会多出一串 if-else 或 switch-case。
+
+
+上层知道太多底层细节
+控制层本来只想“让电机工作”，结果却必须知道“这是哪一种电机、用什么协议、反馈格式是什么”。
+
+
+扩展成本高
+新增一种设备时，不只是加新代码，还要修改很多旧代码。
+
+
+模块耦合严重
+应用层直接依赖具体驱动函数，导致系统边界模糊。
+
+
+这就是很多嵌入式项目会走向“对象化组织”的根本原因。
+不是因为 C 想模仿 C++，而是因为系统复杂后，我们需要一种办法把“数据”和“行为”绑定起来，并为上层提供统一接口。
+
+二、函数指针：在 C 中绑定“数据”和“行为”
+C 语言没有成员函数，也没有类。
+但它有一个非常强大的机制：函数指针。
+函数指针的本质，就是“一个变量里保存了函数的地址”，因此我们可以把“这个数据应该调用什么函数”也一起存起来。
+先看一个最简单的例子：
+#include &lt;stdio.h&gt;void say_hello(void) &#123;    printf(&quot;hello\n&quot;);&#125;int main(void) &#123;    void (*func)(void) = say_hello;    func();    return 0;&#125;
+这里的 func 就是一个函数指针。
+它指向 say_hello，所以 func() 实际上等价于调用 say_hello()。
+如果把这个思路进一步扩展，我们就可以在结构体中保存函数指针，让结构体既表示“状态”，也知道“该怎么做事”。
+例如：
+typedef struct Motor Motor;typedef struct &#123;    void (*enable)(Motor *self);    void (*disable)(Motor *self);    void (*set_ref)(Motor *self, float ref);&#125; MotorOps;struct Motor &#123;    const MotorOps *ops;    float ref;    float speed;    float position;&#125;;
+这里已经有一点“对象”的味道了：
+
+Motor 保存数据
+MotorOps 保存行为接口
+ops 把数据和行为关联起来
+
+调用时就可以写成：
+motor-&gt;ops-&gt;enable(motor);motor-&gt;ops-&gt;set_ref(motor, 10.0f);
+这就非常接近“对象方法调用”了。
+虽然语法还是 C，但思想上已经变成：
+
+这个对象知道自己该调用哪一套行为实现。
+
+
+三、从函数指针到“方法调用”
+很多人第一次看到 self 参数时会觉得奇怪：
+为什么函数签名里总要手动传一个指针？
+例如：
+void motor_enable(Motor *self);void motor_set_ref(Motor *self, float ref);
+原因其实很简单：
+在 C++ 里，成员函数调用时会隐式传入 this 指针；
+但在 C 里没有这个机制，所以我们只能显式传入 self。
+因此，下面两种写法，本质上表达的是同一个意思：
+C++ 风格：
+motor.enable();motor.setRef(10.0f);
+C 风格模拟：
+motor-&gt;ops-&gt;enable(motor);motor-&gt;ops-&gt;set_ref(motor, 10.0f);
+区别只在于：
+
+C++ 是语言内建支持
+C 需要我们自己约定接口和调用方式
+
+而一旦这个约定建立起来，我们就可以在一个纯 C 项目里写出非常“对象化”的代码。
+
+四、虚函数表是什么，它和普通函数指针有什么区别
+这里要区分两个容易混淆的概念：
+1. 结构体里直接保存多个函数指针
+例如：
+typedef struct &#123;    void (*enable)(void *self);    void (*disable)(void *self);    void (*set_ref)(void *self, float ref);&#125; Motor;
+这种写法很直接，但有个明显问题：
+
+每个实例都保存一整套函数指针
+如果实例很多，会浪费 RAM
+
+在嵌入式系统里，RAM 往往是宝贵资源，这种写法不够优雅。
+2. 把函数指针集中成一张“操作表”
+更常见的方式是：
+typedef struct &#123;    void (*enable)(void *self);    void (*disable)(void *self);    void (*set_ref)(void *self, float ref);    void (*decode_feedback)(void *self, const unsigned char *data);&#125; MotorVTable;
+然后对象里只保存一个指针：
+typedef struct &#123;    const MotorVTable *vptr;    float ref;    float speed;    float pos;&#125; MotorBase;
+这样，同类对象就可以共享一张操作表。
+例如所有 DJI 电机对象都共用 dji_motor_vtable，
+所有 DM 电机对象都共用 dm_motor_vtable。
+这就非常接近 C++ 的**虚函数表（vtable）**思想了。
+
+五、为什么“虚函数表风格”更适合嵌入式
+这种写法在机器人嵌入式系统中特别有价值，主要有几个原因。
+1. 节省内存
+如果同类对象共用一张操作表，那么每个对象只需要保存一个 vptr 指针。
+相比“每个对象各存一整套函数指针”，显然更省内存。
+2. 接口统一
+上层控制器只关心：
+
+使能
+失能
+设置目标
+解析反馈
+更新控制量
+
+并不关心底层是 DJI 还是 DM，是 CAN 还是 UART。
+这使得控制层可以面向“抽象接口”编程。
+3. 扩展容易
+新增一种电机时，只需要：
+
+定义一种新结构体
+实现一组对应函数
+配一张新的操作表
+
+原来的控制逻辑基本不用改。
+4. 更适合团队协作
+驱动层、控制层、任务层都可以围绕统一接口协作。
+模块边界更清晰，职责更明确。
+
+六、如何在 C 中模拟“继承”
+“继承”是另一个很常被提到的词。
+当然，C 语言并没有真正的继承机制，但我们可以通过结构体嵌套来模拟。
+最典型的写法就是把“基类”放在结构体的第一个成员位置：
+typedef struct &#123;    const MotorVTable *vptr;    float ref;    float speed;    float position;&#125; MotorBase;typedef struct &#123;    MotorBase base;    unsigned short ecd;    short rpm;    short torque;&#125; DJIMotor;typedef struct &#123;    MotorBase base;    unsigned char id;    float q;    float dq;&#125; DMMotor;
+这样做的关键在于内存布局：
+
+DJIMotor 的起始地址与 DJIMotor.base 的地址相同
+DMMotor 的起始地址与 DMMotor.base 的地址也相同
+
+因此可以把子类对象安全地“当作”父类对象来使用：
+DJIMotor dji;MotorBase *motor = (MotorBase *)&amp;dji;
+这样上层统一处理 MotorBase *，而底层仍然可以根据具体类型执行不同实现。
+要注意，这不是语言级的继承，而是一种工程约定。
+它成立的基础是：
+
+父结构体放在第一个成员位置
+所有接口都遵守同样的约定
+类型转换清晰且可控
+
+这类技巧在嵌入式和内核代码里非常常见。
+
+七、如何模拟“重写”和“多态”
+当我们有了：
+
+基类结构体 MotorBase
+操作表 MotorVTable
+多种具体实现 DJIMotor / DMMotor
+
+接下来就自然会出现“重写”和“多态”。
+1. “重写”是什么
+同一个接口，不同实现。
+例如，所有电机都要支持反馈解析：
+void dji_decode_feedback(void *self, const unsigned char *data);void dm_decode_feedback(void *self, const unsigned char *data);
+它们对上层来说接口一致，但内部实现完全不同。
+这就是“重写”的本质。
+2. “多态”是什么
+所谓多态，不是说“一个东西能做很多事”，
+而是说：
+
+调用方式统一，但具体执行哪个实现，由对象实际类型决定。
+
+例如：
+motor-&gt;vptr-&gt;decode_feedback(motor, rx_data);
+对于 DJIMotor，这会调用 dji_decode_feedback；
+对于 DMMotor，这会调用 dm_decode_feedback。
+上层完全不需要写：
+if (type == DJI) ...else if (type == DM) ...
+这就是多态带来的最大价值：消除分支，把变化封装到底层实现中。
+
+八、一个完整的小案例：统一电机接口设计
+下面给出一个简化版的完整案例，说明如何在 C 中实现“虚函数表风格的统一电机接口”。
+1. 定义操作表和基类
+#include &lt;stdio.h&gt;typedef struct MotorBase MotorBase;typedef struct &#123;    void (*enable)(MotorBase *self);    void (*disable)(MotorBase *self);    void (*set_ref)(MotorBase *self, float ref);    void (*print_status)(MotorBase *self);&#125; MotorVTable;struct MotorBase &#123;    const MotorVTable *vptr;    float ref;    float speed;&#125;;
+2. 定义两种具体电机
+typedef struct &#123;    MotorBase base;    int can_id;    int ecd;&#125; DJIMotor;typedef struct &#123;    MotorBase base;    int node_id;    float torque;&#125; DMMotor;
+3. 实现 DJI 电机行为
+void dji_enable(MotorBase *self) &#123;    DJIMotor *motor = (DJIMotor *)self;    printf(&quot;[DJI] enable, can_id=%d\n&quot;, motor-&gt;can_id);&#125;void dji_disable(MotorBase *self) &#123;    DJIMotor *motor = (DJIMotor *)self;    printf(&quot;[DJI] disable, can_id=%d\n&quot;, motor-&gt;can_id);&#125;void dji_set_ref(MotorBase *self, float ref) &#123;    self-&gt;ref = ref;    printf(&quot;[DJI] set ref = %.2f\n&quot;, ref);&#125;void dji_print_status(MotorBase *self) &#123;    DJIMotor *motor = (DJIMotor *)self;    printf(&quot;[DJI] can_id=%d, ref=%.2f, speed=%.2f\n&quot;,           motor-&gt;can_id, self-&gt;ref, self-&gt;speed);&#125;
+4. 实现 DM 电机行为
+void dm_enable(MotorBase *self) &#123;    DMMotor *motor = (DMMotor *)self;    printf(&quot;[DM] enable, node_id=%d\n&quot;, motor-&gt;node_id);&#125;void dm_disable(MotorBase *self) &#123;    DMMotor *motor = (DMMotor *)self;    printf(&quot;[DM] disable, node_id=%d\n&quot;, motor-&gt;node_id);&#125;void dm_set_ref(MotorBase *self, float ref) &#123;    self-&gt;ref = ref;    printf(&quot;[DM] set ref = %.2f\n&quot;, ref);&#125;void dm_print_status(MotorBase *self) &#123;    DMMotor *motor = (DMMotor *)self;    printf(&quot;[DM] node_id=%d, ref=%.2f, speed=%.2f\n&quot;,           motor-&gt;node_id, self-&gt;ref, self-&gt;speed);&#125;
+5. 定义两张虚函数表
+const MotorVTable dji_vtable = &#123;    .enable = dji_enable,    .disable = dji_disable,    .set_ref = dji_set_ref,    .print_status = dji_print_status,&#125;;const MotorVTable dm_vtable = &#123;    .enable = dm_enable,    .disable = dm_disable,    .set_ref = dm_set_ref,    .print_status = dm_print_status,&#125;;
+6. 初始化对象
+void dji_motor_init(DJIMotor *motor, int can_id) &#123;    motor-&gt;base.vptr = &amp;dji_vtable;    motor-&gt;base.ref = 0.0f;    motor-&gt;base.speed = 0.0f;    motor-&gt;can_id = can_id;    motor-&gt;ecd = 0;&#125;void dm_motor_init(DMMotor *motor, int node_id) &#123;    motor-&gt;base.vptr = &amp;dm_vtable;    motor-&gt;base.ref = 0.0f;    motor-&gt;base.speed = 0.0f;    motor-&gt;node_id = node_id;    motor-&gt;torque = 0.0f;&#125;
+7. 上层统一调用
+int main(void) &#123;    DJIMotor dji;    DMMotor dm;    dji_motor_init(&amp;dji, 0x201);    dm_motor_init(&amp;dm, 1);    MotorBase *motors[2];    motors[0] = (MotorBase *)&amp;dji;    motors[1] = (MotorBase *)&amp;dm;    for (int i = 0; i &lt; 2; ++i) &#123;        motors[i]-&gt;vptr-&gt;enable(motors[i]);        motors[i]-&gt;vptr-&gt;set_ref(motors[i], 10.0f + i);        motors[i]-&gt;vptr-&gt;print_status(motors[i]);    &#125;    return 0;&#125;
+从这个例子可以看到，上层逻辑已经不需要关心“这到底是 DJI 还是 DM”。
+它只知道：这是一个“满足统一接口的电机对象”。
+这就是 C 语言模拟虚函数表的核心价值。
+
+九、在机器人嵌入式系统里，这样写到底有什么用
+现在回到工程问题本身。
+在机器人控制系统里，为什么这种写法值得认真使用？
+1. 异构设备统一抽象
+机器人系统往往同时包含：
+
+多种电机
+多种传感器
+不同总线协议
+不同反馈格式
+
+如果没有统一抽象，上层控制器会充满具体设备逻辑。
+而一旦把这些设备都抽象成统一接口，上层只关注“行为”，不关注“实现”。
+2. 控制层和驱动层解耦
+控制器只调用：
+
+enable
+set_ref
+decode_feedback
+update
+
+底层驱动自己处理各自协议和细节。
+这对机器人项目非常重要，因为驱动层和控制层往往演进速度不同。
+3. 方便扩展新设备
+例如原来只有 DJI 和 DM 电机，后来要接入某种伺服驱动器。
+只要补一个新模块和一张新操作表，控制层大概率不用改。
+这比在一堆 switch-case 中反复加分支，维护成本低得多。
+4. 更适合系统模块化
+机器人软件很容易变成“功能堆叠型项目”：
+今天加一个云台，明天加一个机械臂，后天又加一个底盘模块。
+对象化组织并不会让系统 magically 变简单，但它确实能让边界更清楚。
+
+十、这种写法并不天然“更专业”
+这里必须说一句实话。
+很多人第一次接触这类设计时，会觉得：
+
+哇，这样写很像 C++，很像 Linux 内核，看起来很专业。
+
+但工程上真正该问的问题不是“看起来专业不专业”，而是：
+
+这种写法能不能降低系统复杂度？能不能提升扩展性？能不能减少维护成本？
+
+如果答案是能，那它就有价值。
+如果答案是不能，那它只是换了一种更复杂的写法。
+也就是说：
+函数指针和虚函数表风格，本质上是一种工程组织手段，而不是“高级感装饰品”。
+
+十一、它的代价和常见坑
+任何抽象都有成本，这种写法也不例外。
+1. 调试难度上升
+直接函数调用时，调用链非常清晰：
+dji_motor_enable();
+而通过虚表调用时：
+motor-&gt;vptr-&gt;enable(motor);
+你需要进一步跟踪 vptr 才知道实际调用的是谁。
+如果系统层级复杂，调试会更费神。
+2. 容易出现空指针问题
+如果对象没初始化好，vptr == NULL，那一调用就会崩溃。
+在裸机或 RTOS 环境里，这类问题往往特别难查。
+所以工程上通常要加防御性检查：
+if (motor &amp;&amp; motor-&gt;vptr &amp;&amp; motor-&gt;vptr-&gt;enable) &#123;    motor-&gt;vptr-&gt;enable(motor);&#125;
+3. 类型转换要谨慎
+很多实现里会在函数内部做强制类型转换：
+DJIMotor *motor = (DJIMotor *)self;
+这要求调用链必须严格遵守约定。
+一旦传错对象类型，编译器往往帮不了你，运行时就会出错。
+4. 小项目可能过度设计
+如果项目里只有一种电机、两三个模块、生命周期也很短，
+那直接写清晰的函数接口，可能比搭一整套虚表系统更好。
+抽象不是越多越高级，而是越合适越好。
+
+十二、什么时候该用，什么时候不该用
+这部分可以作为很实用的经验总结。
+适合使用的场景
+
+设备种类多，接口行为相似
+上层逻辑希望统一调用方式
+模块边界明确，需要长期扩展
+团队协作开发，需要减少耦合
+项目会持续演进，不是一次性代码
+
+不太适合使用的场景
+
+系统非常小，设备类型单一
+项目生命周期短，快速交付优先
+团队成员对这种设计风格不熟悉
+抽象层次已经多到影响可读性
+
+一句话总结就是：
+
+复杂系统适合抽象，简单系统适合直接。
+
+
+十三、它和 Linux 内核风格有什么关系
+很多人会说：“Linux 内核不就是这么干的吗？”
+这句话大方向没错。
+Linux 内核里确实大量使用：
+
+struct
+函数指针
+ops 表
+回调接口
+
+比如文件操作、设备驱动、总线抽象，很多都是这个思路。
+但要注意，内核这样写不是为了“模仿面向对象”，
+而是因为它要面对：
+
+海量设备类型
+长期演进
+高度模块化
+松耦合接口设计
+
+所以，如果你的机器人嵌入式系统也开始面对类似问题，那么借鉴这种风格是很自然的。
+关键不在于“像不像内核”，而在于你的问题是不是已经值得这种抽象成本。
+
+十四、工程建议：怎么把它用得更稳
+如果你准备在机器人项目里真正使用这一套设计，我建议注意下面几点。
+1. 统一命名
+例如统一使用：
+
+init
+enable
+disable
+set_ref
+decode_feedback
+update
+
+不要每个模块自己发明一套命名体系。
+2. 明确“基类职责”
+MotorBase 只放公共字段，不要把所有东西都塞进去。
+公共状态、公共接口和派生特有字段要有边界。
+3. 初始化流程要明确
+对象一旦进入系统，就必须保证：
+
+vptr 有效
+必要字段初始化完成
+调用前状态可用
+
+否则运行时问题会非常隐蔽。
+4. 适度做空指针保护
+特别是在任务调度、注册式装配、模块热插拔场景下，
+防御性检查很重要。
+5. 不要把抽象搞得过深
+两层抽象有价值，五层抽象就可能开始伤害可读性。
+在嵌入式里，简单、清晰、可调试，永远很重要。
+
+十五、总结
+C 语言并不直接支持面向对象，但这并不意味着它不能组织出“对象化”的系统。
+通过：
+
+结构体保存状态
+函数指针表示行为
+操作表集中管理接口
+结构体嵌套模拟继承
+统一调用方式实现多态
+
+我们完全可以在 C 语言中构建出适合复杂嵌入式系统的模块化架构。
+对于机器人控制系统来说，这种写法最大的意义不是“看起来更专业”，而是：
+
+统一异构设备接口
+降低控制层与驱动层耦合
+提高可扩展性
+让系统在复杂度上升时仍然可维护
+
+当然，它也不是银弹。
+如果项目规模很小，这种抽象可能反而会带来额外负担。
+真正成熟的工程思维，不是盲目追求“高级写法”，而是知道什么时候该抽象，什么时候该直接。
+从这个角度看，函数指针和虚函数表模拟，既不是语法技巧，也不是炫技手段，而是一种非常典型的嵌入式工程组织方法。
+
+十六、下一篇可以写什么
+如果沿着这个系列继续写，下一篇很适合写：
+
+《C语言中的容器、注册表与模块管理》
+《机器人嵌入式中的模块生命周期设计》
+《从电机驱动到整机控制：如何设计统一设备抽象层》
+
+这样就可以把“C语言模拟面向对象”逐渐扩展成一个完整的机器人嵌入式架构系列。
+]]></content>
+      <categories>
+        <category>嵌入式</category>
+      </categories>
+      <tags>
+        <tag>嵌入式</tag>
+        <tag>C语言</tag>
+        <tag>机器人</tag>
       </tags>
   </entry>
 </search>
