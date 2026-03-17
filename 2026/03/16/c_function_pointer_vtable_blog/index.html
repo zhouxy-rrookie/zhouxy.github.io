@@ -1,13 +1,13 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>C语言中的函数指针与虚函数表模拟 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="C语言中的函数指针与虚函数表模拟 在上一篇《C语言模拟面向对象》中，我讨论了一个常见但容易被误解的话题：为什么很多嵌入式项目会把 C 语言写得“像面向对象”一样。 这种写法并不是为了“显得高级”，而是因为当系统开始管理越来越多的设备、模块和控制逻辑时，单纯依靠一堆分散的函数和条件分支，代码会越来越难维护。 而在所有“C 语言模拟面向对象”的技巧里，函数指针和虚函数表风格的操作表（ops table">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>C语言中的函数指针与虚函数表模拟 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="C语言中的函数指针与虚函数表模拟 在上一篇《C语言模拟面向对象》中，讨论了一个常见但容易被误解的话题：为什么很多嵌入式项目会把 C 语言写得“像面向对象”一样。 这种写法并不是为了“显得高级”，而是因为当系统开始管理越来越多的设备、模块和控制逻辑时，单纯依靠一堆分散的函数和条件分支，代码会越来越难维护。 在C语言模拟面向对象的技巧里，函数指针和虚函数表风格的操作表，是最核心的一层机制。 这篇文章就">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C语言中的函数指针与虚函数表模拟">
 <meta property="og:url" content="http://example.com/2026/03/16/c_function_pointer_vtable_blog/index.html">
 <meta property="og:site_name" content="星语的博客">
-<meta property="og:description" content="C语言中的函数指针与虚函数表模拟 在上一篇《C语言模拟面向对象》中，我讨论了一个常见但容易被误解的话题：为什么很多嵌入式项目会把 C 语言写得“像面向对象”一样。 这种写法并不是为了“显得高级”，而是因为当系统开始管理越来越多的设备、模块和控制逻辑时，单纯依靠一堆分散的函数和条件分支，代码会越来越难维护。 而在所有“C 语言模拟面向对象”的技巧里，函数指针和虚函数表风格的操作表（ops table">
+<meta property="og:description" content="C语言中的函数指针与虚函数表模拟 在上一篇《C语言模拟面向对象》中，讨论了一个常见但容易被误解的话题：为什么很多嵌入式项目会把 C 语言写得“像面向对象”一样。 这种写法并不是为了“显得高级”，而是因为当系统开始管理越来越多的设备、模块和控制逻辑时，单纯依靠一堆分散的函数和条件分支，代码会越来越难维护。 在C语言模拟面向对象的技巧里，函数指针和虚函数表风格的操作表，是最核心的一层机制。 这篇文章就">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img.cdn1.vip/i/695e790568d31_1767799045.webp">
 <meta property="article:published_time" content="2026-03-15T16:36:33.656Z">
-<meta property="article:modified_time" content="2026-03-15T16:36:55.026Z">
+<meta property="article:modified_time" content="2026-03-17T13:53:31.653Z">
 <meta property="article:author" content="zhxy">
 <meta property="article:tag" content="嵌入式">
 <meta property="article:tag" content="C语言">
@@ -20,7 +20,7 @@
   "url": "http://example.com/2026/03/16/c_function_pointer_vtable_blog/",
   "image": "https://img.cdn1.vip/i/695e790568d31_1767799045.webp",
   "datePublished": "2026-03-15T16:36:33.656Z",
-  "dateModified": "2026-03-15T16:36:55.026Z",
+  "dateModified": "2026-03-17T13:53:31.653Z",
   "author": [
     {
       "@type": "Person",
@@ -121,7 +121,7 @@
   </script><script>const GLOBAL_CONFIG = {
   root: '/',
   algolia: undefined,
-  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  localSearch: {"path":"/search.json","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
   translate: undefined,
   highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
   copy: {
@@ -191,15 +191,14 @@
     btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
     btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
   }
-})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695e790568d31_1767799045.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">C语言中的函数指针与虚函数表模拟</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">C语言中的函数指针与虚函数表模拟</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-15T16:36:33.656Z" title="发表于 2026-03-16 00:36:33">2026-03-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-15T16:36:55.026Z" title="更新于 2026-03-16 00:36:55">2026-03-16</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>C语言中的函数指针与虚函数表模拟</h1>
-<p>在上一篇《C语言模拟面向对象》中，我讨论了一个常见但容易被误解的话题：<strong>为什么很多嵌入式项目会把 C 语言写得“像面向对象”一样</strong>。<br>
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695e790568d31_1767799045.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">C语言中的函数指针与虚函数表模拟</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">C语言中的函数指针与虚函数表模拟</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-15T16:36:33.656Z" title="发表于 2026-03-16 00:36:33">2026-03-16</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-17T13:53:31.653Z" title="更新于 2026-03-17 21:53:31">2026-03-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>C语言中的函数指针与虚函数表模拟</h1>
+<p>在上一篇《C语言模拟面向对象》中，讨论了一个常见但容易被误解的话题：<strong>为什么很多嵌入式项目会把 C 语言写得“像面向对象”一样</strong>。<br>
 这种写法并不是为了“显得高级”，而是因为当系统开始管理越来越多的设备、模块和控制逻辑时，单纯依靠一堆分散的函数和条件分支，代码会越来越难维护。</p>
-<p>而在所有“C 语言模拟面向对象”的技巧里，<strong>函数指针</strong>和<strong>虚函数表风格的操作表（ops table / vtable）</strong>，是最核心的一层机制。</p>
+<p>在C语言模拟面向对象的技巧里，<strong>函数指针</strong>和<strong>虚函数表风格的操作表</strong>，是最核心的一层机制。</p>
 <p>这篇文章就专门讨论这个问题：</p>
 <blockquote>
 <p>在机器人嵌入式系统中，如何用 C 语言的函数指针模拟“对象方法”，再进一步模拟“虚函数表”和“多态调用”？</p>
 </blockquote>
-<p>我会尽量从工程实践出发，而不是停留在语法层面。</p>
 <hr>
 <h1>一、为什么普通 C 写法会越来越难维护</h1>
 <p>先看最朴素的写法。</p>
@@ -260,8 +259,7 @@
 </blockquote>
 <hr>
 <h1>三、从函数指针到“方法调用”</h1>
-<p>很多人第一次看到 <code>self</code> 参数时会觉得奇怪：<br>
-为什么函数签名里总要手动传一个指针？</p>
+<p>为什么函数签名里总要手动传一个指针？</p>
 <p>例如：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">motor_enable</span><span class="params">(Motor *self)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">motor_set_ref</span><span class="params">(Motor *self, <span class="type">float</span> ref)</span>;</span><br></pre></td></tr></table></figure>
 <p>原因其实很简单：<br>
@@ -280,7 +278,6 @@
 <p>而一旦这个约定建立起来，我们就可以在一个纯 C 项目里写出非常“对象化”的代码。</p>
 <hr>
 <h1>四、虚函数表是什么，它和普通函数指针有什么区别</h1>
-<p>这里要区分两个容易混淆的概念：</p>
 <h2 id="1-结构体里直接保存多个函数指针">1. 结构体里直接保存多个函数指针</h2>
 <p>例如：</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="type">void</span> (*enable)(<span class="type">void</span> *self);</span><br><span class="line">    <span class="type">void</span> (*disable)(<span class="type">void</span> *self);</span><br><span class="line">    <span class="type">void</span> (*set_ref)(<span class="type">void</span> *self, <span class="type">float</span> ref);</span><br><span class="line">&#125; Motor;</span><br></pre></td></tr></table></figure>
