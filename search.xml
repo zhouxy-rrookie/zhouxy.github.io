@@ -2447,7 +2447,7 @@ f_{z,\min}\le f_{z,i,k}\le f_{z,\max}.
       </tags>
   </entry>
   <entry>
-    <title>(科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习</title>
+    <title>IsaacLab入门级食用方法</title>
     <url>/2026/03/17/isaaclab_prj/</url>
     <content><![CDATA[Isaac Lab External 项目完整工作流
 本教程面向已经配置好Isaaclab强化学习环境的新手玩家
