@@ -1,0 +1,591 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>(科普向)STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache 一次讲清 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言 如果你在 STM32H723 上遇到过这些诡异现象：  HAL_UART_Receive_DMA() 正常返回，但缓冲区就是不变 ADC + DMA 偶尔全 0，偶尔又像是“好了” 把数组改成全局变量、static、甚至改个大小，结果症状跟着变 关掉 D-Cache 以后突然一切正常，重新打开又开始抽风  那大概率不是你“DMA 配错了一点点”，而是你踩中了 STM32H7 这一代 MCU">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(科普向)STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache 一次讲清">
+<meta property="og:url" content="http://example.com/2026/03/28/h7_dma/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="前言 如果你在 STM32H723 上遇到过这些诡异现象：  HAL_UART_Receive_DMA() 正常返回，但缓冲区就是不变 ADC + DMA 偶尔全 0，偶尔又像是“好了” 把数组改成全局变量、static、甚至改个大小，结果症状跟着变 关掉 D-Cache 以后突然一切正常，重新打开又开始抽风  那大概率不是你“DMA 配错了一点点”，而是你踩中了 STM32H7 这一代 MCU">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp">
+<meta property="article:published_time" content="2026-03-28T13:42:14.079Z">
+<meta property="article:modified_time" content="2026-03-28T13:42:55.106Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="STM32">
+<meta property="article:tag" content="DMA">
+<meta property="article:tag" content="Cortex-M7">
+<meta property="article:tag" content="缓存">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "(科普向)STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache 一次讲清",
+  "url": "http://example.com/2026/03/28/h7_dma/",
+  "image": "https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp",
+  "datePublished": "2026-03-28T13:42:14.079Z",
+  "dateModified": "2026-03-28T13:42:55.106Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/03/28/h7_dma/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '(科普向)STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache 一次讲清',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">(科普向)STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache 一次讲清</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">(科普向)STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache 一次讲清</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-28T13:42:14.079Z" title="发表于 2026-03-28 21:42:14">2026-03-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-28T13:42:55.106Z" title="更新于 2026-03-28 21:42:55">2026-03-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F/">嵌入式系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>前言</h1>
+<p>如果你在 STM32H723 上遇到过这些诡异现象：</p>
+<ul>
+<li><code>HAL_UART_Receive_DMA()</code> 正常返回，但缓冲区就是不变</li>
+<li>ADC + DMA 偶尔全 0，偶尔又像是“好了”</li>
+<li>把数组改成全局变量、<code>static</code>、甚至改个大小，结果症状跟着变</li>
+<li>关掉 D-Cache 以后突然一切正常，重新打开又开始抽风</li>
+</ul>
+<p>那大概率不是你“DMA 配错了一点点”，而是你踩中了 STM32H7 这一代 MCU 最经典的坑之一。</p>
+<p>STM32H723 和很多 F1/F4/F7 的直觉式用法不太一样。它的 Cortex-M7 内核带有 32 KB I-Cache 和 32 KB D-Cache，同时系统内部又分成 D1 / D2 / D3 三个域，既有 AXI SRAM，也有 D2 SRAM、D3 SRAM，还保留了 ITCM / DTCM 这样的 TCM 内存路径。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/datasheet/stm32h723zg.pdf">DS13313</a>, <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>）</p>
+<p>所以，很多人口中的“DMA 与 RAM 冲突”，其实往往不是“两个模块抢内存”这么朴素，而是下面三类问题混在了一起：</p>
+<ol>
+<li><strong>DMA 根本到不了那块 RAM</strong></li>
+<li><strong>DMA 能到，但 CPU 的 D-Cache 让双方看到的不是同一份数据</strong></li>
+<li><strong>大家都能到，但多个主设备并发访问时，真的发生了总线仲裁和带宽竞争</strong></li>
+</ol>
+<p>这篇文章就把这件事从底层结构到工程修复，一次讲清楚。毕竟人类在调 DMA 这件事上浪费的时间，已经多到足够再造几块板子了。</p>
+<hr>
+<h1>一句话结论</h1>
+<blockquote>
+<p>在 STM32H723 上，所谓 “DMA 与 RAM 冲突”，最常见的根因并不是 RAM 坏了，而是 <strong>Buffer 放错了内存域</strong>，或者 <strong>Buffer 放对了，但 Cache 一致性没处理</strong>。</p>
+</blockquote>
+<p>如果只记一条，请记这条：</p>
+<ul>
+<li><strong>DTCM 很快，但普通 DMA1/DMA2/BDMA 不可见</strong></li>
+<li><strong>AXI SRAM / SRAM1 / SRAM2 / SRAM4 可以给 DMA 用，但开了 D-Cache 以后必须处理一致性</strong></li>
+<li><strong>BDMA 只活在 D3 世界里，别把它往别的域乱塞</strong></li>
+</ul>
+<p>这不是玄学，是架构决定的。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>, <a target="_blank" rel="noopener" href="https://community.st.com/t5/stm32-mcus/dma-is-not-working-on-stm32h7-devices/ta-p/49498">ST-DMA-FAQ</a>, <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf">AN4839</a>）</p>
+<hr>
+<h1>1. 先把地图看明白：H723 到底有哪些 RAM</h1>
+<p>STM32H723 的内部 RAM 不是“一整坨”，而是分散在不同的总线和域上。数据手册给出的 H723 RAM 规模包括：</p>
+<ul>
+<li>128 到 320 KB 的 AXI SRAM，位于 D1 域</li>
+<li>16 KB 的 SRAM1，位于 D2 域</li>
+<li>16 KB 的 SRAM2，位于 D2 域</li>
+<li>16 KB 的 SRAM4，位于 D3 域</li>
+<li>128 KB 的 DTCM RAM</li>
+<li>一部分可在 ITCM 与 AXI SRAM 之间按 64 KB 粒度复用的共享 RAM</li>
+</ul>
+<p>（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/datasheet/stm32h723zg.pdf">DS13313</a>, <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>）</p>
+<p>下面给一个工程上更好记的表：</p>
+<table>
+<thead>
+<tr>
+<th>区域</th>
+<th>典型基地址</th>
+<th>H723 规模</th>
+<th>典型用途</th>
+<th>适不适合做普通 DMA Buffer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DTCM RAM</td>
+<td><code>0x20000000</code></td>
+<td>128 KB</td>
+<td>栈、热点数据、ISR 高频数据</td>
+<td><strong>不适合</strong>，普通 DMA1/DMA2/BDMA 看不到</td>
+</tr>
+<tr>
+<td>AXI SRAM</td>
+<td><code>0x24000000</code></td>
+<td>128 到 320 KB</td>
+<td>大块缓冲、高带宽数据</td>
+<td><strong>适合</strong>，但要管 D-Cache</td>
+</tr>
+<tr>
+<td>SRAM1</td>
+<td><code>0x30000000</code></td>
+<td>16 KB</td>
+<td>D2 外设的本地缓冲</td>
+<td><strong>适合</strong>，但要管 D-Cache</td>
+</tr>
+<tr>
+<td>SRAM2</td>
+<td><code>0x30004000</code></td>
+<td>16 KB</td>
+<td>D2 外设的本地缓冲</td>
+<td><strong>适合</strong>，但要管 D-Cache</td>
+</tr>
+<tr>
+<td>SRAM4</td>
+<td><code>0x38000000</code></td>
+<td>16 KB</td>
+<td>D3/BDMA 相关缓冲</td>
+<td><strong>适合</strong>，尤其适合 D3/BDMA 场景</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>这里故意没把 ITCM 列进“普通 DMA Buffer”候选项，因为它本来就不是拿来干这个的。别硬来，MCU 不会因此对你产生敬意。</p>
+</blockquote>
+<p>从架构上看，STM32H72x/H73x 使用三个独立总线矩阵：D1 域是 64-bit AXI，D2 和 D3 域是 32-bit AHB。这样设计是为了支持多主设备并行访问并减少总线拥塞，但“并发能力更强”并不等于“任何主设备都能访问任何 RAM”。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>）</p>
+<hr>
+<h1>2. 第一类坑：Buffer 放进了 DTCM，DMA 根本摸不到</h1>
+<p>这是最常见、也最容易把人气笑的错误。</p>
+<p>AN4891 明确写到，在 STM32H72x/H73x 架构里，<strong>连接在 ITCM / DTCM 接口上的内存，只有 Cortex-M7 CPU 和 MDMA 能访问</strong>。对普通 DMA1 / DMA2 来说，DTCM 不是“访问效率低”，而是<strong>根本不在它的可达路径上</strong>。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>）</p>
+<p>数据手册对 H723 也给出了同样的结论：DTCM / ITCM 是通过 TCM 接口提供给 CPU 使用的，MDMA 可以通过 Cortex-M7 的特定 AHB slave 访问这些区域。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/datasheet/stm32h723zg.pdf">DS13313</a>）</p>
+<p>所以你一旦把 DMA Buffer 放在 DTCM 里，就会出现非常典型的现象：</p>
+<ul>
+<li>DMA 配置看起来没问题</li>
+<li>中断可能都来了</li>
+<li>外设状态寄存器也像是在工作</li>
+<li>但目标数组就是不更新，或者数据莫名其妙</li>
+</ul>
+<p>这类问题在 STM32H7 上之所以高发，是因为 ST 自己的 FAQ 都专门点名了：<strong>有些工程和示例会默认把内存放到 DTCM</strong>，而 D1/D2 外设的 DMA 并不能访问这块内存。（见 <a target="_blank" rel="noopener" href="https://community.st.com/t5/stm32-mcus/dma-is-not-working-on-stm32h7-devices/ta-p/49498">ST-DMA-FAQ</a>）</p>
+<h2 id="一个简单到近乎粗暴的判断方法">一个简单到近乎粗暴的判断方法</h2>
+<p>先别急着怀疑外设时序，先打印一下 Buffer 地址。</p>
+<p>如果你的 DMA 缓冲区地址落在 <code>0x20000000</code> 这一段，那就先别讨论别的了，先把它挪出去。<br>
+在 H723 上，这里首先该怀疑的就是 DTCM。</p>
+<hr>
+<h1>3. 第二类坑：Buffer 挪到了 AXI/D2/D3 SRAM，但 D-Cache 仍然会害你</h1>
+<p>很多人修到这一步，会以为问题已经结束：</p>
+<blockquote>
+<p>“我都把数组从 <code>0x20000000</code> 挪到 <code>0x30000000</code> 了，怎么数据还是不对？”</p>
+</blockquote>
+<p>原因是，H723 的 Cortex-M7 带 D-Cache，而在 MPU 未配置时，Cortex-M7 默认地址映射会把 SRAM 区域当作 cacheable 的 normal memory，策略是 write-back / write-allocate。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf">AN4839</a>, <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>）</p>
+<p>这就带来两个经典场景：</p>
+<h2 id="场景-A：CPU-先写-Buffer，DMA-再去读">场景 A：CPU 先写 Buffer，DMA 再去读</h2>
+<p>例如 UART/SPI/I2S 发送场景：</p>
+<ol>
+<li>CPU 把待发送数据写进 SRAM</li>
+<li>这些新数据可能还只停留在 D-Cache 里，没有立刻回写到真正的 SRAM</li>
+<li>DMA 去读 SRAM 时，读到的还是旧内容</li>
+<li>结果就是“发出去的数据不对”</li>
+</ol>
+<p>AN4839 直接把这个问题讲得很明白：当内存区域使用 write-back cache 策略时，CPU 的写入可能被缓存，DMA 读到的不是 CPU 刚刚写进去的值。官方给出的解决方式之一，就是在 DMA 启动前对相应地址做 D-Cache clean。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf">AN4839</a>）</p>
+<h2 id="场景-B：DMA-先写-Buffer，CPU-再去读">场景 B：DMA 先写 Buffer，CPU 再去读</h2>
+<p>例如 ADC / UART RX / SPI RX 场景：</p>
+<ol>
+<li>DMA 把新数据写回 SRAM</li>
+<li>但 CPU 之前已经把这块地址缓存进 D-Cache 了</li>
+<li>CPU 读到的还是缓存里的旧数据</li>
+<li>结果就是“DMA 明明完成了，数组看起来却没变化”</li>
+</ol>
+<p>AN4839 同样给出的官方建议是：<strong>在 CPU 读取 DMA 刚写完的内存前，先做 D-Cache invalidate</strong>，让 CPU 下次读取时重新从 SRAM 拿数据。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf">AN4839</a>）</p>
+<h2 id="一个非常好记的口诀">一个非常好记的口诀</h2>
+<blockquote>
+<p><strong>CPU 写，DMA 读：先 Clean</strong><br>
+<strong>DMA 写，CPU 读：先 Invalidate</strong></p>
+</blockquote>
+<p>这条不神秘，就是 Cache 一致性的最小常识。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf">AN4839</a>, <a target="_blank" rel="noopener" href="https://arm-software.github.io/CMSIS_6/latest/Core/group__Dcache__functions__m7.html">CMSIS-DCache</a>）</p>
+<hr>
+<h1>4. 第三类坑：这次真的是“争用”，但它通常不是第一个要怀疑的锅</h1>
+<p>AN4891 说明，STM32H72x/H73x 之所以拆成多套总线矩阵，就是为了支持多主设备并发访问，并通过内部仲裁器解决冲突；D2/D3 的 AHB 矩阵也会对并发访问做仲裁，使用 round-robin 算法。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>）</p>
+<p>所以，<strong>总线竞争是客观存在的</strong>。如果你同时让 CPU、DMA1、DMA2、ETH、USB、SDMMC 之类的主设备一起对同一片 SRAM 高强度访问，确实可能出现：</p>
+<ul>
+<li>吞吐下降</li>
+<li>FIFO overrun / underrun</li>
+<li>某些帧偶发超时</li>
+<li>高频实时任务抖动</li>
+</ul>
+<p>但在工程上，真正的“DMA 完全不工作”或者“搬运结果全错”这类症状，优先级最高的排查方向依旧是前两类：</p>
+<ol>
+<li><strong>地址是不是掉进 DTCM 了</strong></li>
+<li><strong>D-Cache 一致性是不是没处理</strong></li>
+</ol>
+<p>因为这两类问题最致命、最稳定、也最常见。<br>
+至于总线竞争，更像是你把前两类都修完之后，系统在高负载下才暴露出来的第二阶段问题。</p>
+<hr>
+<h1>5. 不同 RAM 区到底该怎么用</h1>
+<p>如果只谈“能不能跑”，很多放法都能凑合。<br>
+但如果你想让工程更稳定，最好从一开始就把 RAM 分工想清楚。</p>
+<h2 id="5-1-DTCM：给-CPU-私有热点数据，不给普通-DMA">5.1 DTCM：给 CPU 私有热点数据，不给普通 DMA</h2>
+<p>DTCM 的优点是快、确定性高、零等待状态，适合：</p>
+<ul>
+<li>栈</li>
+<li>高频 ISR 数据</li>
+<li>数学计算中的热点变量</li>
+<li>对延迟特别敏感的控制数据</li>
+</ul>
+<p>但它不适合做 DMA1/DMA2/BDMA 的普通缓冲区。<br>
+如果你非要让外设链路和 DTCM 之间搬数据，正确角色通常不是 DMA1/2，而是 <strong>MDMA 作为桥</strong>。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/datasheet/stm32h723zg.pdf">DS13313</a>, <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>）</p>
+<h2 id="5-2-SRAM1-SRAM2：给-D2-外设-DMA-做“本地缓冲”">5.2 SRAM1 / SRAM2：给 D2 外设 DMA 做“本地缓冲”</h2>
+<p>AN4891 专门提到，对 H72x/H73x 来说，D2 域的 SRAM1 和 SRAM2 可以作为位于 D2 域的本地 DMA 缓冲区；而且每块 SRAM 都有各自的 AHB 通路，这有助于减少并发访问时的总线争用。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>）</p>
+<p>这意味着如果你在做：</p>
+<ul>
+<li>USART + DMA</li>
+<li>SPI/I2C + DMA</li>
+<li>ADC + DMA</li>
+<li>一些典型 D2 通信外设的数据流</li>
+</ul>
+<p>那么把 Buffer 放在 <code>SRAM1 / SRAM2</code> 往往是很稳妥的选择。</p>
+<h2 id="5-3-AXI-SRAM：给大块缓冲和高带宽链路">5.3 AXI SRAM：给大块缓冲和高带宽链路</h2>
+<p>AXI SRAM 在 D1 域，容量更大，适合：</p>
+<ul>
+<li>大块图像/音频缓冲</li>
+<li>USB / Ethernet / SDMMC 一类更偏“大块搬运”的数据区</li>
+<li>需要被 D1 / D2 主设备共同访问的大缓冲区</li>
+</ul>
+<p>但它通常也是更容易和 Cache 打架的地方。<br>
+所以 AXI SRAM 不是“拿来就用”的万能区，而是“适合做 DMA 大缓冲，但必须管住 Cache”的区域。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>, <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf">AN4839</a>）</p>
+<h2 id="5-4-SRAM4：给-D3-BDMA-相关场景">5.4 SRAM4：给 D3 / BDMA 相关场景</h2>
+<p>AN4891 明确指出：</p>
+<ul>
+<li>SRAM4 位于 D3 域</li>
+<li>D2 域的 DMA1 / DMA2 可以经由 D2-to-D3 访问它</li>
+<li><strong>BDMA 只能访问 D3 域资源</strong></li>
+</ul>
+<p>这句话的潜台词非常重要：</p>
+<blockquote>
+<p>如果你在用 BDMA，缓冲区就别往 AXI SRAM 或 DTCM 里塞了，优先考虑 SRAM4。</p>
+</blockquote>
+<p>否则你以为是“DMA 配置不对”，实际上是你让一个只会在 D3 里活动的搬运工，去 D1/DTCM 仓库扛货。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>）</p>
+<hr>
+<h1>6. 实战上怎么修：一个稳妥的工程模板</h1>
+<p>下面给一个在 CubeIDE / GCC 工程里相对稳妥的思路。</p>
+<h2 id="6-1-先在链接脚本里单独开一个-DMA-Buffer-段">6.1 先在链接脚本里单独开一个 DMA Buffer 段</h2>
+<p>以 <code>.ld</code> 为例，把一段专门给 DMA 的 section 放到 <code>RAM_D2</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/* 只示意关键段，具体 MEMORY 名称以你的工程脚本为准 */</span><br><span class="line"></span><br><span class="line">.dma_buffer :</span><br><span class="line">&#123;</span><br><span class="line">    . = ALIGN(32);</span><br><span class="line">    *(.dma_buffer)</span><br><span class="line">    . = ALIGN(32);</span><br><span class="line">&#125; &gt;RAM_D2</span><br></pre></td></tr></table></figure>
+<p>如果你是 D3 / BDMA 场景，就把它改成 <code>&gt;RAM_D3</code>。<br>
+如果是大块高带宽缓冲，比如网络帧或大块接收区，也可以考虑 <code>&gt;RAM_D1</code>。</p>
+<h2 id="6-2-变量显式放段，并做-32-字节对齐">6.2 变量显式放段，并做 32 字节对齐</h2>
+<p>CMSIS 的 D-Cache 按地址维护接口要求地址按 32 字节边界对齐，因此 DMA Buffer 显式做 32 字节对齐是个很值得养成的习惯。（见 <a target="_blank" rel="noopener" href="https://arm-software.github.io/CMSIS_6/latest/Core/group__Dcache__functions__m7.html">CMSIS-DCache</a>）</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__attribute__((section(<span class="string">&quot;.dma_buffer&quot;</span>), aligned(<span class="number">32</span>)))</span><br><span class="line"><span class="type">static</span> <span class="type">uint8_t</span> uart_rx_buf[<span class="number">512</span>];</span><br><span class="line"></span><br><span class="line">__attribute__((section(<span class="string">&quot;.dma_buffer&quot;</span>), aligned(<span class="number">32</span>)))</span><br><span class="line"><span class="type">static</span> <span class="type">uint8_t</span> uart_tx_buf[<span class="number">512</span>];</span><br></pre></td></tr></table></figure>
+<h2 id="6-3-封装-Cache-维护函数，别每次手写">6.3 封装 Cache 维护函数，别每次手写</h2>
+<p>CMSIS 文档明确写了：<code>SCB_CleanDCache_by_Addr()</code> 和 <code>SCB_InvalidateDCache_by_Addr()</code> 的地址参数需要按 32 字节边界对齐。（见 <a target="_blank" rel="noopener" href="https://arm-software.github.io/CMSIS_6/latest/Core/group__Dcache__functions__m7.html">CMSIS-DCache</a>）</p>
+<p>所以，最稳妥的做法不是“每次手工算一下”，而是自己封装一层：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdint.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stddef.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;core_cm7.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CACHE_LINE_SIZE 32U</span></span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">dcache_clean_by_addr</span><span class="params">(<span class="type">const</span> <span class="type">void</span> *addr, <span class="type">size_t</span> len)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uintptr_t</span> start = (<span class="type">uintptr_t</span>)addr &amp; ~(CACHE_LINE_SIZE - <span class="number">1U</span>);</span><br><span class="line">    <span class="type">uintptr_t</span> end   = ((<span class="type">uintptr_t</span>)addr + len + CACHE_LINE_SIZE - <span class="number">1U</span>) &amp; ~(CACHE_LINE_SIZE - <span class="number">1U</span>);</span><br><span class="line">    SCB_CleanDCache_by_Addr((<span class="keyword">volatile</span> <span class="type">void</span> *)start, (<span class="type">int32_t</span>)(end - start));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="keyword">inline</span> <span class="type">void</span> <span class="title function_">dcache_invalidate_by_addr</span><span class="params">(<span class="type">void</span> *addr, <span class="type">size_t</span> len)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">uintptr_t</span> start = (<span class="type">uintptr_t</span>)addr &amp; ~(CACHE_LINE_SIZE - <span class="number">1U</span>);</span><br><span class="line">    <span class="type">uintptr_t</span> end   = ((<span class="type">uintptr_t</span>)addr + len + CACHE_LINE_SIZE - <span class="number">1U</span>) &amp; ~(CACHE_LINE_SIZE - <span class="number">1U</span>);</span><br><span class="line">    SCB_InvalidateDCache_by_Addr((<span class="keyword">volatile</span> <span class="type">void</span> *)start, (<span class="type">int32_t</span>)(end - start));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="6-4-发送和接收分别怎么用">6.4 发送和接收分别怎么用</h2>
+<h3 id="发送：CPU-写完，启动-DMA-前-Clean">发送：CPU 写完，启动 DMA 前 Clean</h3>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="built_in">memcpy</span>(uart_tx_buf, src, tx_len);</span><br><span class="line">dcache_clean_by_addr(uart_tx_buf, tx_len);</span><br><span class="line">HAL_UART_Transmit_DMA(&amp;huart1, uart_tx_buf, tx_len);</span><br></pre></td></tr></table></figure>
+<h3 id="接收：DMA-写完，CPU-读之前-Invalidate">接收：DMA 写完，CPU 读之前 Invalidate</h3>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">HAL_UART_Receive_DMA(&amp;huart1, uart_rx_buf, <span class="keyword">sizeof</span>(uart_rx_buf));</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">HAL_UART_RxCpltCallback</span><span class="params">(UART_HandleTypeDef *huart)</span></span><br><span class="line">&#123;</span><br><span class="line">    dcache_invalidate_by_addr(uart_rx_buf, <span class="keyword">sizeof</span>(uart_rx_buf));</span><br><span class="line">    <span class="comment">/* 此后再去解析 uart_rx_buf */</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你用的是 half-transfer / circular DMA，同样的原则不变，只是对“半缓冲”或“当前有效窗口”分别做 invalidate 即可。</p>
+<h2 id="6-5-如果-DMA-很频繁，考虑直接用非-Cache-区">6.5 如果 DMA 很频繁，考虑直接用非 Cache 区</h2>
+<p>AN4839 给出的官方思路之一，就是把 DMA Buffer 放到 non-cacheable 区，或者通过 MPU 把对应区域设成 write-through / shared，从而减少软件手工维护 Cache 的负担。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf">AN4839</a>）</p>
+<p>实际工程里，如果某块 Buffer：</p>
+<ul>
+<li>更新频繁</li>
+<li>数据量大</li>
+<li>又被多个回调和任务来回使用</li>
+</ul>
+<p>那直接给它单独开一块 non-cacheable 区，往往比到处 <code>Clean/Invalidate</code> 更不容易出事故。</p>
+<hr>
+<h1>7. 很多人会漏掉的两个细节</h1>
+<h2 id="7-1-SRAM1-SRAM2-不是永远默认可用">7.1 SRAM1 / SRAM2 不是永远默认可用</h2>
+<p>AN4891 还提到：复位后 SRAM1 / SRAM2 / SRAM3 的时钟默认是关闭的，需要通过 <code>RCC_AHB2ENR</code> 打开相应使能位后才能访问。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891</a>）</p>
+<p>这件事在“完全照着 Cube 自动生成工程走”的情况下通常不太容易暴露；但如果你：</p>
+<ul>
+<li>自己改了启动流程</li>
+<li>裸机手写初始化</li>
+<li>提前把 <code>.data/.bss</code> 或特殊段搬进 D2 RAM</li>
+</ul>
+<p>那就别忘了确认这件事。<br>
+不然你可能会把问题误判成“链接脚本炸了”或者“启动文件有毒”。</p>
+<h2 id="7-2-关掉-D-Cache-只是验证手段，不是优雅答案">7.2 关掉 D-Cache 只是验证手段，不是优雅答案</h2>
+<p>AN4839 的例子很直接：关闭 D-Cache 时，DMA 相关数据搬运可以正常；开启 D-Cache 后，如果不处理一致性，就会出现数据不匹配。（见 <a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf">AN4839</a>）</p>
+<p>所以，<strong>临时关 D-Cache</strong> 非常适合做定位：</p>
+<ul>
+<li>关了就好，说明你多半是 Cache 一致性问题</li>
+<li>关了也不好，那就继续回头查地址和内存域</li>
+</ul>
+<p>但把 D-Cache 永久关掉，通常只是“先让它别坏”，不是“从架构上做对”。<br>
+你买 H723 不是为了把 Cortex-M7 当没 Cache 的老 MCU 用的，虽然很多项目最后确实活成了这样。</p>
+<hr>
+<h1>8. 一套非常实用的排查顺序</h1>
+<p>以后再碰到 STM32H723 的 DMA 异常，可以按下面这个顺序排：</p>
+<h2 id="第一步：先看-Buffer-地址">第一步：先看 Buffer 地址</h2>
+<ul>
+<li><code>0x20000000</code> 一带，先怀疑 DTCM</li>
+<li><code>0x24000000</code> 一带，通常是 AXI SRAM</li>
+<li><code>0x30000000</code> / <code>0x30004000</code>，通常是 SRAM1 / SRAM2</li>
+<li><code>0x38000000</code>，通常是 SRAM4</li>
+</ul>
+<p>不要一上来翻 HAL 源码。先问“这块内存 DMA 到底能不能到”。</p>
+<h2 id="第二步：确认当前有没有开-D-Cache">第二步：确认当前有没有开 D-Cache</h2>
+<p>如果开了 D-Cache，而 Buffer 又在 AXI SRAM / SRAM1 / SRAM2 / SRAM4 这些可被 DMA 访问的 SRAM 里，那么就必须继续问下一句：</p>
+<blockquote>
+<p>这次是 <strong>CPU 写后 DMA 读</strong>，还是 <strong>DMA 写后 CPU 读</strong>？</p>
+</blockquote>
+<p>然后决定是 <code>Clean</code> 还是 <code>Invalidate</code>。</p>
+<h2 id="第三步：确认-DMA-控制器属于哪个域">第三步：确认 DMA 控制器属于哪个域</h2>
+<ul>
+<li>DMA1 / DMA2 主要活在 D2</li>
+<li>BDMA 只活在 D3</li>
+<li>MDMA 才是那个能碰 TCM、适合做跨域桥接的角色</li>
+</ul>
+<p>控制器选错了，Buffer 再怎么挪也只是盲修。</p>
+<h2 id="第四步：最后才去怀疑真正的带宽竞争">第四步：最后才去怀疑真正的带宽竞争</h2>
+<p>如果前面都确认没问题，只在高吞吐、并发外设、满速场景下偶发异常，再去考虑：</p>
+<ul>
+<li>Buffer 是否都堆在同一片 SRAM</li>
+<li>CPU 是否在高频扫描 DMA 正在写的区域</li>
+<li>是否需要把 D2 本地缓冲和 D1 大缓冲分层</li>
+<li>是否应该用 MDMA 做二级搬运</li>
+</ul>
+<p>这个顺序能帮你避开 80% 以上的无效调试。</p>
+<hr>
+<h1>结语</h1>
+<p>STM32H723 的 DMA 与 RAM 问题，本质上不是一个“外设配置小失误”，而是一道架构题。</p>
+<p>你只要把这几个角色分清：</p>
+<ul>
+<li><strong>DTCM</strong>：很快，但偏 CPU 私有</li>
+<li><strong>AXI SRAM / SRAM1 / SRAM2 / SRAM4</strong>：共享给系统，但要考虑域和 Cache</li>
+<li><strong>DMA1 / DMA2 / BDMA / MDMA</strong>：各自活在不同的访问路径上</li>
+<li><strong>D-Cache</strong>：能提速，也能让你读到一份“看起来像真的旧数据”</li>
+</ul>
+<p>整件事就会从“玄学”变成“可验证、可修复、可复用的工程问题”。</p>
+<p>以后再看到“DMA 没搬动”，别急着重生成工程、删 <code>.ioc</code>、或者给 HAL 烧香。<br>
+先问三句话：</p>
+<ol>
+<li><strong>这块 RAM，DMA 到得了吗？</strong></li>
+<li><strong>这块 RAM，CPU 和 DMA 看的是同一份数据吗？</strong></li>
+<li><strong>如果前两条都满足，是不是才轮到总线竞争？</strong></li>
+</ol>
+<p>把这三句问完，问题通常就已经被你抓住七寸了。</p>
+<hr>
+<h1>参考资料</h1>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://www.st.com/resource/en/datasheet/stm32h723zg.pdf">DS13313 - STM32H723xE/G datasheet</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4891-stm32h72x-stm32h73x-and-singlecore-stm32h74x75x-system-architecture-and-performance-stmicroelectronics.pdf">AN4891 - STM32H72x, STM32H73x, and single-core STM32H74x/75x system architecture and performance</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.st.com/resource/en/application_note/an4839-level-1-cache-on-stm32f7-series-and-stm32h7-series-stmicroelectronics.pdf">AN4839 - Level 1 cache on STM32F7 Series and STM32H7 Series</a></li>
+<li><a target="_blank" rel="noopener" href="https://community.st.com/t5/stm32-mcus/dma-is-not-working-on-stm32h7-devices/ta-p/49498">ST DMA FAQ - DMA is not working on STM32H7 devices</a></li>
+<li><a target="_blank" rel="noopener" href="https://arm-software.github.io/CMSIS_6/latest/Core/group__Dcache__functions__m7.html">CMSIS D-Cache functions for Cortex-M7</a></li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/03/28/h7_dma/">http://example.com/2026/03/28/h7_dma/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a><a class="post-meta__tags" href="/tags/STM32/">STM32</a><a class="post-meta__tags" href="/tags/DMA/">DMA</a><a class="post-meta__tags" href="/tags/Cortex-M7/">Cortex-M7</a><a class="post-meta__tags" href="/tags/%E7%BC%93%E5%AD%98/">缓存</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法"><img class="cover" src="https://img.cdn1.vip/i/69b966ad97776_1773758125.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">IsaacLab入门级食用方法</div></div><div class="info-2"><div class="info-item-1">Isaac Lab External 项目完整工作流 本教程面向已经配置好Isaaclab强化学习环境的新手玩家 项目仓库：https://github.com/Leggedsys/legged_train/tree/main 第一次新建一个空的IsaacLab外部项目，除了跑一跑倒立摆的示例，我也不知道下一步要做什么。仓库是新的，我的目标是训练一条机器狗，下一步要干啥？：先放URDF ？写 env ？先写 PPO 配置？还是去啃官方教程？本人想做一篇文档教程作为参考，把训练一台机器狗这个事，完整记录一下。 整个过程其实比较简单：先把项目变成一个能被IsaacLab 识别的Python扩展，再把机器人资产接进来，然后围绕这台机器人写配置、场景、环境和奖励，最后再接上PPO训练与回放脚本。难点从来不在于某一步特别神秘，我们第一次做isaaclab项目时，大概已经知道我要做的无非就这些事，但不知道从何开始，也不知道这些文件到底是干啥的。只要这条线理顺了，后面想加入平地gait、rough terrain、抗扰动或者sim-to-real 扩展，其实都会顺很多。 项目环境准备 我的项目...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/16/c_function_pointer_vtable_blog/" title="C语言中的函数指针与虚函数表模拟"><img class="cover" src="https://img.cdn1.vip/i/69b967e9d0aa8_1773758441.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-16</div><div class="info-item-2">C语言中的函数指针与虚函数表模拟</div></div><div class="info-2"><div class="info-item-1">C语言中的函数指针与虚函数表模拟 在上一篇《C语言模拟面向对象》中，讨论了一个常见但容易被误解的话题：为什么很多嵌入式项目会把 C 语言写得“像面向对象”一样。 这种写法并不是为了“显得高级”，而是因为当系统开始管理越来越多的设备、模块和控制逻辑时，单纯依靠一堆分散的函数和条件分支，代码会越来越难维护。 在C语言模拟面向对象的技巧里，函数指针和虚函数表风格的操作表，是最核心的一层机制。 这篇文章就专门讨论这个问题：  在机器人嵌入式系统中，如何用 C 语言的函数指针模拟“对象方法”，再进一步模拟“虚函数表”和“多态调用”？   一、为什么普通 C 写法会越来越难维护 先看最朴素的写法。 假设我们有两类电机：  DJI 电机 DM 电机  一开始也许只需要做“使能”： if (motor_type == DJI_MOTOR) &#123;    dji_motor_enable();&#125; else if (motor_type == DM_MOTOR) &#123;    dm_motor_enable();&#125; 后来需求变多了，还要设置目标值、解析反馈、执行控制更...</div></div></div></a><a class="pagination-related" href="/2026/03/16/c_language_oop_robotics_blog/" title="C语言模拟面向对象"><img class="cover" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-16</div><div class="info-item-2">C语言模拟面向对象</div></div><div class="info-2"><div class="info-item-1">C语言模拟面向对象 很多人第一次看到这种代码风格时，都会有一个问题：“用 C 语言写出面向对象的样子，是不是显得更专业” 我的看法是：专业不在于“像不像 C++”，而在于这套写法能不能真正解决工程问题。 对于机器人嵌入式控制系统来说，系统里往往同时存在底盘、电机、升降机构、武器机构、CAN 通信、PID 控制、任务调度等多个层次。如果继续用“满地全局变量 + 一堆 switch-case + 到处散落的初始化函数”去组织代码，随着功能变多，系统很快就会变得难以维护。 这时候，C 语言里的几个经典手段——结构体封装、函数指针、组合关系、统一初始化接口、对象注册——就能模拟出一套足够实用的“面向对象”风格。 这篇文章就结合一套机器人电机控制代码，聊聊：  为什么嵌入式系统里要用 C 模拟面向对象 你的这套代码到底“对象化”在什么地方 这种写法在机器人控制系统里有什么实际价值 这种设计什么时候值得用，什么时候会过度设计 基于现有代码，还能做哪些工程上的改进   1. 为什么 C 语言也要“对象化”？ 在桌面开发里，大家很容易直接想到 C++、Rust 这类更现代的语言；但在嵌入式世界，...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">zhxy</div><div class="author-info-description">学微电子的破大学生</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">一句话结论</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">1. 先把地图看明白：H723 到底有哪些 RAM</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text">2. 第一类坑：Buffer 放进了 DTCM，DMA 根本摸不到</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E5%88%B0%E8%BF%91%E4%B9%8E%E7%B2%97%E6%9A%B4%E7%9A%84%E5%88%A4%E6%96%AD%E6%96%B9%E6%B3%95"><span class="toc-number">4.1.</span> <span class="toc-text">一个简单到近乎粗暴的判断方法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">5.</span> <span class="toc-text">3. 第二类坑：Buffer 挪到了 AXI&#x2F;D2&#x2F;D3 SRAM，但 D-Cache 仍然会害你</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF-A%EF%BC%9ACPU-%E5%85%88%E5%86%99-Buffer%EF%BC%8CDMA-%E5%86%8D%E5%8E%BB%E8%AF%BB"><span class="toc-number">5.1.</span> <span class="toc-text">场景 A：CPU 先写 Buffer，DMA 再去读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF-B%EF%BC%9ADMA-%E5%85%88%E5%86%99-Buffer%EF%BC%8CCPU-%E5%86%8D%E5%8E%BB%E8%AF%BB"><span class="toc-number">5.2.</span> <span class="toc-text">场景 B：DMA 先写 Buffer，CPU 再去读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E9%9D%9E%E5%B8%B8%E5%A5%BD%E8%AE%B0%E7%9A%84%E5%8F%A3%E8%AF%80"><span class="toc-number">5.3.</span> <span class="toc-text">一个非常好记的口诀</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">6.</span> <span class="toc-text">4. 第三类坑：这次真的是“争用”，但它通常不是第一个要怀疑的锅</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">7.</span> <span class="toc-text">5. 不同 RAM 区到底该怎么用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#5-1-DTCM%EF%BC%9A%E7%BB%99-CPU-%E7%A7%81%E6%9C%89%E7%83%AD%E7%82%B9%E6%95%B0%E6%8D%AE%EF%BC%8C%E4%B8%8D%E7%BB%99%E6%99%AE%E9%80%9A-DMA"><span class="toc-number">7.1.</span> <span class="toc-text">5.1 DTCM：给 CPU 私有热点数据，不给普通 DMA</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-2-SRAM1-SRAM2%EF%BC%9A%E7%BB%99-D2-%E5%A4%96%E8%AE%BE-DMA-%E5%81%9A%E2%80%9C%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%86%B2%E2%80%9D"><span class="toc-number">7.2.</span> <span class="toc-text">5.2 SRAM1 &#x2F; SRAM2：给 D2 外设 DMA 做“本地缓冲”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-3-AXI-SRAM%EF%BC%9A%E7%BB%99%E5%A4%A7%E5%9D%97%E7%BC%93%E5%86%B2%E5%92%8C%E9%AB%98%E5%B8%A6%E5%AE%BD%E9%93%BE%E8%B7%AF"><span class="toc-number">7.3.</span> <span class="toc-text">5.3 AXI SRAM：给大块缓冲和高带宽链路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-4-SRAM4%EF%BC%9A%E7%BB%99-D3-BDMA-%E7%9B%B8%E5%85%B3%E5%9C%BA%E6%99%AF"><span class="toc-number">7.4.</span> <span class="toc-text">5.4 SRAM4：给 D3 &#x2F; BDMA 相关场景</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">8.</span> <span class="toc-text">6. 实战上怎么修：一个稳妥的工程模板</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#6-1-%E5%85%88%E5%9C%A8%E9%93%BE%E6%8E%A5%E8%84%9A%E6%9C%AC%E9%87%8C%E5%8D%95%E7%8B%AC%E5%BC%80%E4%B8%80%E4%B8%AA-DMA-Buffer-%E6%AE%B5"><span class="toc-number">8.1.</span> <span class="toc-text">6.1 先在链接脚本里单独开一个 DMA Buffer 段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-2-%E5%8F%98%E9%87%8F%E6%98%BE%E5%BC%8F%E6%94%BE%E6%AE%B5%EF%BC%8C%E5%B9%B6%E5%81%9A-32-%E5%AD%97%E8%8A%82%E5%AF%B9%E9%BD%90"><span class="toc-number">8.2.</span> <span class="toc-text">6.2 变量显式放段，并做 32 字节对齐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-3-%E5%B0%81%E8%A3%85-Cache-%E7%BB%B4%E6%8A%A4%E5%87%BD%E6%95%B0%EF%BC%8C%E5%88%AB%E6%AF%8F%E6%AC%A1%E6%89%8B%E5%86%99"><span class="toc-number">8.3.</span> <span class="toc-text">6.3 封装 Cache 维护函数，别每次手写</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-4-%E5%8F%91%E9%80%81%E5%92%8C%E6%8E%A5%E6%94%B6%E5%88%86%E5%88%AB%E6%80%8E%E4%B9%88%E7%94%A8"><span class="toc-number">8.4.</span> <span class="toc-text">6.4 发送和接收分别怎么用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E9%80%81%EF%BC%9ACPU-%E5%86%99%E5%AE%8C%EF%BC%8C%E5%90%AF%E5%8A%A8-DMA-%E5%89%8D-Clean"><span class="toc-number">8.4.1.</span> <span class="toc-text">发送：CPU 写完，启动 DMA 前 Clean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E6%94%B6%EF%BC%9ADMA-%E5%86%99%E5%AE%8C%EF%BC%8CCPU-%E8%AF%BB%E4%B9%8B%E5%89%8D-Invalidate"><span class="toc-number">8.4.2.</span> <span class="toc-text">接收：DMA 写完，CPU 读之前 Invalidate</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-5-%E5%A6%82%E6%9E%9C-DMA-%E5%BE%88%E9%A2%91%E7%B9%81%EF%BC%8C%E8%80%83%E8%99%91%E7%9B%B4%E6%8E%A5%E7%94%A8%E9%9D%9E-Cache-%E5%8C%BA"><span class="toc-number">8.5.</span> <span class="toc-text">6.5 如果 DMA 很频繁，考虑直接用非 Cache 区</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">9.</span> <span class="toc-text">7. 很多人会漏掉的两个细节</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#7-1-SRAM1-SRAM2-%E4%B8%8D%E6%98%AF%E6%B0%B8%E8%BF%9C%E9%BB%98%E8%AE%A4%E5%8F%AF%E7%94%A8"><span class="toc-number">9.1.</span> <span class="toc-text">7.1 SRAM1 &#x2F; SRAM2 不是永远默认可用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-2-%E5%85%B3%E6%8E%89-D-Cache-%E5%8F%AA%E6%98%AF%E9%AA%8C%E8%AF%81%E6%89%8B%E6%AE%B5%EF%BC%8C%E4%B8%8D%E6%98%AF%E4%BC%98%E9%9B%85%E7%AD%94%E6%A1%88"><span class="toc-number">9.2.</span> <span class="toc-text">7.2 关掉 D-Cache 只是验证手段，不是优雅答案</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">10.</span> <span class="toc-text">8. 一套非常实用的排查顺序</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%85%88%E7%9C%8B-Buffer-%E5%9C%B0%E5%9D%80"><span class="toc-number">10.1.</span> <span class="toc-text">第一步：先看 Buffer 地址</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E7%A1%AE%E8%AE%A4%E5%BD%93%E5%89%8D%E6%9C%89%E6%B2%A1%E6%9C%89%E5%BC%80-D-Cache"><span class="toc-number">10.2.</span> <span class="toc-text">第二步：确认当前有没有开 D-Cache</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E7%A1%AE%E8%AE%A4-DMA-%E6%8E%A7%E5%88%B6%E5%99%A8%E5%B1%9E%E4%BA%8E%E5%93%AA%E4%B8%AA%E5%9F%9F"><span class="toc-number">10.3.</span> <span class="toc-text">第三步：确认 DMA 控制器属于哪个域</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E6%9C%80%E5%90%8E%E6%89%8D%E5%8E%BB%E6%80%80%E7%96%91%E7%9C%9F%E6%AD%A3%E7%9A%84%E5%B8%A6%E5%AE%BD%E7%AB%9E%E4%BA%89"><span class="toc-number">10.4.</span> <span class="toc-text">第四步：最后才去怀疑真正的带宽竞争</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">11.</span> <span class="toc-text">结语</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">12.</span> <span class="toc-text">参考资料</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/03/28/h7_dma/" title="(科普向)STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache 一次讲清"><img src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="(科普向)STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache 一次讲清"/></a><div class="content"><a class="title" href="/2026/03/28/h7_dma/" title="(科普向)STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache 一次讲清">(科普向)STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache 一次讲清</a><time datetime="2026-03-28T13:42:14.079Z" title="发表于 2026-03-28 21:42:14">2026-03-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法"><img src="https://img.cdn1.vip/i/69b966ad97776_1773758125.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IsaacLab入门级食用方法"/></a><div class="content"><a class="title" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法">IsaacLab入门级食用方法</a><time datetime="2026-03-17T14:31:28.438Z" title="发表于 2026-03-17 22:31:28">2026-03-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/16/quadruped_mpc_math_qp/" title="四足机器人 MPC 的数学建模与 QP 推导"><img src="https://img.cdn1.vip/i/69b969f530f1b_1773758965.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足机器人 MPC 的数学建模与 QP 推导"/></a><div class="content"><a class="title" href="/2026/03/16/quadruped_mpc_math_qp/" title="四足机器人 MPC 的数学建模与 QP 推导">四足机器人 MPC 的数学建模与 QP 推导</a><time datetime="2026-03-16T09:54:29.375Z" title="发表于 2026-03-16 17:54:29">2026-03-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/16/c_function_pointer_vtable_blog/" title="C语言中的函数指针与虚函数表模拟"><img src="https://img.cdn1.vip/i/69b967e9d0aa8_1773758441.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="C语言中的函数指针与虚函数表模拟"/></a><div class="content"><a class="title" href="/2026/03/16/c_function_pointer_vtable_blog/" title="C语言中的函数指针与虚函数表模拟">C语言中的函数指针与虚函数表模拟</a><time datetime="2026-03-15T16:36:33.656Z" title="发表于 2026-03-16 00:36:33">2026-03-16</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/16/c_language_oop_robotics_blog/" title="C语言模拟面向对象"><img src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="C语言模拟面向对象"/></a><div class="content"><a class="title" href="/2026/03/16/c_language_oop_robotics_blog/" title="C语言模拟面向对象">C语言模拟面向对象</a><time datetime="2026-03-15T16:22:54.915Z" title="发表于 2026-03-16 00:22:54">2026-03-16</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
