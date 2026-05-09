@@ -1,0 +1,442 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>DQN算法超详尽教程——从Q-table到深度强化学习 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="DQN 算法超详尽教程——从 Q-table 到深度强化学习 如果说 Q-learning 是强化学习的&quot;Hello World&quot;，那 DQN（Deep Q-Network）就是深度强化学习真正走出实验室、进入公众视野的里程碑。2013 年，DeepMind 的 Mnih 等人在 NIPS 发表 Playing Atari with Deep Reinforcement Lea">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DQN算法超详尽教程——从Q-table到深度强化学习">
+<meta property="og:url" content="http://example.com/2026/05/09/dqn_algorithm_tutorial/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="DQN 算法超详尽教程——从 Q-table 到深度强化学习 如果说 Q-learning 是强化学习的&quot;Hello World&quot;，那 DQN（Deep Q-Network）就是深度强化学习真正走出实验室、进入公众视野的里程碑。2013 年，DeepMind 的 Mnih 等人在 NIPS 发表 Playing Atari with Deep Reinforcement Lea">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/695e790568d31_1767799045.webp">
+<meta property="article:published_time" content="2026-05-09T11:11:40.887Z">
+<meta property="article:modified_time" content="2026-05-09T11:25:40.016Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="算法">
+<meta property="article:tag" content="强化学习">
+<meta property="article:tag" content="DQN">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/695e790568d31_1767799045.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "DQN算法超详尽教程——从Q-table到深度强化学习",
+  "url": "http://example.com/2026/05/09/dqn_algorithm_tutorial/",
+  "image": "https://img.cdn1.vip/i/695e790568d31_1767799045.webp",
+  "datePublished": "2026-05-09T11:11:40.887Z",
+  "dateModified": "2026-05-09T11:25:40.016Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "http://example.com"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2026/05/09/dqn_algorithm_tutorial/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.json","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'DQN算法超详尽教程——从Q-table到深度强化学习',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (false) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695e790568d31_1767799045.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">DQN算法超详尽教程——从Q-table到深度强化学习</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">DQN算法超详尽教程——从Q-table到深度强化学习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-05-09T11:11:40.887Z" title="发表于 2026-05-09 19:11:40">2026-05-09</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-09T11:25:40.016Z" title="更新于 2026-05-09 19:25:40">2026-05-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>DQN 算法超详尽教程——从 Q-table 到深度强化学习</h1>
+<p>如果说 Q-learning 是强化学习的&quot;Hello World&quot;，那 DQN（Deep Q-Network）就是深度强化学习真正走出实验室、进入公众视野的里程碑。2013 年，DeepMind 的 Mnih 等人在 NIPS 发表 <em>Playing Atari with Deep Reinforcement Learning</em>，用一个卷积神经网络直接从原始像素输入学到了 Atari 2600 平台上 6 款游戏（后来扩展到 49 款）中超越人类专业玩家水平的控制策略。这篇工作的冲击力在于：它首次干净利落地证明了，深度神经网络可以在强化学习框架下进行稳定训练，而不需要任何手工特征工程。两年后，这篇论文的改进版登上了 <em>Nature</em>，标题只有三个词：<em>Human-level control through deep reinforcement learning</em>。从此，深度强化学习进入了爆发期。</p>
+<p>DQN 之所以经典，不在于它用了多复杂的数学工具，而在于它用两个看似简单的工程技巧——经验回放（Experience Replay）和目标网络（Target Network）——破解了一个困扰学界多年的死结：如何在一个非平稳的数据分布上训练深度神经网络。这篇文章的目标是把 DQN 从问题动机到数学推导、从伪代码到 PyTorch 实现、从基础原理到改进变体的整条链路，以科研论文式的结构拆解清楚。</p>
+<hr>
+<h2 id="1-问题溯源：Q-learning-为何在-大世界-中失效">1. 问题溯源：Q-learning 为何在&quot;大世界&quot;中失效</h2>
+<p>Q-learning 的核心是一张表格：对于每一个离散状态 $s$ 和离散动作 $a$，在表格中维护一个标量 $Q(s, a)$，表示在状态 $s$ 下采取动作 $a$ 所能获得的期望累积回报的估计值。每一次智能体与环境交互，产生一组 $(s, a, r, s’)$ 转移，Q-learning 就按照著名的 Bellman 最优方程的采样形式更新一个条目：</p>
+<p>$$<br>
+Q(s, a) \leftarrow Q(s, a) + \alpha \left[ r + \gamma \max_{a’} Q(s’, a’) - Q(s, a) \right]<br>
+$$</p>
+<p>这个更新规则在理论上是收敛的——当每个状态-动作对被无限次访问，且步长 $\alpha$ 满足 Robbins-Monro 条件时，$Q$ 将以概率 1 收敛到最优动作价值函数 $Q^*$。然而，这一优雅的理论结果建立在一个隐含前提之上：状态空间和动作空间都足够小，使得遍历访问成为可能。</p>
+<p>一旦状态空间膨胀到一定程度——比如 Atari 游戏的一帧 $84 \times 84$ 灰度图像对应了 $256^{7056}$ 种可能的观测——表格方法就彻底失效了。不仅是存储问题，更根本的是泛化问题：Q-learning 对表格中的每一个格子独立更新，无法将一个状态中学到的规律迁移到另一个相似状态。直觉告诉我们，屏幕上一架太空飞船向左平移一个像素，它的最优动作应该几乎不变，但 Q-table 对此毫无知觉。</p>
+<p>这就是函数逼近（Function Approximation）登场的地方。我们不再维护一张离散表格，而是用一个参数化函数 $Q(s, a; \theta)$ ——在 DQN 中就是一个深度神经网络——来拟合动作价值函数。参数 $\theta$ 使得函数可以跨状态泛化：相近的状态会得到相近的 Q 值预测，经验的效用从&quot;点&quot;扩展到了&quot;邻域&quot;。</p>
+<p>然而，把神经网络放进强化学习循环中并不是简单地替换一张表。它带来三个深层问题：第一，深度学习的核心假设是数据独立同分布（i.i.d.），而强化学习的数据是序贯采样的，具有强时序相关性；第二，监督学习的目标是固定的，而强化学习中的目标值 $r + \gamma \max_{a’} Q(s’, a’; \theta)$ 本身依赖于正在被优化的参数 $\theta$，形成了一个&quot;追着自己尾巴跑&quot;的困境；第三，深度网络的训练需要大量梯度更新，而每更新一次参数，数据分布就会漂移，原本学到的表示可能瞬间过时。DQN 用两个精巧的设计同时解决了这三个问题。</p>
+<hr>
+<h2 id="2-经验回放：让序贯数据-看起来像-i-i-d">2. 经验回放：让序贯数据&quot;看起来像&quot; i.i.d.</h2>
+<p>强化学习的数据流是时间相关的：$t$ 时刻的状态 $s_t$ 决定了 $t+1$ 时刻的状态 $s_{t+1}$，因此从时间线的视角看，相邻的样本高度相似。如果直接把这些序贯样本逐个喂给神经网络做 SGD，梯度会在某个局部方向上持续累积，导致网络过度拟合近期经验而遗忘此前学到的策略，即灾难性遗忘（catastrophic forgetting）。更隐蔽的问题在于，这种按时间排序的训练数据使得梯度更新的方差极大——因为一个 episode 内部的样本远非独立，无法满足 SGD 收敛理论中对梯度无偏估计的要求。</p>
+<p>经验回放（Experience Replay）的思想直接而有效：维护一个固定容量的经验池（Replay Buffer）$\mathcal{D}$，容量记为 $N$（典型值 $10^5$ 到 $10^6$）。智能体与环境每交互一步，产生一个 transition $(s_t, a_t, r_t, s_{t+1})$，将其存入经验池；当池满时，最旧的 transition 被覆盖。训练时，从 $\mathcal{D}$ 中<strong>均匀随机采样</strong>一个大小为 $B$ 的 mini-batch 来计算梯度：</p>
+<p>$$<br>
+\nabla_{\theta} L(\theta) = \frac{1}{B} \sum_{(s,a,r,s’) \in \text{batch}} \nabla_{\theta} \left( r + \gamma \max_{a’} Q(s’, a’; \theta) - Q(s, a; \theta) \right)^2<br>
+$$</p>
+<p>这一步看似简单，但解决了好几个层面的问题。首先是打破了时序相关性——一个 mini-batch 里的样本来自完全不同的时间点和 episode，近似满足了 SGD 对数据独立性的要求。其次，每个 transition 不再是一次性消耗品，它可以被反复采样多次，用于多轮参数更新，极大地提高了样本效率。更重要的是，经验池充当了一种&quot;历史缓存&quot;：即使智能体当前的策略已经有了很大变化，池中依然保存着旧策略采样出的数据，这迫使网络在一个更多样、更平稳的数据分布上训练，平滑了策略切换带来的分布漂移。</p>
+<p>一个实现细节值得注意：在训练的最初阶段（通常称为 warm-up 阶段，约 $5 \times 10^4$ 步），智能体仅用随机策略收集经验，不进行任何参数更新。只有经验池中积累了足够多的数据后，才开始从池中采样训练。这确保了训练起始时梯度估计的方差是可控的。</p>
+<hr>
+<h2 id="3-目标网络：给追逐者一个-固定靶">3. 目标网络：给追逐者一个&quot;固定靶&quot;</h2>
+<p>即使有了经验回放来稳定数据分布，损失函数本身仍然包含一个微妙的不稳定性。标准 DQN 的损失定义为：</p>
+<p>$$<br>
+L(\theta) = \mathbb{E}<em>{(s,a,r,s’) \sim \mathcal{D}} \left[ \left( r + \gamma \max</em>{a’} Q(s’, a’; \theta) - Q(s, a; \theta) \right)^2 \right]<br>
+$$</p>
+<p>注意，这里目标值 $y = r + \gamma \max_{a’} Q(s’, a’; \theta)$ 和当前网络输出 $Q(s, a; \theta)$ <strong>依赖同一组参数 $\theta$</strong>。当我们用梯度下降来降低 $L(\theta)$ 时，我们不仅拉近 $Q(s, a; \theta)$ 朝 $y$，同时 $y$ 本身也在随着 $\theta$ 的更新而移动。形象地说，这就像一个人追着自己的影子跑——每一步移动，影子也跟着移动，不仅永远追不上，还可能陷入无休止的震荡。更深层地，这种自举（bootstrapping）+ 函数逼近 + off-policy 三者的组合，正是 Sutton 和 Barto 早在 1990 年代就指出的可能导致强化学习发散和崩塌的&quot;死亡三合会&quot;（deadly triad）。</p>
+<p>DQN 的解决方案是引入第二个神经网络，称为<strong>目标网络</strong>（Target Network），记为 $Q(s, a; \theta^{-})$。这个网络的结构与主网络（记为 $Q(s, a; \theta)$）完全相同，但它的参数 $\theta^{-}$ 并非每一步都更新，而是每隔固定的 $C$ 步才从主网络拷贝一次：</p>
+<p>$$<br>
+\theta^{-} \leftarrow \theta \quad \text{（hard update）}<br>
+$$</p>
+<p>损失函数随之变为：</p>
+<p>$$<br>
+L(\theta) = \mathbb{E}<em>{\mathcal{D}} \left[ \left( r + \gamma \max</em>{a’} Q(s’, a’; \theta^{-}) - Q(s, a; \theta) \right)^2 \right]<br>
+$$</p>
+<p>现在，在两次目标网络更新之间的 $C$ 步内，目标值 $y = r + \gamma \max_{a’} Q(s’, a’; \theta^{-})$ 是固定的——目标网络参数 $\theta^{-}$ 不变。主网络的梯度下降有了一个静止的瞄准点，训练变成了真正的监督回归问题。当主网络经过 $C$ 步优化收敛到当前目标附近后，再同步一次目标网络，将&quot;标靶&quot;移动到更优的位置。这种周期性同步的策略创造了一种围绕优化问题的&quot;准静态&quot;假设，在实践中被证明足以让网络稳定收敛。</p>
+<p>这里有一个常见的误解需要澄清：目标网络并不是用&quot;旧&quot;的参数来估计一个近似目标——在两次同步之间，目标网络确实使用的是旧参数，但正因为它是&quot;旧&quot;的，它不会随着主网络的每一次更新而漂移，从而为优化提供了稳定的回归目标。$C$ 的选择是一个权衡：太大会拖慢学习进度，太小则目标网络更新太频繁，退化回没有目标网络的情形。论文中的典型取值为 $C = 10^4$ 步。</p>
+<hr>
+<h2 id="4-网络结构设计：从像素到-Q-值">4. 网络结构设计：从像素到 Q 值</h2>
+<p>DQN 在两篇标志性论文中采用了一个统一的卷积神经网络架构来处理 Atari 游戏的原始视觉输入。这个网络值得详细拆解，因为它奠定了后续大量视觉强化学习工作的基础架构范式。</p>
+<p><strong>输入层</strong>：网络接收的并非单帧画面，而是连续 4 帧 $84 \times 84$ 灰度图像的堆叠，输入张量维度为 $84 \times 84 \times 4$。四帧堆叠的意义在于让网络能够捕获运动信息——单帧图像中一架向右飞行的太空飞船和一架向左飞行的看起来可能一样，但连续四帧输入给出了速度向量的完整信息。这等价于使环境从部分可观测马尔可夫决策过程（POMDP）退化为马尔可夫决策过程（MDP），恢复了马尔可夫性。</p>
+<p><strong>卷积层序列</strong>：</p>
+<p>$$<br>
+\begin{aligned}<br>
+\text{Conv1}&amp;\text{: } 32 \text{ filters, } 8\times8 \text{ kernel, stride } 4, \text{ReLU} \<br>
+\text{Conv2}&amp;\text{: } 64 \text{ filters, } 4\times4 \text{ kernel, stride } 2, \text{ReLU} \<br>
+\text{Conv3}&amp;\text{: } 64 \text{ filters, } 3\times3 \text{ kernel, stride } 1, \text{ReLU}<br>
+\end{aligned}<br>
+$$</p>
+<p>三层卷积逐步压缩空间维度、扩展通道维度，最后经 Flatten 拉平后接入一个 512 维全连接层，再输出一个 $|\mathcal{A}|$ 维向量，每个维度对应一个动作的 Q 值估计。值得注意的是，DQN 的输出不是 $(s, a)$ 对输入后的一个标量，而是<strong>一次性输出所有动作的 Q 值</strong>——给定状态 $s$，一次前向传播即得到全部动作的估计，无需对每个动作独立计算。前向传播的输出是一个向量：</p>
+<p>$$<br>
+\mathbf{q} = [Q(s, a_1; \theta), Q(s, a_2; \theta), \dots, Q(s, a_{|\mathcal{A}|}; \theta)]<br>
+$$</p>
+<p>这种&quot;输出层等于动作数&quot;的设计在计算上极为高效，也成为后续所有离散动作 DRL 算法的标准。</p>
+<p>对于非视觉输入的场景——比如状态是关节角度、IMU 读数、机器人本体传感器等向量形式的数据——网络可以简化为一个全连接架构：输入层接两层 128 维或 256 维的全连接层（带 ReLU 激活），输出层同样是 $|\mathcal{A}|$ 维。网络架构的选择并不影响算法的核心逻辑，只要输入能够编码状态的充分统计信息即可。</p>
+<hr>
+<h2 id="5-算法流程的完整推导">5. 算法流程的完整推导</h2>
+<p>设强化学习环境建模为 MDP $\langle \mathcal{S}, \mathcal{A}, P, R, \gamma \rangle$，其中状态空间 $\mathcal{S}$ 连续（或高维离散），动作空间 $\mathcal{A}$ 离散。我们的目标是学习一个参数化函数 $Q(s, a; \theta)$ 来近似最优动作价值函数 $Q^*(s, a) = \max_{\pi} \mathbb{E}<em>{\pi} \left[ \sum</em>{k=0}^{\infty} \gamma^k r_{t+k} \mid s_t = s, a_t = a \right]$。</p>
+<p>参数 $\theta$ 通过最小化以下均方 Bellman 误差来学习：</p>
+<p>$$<br>
+L(\theta) = \mathbb{E}_{(s,a,r,s’) \sim \mathcal{D}} \left[ \left( y - Q(s, a; \theta) \right)^2 \right]<br>
+$$</p>
+<p>其中目标值 $y$ 由目标网络给出：</p>
+<p>$$<br>
+y = r + \gamma \max_{a’} Q(s’, a’; \theta^{-})<br>
+$$</p>
+<p>若 $s’$ 为终止状态，$y = r$。这个目标值的构造方式来自对最优 Bellman 方程 $Q^<em>(s, a) = r + \gamma \max_{a’} Q^</em>(s’, a’)$ 的半梯度近似——目标网络参数 $\theta^{-}$ 在梯度计算中被视为常数，不参与求导，因此称为&quot;半梯度&quot;方法（semi-gradient）。损失 $L(\theta)$ 对 $\theta$ 的梯度为：</p>
+<p>$$<br>
+\nabla_{\theta} L(\theta) = -2 \cdot \mathbb{E}<em>{\mathcal{D}} \left[ (y - Q(s, a; \theta)) \cdot \nabla</em>{\theta} Q(s, a; \theta) \right]<br>
+$$</p>
+<p>在实际实现中，mini-batch SGD 执行的更新步骤为：</p>
+<p>$$<br>
+\theta \leftarrow \theta + \alpha \frac{1}{B} \sum_{j=1}^{B} (y_j - Q(s_j, a_j; \theta)) \cdot \nabla_{\theta} Q(s_j, a_j; \theta)<br>
+$$</p>
+<p>行为策略使用 $\varepsilon$-greedy 探索：以概率 $\varepsilon$ 随机选择动作，以概率 $1 - \varepsilon$ 选择 $\arg\max_a Q(s, a; \theta)$。$\varepsilon$ 通常从 1.0 线性衰减到 0.1 或 0.01，以平衡探索（exploration）和利用（exploitation）的经典矛盾。</p>
+<p>需要强调的是，DQN 是一种 off-policy 算法——行为策略（$\varepsilon$-greedy）和目标策略（greedy）可以不同，这是 Q-learning 系列算法的固有优势。经验回放也天然支持 off-policy 训练：池中存储旧策略产生的数据，训练时采样这些数据来更新当前策略的 Q 函数，这在 on-policy 方法中是无法做到的。</p>
+<hr>
+<h2 id="6-训练稳定性的工程细节">6. 训练稳定性的工程细节</h2>
+<p>将上述理论转化为可运行的代码，有几个工程细节看似琐碎，实际上往往是训练成败的分水岭。</p>
+<p><strong>Reward Clipping</strong>：在不同游戏中，奖励的尺度可能相差数个量级——某个游戏的分数是 1 分 1 分地增长，另一个游戏可能直接给出 +10000。这种尺度差异会通过损失函数放大为巨大的梯度，轻易破坏训练。原始 DQN 论文的解决方案简单而有效：将所有正奖励截断为 $+1$，所有负奖励截断为 $-1$，零奖励保持为零。这一操作牺牲了奖励函数的精确值来换取梯度稳定性。对于不涉及跨环境泛化的单一任务训练，也可以使用 reward scaling（除以标准差）或分级奖励来替代截断，但截断仍然是入门阶段最稳妥的选择。</p>
+<p><strong>Huber Loss</strong>：均方误差（MSE）对大误差的惩罚是二次的，这在大 TD error 出现时会产生超大梯度。论文改用截断后的 MSE（即 $y$ 被 clamp 到 $[-1, 1]$ 后计算损失），等价于使用 Huber loss：</p>
+<p>$$<br>
+L_{\text{Huber}}(\delta) = \begin{cases}<br>
+\frac{1}{2}\delta^2 &amp; |\delta| \leq 1 \<br>
+|\delta| - \frac{1}{2} &amp; |\delta| &gt; 1<br>
+\end{cases}<br>
+$$</p>
+<p>其中 $\delta = y - Q(s, a; \theta)$。Huber loss 在小误差区间保持 MSE 的平滑性，在大误差区间切换为 MAE 的鲁棒性，防止个别异常样本主导梯度方向。</p>
+<p><strong>Warm-up 与初始探索</strong>：训练的最初若干步不进行任何参数更新，仅用探索策略（高 $\varepsilon$）收集经验填充缓冲池。这是为了给 SGD 准备一个多样化的初始 batch，避免训练从一开始就坍缩到某个狭窄的经验域。典型的 warm-up 步数为 $5 \times 10^4$。</p>
+<p><strong>目标网络同步时机</strong>：每隔 $C$ 步执行 $\theta^{-} \leftarrow \theta$。$C$ 的选取没有金标准，但它必须大于一次训练期内经验分布发生显著变化的时间尺度。太小（如每步同步）退化回无目标网络的状态，太大则目标值过于陈旧，滞后于策略的进展。$10^3 \sim 10^4$ 是经验验证出的合理窗口。</p>
+<p><strong>梯度裁剪</strong>：即使使用了 Huber loss，偶发的极端梯度仍然可能出现。实践中常用的做法是对梯度的 $L_2$ 范数进行裁剪（如裁剪到 10），这可以在 PyTorch 中用 <code>torch.nn.utils.clip_grad_norm_</code> 一行代码实现，是对训练稳定性的最后一道保险。</p>
+<hr>
+<h2 id="7-varepsilon-greedy-的衰减策略及其理论动机">7. $\varepsilon$-greedy 的衰减策略及其理论动机</h2>
+<p>探索与利用的权衡是强化学习中最基本也最微妙的问题，$\varepsilon$-greedy 策略是它最朴素的解法。在训练初期，网络参数随机初始化，Q 值的估计几乎毫无意义，此时选择 $\arg\max_a Q(s, a; \theta)$ 并不能提供有效的学习信号——智能体只是在追逐随机的 Q 值噪声。因此训练起步时需要较高的随机探索概率来收集多样化的经验，让 Q 函数有机会在广泛的状态-动作空间中获得&quot;第一个合理的估计&quot;。随着训练的推进，Q 函数逐渐变得可靠，$\varepsilon$ 线性衰减到较低水平，让智能体更多地利用已学到的知识。</p>
+<p>常见的线性衰减公式为：</p>
+<p>$$<br>
+\varepsilon = \max \left( \varepsilon_{\min},; \varepsilon_{\text{init}} - \frac{t}{T_{\text{decay}}} (\varepsilon_{\text{init}} - \varepsilon_{\min}) \right)<br>
+$$</p>
+<p>其中 $t$ 是当前步数，$T_{\text{decay}}$ 是衰减持续的步数。$\varepsilon_{\min}$ 保持在 0.01 到 0.1 之间，目的是保留永久的最小探索——在非平稳环境或对手会适应的场景中，完全关闭探索是不可取的。</p>
+<p>理论上，$\varepsilon$-greedy 的收敛性在表格案例中已得到证明：只要满足 GLIE（Greedy in the Limit with Infinite Exploration）条件，即每个状态-动作对被无限次访问，且策略最终趋向贪婪，Q-learning 就能收敛到最优。在函数逼近的情况下，严格的收敛保证不再成立，但 $\varepsilon$-greedy 配合经验回放和目标网络在实践中被反复验证为可靠的探索机制。</p>
+<hr>
+<h2 id="8-PyTorch-实现：从模块到完整-Agent">8. PyTorch 实现：从模块到完整 Agent</h2>
+<p>下面给出一个可以直接运行的 DQN 实现，结构清晰，注释精简，适合作为实验基准。我们将组件拆为三个部分：网络模型、经验回放池、以及 DQN Agent 主体。</p>
+<p><strong>网络模型</strong>——输入状态维度，输出各动作的 Q 值：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DQN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, state_dim, action_dim, hidden_dim=<span class="number">128</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.net = nn.Sequential(</span><br><span class="line">            nn.Linear(state_dim, hidden_dim),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(hidden_dim, hidden_dim),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(hidden_dim, action_dim)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.net(x)</span><br></pre></td></tr></table></figure>
+<p><strong>经验回放池</strong>——环形缓冲区，随机采样 mini-batch：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ReplayBuffer</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, capacity</span>):</span><br><span class="line">        <span class="variable language_">self</span>.buffer = deque(maxlen=capacity)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">push</span>(<span class="params">self, state, action, reward, next_state, done</span>):</span><br><span class="line">        <span class="variable language_">self</span>.buffer.append((state, action, reward, next_state, done))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sample</span>(<span class="params">self, batch_size</span>):</span><br><span class="line">        batch = random.sample(<span class="variable language_">self</span>.buffer, batch_size)</span><br><span class="line">        states, actions, rewards, next_states, dones = <span class="built_in">zip</span>(*batch)</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            torch.FloatTensor(np.array(states)),</span><br><span class="line">            torch.LongTensor(actions),</span><br><span class="line">            torch.FloatTensor(rewards),</span><br><span class="line">            torch.FloatTensor(np.array(next_states)),</span><br><span class="line">            torch.FloatTensor(dones)</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(<span class="variable language_">self</span>.buffer)</span><br></pre></td></tr></table></figure>
+<p><strong>DQN Agent</strong>——核心逻辑包含动作选择（带 $\varepsilon$-greedy 衰减）、经验存储和参数更新：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">DQNAgent</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, state_dim, action_dim, lr=<span class="number">1e-3</span>, gamma=<span class="number">0.99</span>,</span></span><br><span class="line"><span class="params">                 epsilon=<span class="number">1.0</span>, eps_min=<span class="number">0.01</span>, eps_decay=<span class="number">5000</span>,</span></span><br><span class="line"><span class="params">                 target_update=<span class="number">100</span>, buffer_capacity=<span class="number">10000</span>, batch_size=<span class="number">64</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.action_dim = action_dim</span><br><span class="line">        <span class="variable language_">self</span>.gamma = gamma</span><br><span class="line">        <span class="variable language_">self</span>.epsilon = epsilon</span><br><span class="line">        <span class="variable language_">self</span>.eps_min = eps_min</span><br><span class="line">        <span class="variable language_">self</span>.eps_decay = eps_decay</span><br><span class="line">        <span class="variable language_">self</span>.target_update = target_update</span><br><span class="line">        <span class="variable language_">self</span>.batch_size = batch_size</span><br><span class="line">        <span class="variable language_">self</span>.step_count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.q_net = DQN(state_dim, action_dim)</span><br><span class="line">        <span class="variable language_">self</span>.target_net = DQN(state_dim, action_dim)</span><br><span class="line">        <span class="variable language_">self</span>.target_net.load_state_dict(<span class="variable language_">self</span>.q_net.state_dict())</span><br><span class="line">        <span class="variable language_">self</span>.target_net.<span class="built_in">eval</span>()</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.optimizer = torch.optim.Adam(<span class="variable language_">self</span>.q_net.parameters(), lr=lr)</span><br><span class="line">        <span class="variable language_">self</span>.buffer = ReplayBuffer(buffer_capacity)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">select_action</span>(<span class="params">self, state</span>):</span><br><span class="line">        <span class="variable language_">self</span>.step_count += <span class="number">1</span></span><br><span class="line">        <span class="variable language_">self</span>.epsilon = <span class="built_in">max</span>(<span class="variable language_">self</span>.eps_min,</span><br><span class="line">            <span class="variable language_">self</span>.epsilon - (<span class="variable language_">self</span>.epsilon - <span class="variable language_">self</span>.eps_min) / <span class="variable language_">self</span>.eps_decay)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> np.random.random() &lt; <span class="variable language_">self</span>.epsilon:</span><br><span class="line">            <span class="keyword">return</span> np.random.randint(<span class="variable language_">self</span>.action_dim)</span><br><span class="line"></span><br><span class="line">        state_tensor = torch.FloatTensor(state).unsqueeze(<span class="number">0</span>)</span><br><span class="line">        <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">            q_values = <span class="variable language_">self</span>.q_net(state_tensor)</span><br><span class="line">        <span class="keyword">return</span> q_values.argmax().item()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(<span class="variable language_">self</span>.buffer) &lt; <span class="variable language_">self</span>.batch_size:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">        states, actions, rewards, next_states, dones = \</span><br><span class="line">            <span class="variable language_">self</span>.buffer.sample(<span class="variable language_">self</span>.batch_size)</span><br><span class="line"></span><br><span class="line">        q_values = <span class="variable language_">self</span>.q_net(states).gather(<span class="number">1</span>, actions.unsqueeze(<span class="number">1</span>)).squeeze(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">with</span> torch.no_grad():</span><br><span class="line">            next_q_values = <span class="variable language_">self</span>.target_net(next_states).<span class="built_in">max</span>(dim=<span class="number">1</span>)[<span class="number">0</span>]</span><br><span class="line">            targets = rewards + <span class="variable language_">self</span>.gamma * next_q_values * (<span class="number">1</span> - dones)</span><br><span class="line"></span><br><span class="line">        loss = F.mse_loss(q_values, targets)</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        torch.nn.utils.clip_grad_norm_(<span class="variable language_">self</span>.q_net.parameters(), <span class="number">10.0</span>)</span><br><span class="line">        <span class="variable language_">self</span>.optimizer.step()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="variable language_">self</span>.step_count % <span class="variable language_">self</span>.target_update == <span class="number">0</span>:</span><br><span class="line">            <span class="variable language_">self</span>.target_net.load_state_dict(<span class="variable language_">self</span>.q_net.state_dict())</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> loss.item()</span><br></pre></td></tr></table></figure>
+<p>这段代码中有几个值得展开的细节。首先是 <code>self.target_net.eval()</code> ——目标网络全程处于 eval 模式，因为它不需要反向传播，置为 eval 可以关闭 dropout 和 batch normalization 等训练特有的行为，确保目标值计算的一致性。其次是在 <code>with torch.no_grad()</code> 上下文中计算目标值，这阻止 PyTorch 构建关于目标网络的计算图，节省内存并确保梯度只流向主网络。<code>(1 - dones)</code> 这个乘子优雅地处理了终止状态：当 <code>done == 1</code> 时，第二项归零，目标退化为即时奖励本身，这是对 Bellman 方程中终止状态无未来价值的精确编码。</p>
+<hr>
+<h2 id="9-训练循环与评估">9. 训练循环与评估</h2>
+<p>完整的训练循环将上述组件串联成一个自洽的实验流程：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">train</span>(<span class="params">env, agent, num_episodes</span>):</span><br><span class="line">    episode_rewards = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> episode <span class="keyword">in</span> <span class="built_in">range</span>(num_episodes):</span><br><span class="line">        state, _ = env.reset()</span><br><span class="line">        total_reward = <span class="number">0</span></span><br><span class="line">        done = <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">not</span> done:</span><br><span class="line">            action = agent.select_action(state)</span><br><span class="line">            next_state, reward, terminated, truncated, _ = env.step(action)</span><br><span class="line">            done = terminated <span class="keyword">or</span> truncated</span><br><span class="line"></span><br><span class="line">            agent.buffer.push(state, action, reward, next_state, done)</span><br><span class="line">            loss = agent.update()</span><br><span class="line"></span><br><span class="line">            state = next_state</span><br><span class="line">            total_reward += reward</span><br><span class="line"></span><br><span class="line">        episode_rewards.append(total_reward)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (episode + <span class="number">1</span>) % <span class="number">100</span> == <span class="number">0</span>:</span><br><span class="line">            avg = np.mean(episode_rewards[-<span class="number">100</span>:])</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;Episode <span class="subst">&#123;episode+<span class="number">1</span>:5d&#125;</span> | &quot;</span></span><br><span class="line">                  <span class="string">f&quot;Avg Reward (100 ep): <span class="subst">&#123;avg:<span class="number">8.2</span>f&#125;</span> | &quot;</span></span><br><span class="line">                  <span class="string">f&quot;Epsilon: <span class="subst">&#123;agent.epsilon:<span class="number">.3</span>f&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> episode_rewards</span><br></pre></td></tr></table></figure>
+<p>用 Gymnasium 的 CartPole-v1 跑一个基线实验：state_dim=4, action_dim=2, num_episodes=1000。如果你亲眼看到 reward 曲线从起初的几十步就倒下（episode 结束时杆子倾倒），到中期跌跌撞撞撑住几百步，再到后期连续数千步不倒、reward 触及环境上限（500），你就能直观体会到 Q 函数是如何在一次次试错中被&quot;雕刻&quot;出正确形状的。这条曲线本身就是理解 DQN 的最佳注释。</p>
+<hr>
+<h2 id="10-Q-值高估问题与-Double-DQN">10. Q 值高估问题与 Double DQN</h2>
+<p>DQN 的一个被充分研究的缺陷是其系统性高估 Q 值的倾向。这个问题的根源在于目标值的构造方式：</p>
+<p>$$<br>
+y = r + \gamma \max_{a’} Q(s’, a’; \theta^{-})<br>
+$$</p>
+<p>这里的 $\max$ 操作同时对真实 Q 值和估计噪声取最大值。即使目标网络 $Q(s’, a’; \theta^{-})$ 在每个动作上的估计都是无偏的（即期望等于真实 Q），对这些无偏估计取最大值后得到的量也必然大于等于真实的 $\max$——这是一种由统计极值特性导致的系统性偏差。更通俗地说，有一组从真实值附近随机波动的数，你从中挑出最大的那个，它几乎总是高于真实的那个最大值。这就是估计理论中著名的 supremum of noise 问题。</p>
+<p>Hado van Hasselt 等人在 2015 年提出了一个优雅的解耦方案，称为 Double DQN（DDQN）。其核心洞察是：$\max$ 操作可以分解为两步——<strong>选择</strong>一个动作，和<strong>评估</strong>被选中的那个动作。DQN 让同一个目标网络同时做这两件事，因此高估被放大；Double DQN 让<strong>主网络负责选择动作</strong>、让<strong>目标网络负责评估</strong>：</p>
+<p>$$<br>
+y = r + \gamma Q\left(s’, \arg\max_{a’} Q(s’, a’; \theta);; \theta^{-}\right)<br>
+$$</p>
+<p>直观上，主网络在这个状态下可能高估动作 $a_1$、低估动作 $a_2$，而目标网络的估计噪声分布和主网络不完全一致，因此主网络&quot;偏爱&quot;的动作被目标网络重新评估后，高估倾向被显著抑制。这一操作不引入新的超参数，不增加额外计算开销，仅需改动一行代码，却能够稳定降低 Q 值的估计偏差。在代码层面，改动从：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">next_q_values = <span class="variable language_">self</span>.target_net(next_states).<span class="built_in">max</span>(dim=<span class="number">1</span>)[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<p>变为：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">next_actions = <span class="variable language_">self</span>.q_net(next_states).argmax(dim=<span class="number">1</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">next_q_values = <span class="variable language_">self</span>.target_net(next_states).gather(<span class="number">1</span>, next_actions).squeeze(<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>仅此而已。Double DQN 是 DQN 最&quot;物美价廉&quot;的升级，几乎已成为标准 DQN 实现的一部分。</p>
+<hr>
+<h2 id="11-Dueling-DQN-与价值分解">11. Dueling DQN 与价值分解</h2>
+<p>Dueling DQN（Wang et al., 2016）从网络结构的层面入手，提出将 Q 值拆分为两部分：状态价值 $V(s)$ 和优势函数 $A(s, a)$。这里 $V(s) = \max_a Q(s, a)$ 表示&quot;处于当前状态本身有多好&quot;，$A(s, a) = Q(s, a) - V(s)$ 表示&quot;相对于当前状态的平均水平，做这个动作能带来多少额外的价值&quot;。</p>
+<p>Dueling 架构用同一个卷积层提取底层特征，然后分叉为两个全连接头——一个输出标量 $V(s)$，一个输出 $|\mathcal{A}|$ 维向量 $A(s, a)$——最后按如下方式重组为 Q 值：</p>
+<p>$$<br>
+Q(s, a; \theta, \alpha, \beta) = V(s; \theta, \alpha) + \left( A(s, a; \theta, \beta) - \frac{1}{|\mathcal{A}|} \sum_{a’} A(s, a’; \theta, \beta) \right)<br>
+$$</p>
+<p>减去均值 $\frac{1}{|\mathcal{A}|} \sum_{a’} A(s, a’)$ 是为解决可辨识性问题——如果不做这个约束，$V$ 和 $A$ 的分解有无穷多种可能：你可以从 $A$ 的每个分量各减一个常数，再加回 $V$ 上，Q 值完全不变。减去均值后强制 $\sum_a A(s, a) = 0$，分解是唯一的。当然也可以选择用 $\max_a A(s, a)$ 替代均值，但均值在实践中更稳定。</p>
+<p>Dueling 结构的优势在于一种重要的泛化模式：有些状态下，所有动作的价值几乎相同（比如车辆在空旷直道上），此时精确区分动作不如准确估计&quot;这个状态总体有多好&quot;重要。标准 DQN 必须通过对每个动作的输出各自调整才能学到这一点，而 Dueling DQN 的 $V(s)$ 头可以独立于动作学习状态价值。这是将先验知识（Q 值可分解为状态价值与动作优势）编码进网络结构的典型案例。</p>
+<hr>
+<h2 id="12-从-DQN-到-Rainbow：集大成之路">12. 从 DQN 到 Rainbow：集大成之路</h2>
+<p>在 DQN 提出后的短短三年内，学界涌现了大量改进方案，各自针对 DQN 的不同缺陷。2017 年，DeepMind 的 Hessel 等人做了一项雄心勃勃的消融实验——他们将六项独立改进打包在一起，取名为 Rainbow，考察它们在多大程度上互补或重叠。</p>
+<p>这六项改进分别是：</p>
+<p><strong>Double DQN</strong> 解决 Q 值高估问题；<strong>Dueling DQN</strong> 分解状态价值和动作优势以提升泛化；**Prioritized Experience Replay（PER）**按 TD error 的绝对值给经验加权采样，让网络优先学习那些它&quot;还没学会&quot;的 transition，配合重要性采样权重修正非均匀采样带来的偏差；<strong>Multi-step Learning</strong> 不再只向前看一步，而是用 $n$ 步的累积奖励（加上 $n$ 步后状态的 Q 值）作为目标，在偏差和方差之间提供一个可调的权衡；<strong>Distributional RL</strong> 不再输出 Q 值（一个期望值），而是输出回报的完整概率分布，更丰富地编码了不确定性信息；<strong>Noisy Nets</strong> 用可学习的参数化噪声替代 $\varepsilon$-greedy 中的随机探索，让探索策略本身也参与梯度优化。</p>
+<p>Rainbow 的实验结果令人印象深刻：六项改进并非简单叠加，而是产生了正向的协同效应——组合后的效果优于任何单一改进。在 Atari 基准上，Rainbow 的中位数人类归一化分数达到了约 220%，大幅超过原始 DQN 和任何单一优化。</p>
+<hr>
+<h2 id="13-在机器人控制中的应用与适配">13. 在机器人控制中的应用与适配</h2>
+<p>对于足式机器人等实际控制问题，DQN 的适用范围取决于动作空间的类型。如果控制问题可以被合理离散化——比如步态模式选择（小跑 / 溜蹄 / 跳跃）、运动方向切换、或者作为层级控制框架中的高层决策器——DQN 系列算法完全适用且效果可观。</p>
+<p>在离散控制场景中，DQN 可以与底层控制器（如 MPC、阻抗控制、PD 控制器）形成天然的层级结构：上层 DQN 选择宏观行为模式，底层控制器负责任务空间到关节力矩的精细映射。这种分层的设计既利用 DQN 在高维状态下的决策泛化能力，又保留了模型底层控制在物理可行性上的保证，是一种工程上非常务实的融合方式。</p>
+<p>然而需要清醒认识的是，绝大多数足式机器人的底层控制天然是连续的——关节力矩是连续量，落足点的空间坐标也是连续的。要处理连续动作空间，需要使用策略梯度系列算法（DDPG、TD3、SAC）或它们与 Q-learning 的混合体。DQN 在这些场景中的角色更接近于思想基础和概念框架，而非直接可用的工具。</p>
+<p>样本效率是另一个实际瓶颈。DQN 需要数百万甚至上千万步交互才能收敛到一个可靠的策略。对于真实的物理机器人，每一次交互都消耗时间和磨损硬件，这个数量级的交互往往不可行。这一局限推动了 Sim-to-Real 转移、Model-Based RL、以及高度并行的仿真环境（如 Isaac Gym）的发展——在仿真中预训练，再迁移到实物，是目前最可行的手段。</p>
+<hr>
+<h2 id="结语">结语</h2>
+<p>DQN 的贡献不在于数学上的精巧——它的核心公式几乎完全继承自 1989 年的 Q-learning，奖励函数、折扣因子、Bellman 方程一个都没改。它真正的贡献在于证明了：只要把经验回放和目标网络这两个看似朴素的工程技巧加进去，深度神经网络就可以在强化学习中稳定训练。</p>
+<p>从算法演化谱系看，DQN 是深度强化学习大厦的地基：</p>
+<p>$$<br>
+\begin{aligned}<br>
+\text{Q-learning (Watkins, 1989)} &amp;\to \text{DQN (Mnih et al., 2013/2015)} \<br>
+&amp;\to \text{DDQN (van Hasselt, 2015)} \<br>
+&amp;\to \text{Dueling DQN (Wang, 2016)} \<br>
+&amp;\to \text{Rainbow (Hessel, 2017)} \<br>
+&amp;\to \text{DDPG / TD3 / SAC (连续控制，2015-2018)}<br>
+\end{aligned}<br>
+$$</p>
+<p>如果你正在系统学习深度强化学习，建议沿着 Q-learning → DQN → DDQN → DDPG → TD3 → SAC 的顺序推进，并在每个节点用 CartPole、LunarLander、Pendulum 等经典环境跑通代码。当你亲眼看到 Q 函数的曲面在训练步数的推进下，从一个随机的凹凸不平的曲面逐步&quot;焊接&quot;成一条清晰的梯度脊线时，那些公式就不再只是纸上的符号了。</p>
+<p>DQN 教会我们的最重要的一课，或许不是某个具体的公式或技巧，而是一种工程心态：面对非平稳性、相关性和不稳定性，有时最简单的 idea——缓存历史、周期性固定目标——比复杂的数学修正更有效，也更经得起时间的检验。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/05/09/dqn_algorithm_tutorial/">http://example.com/2026/05/09/dqn_algorithm_tutorial/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%AE%97%E6%B3%95/">算法</a><a class="post-meta__tags" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a><a class="post-meta__tags" href="/tags/DQN/">DQN</a><a class="post-meta__tags" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/03/29/publicity_group/" title="运营组成长计划"><img class="cover" src="https://img.cdn1.vip/i/69c8c30b2d8c3_1774764811.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">运营组成长计划</div></div><div class="info-2"><div class="info-item-1">机器人战队运营组成长计划 一、写在前面 我们队伍的运营组不是打杂组的，也不是可有可无的附属品 。 对于一支长期参赛的机器人战队来说，技术组决定机器人能不能跑起来，运营组决定战队能不能稳定传承、持续招新、形成影响力、积累文化，并在校内外建立清晰、可信、可传播的形象。比赛成绩当然重要，所有人都看重比分和名次，但真正让一支队伍走得更远的，往往是组织能力、内容能力、活动能力与对外沟通能力的长期积累。 ROBOCON 与其他机器人竞赛一样，具有明显的赛季性、项目制、强协作、高投入特点。赛场上能被看见的，是机器人、队员和结果；赛场外真正维系队伍正常运转的，是纳新、培训、活动策划、宣传、对外交流、资料积累与文化传承。 运营组的成员，不应该只是单纯的能发推文，或者能剪视频，还应该具有下面的能力：  能了解战队运行规则、与队员建立良好沟通 能独立承接宣传与活动任务 能与技术组高效协同 能与其他学校、企业加强交流   二、运营组的定位 运营组是做什么的 在我们战队中，运营组主要承担以下职责：   宣传 负责战队在校内外平台的整体形象塑造与内容发布，以及文创队服等特色周边制作。   策划 负责招新宣讲...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/15/q-learning/" title="Q-learning"><img class="cover" src="https://img.cdn1.vip/i/6963150bcd40b_1768101131.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-15</div><div class="info-item-2">Q-learning</div></div><div class="info-2"><div class="info-item-1">Q-learning：从入门到理解，再到足式机器人中的应用 Q-learning 是强化学习（Reinforcement Learning, RL）中最经典的算法之一。很多人第一次接触强化学习，都是从它开始的。它结构简单、思想清晰，而且把强化学习中几个最核心的问题都体现得很完整：状态是什么、动作怎么选、奖励如何定义、以及智能体如何通过试错逐步学会更优策略。 对于初学者来说，Q-learning 是理解强化学习的最佳入口；对于做机器人，尤其是足式机器人的人来说，它虽然未必直接用于高维连续控制，但它背后的思想——通过与环境交互不断更新动作价值——仍然是后续很多现代算法的基础。 这篇文章会从以下几个方面展开：  Q-learning 解决的是什么问题 它的数学基础是什么 它为什么能学到“更好”的动作 具体更新公式如何理解 一个简单的 Python 示例 它在足式机器人中的意义与局限   1. 强化学习到底在做什么？ 在监督学习里，我们通常有一批带标签的数据，模型要做的是拟合输入和输出之间的映射。而在强化学习里，没有人直接告诉智能体“正确答案是什么”，智能体只能通过和环境不断交互，根据环...</div></div></div></a><a class="pagination-related" href="/2026/03/15/rsl_rl_source_analysis/" title="rsl_rl库源码解读"><img class="cover" src="https://img.cdn1.vip/i/69b969a8a421f_1773758888.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-15</div><div class="info-item-2">rsl_rl库源码解读</div></div><div class="info-2"><div class="info-item-1">很多人第一次看 rsl_rl，会以为它只是“又一个 PPO 仓库”。但如果把源码真正拆开，你会发现它的核心价值并不只是实现了 PPO，而是把 模型结构、观测组织、采样存储、训练更新、蒸馏部署 这些环节统一进了一套非常清晰的接口里。 对于足式机器人来说，这种设计尤其重要。原因很简单：机器人强化学习不是只写一个 policy(obs) 就结束了。真实工程里你常常会同时面对这些问题：  actor 和 critic 看到的观测不一样； 训练时可以用 privileged information，部署时却不能用； 有些任务只需要 MLP，有些任务要加 CNN 或 RNN； 训练时要高效支持并行环境、PPO、多卡同步，部署时又要能导出 JIT / ONNX。  而这组源码恰好把这些问题都落到了具体实现里。 本文会围绕你给出的几个核心文件，从 理论公式 和 工程实现 两条线同时解读 rsl_rl：  MLP / MLPModel 如何构成整套模型抽象； CNNModel 和 RNNModel 如何复用这套接口； PPO 的采样、GAE、裁剪目标、KL 自适应学习率如何映射到代码； Disti...</div></div></div></a><a class="pagination-related" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法"><img class="cover" src="https://img.cdn1.vip/i/69b966ad97776_1773758125.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-17</div><div class="info-item-2">IsaacLab入门级食用方法</div></div><div class="info-2"><div class="info-item-1">Isaac Lab External 项目完整工作流 本教程面向已经配置好Isaaclab强化学习环境的新手玩家 项目仓库：https://github.com/Leggedsys/legged_train/tree/main 第一次新建一个空的IsaacLab外部项目，除了跑一跑倒立摆的示例，我也不知道下一步要做什么。仓库是新的，我的目标是训练一条机器狗，下一步要干啥？：先放URDF ？写 env ？先写 PPO 配置？还是去啃官方教程？本人想做一篇文档教程作为参考，把训练一台机器狗这个事，完整记录一下。 整个过程其实比较简单：先把项目变成一个能被IsaacLab 识别的Python扩展，再把机器人资产接进来，然后围绕这台机器人写配置、场景、环境和奖励，最后再接上PPO训练与回放脚本。难点从来不在于某一步特别神秘，我们第一次做isaaclab项目时，大概已经知道我要做的无非就这些事，但不知道从何开始，也不知道这些文件到底是干啥的。只要这条线理顺了，后面想加入平地gait、rough terrain、抗扰动或者sim-to-real 扩展，其实都会顺很多。 项目环境准备 我的项目...</div></div></div></a><a class="pagination-related" href="/2026/02/18/mpc/" title="(科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习"><img class="cover" src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-18</div><div class="info-item-2">(科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习</div></div><div class="info-2"><div class="info-item-1">四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习 四足机器人自从宇树机器狗出圈后得到频繁讨论，原因在于足式机器人几乎把机器人领域里核心的、先进的问题都搬到了一台机器上，要面对机构设计，电机驱动，运动学，动力学，状态估计，轨迹规划，全身控制，强化学习以及仿真到实机的迁移。所以这类足式机器人给作为初学者的我造成不小的困扰,问题不在于技术的细节，路线很多，但它们之间的关系不那么清晰，如何做到力位混合控制？如何将学习策略和模型控制结合？我们常常缺少一条完整的技术脉络。 当你开始做机器人，最关键的不是先选一个最先进的策略，而是看你的目标任务是要跑一条结构化的赛道？或者跑通用的locomotion?还是要面对复杂的环境？层出不穷的技术路线不应该简单堆叠在一起,而是要回答一个更实际的问题：如果要把一台四足机器人从能站、能迈步，逐步做到稳定奔跑、跳跃越障、复杂地形适应，甚至进一步做到学习型 locomotion，那么中间到底要跨过哪些层次，每一层又解决什么问题。 四足机器人的发展可以理解成一条不断抬高控制层级的路线。最底层解决的是几何问题，也就是腿在哪里、足端在哪里、关节该转多少；再...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">zhxy</div><div class="author-info-description">学微电子的破大学生</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">DQN 算法超详尽教程——从 Q-table 到深度强化学习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E9%97%AE%E9%A2%98%E6%BA%AF%E6%BA%90%EF%BC%9AQ-learning-%E4%B8%BA%E4%BD%95%E5%9C%A8-%E5%A4%A7%E4%B8%96%E7%95%8C-%E4%B8%AD%E5%A4%B1%E6%95%88"><span class="toc-number">1.1.</span> <span class="toc-text">1. 问题溯源：Q-learning 为何在&quot;大世界&quot;中失效</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%BB%8F%E9%AA%8C%E5%9B%9E%E6%94%BE%EF%BC%9A%E8%AE%A9%E5%BA%8F%E8%B4%AF%E6%95%B0%E6%8D%AE-%E7%9C%8B%E8%B5%B7%E6%9D%A5%E5%83%8F-i-i-d"><span class="toc-number">1.2.</span> <span class="toc-text">2. 经验回放：让序贯数据&quot;看起来像&quot; i.i.d.</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%9B%AE%E6%A0%87%E7%BD%91%E7%BB%9C%EF%BC%9A%E7%BB%99%E8%BF%BD%E9%80%90%E8%80%85%E4%B8%80%E4%B8%AA-%E5%9B%BA%E5%AE%9A%E9%9D%B6"><span class="toc-number">1.3.</span> <span class="toc-text">3. 目标网络：给追逐者一个&quot;固定靶&quot;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1%EF%BC%9A%E4%BB%8E%E5%83%8F%E7%B4%A0%E5%88%B0-Q-%E5%80%BC"><span class="toc-number">1.4.</span> <span class="toc-text">4. 网络结构设计：从像素到 Q 值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B%E7%9A%84%E5%AE%8C%E6%95%B4%E6%8E%A8%E5%AF%BC"><span class="toc-number">1.5.</span> <span class="toc-text">5. 算法流程的完整推导</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E8%AE%AD%E7%BB%83%E7%A8%B3%E5%AE%9A%E6%80%A7%E7%9A%84%E5%B7%A5%E7%A8%8B%E7%BB%86%E8%8A%82"><span class="toc-number">1.6.</span> <span class="toc-text">6. 训练稳定性的工程细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-varepsilon-greedy-%E7%9A%84%E8%A1%B0%E5%87%8F%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E7%90%86%E8%AE%BA%E5%8A%A8%E6%9C%BA"><span class="toc-number">1.7.</span> <span class="toc-text">7. $\varepsilon$-greedy 的衰减策略及其理论动机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-PyTorch-%E5%AE%9E%E7%8E%B0%EF%BC%9A%E4%BB%8E%E6%A8%A1%E5%9D%97%E5%88%B0%E5%AE%8C%E6%95%B4-Agent"><span class="toc-number">1.8.</span> <span class="toc-text">8. PyTorch 实现：从模块到完整 Agent</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E8%AE%AD%E7%BB%83%E5%BE%AA%E7%8E%AF%E4%B8%8E%E8%AF%84%E4%BC%B0"><span class="toc-number">1.9.</span> <span class="toc-text">9. 训练循环与评估</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-Q-%E5%80%BC%E9%AB%98%E4%BC%B0%E9%97%AE%E9%A2%98%E4%B8%8E-Double-DQN"><span class="toc-number">1.10.</span> <span class="toc-text">10. Q 值高估问题与 Double DQN</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-Dueling-DQN-%E4%B8%8E%E4%BB%B7%E5%80%BC%E5%88%86%E8%A7%A3"><span class="toc-number">1.11.</span> <span class="toc-text">11. Dueling DQN 与价值分解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E4%BB%8E-DQN-%E5%88%B0-Rainbow%EF%BC%9A%E9%9B%86%E5%A4%A7%E6%88%90%E4%B9%8B%E8%B7%AF"><span class="toc-number">1.12.</span> <span class="toc-text">12. 从 DQN 到 Rainbow：集大成之路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E5%9C%A8%E6%9C%BA%E5%99%A8%E4%BA%BA%E6%8E%A7%E5%88%B6%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8%E4%B8%8E%E9%80%82%E9%85%8D"><span class="toc-number">1.13.</span> <span class="toc-text">13. 在机器人控制中的应用与适配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">1.14.</span> <span class="toc-text">结语</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/09/dqn_algorithm_tutorial/" title="DQN算法超详尽教程——从Q-table到深度强化学习"><img src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DQN算法超详尽教程——从Q-table到深度强化学习"/></a><div class="content"><a class="title" href="/2026/05/09/dqn_algorithm_tutorial/" title="DQN算法超详尽教程——从Q-table到深度强化学习">DQN算法超详尽教程——从Q-table到深度强化学习</a><time datetime="2026-05-09T11:11:40.887Z" title="发表于 2026-05-09 19:11:40">2026-05-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/29/publicity_group/" title="运营组成长计划"><img src="https://img.cdn1.vip/i/69c8c30b2d8c3_1774764811.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="运营组成长计划"/></a><div class="content"><a class="title" href="/2026/03/29/publicity_group/" title="运营组成长计划">运营组成长计划</a><time datetime="2026-03-29T06:11:09.397Z" title="发表于 2026-03-29 14:11:09">2026-03-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/28/h7_dma/" title="STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache"><img src="https://img.cdn1.vip/i/69c8c42418811_1774765092.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache"/></a><div class="content"><a class="title" href="/2026/03/28/h7_dma/" title="STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache">STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache</a><time datetime="2026-03-28T13:42:14.079Z" title="发表于 2026-03-28 21:42:14">2026-03-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法"><img src="https://img.cdn1.vip/i/69b966ad97776_1773758125.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IsaacLab入门级食用方法"/></a><div class="content"><a class="title" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法">IsaacLab入门级食用方法</a><time datetime="2026-03-17T14:31:28.438Z" title="发表于 2026-03-17 22:31:28">2026-03-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/16/quadruped_mpc_math_qp/" title="四足机器人 MPC 的数学建模与 QP 推导"><img src="https://img.cdn1.vip/i/69b969f530f1b_1773758965.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足机器人 MPC 的数学建模与 QP 推导"/></a><div class="content"><a class="title" href="/2026/03/16/quadruped_mpc_math_qp/" title="四足机器人 MPC 的数学建模与 QP 推导">四足机器人 MPC 的数学建模与 QP 推导</a><time datetime="2026-03-16T09:54:29.375Z" title="发表于 2026-03-16 17:54:29">2026-03-16</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
