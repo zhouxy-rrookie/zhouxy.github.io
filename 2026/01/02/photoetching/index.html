@@ -73,7 +73,7 @@
         document.head.appendChild(link)
       }),
       addGlobalFn: (key, fn, name = false, parent = window) => {
-        if (!false && key.startsWith('pjax')) return
+        if (!true && key.startsWith('pjax')) return
         const globalFn = parent.globalFn || {}
         globalFn[key] = globalFn[key] || {}
         globalFn[key][name || Object.keys(globalFn[key]).length] = fn
@@ -120,7 +120,7 @@
   </script><script>const GLOBAL_CONFIG = {
   root: '/',
   algolia: undefined,
-  localSearch: {"path":"/search.json","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
   translate: undefined,
   highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
   copy: {
@@ -149,10 +149,10 @@
   },
   isPhotoFigcaption: false,
   islazyloadPlugin: false,
-  isAnchor: false,
+  isAnchor: true,
   percent: {
     toc: true,
-    rightside: false,
+    rightside: true,
   },
   autoDarkmode: false
 }</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
@@ -186,11 +186,11 @@
     setTimeout(preloader.endLoading, 7000)
   }
 
-  if (false) {
+  if (true) {
     btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
     btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
   }
-})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695e6fb00fcf6_1767796656.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">光刻技术</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">光刻技术</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-01-02T14:47:24.589Z" title="发表于 2026-01-02 22:47:24">2026-01-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-07T14:37:54.641Z" title="更新于 2026-01-07 22:37:54">2026-01-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%8D%8A%E5%AF%BC%E4%BD%93/">半导体</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>光刻工艺</h1>
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695e6fb00fcf6_1767796656.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">光刻技术</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">光刻技术</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-01-02T14:47:24.589Z" title="发表于 2026-01-02 22:47:24">2026-01-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-01-07T14:37:54.641Z" title="更新于 2026-01-07 22:37:54">2026-01-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%8D%8A%E5%AF%BC%E4%BD%93/">半导体</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>光刻工艺</h1>
 <span id="more"></span>
 <p><strong>光刻的要求</strong></p>
 <ul>
@@ -199,7 +199,7 @@
 <li>图形对准精度（高） ——1/3最小特征尺寸</li>
 <li>产率（大）</li>
 <li>缺陷密度（低）<br>
-<img src="https://img.cdn1.vip/i/695b609302267_1767596179.webp" alt=""></li>
+<img src="https://img.cdn1.vip/i/695b609302267_1767596179.webp" alt="" loading='lazy'></li>
 </ul>
 <h2 id="掩模版制作">掩模版制作</h2>
 <p>CAD设计、模拟、验证后由图形发生器产生<strong>数字图形</strong></p>
@@ -210,8 +210,8 @@
 <strong><code>版上缺陷可以修补</code></strong><br>
 <strong><code>蒙膜保护防止颗粒玷污</code></strong></li>
 </ul>
-<p><img src="https://img.cdn1.vip/i/695b668bcdc8e_1767597707.webp" alt=""></p>
-<p><img src="https://img.cdn1.vip/i/695b69462b511_1767598406.webp" alt=""></p>
+<p><img src="https://img.cdn1.vip/i/695b668bcdc8e_1767597707.webp" alt="" loading='lazy'></p>
+<p><img src="https://img.cdn1.vip/i/695b69462b511_1767598406.webp" alt="" loading='lazy'></p>
 <ol>
 <li>通过电子束在光刻胶层写入目标电路图案</li>
 <li>对涂覆的光刻胶进行显影，得到与目标图案对应的光刻胶掩模</li>
@@ -227,16 +227,16 @@
 <li>完成所有工序得到掩模版</li>
 </ol>
 <h2 id="三种硅片曝光模式及系统">三种硅片曝光模式及系统</h2>
-<p><img src="https://img.cdn1.vip/i/695b6e924eb2c_1767599762.webp" alt=""></p>
+<p><img src="https://img.cdn1.vip/i/695b6e924eb2c_1767599762.webp" alt="" loading='lazy'></p>
 <h3 id="接触式光刻机">接触式光刻机</h3>
-<p><img src="https://img.cdn1.vip/i/695b6ec9cad68_1767599817.webp" alt=""></p>
+<p><img src="https://img.cdn1.vip/i/695b6ec9cad68_1767599817.webp" alt="" loading='lazy'></p>
 <p><strong>MERCURY LAMP汞灯</strong>：提供光刻所需的紫外光源，是图案转移的能量来源<br>
 <strong>MIRROR反射镜+CONDENSER LENS聚光透镜</strong>：对汞灯发出的光进行反射、汇聚，使光线均匀、稳定的照射至掩模版区域。<br>
 <strong>TURNING MIRROR转向镜</strong><br>
 <strong>EMULSION MASK乳胶掩模版</strong>：承载目标电路图案的模板<br>
 <strong>涂胶晶圆</strong>：表面涂覆光刻胶的半导体晶圆，是图案转移的最终目标载体。</p>
 <h3 id="接近式光刻机">接近式光刻机</h3>
-<p><img src="https://img.cdn1.vip/i/695b70aedd8f7_1767600302.webp" alt=""></p>
+<p><img src="https://img.cdn1.vip/i/695b70aedd8f7_1767600302.webp" alt="" loading='lazy'></p>
 <p><strong>MERCURY LAMP汞灯</strong><br>
 <strong>ELLIPSOIDAL MIRROR椭球镜</strong>:汇聚汞灯光线，提升光强集中度<br>
 <strong>TURNING MIRROR转向镜</strong><br>
@@ -247,14 +247,14 @@
 <strong>MASK掩模版</strong><br>
 <strong>RESIST-COATED WAFER涂胶晶圆</strong></p>
 <p><strong>接触式和接近式曝光系统：</strong><br>
-<img src="https://img.cdn1.vip/i/695b78f93ac65_1767602425.webp" alt=""><br>
-<img src="https://img.cdn1.vip/i/695b797627e3a_1767602550.webp" alt=""><br>
+<img src="https://img.cdn1.vip/i/695b78f93ac65_1767602425.webp" alt="" loading='lazy'><br>
+<img src="https://img.cdn1.vip/i/695b797627e3a_1767602550.webp" alt="" loading='lazy'><br>
 利用Fresnel衍射理论计算的间隔范围：</p>
 <p>$$\lambda&lt;g&lt;\frac{W^2}{\lambda}$$</p>
 <p>最小分辨尺寸：</p>
 <p>$$W_{min} = \sqrt{\lambda g}$$</p>
 <h3 id="扫描投影式光刻机">扫描投影式光刻机</h3>
-<p><img src="https://img.cdn1.vip/i/695b7265aaeb2_1767600741.webp" alt=""><br>
+<p><img src="https://img.cdn1.vip/i/695b7265aaeb2_1767600741.webp" alt="" loading='lazy'><br>
 <strong>MERCURY LAMP汞灯</strong><br>
 <strong>PRIMARY MIRROR (CONCAVE)主反射镜（凹面）</strong>：汇聚照明系统的光线，优化光场的集中度与传播方向<br>
 <strong>ILLUMINATION照明系统</strong><br>
@@ -263,21 +263,21 @@
 <strong>TRAPEZOIDAL梯形组件</strong>：参与投影光学系统的光路整形，保障图案投影的清晰度与均匀性<br>
 <strong>WAFER晶圆</strong></p>
 <h3 id="步进投影式光刻机">步进投影式光刻机</h3>
-<p><img src="https://img.cdn1.vip/i/695b75c96e50b_1767601609.webp" alt=""></p>
+<p><img src="https://img.cdn1.vip/i/695b75c96e50b_1767601609.webp" alt="" loading='lazy'></p>
 <p><strong>LIGHT SOURCE光源</strong><br>
 <strong>COLLIMATIING LENS SYSTEM准直透镜</strong>：将光源的发散光转换为平行光，保障光线的方向性与均匀性<br>
 <strong>RETICLE投影掩模板</strong>：承载目标电路图案的模板，与传统掩模版（mask）存在放大比例，适配投影系统的缩小需求<br>
 <strong>COMPOUND LENS SYSTEM复合透镜</strong>：实现图案的比例缩小投影，是保障投影精度的核心光学组件<br>
 <strong>RESIST-COATED WAFER涂胶晶圆</strong>：表面涂覆光刻胶的半导体基底，是电路图案转移的最终载体<br>
 <strong>STEPPING AXES步进轴</strong>：控制晶圆在X/Y方向精准移动，实现晶圆不同区域的逐次曝光</p>
-<p><img src="https://img.cdn1.vip/i/695b78475a8ad_1767602247.webp" alt=""><br>
+<p><img src="https://img.cdn1.vip/i/695b78475a8ad_1767602247.webp" alt="" loading='lazy'><br>
 DSW（direct step on wafer）晶圆直接步进工艺，是半导体制程中光刻工序的一种晶圆曝光方式，通过逐次精准步进操作，实现电路图案在整个晶圆表面的完整覆盖。</p>
 <p><strong>First Step</strong>:在晶圆局部区域完成首次曝光，确定初始图案区域，后续步进区域围绕该区域展开。<br>
 <strong>Partially Complete</strong>: 由步进轴控制晶圆精准移动，依次在相邻区域重复曝光，逐步覆盖晶圆大部分区域，剩余少量区域待处理。<br>
 <strong>Complete</strong>:持续执行步进与曝光操作，直至电路图案覆盖整个晶圆表面，完成单次光刻的图案转移。</p>
 <p><strong>投影式——远场衍射：</strong> 像平面远离孔径，在孔径和像平面之间设置镜头</p>
-<p><img src="https://img.cdn1.vip/i/695b7aa077c62_1767602848.webp" alt=""><br>
-<img src="https://img.cdn1.vip/i/695b7aa8e3f88_1767602856.webp" alt=""></p>
+<p><img src="https://img.cdn1.vip/i/695b7aa077c62_1767602848.webp" alt="" loading='lazy'><br>
+<img src="https://img.cdn1.vip/i/695b7aa8e3f88_1767602856.webp" alt="" loading='lazy'></p>
 <h3 id="分辨率">分辨率</h3>
 <p>点物S1的爱里斑中心恰好与另一个点物S2的爱里斑边缘（第一衍射极小）相重合时，恰可分辨两物点。<br>
 两个艾里光斑的分辨率：</p>
@@ -287,31 +287,31 @@ $$R = k_1 \frac{\lambda}{NA}$$</p>
 <p>$NA = nsin\alpha$ ,数值孔径，表示手机衍射光的能力。<br>
 提高分辨率：<br>
 <strong>1.使用短波长的光</strong></p>
-<p><img src="https://img.cdn1.vip/i/695e2aff4190b_1767779071.webp" alt=""><br>
+<p><img src="https://img.cdn1.vip/i/695e2aff4190b_1767779071.webp" alt="" loading='lazy'><br>
 <strong>2.减小 k1</strong><br>
 <strong>3.增大 NA</strong></p>
 <div style="display: flex; gap: 10px; margin: 10px 0;">
-  <img src="https://img.cdn1.vip/i/695e2fac56daf_1767780268.webp" style="width: 50%;" alt="图片1">
-  <img src="https://img.cdn1.vip/i/695e300ac6147_1767780362.webp" style="width: 50%;" alt="图片2">
+  <img src="https://img.cdn1.vip/i/695e2fac56daf_1767780268.webp" style="width: 50%;" alt="图片1" loading='lazy'>
+  <img src="https://img.cdn1.vip/i/695e300ac6147_1767780362.webp" style="width: 50%;" alt="图片2" loading='lazy'>
 </div>
 <h3 id="焦深-DOF">焦深 DOF</h3>
 <p>$$\lambda / 4 = \delta-\delta\cos\theta$$</p>
 <p>$$\lambda/4 = \delta[1-(1 - \theta^2/2)] = \delta\theta^2/2$$</p>
 <p>$$\theta = \sin \theta = \frac{d}{2f} = NA$$</p>
 <p>$$DOF = \delta = ±k_2\frac{\lambda}{(NA)^2}$$</p>
-<p><img src="https://img.cdn1.vip/i/695e30a04967c_1767780512.webp" alt=""></p>
+<p><img src="https://img.cdn1.vip/i/695e30a04967c_1767780512.webp" alt="" loading='lazy'></p>
 <h3 id="调制传递函数MTF-对比度">调制传递函数MTF-对比度</h3>
-<p><img src="https://img.cdn1.vip/i/695e33c8233e3_1767781320.webp" alt=""></p>
+<p><img src="https://img.cdn1.vip/i/695e33c8233e3_1767781320.webp" alt="" loading='lazy'></p>
 <p>$$MTF = \frac{I_{max} - I_{min}}{I_{max} + I_{min}}$$</p>
-<p><img src="https://img.cdn1.vip/i/695e35276e20c_1767781671.webp" alt=""></p>
-<p><img src="https://img.cdn1.vip/i/695e3471e6651_1767781489.webp" alt=""></p>
+<p><img src="https://img.cdn1.vip/i/695e35276e20c_1767781671.webp" alt="" loading='lazy'></p>
+<p><img src="https://img.cdn1.vip/i/695e3471e6651_1767781489.webp" alt="" loading='lazy'></p>
 <h2 id="光刻胶">光刻胶</h2>
 <p>光刻胶的作用：对于入射光子有化学变化，保持潜像至显影，从而实现图形转移，即空间图像-&gt;潜像。<br>
 灵敏度：单位面积的胶曝光所需的光能量<br>
 抗蚀性：刻蚀和离子注入</p>
 <div style="display: flex; gap: 10px; margin: 10px 0;">
-  <img src="https://img.cdn1.vip/i/695e63d466cfb_1767793620.webp" style="width: 50%;" alt="图片1">
-  <img src="https://img.cdn1.vip/i/695e639be594a_1767793563.webp" style="width: 50%;" alt="图片2">
+  <img src="https://img.cdn1.vip/i/695e63d466cfb_1767793620.webp" style="width: 50%;" alt="图片1" loading='lazy'>
+  <img src="https://img.cdn1.vip/i/695e639be594a_1767793563.webp" style="width: 50%;" alt="图片2" loading='lazy'>
 </div>
 正胶分辨率高于负胶
 <h3 id="g线和i线光刻胶的组成（正胶）">g线和i线光刻胶的组成（正胶）</h3>
@@ -348,9 +348,9 @@ $$R = k_1 \frac{\lambda}{NA}$$</p>
 <strong>PAG(photo-acid generator)</strong><br>
 原理：入射光子于与PAG光子反应，产生酸分子，在后续的烘烤过程中，酸分子起催化剂作用，使曝光区域光刻胶改性。<br>
 总量子效率&gt;&gt;1，因此<strong>DUV胶的灵敏度有很大提高</strong><br>
-<img src="https://img.cdn1.vip/i/695e6835711ee_1767794741.png" alt=""></li>
+<img src="https://img.cdn1.vip/i/695e6835711ee_1767794741.png" alt="" loading='lazy'></li>
 </ul>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/01/02/photoetching/">http://example.com/2026/01/02/photoetching/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%BE%AE%E7%94%B5%E5%AD%90/">微电子</a><a class="post-meta__tags" href="/tags/%E9%9B%86%E6%88%90%E7%94%B5%E8%B7%AF/">集成电路</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/695e6fb00fcf6_1767796656.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/02/18/mpc/" title="(科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习"><img class="cover" src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">(科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习</div></div><div class="info-2"><div class="info-item-1">四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习 四足机器人自从宇树机器狗出圈后得到频繁讨论，原因在于足式机器人几乎把机器人领域里核心的、先进的问题都搬到了一台机器上，要面对机构设计，电机驱动，运动学，动力学，状态估计，轨迹规划，全身控制，强化学习以及仿真到实机的迁移。所以这类足式机器人给作为初学者的我造成不小的困扰,问题不在于技术的细节，路线很多，但它们之间的关系不那么清晰，如何做到力位混合控制？如何将学习策略和模型控制结合？我们常常缺少一条完整的技术脉络。 当你开始做机器人，最关键的不是先选一个最先进的策略，而是看你的目标任务是要跑一条结构化的赛道？或者跑通用的locomotion?还是要面对复杂的环境？层出不穷的技术路线不应该简单堆叠在一起,而是要回答一个更实际的问题：如果要把一台四足机器人从能站、能迈步，逐步做到稳定奔跑、跳跃越障、复杂地形适应，甚至进一步做到学习型 locomotion，那么中间到底要跨过哪些层次，每一层又解决什么问题。 四足机器人的发展可以理解成一条不断抬高控制层级的路线。最底层解决的是几何问题，也就是腿在哪里、足端在哪里、关节该转多少；再...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">zhxy</div><div class="author-info-description">学微电子的破大学生</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">光刻工艺</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A9%E6%A8%A1%E7%89%88%E5%88%B6%E4%BD%9C"><span class="toc-number">1.1.</span> <span class="toc-text">掩模版制作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E7%A1%85%E7%89%87%E6%9B%9D%E5%85%89%E6%A8%A1%E5%BC%8F%E5%8F%8A%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.2.</span> <span class="toc-text">三种硅片曝光模式及系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E8%A7%A6%E5%BC%8F%E5%85%89%E5%88%BB%E6%9C%BA"><span class="toc-number">1.2.1.</span> <span class="toc-text">接触式光刻机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E8%BF%91%E5%BC%8F%E5%85%89%E5%88%BB%E6%9C%BA"><span class="toc-number">1.2.2.</span> <span class="toc-text">接近式光刻机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%AB%E6%8F%8F%E6%8A%95%E5%BD%B1%E5%BC%8F%E5%85%89%E5%88%BB%E6%9C%BA"><span class="toc-number">1.2.3.</span> <span class="toc-text">扫描投影式光刻机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A5%E8%BF%9B%E6%8A%95%E5%BD%B1%E5%BC%8F%E5%85%89%E5%88%BB%E6%9C%BA"><span class="toc-number">1.2.4.</span> <span class="toc-text">步进投影式光刻机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E8%BE%A8%E7%8E%87"><span class="toc-number">1.2.5.</span> <span class="toc-text">分辨率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%84%A6%E6%B7%B1-DOF"><span class="toc-number">1.2.6.</span> <span class="toc-text">焦深 DOF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E5%88%B6%E4%BC%A0%E9%80%92%E5%87%BD%E6%95%B0MTF-%E5%AF%B9%E6%AF%94%E5%BA%A6"><span class="toc-number">1.2.7.</span> <span class="toc-text">调制传递函数MTF-对比度</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E5%88%BB%E8%83%B6"><span class="toc-number">1.3.</span> <span class="toc-text">光刻胶</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#g%E7%BA%BF%E5%92%8Ci%E7%BA%BF%E5%85%89%E5%88%BB%E8%83%B6%E7%9A%84%E7%BB%84%E6%88%90%EF%BC%88%E6%AD%A3%E8%83%B6%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">g线和i线光刻胶的组成（正胶）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B4%9F%E8%83%B6"><span class="toc-number">1.3.2.</span> <span class="toc-text">负胶</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DUV%E6%B7%B1%E7%B4%AB%E5%A4%96%E5%85%89%E5%88%BB%E8%83%B6"><span class="toc-number">1.3.3.</span> <span class="toc-text">DUV深紫外光刻胶</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/09/dqn_algorithm_tutorial/" title="DQN算法超详尽教程——从Q-table到深度强化学习"><img src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DQN算法超详尽教程——从Q-table到深度强化学习"/></a><div class="content"><a class="title" href="/2026/05/09/dqn_algorithm_tutorial/" title="DQN算法超详尽教程——从Q-table到深度强化学习">DQN算法超详尽教程——从Q-table到深度强化学习</a><time datetime="2026-05-09T11:11:40.887Z" title="发表于 2026-05-09 19:11:40">2026-05-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/29/publicity_group/" title="运营组成长计划"><img src="https://img.cdn1.vip/i/69c8c30b2d8c3_1774764811.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="运营组成长计划"/></a><div class="content"><a class="title" href="/2026/03/29/publicity_group/" title="运营组成长计划">运营组成长计划</a><time datetime="2026-03-29T06:11:09.397Z" title="发表于 2026-03-29 14:11:09">2026-03-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/28/h7_dma/" title="STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache"><img src="https://img.cdn1.vip/i/69c8c42418811_1774765092.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache"/></a><div class="content"><a class="title" href="/2026/03/28/h7_dma/" title="STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache">STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache</a><time datetime="2026-03-28T13:42:14.079Z" title="发表于 2026-03-28 21:42:14">2026-03-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法"><img src="https://img.cdn1.vip/i/69b966ad97776_1773758125.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IsaacLab入门级食用方法"/></a><div class="content"><a class="title" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法">IsaacLab入门级食用方法</a><time datetime="2026-03-17T14:31:28.438Z" title="发表于 2026-03-17 22:31:28">2026-03-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/16/quadruped_mpc_math_qp/" title="四足机器人 MPC 的数学建模与 QP 推导"><img src="https://img.cdn1.vip/i/69b969f530f1b_1773758965.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足机器人 MPC 的数学建模与 QP 推导"/></a><div class="content"><a class="title" href="/2026/03/16/quadruped_mpc_math_qp/" title="四足机器人 MPC 的数学建模与 QP 推导">四足机器人 MPC 的数学建模与 QP 推导</a><time datetime="2026-03-16T09:54:29.375Z" title="发表于 2026-03-16 17:54:29">2026-03-16</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2026/01/02/photoetching/">http://example.com/2026/01/02/photoetching/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://example.com" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%BE%AE%E7%94%B5%E5%AD%90/">微电子</a><a class="post-meta__tags" href="/tags/%E9%9B%86%E6%88%90%E7%94%B5%E8%B7%AF/">集成电路</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/695e6fb00fcf6_1767796656.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/02/18/mpc/" title="(科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习"><img class="cover" src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post" loading='lazy'><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">(科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习</div></div><div class="info-2"><div class="info-item-1">四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习 四足机器人自从宇树机器狗出圈后得到频繁讨论，原因在于足式机器人几乎把机器人领域里核心的、先进的问题都搬到了一台机器上，要面对机构设计，电机驱动，运动学，动力学，状态估计，轨迹规划，全身控制，强化学习以及仿真到实机的迁移。所以这类足式机器人给作为初学者的我造成不小的困扰,问题不在于技术的细节，路线很多，但它们之间的关系不那么清晰，如何做到力位混合控制？如何将学习策略和模型控制结合？我们常常缺少一条完整的技术脉络。 当你开始做机器人，最关键的不是先选一个最先进的策略，而是看你的目标任务是要跑一条结构化的赛道？或者跑通用的locomotion?还是要面对复杂的环境？层出不穷的技术路线不应该简单堆叠在一起,而是要回答一个更实际的问题：如果要把一台四足机器人从能站、能迈步，逐步做到稳定奔跑、跳跃越障、复杂地形适应，甚至进一步做到学习型 locomotion，那么中间到底要跨过哪些层次，每一层又解决什么问题。 四足机器人的发展可以理解成一条不断抬高控制层级的路线。最底层解决的是几何问题，也就是腿在哪里、足端在哪里、关节该转多少；再...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">学微电子的破大学生</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">11</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">光刻工艺</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A9%E6%A8%A1%E7%89%88%E5%88%B6%E4%BD%9C"><span class="toc-number">1.1.</span> <span class="toc-text">掩模版制作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E7%A1%85%E7%89%87%E6%9B%9D%E5%85%89%E6%A8%A1%E5%BC%8F%E5%8F%8A%E7%B3%BB%E7%BB%9F"><span class="toc-number">1.2.</span> <span class="toc-text">三种硅片曝光模式及系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E8%A7%A6%E5%BC%8F%E5%85%89%E5%88%BB%E6%9C%BA"><span class="toc-number">1.2.1.</span> <span class="toc-text">接触式光刻机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E8%BF%91%E5%BC%8F%E5%85%89%E5%88%BB%E6%9C%BA"><span class="toc-number">1.2.2.</span> <span class="toc-text">接近式光刻机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%AB%E6%8F%8F%E6%8A%95%E5%BD%B1%E5%BC%8F%E5%85%89%E5%88%BB%E6%9C%BA"><span class="toc-number">1.2.3.</span> <span class="toc-text">扫描投影式光刻机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A5%E8%BF%9B%E6%8A%95%E5%BD%B1%E5%BC%8F%E5%85%89%E5%88%BB%E6%9C%BA"><span class="toc-number">1.2.4.</span> <span class="toc-text">步进投影式光刻机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E8%BE%A8%E7%8E%87"><span class="toc-number">1.2.5.</span> <span class="toc-text">分辨率</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%84%A6%E6%B7%B1-DOF"><span class="toc-number">1.2.6.</span> <span class="toc-text">焦深 DOF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E5%88%B6%E4%BC%A0%E9%80%92%E5%87%BD%E6%95%B0MTF-%E5%AF%B9%E6%AF%94%E5%BA%A6"><span class="toc-number">1.2.7.</span> <span class="toc-text">调制传递函数MTF-对比度</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%89%E5%88%BB%E8%83%B6"><span class="toc-number">1.3.</span> <span class="toc-text">光刻胶</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#g%E7%BA%BF%E5%92%8Ci%E7%BA%BF%E5%85%89%E5%88%BB%E8%83%B6%E7%9A%84%E7%BB%84%E6%88%90%EF%BC%88%E6%AD%A3%E8%83%B6%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">g线和i线光刻胶的组成（正胶）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B4%9F%E8%83%B6"><span class="toc-number">1.3.2.</span> <span class="toc-text">负胶</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DUV%E6%B7%B1%E7%B4%AB%E5%A4%96%E5%85%89%E5%88%BB%E8%83%B6"><span class="toc-number">1.3.3.</span> <span class="toc-text">DUV深紫外光刻胶</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/09/dqn_algorithm_tutorial/" title="DQN算法超详尽教程——从Q-table到深度强化学习"><img src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DQN算法超详尽教程——从Q-table到深度强化学习"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/05/09/dqn_algorithm_tutorial/" title="DQN算法超详尽教程——从Q-table到深度强化学习">DQN算法超详尽教程——从Q-table到深度强化学习</a><time datetime="2026-05-09T11:11:40.887Z" title="发表于 2026-05-09 19:11:40">2026-05-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/29/publicity_group/" title="运营组成长计划"><img src="https://img.cdn1.vip/i/69c8c30b2d8c3_1774764811.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="运营组成长计划"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/03/29/publicity_group/" title="运营组成长计划">运营组成长计划</a><time datetime="2026-03-29T06:11:09.397Z" title="发表于 2026-03-29 14:11:09">2026-03-29</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/28/h7_dma/" title="STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache"><img src="https://img.cdn1.vip/i/69c8c42418811_1774765092.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/03/28/h7_dma/" title="STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache">STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache</a><time datetime="2026-03-28T13:42:14.079Z" title="发表于 2026-03-28 21:42:14">2026-03-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法"><img src="https://img.cdn1.vip/i/69b966ad97776_1773758125.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IsaacLab入门级食用方法"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法">IsaacLab入门级食用方法</a><time datetime="2026-03-17T14:31:28.438Z" title="发表于 2026-03-17 22:31:28">2026-03-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/16/quadruped_mpc_math_qp/" title="四足机器人 MPC 的数学建模与 QP 推导"><img src="https://img.cdn1.vip/i/69b969f530f1b_1773758965.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足机器人 MPC 的数学建模与 QP 推导"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/03/16/quadruped_mpc_math_qp/" title="四足机器人 MPC 的数学建模与 QP 推导">四足机器人 MPC 的数学建模与 QP 推导</a><time datetime="2026-03-16T09:54:29.375Z" title="发表于 2026-03-16 17:54:29">2026-03-16</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
   const loadMathjax = () => {
     if (!window.MathJax) {
       window.MathJax = {
@@ -424,8 +424,137 @@ $$R = k_1 \frac{\lambda}{NA}$$</p>
 
   btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
   window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
 })()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
 POWERMODE.shake = false;
 POWERMODE.mobile = false;
 document.body.addEventListener('input', POWERMODE);
-</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
