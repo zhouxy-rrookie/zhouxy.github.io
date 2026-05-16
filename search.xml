@@ -4,220 +4,160 @@
     <title>风格考古学——AIGC时代的30种视觉语言与它们的前世今生</title>
     <url>/2026/05/17/aigc_art_styles_guide/</url>
     <content><![CDATA[
-2022年8月，Stable Diffusion 开源。一夜之间，人类历史上所有的视觉风格都被压缩进了一个 Latent Space。任何一个会用键盘打字的人，都可以召唤出伦勃朗的光影、葛饰北斋的海浪、安迪·沃霍尔的丝网。但问题也随之而来：你到底要召唤什么？如果你不知道那些风格叫什么名字、长什么样子、从哪来的，你就只是一个在巨大的风格博物馆里迷路的游客。这篇稿子，是一张地图。
+2022年8月，Stable Diffusion 把人类几千年的视觉史塞进了一个 Latent Space。但问题来了——你总得知道你要什么，才能告诉 AI 你要什么。所以就有了这篇。
 
-一、肌理与质感：触觉先于视觉
-人类第一次在平面上制造肌理，大概是在三万七千年前的肖维岩洞。手掌蘸上赭石粉，按在粗糙的石灰岩上——那是人类最早的&quot;印刷&quot;。从那一刻起，我们就迷上了在平面上制造不平坦的幻觉。
-1. 半调网点 Halftone
-1873年，德国人 Georg Meisenbach 发明了网目半调工艺。他用一个装满细密网格的玻璃屏，把照片的连续色调拆解成大小不一的圆点。这本来只是一种印刷妥协——报纸的油墨只能印纯色，要么黑要么白，没有中间灰度。但意外的是，这种&quot;妥协&quot;恰恰成了报纸和漫画书的视觉基因。Lichtenstein 在1961年开始把漫画放大到画布上，那些本该藏在报纸印刷里的网点成了主角。从此以后，你看到网点就想到&quot;印刷品&quot;，这就是风格的形成。
+壹 · 肌理与质感
+人类第一次在平面上留下纹理，是在肖维岩洞里蘸着赭石往墙上拍手印。三万七千年后，我们还在干同样的事——只不过换成了 GPU。
+1. 半调网点
+1873 年，德国人 Georg Meisenbach 用一块刻满细密网格的玻璃屏，把照片拆成了大小不一的圆点。报纸印刷的油墨只有纯黑纯白，网点是唯一的妥协方式。但 Lichtenstein 在 1961 年把这个妥协放大成了主角——他把漫画格涂在巨大的画布上，网点不再是印刷缺陷，变成了波普的视觉基因。
 
-半调网点风 · Midjourney 生成
+半调网点
+2. 颗粒噪点
+说实话，数码相机工程师花了几十年消灭噪点，胶片摄影师却花了一辈子迷恋它。Tri-X 400 的黑白颗粒里有整个二十世纪的街头。森山大道说：“清晰是一种谎言。”
 
-Prompt: halftone dot pattern, Ben-Day dots, comic book style, bold primary colors, screen printing texture, Lichtenstein inspired, misregistration effect
+颗粒噪点
+3. 厚涂
+梵高在圣雷米精神病院画《星夜》，窗户是他唯一能看到天空的通道。他用刮刀把颜料堆上去——堆，不是涂。每一笔比前一笔高半毫米。你看原画的时候侧光会让每道笔触下的微影亮起来。厚涂就是把二维幻术做成三维事实。
+如果你只记得一个 Prompt：
+impasto oil painting, thick palette knife strokes, three-dimensional paint layers on raw canvas, van Gogh energy, sculptural brushwork, heavy cadmium yellow and ultramarine, side-lighting reveals physical relief of each stroke, museum gallery lighting casting micro-shadows across textured surface, expressionist landscape --ar 16:9
 
-2. 颗粒噪点 Grain
-噪点，在数字摄影时代被视为缺陷。但胶片摄影师知道，噪点就是味道。Tri-X 400 的黑白颗粒里藏着整个二十世纪的街头——Robert Frank 的美国人、森山大道的东京、布列松的决定性瞬间。森山大道有句名言：&quot;我的照片永远对焦不准，永远颗粒粗糙，因为清晰是一种谎言。&quot;噪点是反完美的宣言。在 AIGC 中，加噪点的本质是给完美到让人不安的 AI 渲染图加上一道时光的划痕。
+厚涂
+4. 水彩
+水彩是唯一诚实的画种——颜料碰纸的那一刻，你就失去了一半的控制权。水往哪走，颜色就往哪晕。这种不可控，恰好是 AI 最不擅长的事。
 
-颗粒噪点肌理风 · ISO 3200 胶片质感
+水彩
+5. 水墨
+张彦远在《历代名画记》里写：&quot;运墨而五色具。&quot;墨不是黑的——焦、浓、重、淡、清，五种灰度就是五种颜色。北宋范宽的《溪山行旅图》，一座山占了三分之二的画面，山脚下的人比蚂蚁还小。那不是透视法的问题，是世界观：人在山面前就该那么小。比西方的明暗法早了四百年。
 
-Prompt: film grain texture, Kodak Tri-X 400, heavy noise in shadows, analog photography, 35mm aesthetic, pushed two stops, grainy atmosphere
+水墨
 
-3. 厚涂 Impasto
-梵高在1889年画《星夜》的时候，圣雷米精神病院的窗户是他唯一能看到天空的渠道。他用刮刀把颜料压在画布上，不是涂抹，是堆砌——每一笔都比前一笔高半毫米。你在美术馆看原画的时候，会看到从侧面打来的光在颜料凸起处投下细小的阴影，那张画在发光。厚涂的精髓，是把二维的幻术变成三维的事实。
-Prompt 示例：
-An expressionist landscape with fiercely applied impasto oil paint, thick buttery strokes rising from the canvas like sculpted terrain, palette knife marks carving direction into every surface, Van Gogh's starry night energy swirling through cypress trees, deep ultramarine and cadmium yellow collide in raised ridges of pigment, side-lighting reveals the three-dimensional relief of each brushstroke, raw linen canvas peeking through unpainted gaps, the physical weight of paint palpable --ar 16:9
+贰 · 几何与构成
+包豪斯的 Albers 讲过一句话：几何形态本身没意义，排列才让它活过来。
+6. 低多边形
+1996 年《古墓丽影》的劳拉只有几百个三角面。2014 年《纪念碑谷》把这件事做到极致——低多边形不再是没有预算的妥协，而是故意为之的美学语言。面数越少，辨识度反而越高。你用八个三角面搭一棵树的时候，只能留下它最本质的轮廓。
 
-厚涂肌理风 · 梵高式的颜料堆叠
-4. 水彩 Watercolor
-水彩可能是最诚实的画种——颜料滴在纸上的那一刻，画家就失去了一半的控制权。水往哪流，颜色就往哪晕。纸张的吸水性、空气的湿度、颜料的颗粒度，每一个变量都在改写画面。十八世纪的英国水彩画家像追捕蝴蝶一样追着水痕跑。这种不可控，恰好是 AI 最需要补课的一课。
+低多边形
+7. 等距视角
+三条轴各偏 120 度，没有消失点。你同时看到屋顶和地板，像一个拆了盖子的玩具屋。RPG 游戏对这个视角爱不释手，因为玩家需要上帝视角来做决策。
 
-Prompt: watercolor, wet-on-wet blooms, cold-pressed paper, translucent washes, salt crystallization, delicate splatter, botanical illustration
+等距视角
+8. 像素风
+1978 年《太空侵略者》，外星人不到 50 个像素，没人认错——人脑会自动补完。1990 年《时空之轮》把 16 位像素推到了艺术极限：32 色调色板、逐像素手工抖动、多卷轴视差。那不是一个技术限制下的产物，那是一种自律的美学，跟俳句只能十七音一样。
 
+像素风
+9. 故障艺术
+1965 年，韩国艺术家 Nam June Paik 把一台电视机摔在地上，重新接错了线。画面坏掉了，但他觉得好看。2000 年代 Rosa Menkman 写书给故障艺术建了理论：Glitch 不是技术失败，是技术让我们看它的内脏。
 
-5. 水墨 Ink Wash
-唐代张彦远在《历代名画记》里写：&quot;运墨而五色具。&quot;墨不是黑色，墨是五色——焦、浓、重、淡、清。北宋的范宽画《溪山行旅图》，一座山占了画面的三分之二，山脚下的人小得像个逗号。这不是透视法的问题，这是一种世界观：人在山面前就该那么小。十一世纪的中国人就已经在用灰度层次的幻术来表达&quot;敬畏&quot;这种情绪了，比西方的明暗对照法早了四百年。
+故障艺术
+10. 像素排序
+2012 年，Kim Asendorf 用 Processing 写了一小段代码，按亮度重新排列每行像素。画面像冰川融化一样往下流淌。这种&quot;数学摧毁&quot;比任何人类手工都更冷、也更美。
 
-水墨风 · 北派山水构图
+像素排序
 
-Prompt: Chinese ink wash, sumi-e, five tones of ink, xuan rice paper, misty mountains, negative space, Northern Song monumental landscape, dry brush pine
+叁 · 光影与色彩
+人类花了十几万年走出黑暗，然后花了五十年把灯光做成艺术。
+11. 霓虹灯
+1910 年巴黎车展，Georges Claude 第一次展示霓虹灯管。观众的反应是恐惧——这东西发亮，像巫术。1923 年，第一块霓虹广告牌出现在洛杉矶。到《银翼杀手》时代，霓虹已经不是广告了，是城市的呼吸。
+我每次用霓虹灯提示词都会加一句 rain-soaked pavement——湿地面把灯光反射成碎片，比灯本身更迷人。
 
+霓虹灯
+12. 赛博朋克
+高科技，低生活。六个字把整个赛博朋克装进去了。1982 年《银翼杀手》设定的 2019 年没有飞来飞去的汽车，但 Syd Mead 设计的城市像一座发光的水晶体，把人的情绪压缩成了街边一碗面的热蒸汽。
+cyberpunk megacity, vertigo-inducing upward gaze through neon canyons, mirrored skyscrapers reaching toxic cloud layer, holographic geisha billboards fifty stories tall through heavy drizzle, flying taxi drones threading between buildings leaving red light trails, street noodle bar steam lit by single buzzing pink tube, every wet surface reflecting different neon color — magenta above, cyan below, amber from side, volumetric fog catching intersecting light beams, human figures barely visible specks below, Syd Mead meets Masamune Shirow --ar 9:16
 
-第二章
-二、几何与构成：数学的浪漫
-包豪斯的 Josef Albers 说过：几何形态本身没有意义，是排列让它有了生命。从低多边形到 ASCII 字符画，人类一直在用最简单的几何单元搭建最复杂的视觉世界。
-6. 低多边形 Low Poly
-1996年，《古墓丽影》的劳拉只有几百个三角面。2004年，《魔兽世界》把低多边形的美学推到了巅峰——不是因为技术达不到更高，而是因为暴雪的美术总监发现：面数越少，辨识度越高。当你只能用八个三角面搭建一棵树的时候，你就必须做出最本质的概括。2014年的《纪念碑谷》把这个概念用到了极致——低多边形本身成为了艺术语言。
+赛博朋克
+13. 蒸汽波
+2011 年的互联网角落突然涌出大量粉色紫色渐变、大卫石膏像、棕榈树、Windows 95 对话框。没人说得清这是什么风格，但有一种上头的力量——对从未经历过的 80 年代消费主义的想象性乡愁。
 
-Prompt: low poly, faceted geometry, flat shading, triangular mesh, Monument Valley style, clean edges, geometric abstraction
+蒸汽波
+14. 双重曝光
+胶片时代忘了过片就按第二下快门，两张照片叠一起——本来是废片，被 1960 年代的艺术家回收成语言。Jerry Uelsmann 用七台放大机在暗房里把一个人脸填满了森林。后来 HBO 的《真探》把它用到极致：每一帧片头都在把一个灵魂叠进一片荒原。
 
+双重曝光
+15. 剪影
+去掉面孔的表情、服装的纹理、皮肤的冷暖，剩下一个纯黑的轮廓。奇怪的是，越少的细节有时候说出越多的话。一棵树对着夕阳的剪影，可以同时是孤独、希望、开始和结束。
 
-7. 等距视角 Isometric
-人类对&quot;上帝视角&quot;有天然的迷恋。从古埃及的壁画开始，人们就在尝试同时展示一个物体的正面和侧面。等距投影的数学原理很简单——三条轴各偏转120度，没有透视消失点——但它创造的世界观很复杂：你可以同时看到一座建筑的屋顶和地板，像一个拆开盖子的玩具屋。RPG 游戏对这种视角爱不释手，因为玩家需要全局信息来做决策。
+剪影
+16. 梦幻柔焦
+柔焦本来是镜头球差的缺陷，高光边缘溢出到暗部。1930 年代好莱坞人像摄影师发现这个缺陷让人的脸变得像裹了一层薄雾。他们把凡士林涂在 UV 镜上模拟这种效果——黛德丽和嘉宝的那些神光，隔着一层凡士林。
 
-Prompt: isometric view, 30-degree angle, no perspective, miniature diorama, isometric room, grid-based layout, dollhouse cross-section
+梦幻柔焦
 
+肆 · 绘画与手绘
+17. 浮世绘
+Ukiyo-e，“浮世绘”——画这个浮动的、短暂的、不值得执着的人间。江户匠人用刀子把线条刻进樱木板，一色一板，一张画能刻十几块。北斋的《神奈川冲浪里》传到欧洲后，那些卷曲的浪尖直接长进了梵高的《星空》。两种文明隔着太平洋，被同一根海浪的线条连在一起。
 
-8. 像素风 Pixel Art
-1978年，西角友宏设计了《太空侵略者》。那些外星人只有不到50个像素，但没有人会认错——像素画的魔力在于，人脑会自动补全缺失的信息。1990年 SFC 上的《时空之轮》把16位像素推向了艺术的极限：32色锁定的调色板、逐像素的手工抖动、多卷轴视差层叠。那不是一个&quot;技术限制&quot;下的产物，那是一种自主选择的美学体系，就像俳句的十七音节一样，限制本身就是形式。
+浮世绘
+18. 线稿素描
+0.05 毫米的钢笔尖和 0.5 毫米的马克笔，在同一条纸上完全是两种语言。达·芬奇笔记本里的那些飞行器和解剖图，不只是发明了什么，更在于那些线条——试探的、自信的、犹豫的、确认的——就是思想的痕迹本迹。
 
-Prompt: pixel art, 16-bit style, dithering, 32 color palette, scanline CRT glow, parallax layers, Chrono Trigger aesthetic
+线稿素描
+19. 波普艺术
+1962 年，安迪·沃霍尔在纽约展出了 32 幅《金宝汤罐头》。媒体的标题一片骂声——&quot;这不是艺术，是商店目录。&quot;沃霍尔说，对，我要的就是这个。波普问了一个简单的问题：如果超市货架和美术馆画布没有区别，什么叫艺术？
 
+波普艺术
+20. 扁平插画
+最早可以追溯到 1950 年代的瑞士国际主义设计。但扁平真正成为大众语言是在数码时代——当屏幕分辨率终于够高了，设计师发现没有渐变没有阴影的图形在任何设备上都清晰得惊人。Instagram、Google Material、Airbnb 引导页——扁平是数字时代的普通话。
 
-9. 故障艺术 Glitch Art
-故障艺术的历史，是一部错误被发现、被驯化、被美化的历史。最早的&quot;故障&quot;大概发生在1965年——一个叫 Nam June Paik 的韩裔艺术家把一台电视机摔在地上，重新组装时故意接错了线。画面彻底坏掉了，但他觉得很好看。2000年代，Rosa Menkman 出版了《The Glitch Moment(um)》，给故障艺术建立了理论框架。她认为，Glitch 不是技术失败，是技术向我们展示它的内脏。
+扁平插画
 
-Prompt: glitch art, RGB shift, screen tearing, data corruption, VHS tracking error, digital distortion, scanline artifacts
+伍 · 摄影与 3D
+21. 胶片摄影
+Kodak Portra 400，光这个词就能让胶片玩家心跳。Portra 的乳剂配方 1998 年 Kodak 熬了三年——暗部微绿，高光带暖桃，反差低到像一层薄雾。2022 年 Kodak 涨了三次价，因为用的人太多排产跟不上。胶片死了无数回，从来没死成。
 
+胶片摄影
+22. CinemaScope 电影感
+1953年，20世纪福克斯推出宽银幕。当时电视是 4:3 的小方框，电影需要一种电视永远模仿不了的东西——答案就是宽度。2.35:1 的画幅让你同时看到悬崖有多高、海有多大、人有多孤独。罗杰·迪金斯的每个镜头都在说：宽度不是奢侈，是叙事。
+lone figure at edge of windswept cliff at dawn, CinemaScope 2.35:1 anamorphic frame stretched wide to capture ocean immensity, teal shadows on cliff face, orange rim light catching figure silhouette from low sun, anamorphic lens flare streaking horizontal in cool blue, shallow depth of field with foreground grass blurred to soft abstraction, sea spray catching morning light in thick atmosphere, 35mm film grain adding texture to gradients, precise teal-and-orange color split, Deakins compositional rigor, Malick reverence for natural light --ar 21:9
 
-10. 像素排序 Pixel Sorting
-如果说故障艺术是&quot;失控的机器&quot;，那像素排序就是&quot;失控的数学家&quot;。2012年，Kim Asendorf 用 Processing 写了一段代码，按亮度重新排列每一行像素，图像像融化的冰川一样向下流淌。这种&quot;数学摧毁&quot;，比任何人类手工都更冰冷也更美。
+CinemaScope 电影感
+23. 黏土风
+Aardman 工作室的 Nick Park 在 1989 年捏了一只叫 Gromit 的狗。每秒 24 帧，一部 90 分钟的片子等于 129600 次手工微调。AI 版的黏土保留了圆润和指纹，但没有那种手腕的酸痛。有些东西是物理性的，算法永远缺这个。
 
-Prompt: pixel sorting, brightness channel stretch, melting pixels, digital dissolution, vertical color ribbons, data bending
+黏土风
+24. 玻璃拟态
+2020 年 macOS Big Sur 和 Windows Vista Aero（2006），隔了 14 年做了同一件事：让半透明面板有厚度。背景模糊透过来，加上 1 像素的白边，就像一块磨砂玻璃悬在空气里。一个 UI 风格的诞生，两代操作系统，十五年的轮回。
 
+玻璃拟态
+25. Octane 写实渲染
+2010 年新西兰公司 OTOY 发布 Octane Render，第一个能在消费级 GPU 上追踪光线的渲染器。之前追踪一束光的反射折射需要一台服务器。Octane 把照片级真实从电影公司特权变成了任何人的右键导出。
+hyperrealistic 3D render of dewdrop-laden peony in full bloom, every petal with subsurface scattering catching and transmitting light like living tissue, hundreds of micro-droplets with physically accurate refraction bending petal colors within each sphere, single dramatic key light at 45 degrees from total darkness, razor-sharp forward petals dissolving to creamy bokeh behind, petals velvety matte at base transitioning glossy at tips, individual pollen grain geometry on anthers, Octane path tracing 4096 samples, the line between CGI and photography completely obliterated --ar 3:4
 
+Octane 写实渲染
 
-第三章
-三、光影与色彩：夜色中发光的文明
-人类花了十几万年走出黑暗，然后花了五十年学习如何把人造光源变成艺术。
-11. 霓虹灯 Neon
-1910年，法国工程师 Georges Claude 在巴黎车展上第一次展示霓虹灯管。观者的反应是恐惧——这种发光的玻璃管看起来像某种巫术。1923年，美国人把第一块霓虹广告牌装在了洛杉矶的一家 Packard 汽车经销店。从此，城市学会了在黑夜里发亮。到了《银翼杀手》的时代，霓虹已经不是广告了，它是文明的呼吸。王家卫的镜头里，霓虹灯下的每一滩积水都在讲一个没能说完的故事。
+陆 · 手工与混合
+26. 剪纸
+Hari 和 Deepti 用彩纸、刀片和光造出了深海。一张纸叠在另一张纸上，隔 3 毫米，侧光一照，每层在下一层上投下影子。看起来像水里发光的珊瑚礁，实际上是纸和光的合谋。
 
-Prompt: neon lights, noble gases, argon blue, neon pink, rain-soaked pavement, wet reflections, Blade Runner melancholia, Wong Kar-wai chromatic
+剪纸
+27. 丝网印刷
+丝网印的灵魂在偏差。手工印的 T 恤上，蓝和黄套色偏了 0.5 毫米——那个微小的偏移比精准的数码校准有生命力。独立乐队的演出海报几乎全是丝网印的，不是他们不用数码打印机，而是丝网印的墨是真压进纸纤维里的，你摸得到。
 
+丝网印刷
+28. 拼贴
+达达派 1918 年把报纸碎片贴在画布上，被骂神经病。Hannah Höch 用杂志剪报拼出了二十世纪最有力的女性主义宣言，原标题长得像个玩笑：《用厨房刀切开德国最后一个魏玛啤酒肚文化时代》。拼贴的暴力在于，把一个东西从原来的语境里剪下来，塞进另一个语境，逼它说完全不同的话。
 
-12. 赛博朋克 Cyberpunk
-“高科技，低生活”——这句话浓缩了整个赛博朋克的灵魂。1982年，Ridley Scott 拍了《银翼杀手》，设定在2019年的洛杉矶。那一年的实际洛杉矶并没有什么全息广告和飞行汽车，但 Scott 预言的不是科技，是情绪：科技越发达，人越孤独。Syd Mead 设计的城市像一座发光的水晶体，把人和人的情感压缩成了街边一碗热汤面的水汽。
+拼贴
+29. ASCII Art
+1966 年 Bell Labs 的 Ken Knowlton 用 IBM 7094 打印出了第一张 ASCII 艺术——当时没有屏幕，输出介质是连续的折叠打印纸。后来终端变成了黑底绿字的 CRT，@、%、# 这些字符的密度拼出人脸，在绿色的磷光里有一种说不清的浪漫。黑客社区的暗号。
 
-Prompt: cyberpunk megacity, neon canyons, hologram billboards, rain and steam, vertical skyscrapers, flying traffic, street noodle bar, teal and magenta
+ASCII Art
+30. 非遗国风
+景泰蓝的工序残忍——铜丝掐出蜂巢格子，珐琅釉料填进去，八百度高温烧。每烧一次颜色会变，反复十几遍。一只景泰蓝凤凰从设计到成品，匠人花的工夫够 AI 出上千万个版本。但铜丝掐出来的那 0.1 毫米的不完美，AI 做不到。我试过让它生成景泰蓝，它每次都把掐丝做得太齐太均，像机器而不是人的手。
+magnificent Chinese cloisonné enamel phoenix soaring through clouds, each feather a separate cell defined by delicate brass filigree wires, cells filled with jewel-toned enamels — imperial vermilion, lapis lazuli blue, malachite green, luminous turquoise — polished glass-smooth, gold wires catching light with calligraphic elegance, traditional auspicious cloud motifs, subtle luminous glow from within enamel as if backlit, dark void background making colors sing, macro detail of polished enamel micro-texture, thousand-year-old Jingdezhen craft tradition, museum-quality presentation --ar 2:3
 
+非遗国风
 
-13. 蒸汽波 Vaporwave
-2011年，互联网的某个角落突然充斥着粉色和紫色的渐变、大卫石膏像、棕榈树剪影、Windows 95 对话框。没有人知道这算不算一种&quot;风格&quot;，但它有一种奇怪的感染力——一种对从未真正经历过的80年代消费主义的乡愁。评论家说这是&quot;资本主义的挽歌&quot;，创作者说&quot;我只是觉得好看&quot;。
+画质通用词
+随手记在这里，不管你用哪个风格，末尾加一行不会错：
+masterpiece, best quality, 8k, ultra detailed, volumetric lighting, trending on artstation
 
-Prompt: vaporwave, pink cyan gradient, marble bust, palm tree silhouette, grid floor, VHS scanlines, 80s nostalgia, katakana overlay
-
-
-14. 双重曝光 Double Exposure
-胶片摄影时代，如果你忘记过片就按第二下快门，两张照片就会叠在一起。这种&quot;错误&quot;在20世纪60年代被艺术家们回收利用。Jerry Uelsmann——一位从未用过 Photoshop 的暗房魔法师——在一个下午用七台放大机把一张人脸的轮廓填满森林，完成了一幅双重曝光作品。后来者把这种语言用到了极致：《真探》第一季的片头，每一帧都在把一个灵魂叠进一片荒原。
-
-Prompt: double exposure, silhouette portrait, forest inside profile, in-camera multiple exposure, ethereal overlay, mist threading
-
-
-15. 剪影 Silhouette
-当所有的细节都归于零，只剩下轮廓的时候，画面开始说话。剪影的力量来自减法——你去掉了面孔的表情、服装的纹理、皮肤的冷暖，留下的只是一个纯黑的形体。有趣的是，很多时候越少的细节，表达的情绪越强烈。一棵树对着夕阳的剪影可以同时代表孤独、希望、开始和结束。
-
-Prompt: silhouette, stark contrast, jet black figure, vibrant sunset sky, acacia tree, golden hour, rule of thirds, emotional minimalism
-
-
-16. 梦幻柔焦 Soft Focus
-柔焦原本是光学缺陷——早期的镜头球差比较大，高光区域的边缘会溢出到暗部。但摄影师们发现，这种&quot;缺陷&quot;产生的朦胧光晕，让人像变得像梦一样柔和。1930年代的好莱坞人像摄影师用凡士林涂在 UV 镜上模拟这种效果——黛德丽和嘉宝的那些经典肖像，都隔着一层薄薄的凡士林。
-
-Prompt: soft focus, golden hour backlight, Petzval swirly bokeh, ethereal bloom, rim light halo, dreamy haze, overexposed highlights
-
-
-
-第四章
-四、绘画与手绘：那些不用电的图像
-17. 浮世绘 Ukiyo-e
-Ukiyo-e 直译是&quot;浮世绘&quot;——画这个世界，这个浮动的、短暂的、不值得执着的人间。江户时代的版画工匠用刀子在一块樱木上刻出线条，再分色套印。一块木板就是一种颜色，一张画最多要刻十几块木板。葛饰北斋的《神奈川冲浪里》的浪尖上，凝聚着一个文明对海洋的恐惧与敬畏。奇妙的是，这种平面化的美学在十九世纪出口到欧洲后，直接催生了印象派——梵高的《星空》里那些卷曲的线条，直接来自北斋的海浪。
-
-Prompt: ukiyo-e, Japanese woodblock print, flat colors, bold outlines, Hokusai waves, Edo period, bokashi gradient, kozo washi paper
-
-
-18. 线稿素描 Line Art
-一条线，可以有千万种表情。0.05毫米的钢笔尖画出的细线和0.5毫米的马克笔推过的粗线，在图纸上扮演着完全不同的角色。文艺复兴时期的版画家用交叉排线（cross-hatching）在铜板上制造了灰度。达·芬奇的笔记本里，那些飞行器和解剖图的草稿从不只是因为它们在发明什么，更因为线条本身——那些犹豫的、自信的、试探的、确认的线条——就是思想的痕迹。
-
-Prompt: line art, fine pen cross-hatching, sketchbook aesthetic, parchment background, Da Vinci draftsmanship, architectural study
-
-
-19. 波普艺术 Pop Art
-1962年，安迪·沃霍尔在纽约 Stable 画廊展出了32幅《金宝汤罐头》。评论界炸了。他们说这不是艺术，这是消费品目录。沃霍尔笑了——他说他要的就是这个效果。波普艺术的底层逻辑是一句追问：当超市货架上的罐头和美术馆里的画布没有任何区别，那么什么是艺术？
-
-Prompt: pop art, Warholian silk-screen, primary colors, thick black outlines, Ben-Day dots, celebrity serial reproduction, acrylic on canvas
-
-
-20. 扁平插画 Flat Illustration
-扁平插画的源头可以追溯到20世纪中期的瑞士国际主义风格——用最少的色彩、最简的形状传达最明确的信息。但它真正成为一种大众视觉语言，是在数字时代：当屏幕分辨率从 72dpi 升到 300dpi 的时候，设计师发现无渐变无阴影的扁平图形在任何设备上都清晰可辨。Instagram 的图标、Google 的 Material Design、Airbnb 的引导页——扁平已经不只是风格，它是数字时代的通用语法。
-
-Prompt: flat illustration, bold colors, no gradients, clean shapes, vector art, mid-century modern poster, geometric simplification
-
-
-
-第五章
-五、摄影、3D 与工艺：当数码有了重量
-21. 胶片摄影 Analog Film
-Kodak Portra 400。光是这两个词就能让胶片摄影师心跳加速。Portra 的血统来自 1998 年，Kodak 的化学工程师们花了三年时间调配出一种对肤色无比温柔的乳剂配方。它的暗部泛橄榄绿，高光带暖桃色，反差低得像一层薄雾。2022 年，Kodak 把 Portra 400 的价格涨了三次——因为用的人太多了，生产线跟不上。胶片的&quot;死亡&quot;被一再预言，但从来没真正发生。
-
-Prompt: Kodak Portra 400, warm amber tone, subtle film grain, soft contrast, golden hour kitchen light, nostalgic snapshot, 35mm aesthetic
-
-
-22. CinemaScope 电影感 CinemaScope
-1953 年，20 世纪福克斯推出了 CinemaScope 宽银幕系统。当时的电视画面是 4:3 的小方框。电影需要一种电视永远无法模拟的东西来留住观众——答案就是宽度。2.35:1 的画幅比让你在看一个牛仔站在悬崖边的时候，同时看到悬崖有多高、海有多大、人的孤独有多深。罗杰·迪金斯的每一帧都在告诉你：宽度不是奢侈，是叙事。
-
-Prompt: cinematic shot, 2.35:1 anamorphic, teal-orange grade, shallow depth of field, film grain, Deakins lighting, windswept cliff
-
-
-23. 黏土风 Claymation
-Aardman 工作室的动画师 Nick Park 在1989年用黏土捏出了一只叫 Gromit 的狗和它的主人 Wallace，然后一帧一帧地移动它们。每秒钟需要拍24帧。一部90分钟的电影，等于129600次手工微调。黏土风的 AI 版本保留了这种圆润和指纹的痕迹，但它没有保留那种物理上的疼痛感——捏一天黏土手腕会酸的。有些东西 AI 永远学不会。
-
-Prompt: claymation, plasticine texture, fingerprints on clay, stop-motion, Aardman style, rounded shapes, handcrafted diorama
-
-
-24. 玻璃拟态 Glassmorphism
-2020年，苹果在 macOS Big Sur 里大量使用了毛玻璃效果。但半透明的界面语言其实可以追溯到2006年的 Windows Vista Aero。一种风格，两代操作系统，十五年的轮回。玻璃拟态的核心技术是把背景模糊之后叠加到前景上，但这背后的设计哲学是：让界面有厚度。
-
-Prompt: glassmorphism, frosted glass, translucent panels, background blur, 1px white border, rainbow caustics, product showcase
-
-
-25. Octane 写实渲染 Octane
-2010 年，新西兰公司 OTOY 发布了 Octane Render。它是第一款能在消费级 GPU 上跑的光线追踪渲染器——在此之前，追踪一束光的反射和折射需要一台服务器。Octane 让任何一个人都能在笔记本电脑上渲染出物理上正确的焦散、次表面散射和景深。它把&quot;照片级真实&quot;从少数电影公司的特权变成了任何人的随手可得。
-
-Prompt: octane render, path tracing, subsurface scattering, micro-droplets, studio key light, razor sharp depth of field, photorealism, petal texture
-
-
-
-第六章
-六、混合工艺：手工的痕迹
-26. 剪纸 Paper Cut
-一张纸叠在另一张纸上，中间隔3毫米的距离，灯光从侧面照过去，每一层在下一层上投下自己的影子。纸艺家 Hari 和 Deepti 把这种简单的物理现象变成了艺术语言。他们的灯箱作品看起来像深海里发光的珊瑚礁，实际上只是彩纸、刀片和光的合谋。
-
-Prompt: paper cut art, layered paper, drop shadow between layers, die-cut details, shadow box, Hari &amp; Deepti light box, coral reef diorama
-
-
-27. 丝网印刷 Screen Print
-丝网印刷的灵魂不在完美，在偏差。你看着一件手工印的 T 恤，蓝和黄的套色偏了0.5毫米，那个微小的偏移比精准的色彩校准更有生命力。独立乐队的所有演出海报几乎都是丝网印——不是因为他们不想用数码打印，而是因为丝网印刷的墨是压进纸纤维里的，你可以摸到它。
-
-Prompt: screen print, hand-pulled silkscreen, color misregistration, limited ink colors, French paper, gig poster, DIY aesthetic
-
-
-28. 拼贴 Collage
-达达主义者在1918年把报纸碎片贴在画布上的时候，艺术界骂他们神经病。Hannah Höch 用杂志剪报拼出了二十世纪最有力的女性主义宣言：《用厨房刀切开德国最后一个魏玛啤酒肚文化时代》。拼贴的暴力美学在于：把一个东西从它原有的语境里剪下来，塞进另一个语境，让它说完全不一样的话。
-
-Prompt: collage art, vintage magazine clippings, torn paper edges, mixed media, surreal juxtaposition, Dada sensibility, glue streaks visible
-
-
-29. ASCII Art ASCII
-1966 年，Bell Labs 的 Ken Knowlton 用一台 IBM 7094 打印出了第一张 ASCII 艺术——用 @、%、# 这些字符的密度模拟灰度。那时候没有屏幕，输出介质是连续的折叠打印纸。后来终端成了黑底绿字的 CRT 屏幕，ASCII 艺术就成了黑客和程序员的暗号。一张用 80x25 个字符拼出的脸，在绿色的磷光屏幕上，有一种无法言说的浪漫。
-
-Prompt: ascii art, monospaced characters, amber phosphor CRT, terminal aesthetic, text-mode portrait, retro computing, green scanlines
-
-
-30. 非遗国风 Cloisonné
-一门快要失传的工艺，最近在 AIGC 中找到了第二次生命。景泰蓝的工序极其残酷：先用铜丝在器物表面掐出蜂巢一样的格子，再把各色珐琅釉料填入格子，八百度高温烧制。每烧一次颜色会变，可能要反复十几遍。一只景泰蓝凤凰从设计到成品，匠人在它身上消耗掉的时间，够AI生成上千万个版本的凤凰。但那个铜丝掐出的微瑕——那个0.1毫米的不完美——是AI永远造不出来的。
-
-Prompt: Chinese cloisonné enamel, filigree gold wire, jewel-tone cells, phoenix motif, Jingdezhen craft, turquoise vermilion lapis, museum quality
-
-
-
-小结
 
 收录 30 种视觉风格，6 大分类
-每种配历史轶事 + 精炼 Prompt 关键词
-图片来自 Midjourney / Stable Diffusion 生成
-风格可自由组合："浮世绘 + 赛博朋克" = 赛博浪人，"水彩 + 剪纸" = 绘本插画
+全图 Midjourney / Stable Diffusion 直出
+风格自由混搭："浮世绘 + 赛博朋克" = 赛博浪人，"水彩 + 剪纸" = 绘本插画
 
-画质增强通用词：masterpiece, best quality, 8k, ultra detailed, volumetric lighting, trending on artstation
-— 整理于 2026 年 5 月，持续更新中 —
+— 整理于 2026 年 5 月，持续更新 —
 
 ]]></content>
       <categories>
