@@ -1,3 +1,4 @@
+https://zhxylabflow.xyz/2026/05/21/rtos_from_scratch_h723/
 https://zhxylabflow.xyz/2026/03/18/quadruped_control_theory_cn/
 https://zhxylabflow.xyz/2026/05/21/ppo_for_quadruped/
 https://zhxylabflow.xyz/2026/05/17/aigc_art_styles_guide/
@@ -43,6 +44,7 @@ https://zhxylabflow.xyz/tags/%E4%BC%98%E5%8C%96/
 https://zhxylabflow.xyz/tags/%E5%A5%96%E5%8A%B1%E5%87%BD%E6%95%B0/
 https://zhxylabflow.xyz/tags/python/
 https://zhxylabflow.xyz/tags/PPO/
+https://zhxylabflow.xyz/tags/RTOS/
 https://zhxylabflow.xyz/categories/%E8%AE%BE%E8%AE%A1/
 https://zhxylabflow.xyz/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/
 https://zhxylabflow.xyz/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/
