@@ -4,6 +4,7 @@ https://zhxylabflow.xyz/2026/05/12/quadruped_reward_design/
 https://zhxylabflow.xyz/2026/05/09/dqn_algorithm_tutorial/
 https://zhxylabflow.xyz/2026/03/29/publicity_group/
 https://zhxylabflow.xyz/2026/03/28/h7_dma/
+https://zhxylabflow.xyz/2026/03/18/quadruped_control_theory_cn/
 https://zhxylabflow.xyz/2026/03/17/isaaclab_prj/
 https://zhxylabflow.xyz/2026/03/16/quadruped_mpc_math_qp/
 https://zhxylabflow.xyz/2026/03/16/c_function_pointer_vtable_blog/

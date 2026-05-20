@@ -1,0 +1,1399 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>四足机器人控制统一技术文档（公式推导版） | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="四足机器人控制统一技术文档（公式推导版）  目标：给出一套从单腿运动学 → 全身动力学 → MPC &#x2F; WBC &#x2F; RL 的统一数学体系。 采用对象：主流 12 自由度串联四足（浮动基座 + 4 条 3 自由度腿）。 说明：若你的本体是 8 自由度并联腿或五连杆腿，只需要替换“单腿几何闭环、雅可比、单腿惯性”部分；从浮动基座动力学、状态估计、MPC、WBC 到 RL 的整体框架不变。   0. 总">
+<meta property="og:type" content="article">
+<meta property="og:title" content="四足机器人控制统一技术文档（公式推导版）">
+<meta property="og:url" content="https://zhxylabflow.xyz/2026/03/18/quadruped_control_theory_cn/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="四足机器人控制统一技术文档（公式推导版）  目标：给出一套从单腿运动学 → 全身动力学 → MPC &#x2F; WBC &#x2F; RL 的统一数学体系。 采用对象：主流 12 自由度串联四足（浮动基座 + 4 条 3 自由度腿）。 说明：若你的本体是 8 自由度并联腿或五连杆腿，只需要替换“单腿几何闭环、雅可比、单腿惯性”部分；从浮动基座动力学、状态估计、MPC、WBC 到 RL 的整体框架不变。   0. 总">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6958d73347225_1767429939.webp">
+<meta property="article:published_time" content="2026-03-17T16:46:40.298Z">
+<meta property="article:modified_time" content="2026-05-20T17:53:46.904Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="足式机器人">
+<meta property="article:tag" content="控制">
+<meta property="article:tag" content="MPC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6958d73347225_1767429939.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "四足机器人控制统一技术文档（公式推导版）",
+  "url": "https://zhxylabflow.xyz/2026/03/18/quadruped_control_theory_cn/",
+  "image": "https://img.cdn1.vip/i/6958d73347225_1767429939.webp",
+  "datePublished": "2026-03-17T16:46:40.298Z",
+  "dateModified": "2026-05-20T17:53:46.904Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "https://zhxylabflow.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/2026/03/18/quadruped_control_theory_cn/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '四足机器人控制统一技术文档（公式推导版）',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">24</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">四足机器人控制统一技术文档（公式推导版）</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">四足机器人控制统一技术文档（公式推导版）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-03-17T16:46:40.298Z" title="发表于 2026-03-18 00:46:40">2026-03-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-20T17:53:46.904Z" title="更新于 2026-05-21 01:53:46">2026-05-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>四足机器人控制统一技术文档（公式推导版）</h1>
+<blockquote>
+<p>目标：给出一套<strong>从单腿运动学 → 全身动力学 → MPC / WBC / RL</strong> 的统一数学体系。<br>
+采用对象：<strong>主流 12 自由度串联四足</strong>（浮动基座 + 4 条 3 自由度腿）。<br>
+说明：若你的本体是 8 自由度并联腿或五连杆腿，<strong>只需要替换“单腿几何闭环、雅可比、单腿惯性”部分</strong>；从浮动基座动力学、状态估计、MPC、WBC 到 RL 的整体框架不变。</p>
+</blockquote>
+<hr>
+<h2 id="0-总体建模对象与控制链">0. 总体建模对象与控制链</h2>
+<p>四足机器人广义坐标选为</p>
+<p>$$<br>
+q = \begin{bmatrix} p_B \ \Theta_B \ q_j \end{bmatrix}<br>
+\in \mathbb{R}^{6+n},<br>
+\qquad<br>
+n=12,<br>
+$$</p>
+<p>其中</p>
+<ul>
+<li>$p_B\in\mathbb{R}^3$：机身质心位置；</li>
+<li>$\Theta_B$：机身姿态参数（欧拉角或四元数最小参数）；</li>
+<li>$q_j\in\mathbb{R}^{12}$：12 个关节角；</li>
+<li>浮动基速度更适合写成<br>
+$$<br>
+\nu = \begin{bmatrix} v_B \ \omega_B \ \dot q_j \end{bmatrix}\in\mathbb{R}^{18}.<br>
+$$</li>
+</ul>
+<p>一套完备控制链路写成</p>
+<p>$$<br>
+\text{感知/估计} \to \text{步态/落足点/摆腿轨迹} \to \text{SRB-MPC} \to \text{WBC} \to \text{关节力矩控制} \to \text{执行器}.<br>
+$$</p>
+<p>其中：</p>
+<ul>
+<li><strong>状态估计</strong>输出 $\hat p_B,\hat v_B,\hat R_{WB},\hat\omega_B$；</li>
+<li><strong>MPC</strong> 输出未来短时域内接触力 $\lambda = [f_1^T,\dots,f_4^T]^T$；</li>
+<li><strong>WBC</strong> 将机身任务、足端任务、接触约束综合成 $\tau$；</li>
+<li><strong>低层伺服</strong> 将 $\tau$、$q_d$、$\dot q_d$ 作用到电机。</li>
+</ul>
+<hr>
+<h2 id="1-坐标系与基础符号">1. 坐标系与基础符号</h2>
+<p>设：</p>
+<ul>
+<li>世界系 ${W}$；</li>
+<li>机体系 ${B}$；</li>
+<li>第 $i$ 条腿髋关节系 ${H_i}$；</li>
+<li>足端系 ${F_i}$。</li>
+</ul>
+<p>机身姿态用旋转矩阵</p>
+<p>$$<br>
+R_{WB}\in SO(3),<br>
+$$</p>
+<p>表示从机体系到世界系的方向变换。叉乘矩阵定义为</p>
+<p>$$<br>
+[a]<em>\times =<br>
+\begin{bmatrix}<br>
+0 &amp; -a_3 &amp; a_2 \<br>
+a_3 &amp; 0 &amp; -a_1 \<br>
+-a_2 &amp; a_1 &amp; 0<br>
+\end{bmatrix},<br>
+\qquad<br>
+a\times b = [a]</em>\times b.<br>
+$$</p>
+<p>欧拉角 $\Theta = [\phi,\theta,\psi]^T$ 与机体角速度 $\omega_B$ 的映射为</p>
+<p>$$<br>
+\dot \Theta = T(\phi,\theta),\omega_B,<br>
+$$</p>
+<p>其中（ZYX 欧拉角）</p>
+<p>$$<br>
+T(\phi,\theta)=<br>
+\begin{bmatrix}<br>
+1 &amp; \sin\phi\tan\theta &amp; \cos\phi\tan\theta \<br>
+0 &amp; \cos\phi &amp; -\sin\phi \<br>
+0 &amp; \sin\phi/\cos\theta &amp; \cos\phi/\cos\theta<br>
+\end{bmatrix}.<br>
+$$</p>
+<p>若直接用四元数 $q_{WB}$，则姿态传播更稳健：</p>
+<p>$$<br>
+\dot q_{WB} = \frac12,\Omega(\omega_B) q_{WB},<br>
+$$</p>
+<p>其中 $\Omega(\omega)$ 为标准四元数角速度矩阵。</p>
+<hr>
+<h2 id="2-单腿运动学：正运动学、逆运动学、雅可比">2. 单腿运动学：正运动学、逆运动学、雅可比</h2>
+<p>以下以<strong>串联 3 自由度腿</strong>为例：</p>
+<ul>
+<li>$q_1$：髋外展/内收（绕 $x$ 轴）；</li>
+<li>$q_2$：髋俯仰；</li>
+<li>$q_3$：膝俯仰；</li>
+<li>大腿长 $l_2$，小腿长 $l_3$。</li>
+</ul>
+<p>为使公式最紧凑，先写成无髋部固定偏距的形式。若你的腿有固定侧向偏距 $d$，只需在齐次变换中增加常量平移即可。</p>
+<h3 id="2-1-齐次变换与正运动学">2.1 齐次变换与正运动学</h3>
+<p>令</p>
+<p>$$<br>
+{}^{H}T_F(q) = R_x(q_1)R_y(q_2),\mathrm{Trans}(0,0,-l_2),R_y(q_3),\mathrm{Trans}(0,0,-l_3).<br>
+$$</p>
+<p>则足端相对髋关节的坐标为</p>
+<h1>$$<br>
+p(q)=<br>
+\begin{bmatrix}<br>
+x \ y \ z<br>
+\end{bmatrix}</h1>
+<p>\begin{bmatrix}</p>
+<ul>
+<li>l_2\sin q_2 - l_3\sin(q_2+q_3) \<br>
+\sin q_1,\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big) \<br>
+-\cos q_1,\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big)<br>
+\end{bmatrix}.<br>
+$$</li>
+</ul>
+<p>记</p>
+<p>$$<br>
+q_{23}=q_2+q_3,<br>
+\qquad<br>
+r(q)=l_2\cos q_2+l_3\cos q_{23},<br>
+$$</p>
+<p>则更紧凑地写成</p>
+<p>$$<br>
+x = -l_2\sin q_2 - l_3\sin q_{23},<br>
+\qquad<br>
+y = \sin q_1,r,<br>
+\qquad<br>
+z = -\cos q_1,r.<br>
+$$</p>
+<h3 id="2-2-逆运动学">2.2 逆运动学</h3>
+<p>先由 $y,z$ 求 $q_1$：</p>
+<p>$$<br>
+\rho = \sqrt{y^2+z^2},<br>
+\qquad<br>
+q_1 = \operatorname{atan2}(y,-z).<br>
+$$</p>
+<p>再将三维问题转成髋俯仰-膝俯仰平面二连杆问题。定义</p>
+<p>$$<br>
+r = \sqrt{y^2+z^2},<br>
+\qquad<br>
+x_p = x,<br>
+\qquad<br>
+z_p = -r.<br>
+$$</p>
+<p>则有</p>
+<p>$$<br>
+D = \frac{x_p^2+z_p^2-l_2^2-l_3^2}{2l_2l_3}.<br>
+$$</p>
+<p>膝关节两组解（肘上/肘下）为</p>
+<p>$$<br>
+q_3 = \operatorname{atan2}(\pm\sqrt{1-D^2},D).<br>
+$$</p>
+<p>再求髋俯仰角：</p>
+<p>$$<br>
+q_2 = \operatorname{atan2}(-x_p,-z_p)<br>
+- \operatorname{atan2}(l_3\sin q_3,,l_2+l_3\cos q_3).<br>
+$$</p>
+<p>因此解析逆解为</p>
+<p>$$<br>
+\boxed{<br>
+\begin{aligned}<br>
+q_1 &amp;= \operatorname{atan2}(y,-z),\<br>
+q_3 &amp;= \operatorname{atan2}(\pm\sqrt{1-D^2},D),\<br>
+q_2 &amp;= \operatorname{atan2}(-x,-\sqrt{y^2+z^2})<br>
+- \operatorname{atan2}(l_3\sin q_3,,l_2+l_3\cos q_3).<br>
+\end{aligned}}<br>
+$$</p>
+<p>若存在固定侧向偏距 $d$，则将</p>
+<p>$$<br>
+\rho = \sqrt{y^2+z^2},<br>
+\qquad<br>
+r = \sqrt{\rho^2-d^2}<br>
+$$</p>
+<p>替代上式中的 $\sqrt{y^2+z^2}$，并将 $q_1$ 修正为</p>
+<p>$$<br>
+q_1 = \operatorname{atan2}(y,-z) - \operatorname{atan2}(d,r).<br>
+$$</p>
+<h3 id="2-3-足端速度雅可比">2.3 足端速度雅可比</h3>
+<p>定义足端线速度</p>
+<p>$$<br>
+\dot p = J(q)\dot q,<br>
+\qquad<br>
+q=[q_1,q_2,q_3]^T.<br>
+$$</p>
+<p>由 $p(q)$ 对 $q$ 求偏导可得</p>
+<p>$$<br>
+J(q)=<br>
+\begin{bmatrix}<br>
+0 &amp; -l_2\cos q_2 - l_3\cos q_{23} &amp; -l_3\cos q_{23} \<br>
+\cos q_1,r &amp; -\sin q_1\big(l_2\sin q_2+l_3\sin q_{23}\big) &amp; -l_3\sin q_1\sin q_{23} \<br>
+\sin q_1,r &amp; \cos q_1\big(l_2\sin q_2+l_3\sin q_{23}\big) &amp; l_3\cos q_1\sin q_{23}<br>
+\end{bmatrix}.<br>
+$$</p>
+<p>若考虑足端角速度，则 6 维雅可比为</p>
+<p>$$<br>
+\mathcal J(q)=<br>
+\begin{bmatrix}<br>
+J_\omega(q) \<br>
+J_v(q)<br>
+\end{bmatrix},<br>
+$$</p>
+<p>其中 $J_\omega$ 可通过关节轴在基坐标系下的方向向量逐列堆叠得到。</p>
+<h3 id="2-4-静力映射">2.4 静力映射</h3>
+<p>由虚功原理</p>
+<p>$$<br>
+\tau^T \delta q = f^T \delta p = f^T J,\delta q,<br>
+$$</p>
+<p>故有</p>
+<p>$$<br>
+\boxed{\tau = J^T f}.<br>
+$$</p>
+<p>这是足端力控制、VMC、接触力分配与 WBC 的最基本桥梁。</p>
+<hr>
+<h2 id="3-单腿动力学">3. 单腿动力学</h2>
+<h3 id="3-1-拉格朗日形式">3.1 拉格朗日形式</h3>
+<p>令各连杆质心位置 $p_i(q)$、角速度 $\omega_i(q,\dot q)$，则系统动能</p>
+<p>$$<br>
+T = \sum_{i=1}^3 \left( \frac12 m_i \dot p_i^T \dot p_i + \frac12 \omega_i^T I_i \omega_i \right),<br>
+$$</p>
+<p>势能</p>
+<p>$$<br>
+V = \sum_{i=1}^3 m_i g^T p_i.<br>
+$$</p>
+<p>定义拉格朗日函数</p>
+<p>$$<br>
+L(q,\dot q)=T-V.<br>
+$$</p>
+<p>则动力学方程为</p>
+<p>$$<br>
+\frac{d}{dt}\left(\frac{\partial L}{\partial \dot q}\right) - \frac{\partial L}{\partial q} = \tau.<br>
+$$</p>
+<p>整理成标准形式：</p>
+<p>$$<br>
+\boxed{M(q)\ddot q + C(q,\dot q)\dot q + g(q)=\tau + J_c^T\lambda.}<br>
+$$</p>
+<p>其中 $\lambda$ 为接触约束力，若该腿处于摆动相，则 $\lambda=0$。</p>
+<h3 id="3-2-质量矩阵的雅可比表达">3.2 质量矩阵的雅可比表达</h3>
+<p>利用</p>
+<p>$$<br>
+\dot p_i = J_{v,i}(q)\dot q,<br>
+\qquad<br>
+\omega_i = J_{\omega,i}(q)\dot q,<br>
+$$</p>
+<p>可得</p>
+<p>$$<br>
+M(q)=\sum_{i=1}^3 \left(m_i J_{v,i}^T J_{v,i} + J_{\omega,i}^T R_i I_i R_i^T J_{\omega,i}\right).<br>
+$$</p>
+<p>重力项写成</p>
+<p>$$<br>
+g(q)=\frac{\partial V}{\partial q}.<br>
+$$</p>
+<p>科氏/离心项可由 Christoffel 符号表示：</p>
+<p>$$<br>
+C_{ij}(q,\dot q)=\sum_{k=1}^n c_{ijk}(q)\dot q_k,<br>
+$$</p>
+<p>$$<br>
+c_{ijk}(q)=\frac12\left(\frac{\partial M_{ij}}{\partial q_k}+<br>
+\frac{\partial M_{ik}}{\partial q_j}-<br>
+\frac{\partial M_{jk}}{\partial q_i}\right).<br>
+$$</p>
+<p>于是</p>
+<p>$$<br>
+\sum_j C_{ij}\dot q_j<br>
+=\sum_{j,k} c_{ijk}\dot q_j\dot q_k.<br>
+$$</p>
+<h3 id="3-3-牛顿-欧拉递推形式">3.3 牛顿-欧拉递推形式</h3>
+<p>对于工程实现，常用递推牛顿-欧拉（RNEA）或组合刚体法（CRBA）：</p>
+<ul>
+<li>逆动力学：给定 $(q,\dot q,\ddot q)$ 计算 $\tau$；</li>
+<li>正动力学：给定 $(q,\dot q,\tau)$ 计算 $\ddot q$；</li>
+<li>惯量矩阵：CRBA 计算 $M(q)$。</li>
+</ul>
+<p>这一步是实现高带宽控制器时最常用的数值工具链。</p>
+<hr>
+<h2 id="4-浮动基座全身动力学">4. 浮动基座全身动力学</h2>
+<p>四足机器人不是固定基机械臂，而是<strong>浮动基座系统</strong>。令广义速度</p>
+<p>$$<br>
+\nu =<br>
+\begin{bmatrix}<br>
+v_B \<br>
+\omega_B \<br>
+\dot q_j<br>
+\end{bmatrix},<br>
+\qquad<br>
+\dot \nu =<br>
+\begin{bmatrix}<br>
+\dot v_B \<br>
+\dot \omega_B \<br>
+\ddot q_j<br>
+\end{bmatrix}.<br>
+$$</p>
+<p>则全身动力学写成</p>
+<p>$$<br>
+\boxed{M(q)\dot \nu + h(q,\nu)=S^T\tau + J_c(q)^T\lambda.}<br>
+$$</p>
+<p>其中：</p>
+<ul>
+<li>$M(q)\in\mathbb{R}^{(6+n)\times(6+n)}$：全身惯量矩阵；</li>
+<li>$h(q,\nu)$：科氏、离心、重力、关节摩擦等并项；</li>
+<li>$S=[0_{n\times 6}\ I_n]$：执行器选择矩阵；</li>
+<li>$\tau\in\mathbb{R}^n$：关节力矩；</li>
+<li>$J_c\in\mathbb{R}^{3m\times(6+n)}$：接触雅可比；</li>
+<li>$\lambda\in\mathbb{R}^{3m}$：全部接触点的接触力。</li>
+</ul>
+<p>若某条腿处于支撑相且足端不滑动，则速度约束为</p>
+<p>$$<br>
+J_c(q)\nu = 0,<br>
+$$</p>
+<p>对时间求导得加速度约束</p>
+<p>$$<br>
+J_c(q)\dot \nu + \dot J_c(q,\nu)\nu = 0.<br>
+$$</p>
+<p>若处于摆动相，则对应接触雅可比行块删除。</p>
+<hr>
+<h2 id="5-状态估计">5. 状态估计</h2>
+<p>状态估计至少需要估计</p>
+<p>$$<br>
+\hat x = {\hat p_B,\hat v_B,\hat R_{WB},\hat \omega_B,\hat q_j,\hat{\dot q}_j}.<br>
+$$</p>
+<h3 id="5-1-姿态传播">5.1 姿态传播</h3>
+<p>IMU 给出测量</p>
+<p>$$<br>
+\omega_m = \omega_B + b_\omega + n_\omega,<br>
+\qquad<br>
+a_m = R_{BW}(\dot v_B-g) + b_a + n_a.<br>
+$$</p>
+<p>若用四元数，姿态传播为</p>
+<p>$$<br>
+\dot q_{WB} = \frac12\Omega(\omega_m-b_\omega) q_{WB}.<br>
+$$</p>
+<h3 id="5-2-足端里程计-EKF">5.2 足端里程计/EKF</h3>
+<p>一种经典状态定义为</p>
+<p>$$<br>
+X =<br>
+\begin{bmatrix}<br>
+p_B \<br>
+v_B \<br>
+p_{f_1}^W \<br>
+p_{f_2}^W \<br>
+p_{f_3}^W \<br>
+p_{f_4}^W<br>
+\end{bmatrix}.<br>
+$$</p>
+<p>连续时间过程模型可写成</p>
+<p>$$<br>
+\dot p_B = v_B,<br>
+$$</p>
+<p>$$<br>
+\dot v_B = R_{WB}(a_m-b_a-n_a)+g,<br>
+$$</p>
+<p>$$<br>
+\dot p_{f_i}^W = w_i,<br>
+$$</p>
+<p>其中 $w_i$ 为足点随机游走。对<strong>支撑足</strong>令 $Q_{f_i}$ 很小，对<strong>摆动足</strong>令 $Q_{f_i}$ 很大。</p>
+<p>接触腿测量关系来自“世界系足端速度为零”：</p>
+<p>$$<br>
+0 = v_B + \omega_B \times (R_{WB}p_{f_i}^B) + R_{WB}J_i(q)\dot q_i.<br>
+$$</p>
+<p>等价写成观测方程</p>
+<p>$$<br>
+z_i = 0 = H_i X + \eta_i.<br>
+$$</p>
+<p>亦可用足端位置约束</p>
+<p>$$<br>
+p_{f_i}^W = p_B + R_{WB}p_{f_i}^B(q_i).<br>
+$$</p>
+<p>于是 EKF 递推为</p>
+<p><strong>预测：</strong></p>
+<p>$$<br>
+\hat X_{k|k-1}=f(\hat X_{k-1|k-1},u_k),<br>
+$$</p>
+<p>$$<br>
+P_{k|k-1}=A_k P_{k-1|k-1}A_k^T + Q_k.<br>
+$$</p>
+<p><strong>更新：</strong></p>
+<p>$$<br>
+K_k = P_{k|k-1}H_k^T(H_k P_{k|k-1}H_k^T + R_k)^{-1},<br>
+$$</p>
+<p>$$<br>
+\hat X_{k|k}=\hat X_{k|k-1}+K_k(z_k-h(\hat X_{k|k-1})),<br>
+$$</p>
+<p>$$<br>
+P_{k|k}=(I-K_kH_k)P_{k|k-1}.<br>
+$$</p>
+<hr>
+<h2 id="6-步态、摆腿轨迹、落足点规划">6. 步态、摆腿轨迹、落足点规划</h2>
+<p>设步态周期 $T_g$，第 $i$ 条腿接触相位函数为</p>
+<p>$$<br>
+\sigma_i(t)\in{0,1},<br>
+$$</p>
+<p>其中 $\sigma_i=1$ 表示支撑相，$\sigma_i=0$ 表示摆动相。</p>
+<h3 id="6-1-接触序列">6.1 接触序列</h3>
+<p>对角小跑可以写成</p>
+<p>$$<br>
+(\sigma_{LF},\sigma_{RH}) = 1- (\sigma_{RF},\sigma_{LH}),<br>
+$$</p>
+<p>相差半周期。</p>
+<h3 id="6-2-摆腿三次-五次多项式">6.2 摆腿三次/五次多项式</h3>
+<p>对单个方向分量 $s(t)$，若要求起终点位置速度加速度连续，常用五次多项式：</p>
+<p>$$<br>
+s(t)=a_0+a_1 t+a_2 t^2+a_3 t^3+a_4 t^4+a_5 t^5.<br>
+$$</p>
+<p>边界条件</p>
+<p>$$<br>
+s(0)=s_0,\ \dot s(0)=\dot s_0,\ \ddot s(0)=\ddot s_0,<br>
+$$<br>
+$$<br>
+s(T)=s_f,\ \dot s(T)=\dot s_f,\ \ddot s(T)=\ddot s_f<br>
+$$</p>
+<p>解得系数向量</p>
+<p>$$<br>
+a = A^{-1}b,<br>
+$$</p>
+<p>其中 $A$ 为由边界条件构成的 $6\times 6$ 矩阵。</p>
+<p>竖直方向常写成抬脚峰值形式，例如中点抬高 $h_{sw}$：</p>
+<p>$$<br>
+z_{foot}(s)=<br>
+\begin{cases}<br>
+z_0 + 2h_{sw}s^2, &amp; 0\le s &lt; 1/2,\<br>
+z_f + 2h_{sw}(1-s)^2, &amp; 1/2\le s \le 1,<br>
+\end{cases}<br>
+$$</p>
+<p>其中 $s=t/T_{sw}$ 为归一化摆动相位。</p>
+<h3 id="6-3-Raibert-落足点启发式">6.3 Raibert 落足点启发式</h3>
+<p>设期望机身速度 $v_d$，实际速度 $v$，支撑时间 $T_{st}$，则一个常见足端名义落足点为</p>
+<p>$$<br>
+p_{foot}^{ref} = p_B + \frac{T_{st}}{2}v_B + K_v(v_B-v_d) + K_\omega(\omega_B-\omega_d).<br>
+$$</p>
+<p>若考虑偏航角速度控制，可在机体系下加入横向偏置项。</p>
+<hr>
+<h2 id="7-单刚体模型（SRB）">7. 单刚体模型（SRB）</h2>
+<p>MPC 最常见的模型是 <strong>Single Rigid Body</strong>：</p>
+<ul>
+<li>忽略腿惯量与腿角动量；</li>
+<li>将机器人简化为质量为 $m$、惯量为 $I_B$ 的刚体；</li>
+<li>控制输入为各支撑足接触力 $f_i$。</li>
+</ul>
+<h3 id="7-1-连续动力学">7.1 连续动力学</h3>
+<p>机身质心运动：</p>
+<p>$$<br>
+\dot p = v,<br>
+$$</p>
+<p>$$<br>
+m\dot v = \sum_{i=1}^4 \sigma_i f_i + mg.<br>
+$$</p>
+<p>机身角动量动力学：</p>
+<p>$$<br>
+\dot R = R[\omega]_\times,<br>
+$$</p>
+<p>$$<br>
+I_W\dot \omega + \omega\times(I_W\omega)<br>
+= \sum_{i=1}^4 \sigma_i (r_i-p)\times f_i,<br>
+$$</p>
+<p>其中</p>
+<p>$$<br>
+I_W = R I_B R^T.<br>
+$$</p>
+<p>若采用小角速度线性化，忽略 $\omega\times(I_W\omega)$，则</p>
+<p>$$<br>
+I_W\dot\omega \approx \sum_{i=1}^4 \sigma_i (r_i-p)\times f_i.<br>
+$$</p>
+<h3 id="7-2-线性化状态方程">7.2 线性化状态方程</h3>
+<p>定义状态</p>
+<p>$$<br>
+x = \begin{bmatrix} p \ v \ \Theta \ \omega \end{bmatrix},<br>
+\qquad<br>
+u = \begin{bmatrix} f_1 \ f_2 \ f_3 \ f_4 \end{bmatrix}.<br>
+$$</p>
+<p>在小滚转/小俯仰条件下，可近似写成</p>
+<p>$$<br>
+\dot \Theta \approx \omega.<br>
+$$</p>
+<p>则连续线性模型可写成</p>
+<p>$$<br>
+\dot x = A_c x + B_c u + d_c,<br>
+$$</p>
+<p>其中</p>
+<p>$$<br>
+A_c=<br>
+\begin{bmatrix}<br>
+0&amp;I&amp;0&amp;0\<br>
+0&amp;0&amp;0&amp;0\<br>
+0&amp;0&amp;0&amp;I\<br>
+0&amp;0&amp;0&amp;0<br>
+\end{bmatrix},<br>
+$$</p>
+<p>$$<br>
+B_c=<br>
+\begin{bmatrix}<br>
+0&amp;0&amp;0&amp;0\<br>
+\frac1mI&amp;\frac1mI&amp;\frac1mI&amp;\frac1mI\<br>
+0&amp;0&amp;0&amp;0\<br>
+I_W^{-1}[r_1-p]<em>\times &amp; I_W^{-1}[r_2-p]</em>\times &amp; I_W^{-1}[r_3-p]<em>\times &amp; I_W^{-1}[r_4-p]</em>\times<br>
+\end{bmatrix},<br>
+$$</p>
+<p>$$<br>
+d_c = \begin{bmatrix}0\g\0\0\end{bmatrix}.<br>
+$$</p>
+<p>离散化后</p>
+<p>$$<br>
+x_{k+1} = A_d x_k + B_d u_k + d_d,<br>
+$$</p>
+<p>其中一阶 Euler 近似为</p>
+<p>$$<br>
+A_d \approx I + A_c\Delta t,<br>
+\qquad<br>
+B_d \approx B_c\Delta t,<br>
+\qquad<br>
+d_d \approx d_c\Delta t.<br>
+$$</p>
+<p>更精确可用矩阵指数：</p>
+<p>$$<br>
+A_d=e^{A_c\Delta t},<br>
+\qquad<br>
+B_d=\int_0^{\Delta t} e^{A_c\tau}B_c,d\tau.<br>
+$$</p>
+<h3 id="7-3-预测方程（condensed-form）">7.3 预测方程（condensed form）</h3>
+<p>预测时域长度为 $N$，定义</p>
+<p>$$<br>
+X=<br>
+\begin{bmatrix}<br>
+x_1\x_2\\vdots\x_N<br>
+\end{bmatrix},<br>
+\qquad<br>
+U=<br>
+\begin{bmatrix}<br>
+u_0\\nu_1\\vdots\\nu_{N-1}<br>
+\end{bmatrix}.<br>
+$$</p>
+<p>由离散模型递推可得</p>
+<p>$$<br>
+\boxed{X=\mathcal A x_0 + \mathcal B U + \mathcal D.}<br>
+$$</p>
+<p>其中</p>
+<p>$$<br>
+\mathcal A=<br>
+\begin{bmatrix}<br>
+A_d\A_d^2\\vdots\A_d^N<br>
+\end{bmatrix},<br>
+$$</p>
+<p>$$<br>
+\mathcal B=<br>
+\begin{bmatrix}<br>
+B_d &amp; 0 &amp; \cdots &amp; 0\<br>
+A_dB_d &amp; B_d &amp; \cdots &amp; 0\<br>
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots\<br>
+A_d^{N-1}B_d &amp; A_d^{N-2}B_d &amp; \cdots &amp; B_d<br>
+\end{bmatrix}.<br>
+$$</p>
+<hr>
+<h2 id="8-MPC-形式化为二次规划">8. MPC 形式化为二次规划</h2>
+<h3 id="8-1-代价函数">8.1 代价函数</h3>
+<p>令参考状态序列为 $X^{ref}$，则一个标准目标函数是</p>
+<p>$$<br>
+\min_U \ \frac12(X-X^{ref})^TQ(X-X^{ref}) + \frac12 U^TRU + \frac12 \Delta U^T R_\Delta \Delta U.<br>
+$$</p>
+<p>代入预测方程后变为标准 QP：</p>
+<p>$$<br>
+\min_U \ \frac12 U^T H U + g^T U,<br>
+$$</p>
+<p>其中</p>
+<p>$$<br>
+H = \mathcal B^T Q \mathcal B + R + D_\Delta^T R_\Delta D_\Delta,<br>
+$$</p>
+<p>$$<br>
+g = \mathcal B^T Q(\mathcal A x_0 + \mathcal D - X^{ref}).<br>
+$$</p>
+<h3 id="8-2-接触约束">8.2 接触约束</h3>
+<p>对每个支撑足，约束法向力为</p>
+<p>$$<br>
+0 \le f_{z,i} \le f_{z,i}^{max}.<br>
+$$</p>
+<p>摩擦锥</p>
+<p>$$<br>
+\sqrt{f_{x,i}^2 + f_{y,i}^2} \le \mu f_{z,i}<br>
+$$</p>
+<p>常用金字塔近似为 4 个线性不等式：</p>
+<p>$$<br>
+-\mu f_{z,i} \le f_{x,i} \le \mu f_{z,i},<br>
+$$</p>
+<p>$$<br>
+-\mu f_{z,i} \le f_{y,i} \le \mu f_{z,i}.<br>
+$$</p>
+<p>摆动腿施加</p>
+<p>$$<br>
+f_i = 0.<br>
+$$</p>
+<p>于是所有约束可统一写成</p>
+<p>$$<br>
+C U \le b,<br>
+\qquad<br>
+A_{eq}U = b_{eq}.<br>
+$$</p>
+<h3 id="8-3-接触时域长度限制">8.3 接触时域长度限制</h3>
+<p>若在预测时域内假设支撑足位置不变，则为了避免“一条腿在时域内经历支撑→摆动→再次支撑”的预测错误，通常要求</p>
+<p>$$<br>
+N\Delta t \le \frac{T_g}{2}.<br>
+$$</p>
+<hr>
+<h2 id="9-全身控制-WBC">9. 全身控制 WBC</h2>
+<p>WBC 的目标是：在满足<strong>接触约束与动力学一致性</strong>的前提下，同时完成多个任务。典型任务：</p>
+<ol>
+<li>支撑足不滑动；</li>
+<li>机身姿态跟踪；</li>
+<li>机身质心位置/速度跟踪；</li>
+<li>摆动足轨迹跟踪；</li>
+<li>关节姿态/冗余整形。</li>
+</ol>
+<h3 id="9-1-任务空间-PD-加速度">9.1 任务空间 PD 加速度</h3>
+<p>对第 $k$ 个任务，定义任务变量 $x_k(q)$，其雅可比为 $J_k(q)$。加速度级任务方程为</p>
+<p>$$<br>
+\ddot x_k = J_k \dot\nu + \dot J_k \nu.<br>
+$$</p>
+<p>期望任务加速度常取</p>
+<p>$$<br>
+\ddot x_k^* = \ddot x_k^{ref} + K_{d,k}(\dot x_k^{ref}-\dot x_k) + K_{p,k}(x_k^{ref}-x_k).<br>
+$$</p>
+<p>于是理想等式为</p>
+<p>$$<br>
+J_k \dot\nu = b_k,<br>
+\qquad<br>
+b_k = \ddot x_k^* - \dot J_k\nu.<br>
+$$</p>
+<h3 id="9-2-基于伪逆-零空间的层级-WBC">9.2 基于伪逆/零空间的层级 WBC</h3>
+<p>对单任务最小范数解：</p>
+<p>$$<br>
+\dot\nu^* = J^# b,<br>
+\qquad<br>
+J^# = J^T(JJ^T)^{-1}<br>
+$$</p>
+<p>（行满秩情形；近奇异点时用阻尼伪逆）</p>
+<p>$$<br>
+J^#_\lambda = J^T(JJ^T+\lambda^2 I)^{-1}.<br>
+$$</p>
+<p>零空间投影矩阵：</p>
+<p>$$<br>
+N = I - J^# J,<br>
+\qquad<br>
+JN=0.<br>
+$$</p>
+<p>若有两层优先级：</p>
+<p>$$<br>
+\dot\nu_1 = J_1^# b_1,<br>
+$$</p>
+<p>$$<br>
+\dot\nu_2 = \dot\nu_1 + (J_2N_1)^#(b_2-J_2\dot\nu_1),<br>
+\qquad<br>
+N_1=I-J_1^#J_1.<br>
+$$</p>
+<p>递推到第 $k$ 层：</p>
+<p>$$<br>
+\dot\nu_k = \dot\nu_{k-1} + (J_kN_{k-1})^#(b_k-J_k\dot\nu_{k-1}),<br>
+$$</p>
+<p>$$<br>
+N_k = N_{k-1} - (J_kN_{k-1})^# J_k N_{k-1}.<br>
+$$</p>
+<p>这是层级逆运动学/加速度级 WBC 的核心公式。</p>
+<h3 id="9-3-动力学一致的-WBC-QP">9.3 动力学一致的 WBC-QP</h3>
+<p>更完整的做法是直接优化变量</p>
+<p>$$<br>
+z = (\dot\nu,\tau,\lambda,s),<br>
+$$</p>
+<p>其中 $s$ 为任务松弛变量。求解</p>
+<p>$$<br>
+\min_z \ \frac12\sum_k |J_k\dot\nu - b_k - s_k|_{W_k}^2</p>
+<ul>
+<li>\frac12|\tau|<em>{W</em>\tau}^2</li>
+<li>\frac12|\lambda|<em>{W</em>\lambda}^2</li>
+<li>\frac12|s|_{W_s}^2,<br>
+$$</li>
+</ul>
+<p>约束为</p>
+<p>$$<br>
+M(q)\dot\nu + h(q,\nu)=S^T\tau + J_c^T\lambda,<br>
+$$</p>
+<p>$$<br>
+J_c\dot\nu + \dot J_c\nu = 0,<br>
+$$</p>
+<p>$$<br>
+A_f\lambda \le b_f,<br>
+$$</p>
+<p>$$<br>
+\tau_{min}\le \tau\le \tau_{max},<br>
+\qquad<br>
+\dot\nu_{min}\le \dot\nu\le \dot\nu_{max}.<br>
+$$</p>
+<p>若将机身任务看得比摆动腿任务更重要，则可以用：</p>
+<ul>
+<li><strong>lexicographic / hierarchical QP</strong>；</li>
+<li>或<strong>大权重差分</strong>近似优先级。</li>
+</ul>
+<h3 id="9-4-MPC-与-WBC-的分工">9.4 MPC 与 WBC 的分工</h3>
+<p>常用分工为：</p>
+<ul>
+<li><strong>MPC</strong>：决定“机身如何受力”——求 $\lambda$；</li>
+<li><strong>WBC</strong>：决定“全身如何运动”——求 $\dot\nu,\tau$；</li>
+<li>再通过动力学一致性将两者耦合。</li>
+</ul>
+<p>一种简洁耦合方式是把 MPC 求出的 $\lambda^{mpc}$ 作为 WBC-QP 的参考项：</p>
+<p>$$<br>
+\min \cdots + \frac12|\lambda-\lambda^{mpc}|<em>{W</em>{mpc}}^2.<br>
+$$</p>
+<hr>
+<h2 id="10-从全身动力学到关节力矩控制">10. 从全身动力学到关节力矩控制</h2>
+<p>若 WBC 输出期望加速度 $\dot\nu^<em>$ 与接触力 $\lambda^</em>$，则关节力矩由动力学直接给出：</p>
+<p>$$<br>
+S^T\tau = M\dot\nu^* + h - J_c^T\lambda^*.<br>
+$$</p>
+<p>左乘 $S$ 得</p>
+<p>$$<br>
+\boxed{\tau = S\big(M\dot\nu^* + h - J_c^T\lambda^*\big).}<br>
+$$</p>
+<p>实际落地时常再叠加关节级阻抗：</p>
+<p>$$<br>
+\tau_{cmd}=\tau + K_p(q_d-q)+K_d(\dot q_d-\dot q).<br>
+$$</p>
+<p>若执行器只能做位置控制，则通常只能退化为</p>
+<p>$$<br>
+\tau_{motor}=K_p(q_d-q)+K_d(\dot q_d-\dot q),<br>
+$$</p>
+<p>此时“力控制”的上限受电机内环与减速器摩擦显著限制。</p>
+<hr>
+<h2 id="11-强化学习-RL">11. 强化学习 RL</h2>
+<p>RL 的价值不在于替代所有模型，而在于：</p>
+<ol>
+<li>学习难建模的接触与恢复策略；</li>
+<li>通过大规模仿真把经验压进策略网络；</li>
+<li>作为 <strong>residual policy</strong> 叠加到模型控制上。</li>
+</ol>
+<h3 id="11-1-MDP-定义">11.1 MDP 定义</h3>
+<p>定义观测</p>
+<p>$$<br>
+s_t = [R_{BW}g,\ v_B^B,\ \omega_B^B,\ q_j-q_j^{nom},\ \dot q_j,\ c_{cmd},\ \varphi_{gait},\ a_{t-1},\dots].<br>
+$$</p>
+<p>常见动作形式：</p>
+<ol>
+<li>目标关节位置 $a_t=q_d$；</li>
+<li>目标关节阻抗偏置 $a_t=\Delta q_d$；</li>
+<li>直接力矩 $a_t=\tau$；</li>
+<li>残差动作 $a_t=\Delta \tau$，与模型控制叠加。</li>
+</ol>
+<p>残差控制最稳妥：</p>
+<p>$$<br>
+\tau_{cmd}=\tau_{model}+\Delta\tau_\theta(s_t).<br>
+$$</p>
+<h3 id="11-2-奖励函数">11.2 奖励函数</h3>
+<p>一个典型奖励可以写为</p>
+<p>$$<br>
+r_t =<br>
++w_v\exp!\left(-\frac{|v-v_{cmd}|^2}{\sigma_v^2}\right)<br>
++w_\omega\exp!\left(-\frac{(\omega_z-\omega_{cmd})^2}{\sigma_\omega^2}\right)<br>
+$$</p>
+<p>$$<br>
+\qquad<br>
+-w_q|q_j-q_j^{nom}|^2<br>
+-w_{\dot q}|\dot q_j|^2<br>
+-w_\tau|\tau|^2<br>
+-w_{slip}\sum_i |v_{foot,i}^{tan}|^2<br>
+-w_{jerk}|a_t-a_{t-1}|^2<br>
+-w_{coll},\mathbf 1_{collision}.<br>
+$$</p>
+<p>还可加入：</p>
+<ul>
+<li>足端离地高度奖励；</li>
+<li>足端着地时序奖励；</li>
+<li>机身俯仰/横滚稳定奖励；</li>
+<li>能耗、热损耗、冲击惩罚。</li>
+</ul>
+<h3 id="11-3-PPO">11.3 PPO</h3>
+<p>策略比值</p>
+<p>$$<br>
+r_t(\theta)=\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}.<br>
+$$</p>
+<p>广义优势估计（GAE）：</p>
+<p>$$<br>
+\delta_t = r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t),<br>
+$$</p>
+<p>$$<br>
+\hat A_t = \sum_{l=0}^{\infty}(\gamma\lambda)^l \delta_{t+l}.<br>
+$$</p>
+<p>PPO 目标函数：</p>
+<p>$$<br>
+L^{clip}(\theta)=<br>
+\mathbb E_t\Big[<br>
+\min\big(r_t(\theta)\hat A_t,<br>
+\operatorname{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_t\big)<br>
+\Big].<br>
+$$</p>
+<p>总损失常写为</p>
+<p>$$<br>
+L(\theta,\phi)= -L^{clip}(\theta)</p>
+<ul>
+<li>c_v,\mathbb E\big[(V_\phi(s_t)-\hat R_t)^2\big]</li>
+</ul>
+<ul>
+<li>c_e,\mathbb E\big[\mathcal H(\pi_\theta(\cdot|s_t))\big].<br>
+$$</li>
+</ul>
+<h3 id="11-4-域随机化与-sim2real">11.4 域随机化与 sim2real</h3>
+<p>令环境参数集合</p>
+<p>$$<br>
+\xi = {m, I, \mu, K_p, K_d, motor\ delay, sensor\ noise, latency, terrain, restitution, backlash}.<br>
+$$</p>
+<p>训练目标改写为</p>
+<p>$$<br>
+\theta^* = \arg\max_\theta<br>
+\mathbb E_{\xi\sim p(\xi)}<br>
+\mathbb E_{\tau\sim \pi_\theta,,P_\xi}<br>
+\left[\sum_{t=0}^{T}\gamma^t r_t\right].<br>
+$$</p>
+<p>这就是域随机化：</p>
+<p>$$<br>
+\xi\sim p(\xi)<br>
+$$</p>
+<p>在每个 episode 随机采样一次，使策略对参数不确定性鲁棒。</p>
+<h3 id="11-5-Teacher-Student-Privileged-Learning">11.5 Teacher-Student / Privileged Learning</h3>
+<p>教师策略使用特权状态</p>
+<p>$$<br>
+s_t^{priv} = [s_t,\ \text{真实地形、真实接触、真实扰动}].<br>
+$$</p>
+<p>学生策略只用真实可测量量 $s_t$。蒸馏目标：</p>
+<p>$$<br>
+\min_\theta \ \mathbb E|\pi_\theta(s_t)-\pi_{teacher}(s_t^{priv})|^2.<br>
+$$</p>
+<hr>
+<h2 id="12-一套真正可落地的“研究级”统一控制器">12. 一套真正可落地的“研究级”统一控制器</h2>
+<p>如果目标是“我照着就能做出一套先进而完整的机器狗控制”，推荐的统一形式是：</p>
+<h3 id="12-1-状态估计层">12.1 状态估计层</h3>
+<p>$$<br>
+\hat x_t = \text{EKF/Invariant EKF}(IMU, q_j, \dot q_j, contact).<br>
+$$</p>
+<h3 id="12-2-规划层">12.2 规划层</h3>
+<ul>
+<li>步态序列：$\sigma_i(t)$；</li>
+<li>摆腿轨迹：$p_{foot}^{sw}(t)$；</li>
+<li>机身参考：$x^{ref}(t)$；</li>
+<li>Raibert 落足点：$p_{foot}^{ref}$。</li>
+</ul>
+<h3 id="12-3-力规划层（MPC）">12.3 力规划层（MPC）</h3>
+<p>$$<br>
+\lambda^{mpc}<em>{0:N-1} = \arg\min_U \ \frac12 U^THU+g^TU,<br>
+\quad \text{s.t. } CU\le b,\ A</em>{eq}U=b_{eq}.<br>
+$$</p>
+<p>取第一步：</p>
+<p>$$<br>
+\lambda_t^{ref} = \lambda_0^{mpc}.<br>
+$$</p>
+<h3 id="12-4-全身控制层（WBC）">12.4 全身控制层（WBC）</h3>
+<p>$$<br>
+(\dot\nu^<em>,\tau^</em>,\lambda^*) =<br>
+\arg\min \sum_k |J_k\dot\nu-b_k|<em>{W_k}^2 + |\lambda-\lambda_t^{ref}|</em>{W_{mpc}}^2 + |\tau|<em>{W</em>\tau}^2<br>
+$$</p>
+<p>$$<br>
+\text{s.t. } M\dot\nu+h=S^T\tau+J_c^T\lambda,<br>
+\quad J_c\dot\nu+\dot J_c\nu=0,<br>
+\quad A_f\lambda\le b_f.<br>
+$$</p>
+<h3 id="12-5-低层控制">12.5 低层控制</h3>
+<p>$$<br>
+\tau_{cmd}=\tau^*+K_p(q_d-q)+K_d(\dot q_d-\dot q).<br>
+$$</p>
+<h3 id="12-6-残差学习（可选）">12.6 残差学习（可选）</h3>
+<p>$$<br>
+\tau_{final}=\tau_{cmd}+\Delta\tau_\theta(s_t).<br>
+$$</p>
+<p>这是目前最稳健的“模型主导 + 学习补偿”的统一形式。</p>
+<hr>
+<h2 id="13-真正决定上限的，不只是公式">13. 真正决定上限的，不只是公式</h2>
+<p>从数学上，一条控制链要真的成立，还必须满足：</p>
+<h3 id="13-1-可实现性条件">13.1 可实现性条件</h3>
+<ol>
+<li>
+<p><strong>驱动带宽</strong>足够：<br>
+$$<br>
+omega_c^{motor} \gg \omega_c^{controller}.<br>
+$$</p>
+</li>
+<li>
+<p><strong>关节力矩冗余</strong>足够：<br>
+$$<br>
+\tau_{max} &gt; \max_t |\tau_{cmd}(t)|.<br>
+$$</p>
+</li>
+<li>
+<p><strong>接触可行</strong>：<br>
+$$<br>
+\lambda \in \mathcal K_\mu,<br>
+$$<br>
+其中 $\mathcal K_\mu$ 为摩擦锥。</p>
+</li>
+<li>
+<p><strong>估计误差受控</strong>：<br>
+$$<br>
+|x-\hat x| \le \varepsilon_x.<br>
+$$</p>
+</li>
+<li>
+<p><strong>模型误差受控</strong>：<br>
+$$<br>
+|M-\hat M|,\ |h-\hat h|,\ |J_c-\hat J_c| \text{ 足够小。}<br>
+$$</p>
+</li>
+</ol>
+<h3 id="13-2-一条最实用的实现顺序">13.2 一条最实用的实现顺序</h3>
+<ol>
+<li>单腿 FK/IK/J；</li>
+<li>单腿 PD 摆腿；</li>
+<li>单腿 $\tau=J^Tf$；</li>
+<li>四足站立静力分配；</li>
+<li>EKF 状态估计；</li>
+<li>步态调度 + 摆腿轨迹；</li>
+<li>SRB-MPC；</li>
+<li>WBC；</li>
+<li>全身逆动力学；</li>
+<li>RL residual / 端到端策略。</li>
+</ol>
+<hr>
+<h2 id="14-一页总公式清单">14. 一页总公式清单</h2>
+<h3 id="14-1-单腿运动学">14.1 单腿运动学</h3>
+<p>$$<br>
+p(q)=<br>
+\begin{bmatrix}</p>
+<ul>
+<li>l_2\sin q_2 - l_3\sin(q_2+q_3) \<br>
+\sin q_1\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big) \<br>
+-\cos q_1\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big)<br>
+\end{bmatrix}<br>
+$$</li>
+</ul>
+<p>$$<br>
+\dot p = J(q)\dot q,<br>
+\qquad<br>
+\tau = J^T f.<br>
+$$</p>
+<h3 id="14-2-全身动力学">14.2 全身动力学</h3>
+<p>$$<br>
+M(q)\dot\nu + h(q,\nu)=S^T\tau + J_c^T\lambda<br>
+$$</p>
+<p>$$<br>
+J_c\nu=0,<br>
+\qquad<br>
+J_c\dot\nu+\dot J_c\nu=0.<br>
+$$</p>
+<h3 id="14-3-SRB-模型">14.3 SRB 模型</h3>
+<p>$$<br>
+\dot p=v,<br>
+\qquad<br>
+m\dot v=\sum_i \sigma_i f_i + mg,<br>
+$$</p>
+<p>$$<br>
+I_W\dot\omega + \omega\times(I_W\omega)=\sum_i \sigma_i (r_i-p)\times f_i.<br>
+$$</p>
+<h3 id="14-4-MPC">14.4 MPC</h3>
+<p>$$<br>
+x_{k+1}=A_dx_k+B_du_k+d_d,<br>
+$$</p>
+<p>$$<br>
+X=\mathcal A x_0 + \mathcal B U + \mathcal D,<br>
+$$</p>
+<p>$$<br>
+\min_U \frac12 U^THU+g^TU,<br>
+\quad<br>
+\text{s.t. } CU\le b.<br>
+$$</p>
+<h3 id="14-5-WBC">14.5 WBC</h3>
+<p>$$<br>
+\ddot x_k = J_k\dot\nu + \dot J_k\nu,<br>
+$$</p>
+<p>$$<br>
+\ddot x_k^*=\ddot x_k^{ref}+K_d(\dot x_k^{ref}-\dot x_k)+K_p(x_k^{ref}-x_k),<br>
+$$</p>
+<p>$$<br>
+\dot\nu_k = \dot\nu_{k-1} + (J_kN_{k-1})^#(b_k-J_k\dot\nu_{k-1}),<br>
+$$</p>
+<p>或</p>
+<p>$$<br>
+\min_{\dot\nu,\tau,\lambda} \sum_k |J_k\dot\nu-b_k|_{W_k}^2<br>
+$$</p>
+<p>$$<br>
+\text{s.t. } M\dot\nu+h=S^T\tau+J_c^T\lambda.<br>
+$$</p>
+<h3 id="14-6-PPO">14.6 PPO</h3>
+<p>$$<br>
+L^{clip}(\theta)=<br>
+\mathbb E\left[\min\big(r_t\hat A_t,\operatorname{clip}(r_t,1-\epsilon,1+\epsilon)\hat A_t\big)\right]<br>
+$$</p>
+<p>$$<br>
+\hat A_t = \sum_{l=0}^{\infty}(\gamma\lambda)^l \delta_{t+l},<br>
+\qquad<br>
+\delta_t=r_t+\gamma V(s_{t+1})-V(s_t).<br>
+$$</p>
+<hr>
+<h2 id="15-最后一条建议">15. 最后一条建议</h2>
+<p>如果你只实现一条路线，优先做：</p>
+<p>$$<br>
+\boxed{\text{状态估计} + \text{步态/摆腿} + \text{SRB-MPC} + \text{WBC} + \text{逆动力学}}<br>
+$$</p>
+<p>如果你要把性能再往上推，再加：</p>
+<p>$$<br>
+\boxed{\text{Residual RL} \quad \text{或} \quad \text{Teacher-Student RL}}<br>
+$$</p>
+<p>这不是唯一路线，但它是最接近“理论完备、工程可落地、还能继续扩展到先进方法”的统一框架。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz/2026/03/18/quadruped_control_theory_cn/">https://zhxylabflow.xyz/2026/03/18/quadruped_control_theory_cn/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zhxylabflow.xyz" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a><a class="post-meta__tags" href="/tags/%E6%8E%A7%E5%88%B6/">控制</a><a class="post-meta__tags" href="/tags/MPC/">MPC</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/03/28/h7_dma/" title="STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache"><img class="cover" src="https://img.cdn1.vip/i/69c8c42418811_1774765092.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post" loading='lazy'><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">STM32H723 的 DMA 与 RAM 冲突问题：从内存域、总线矩阵到 D-Cache</div></div><div class="info-2"><div class="info-item-1">前言 如果你在 STM32H723 上遇到过这些诡异现象：  HAL_UART_Receive_DMA() 正常返回，但缓冲区就是不变 ADC + DMA 偶尔全 0，偶尔又像是“好了” 把数组改成全局变量、static、甚至改个大小，结果症状跟着变 关掉 D-Cache 以后突然一切正常，重新打开又开始抽风  那大概率不是你“DMA 配错了一点点”，而是你踩中了 STM32H7 这一代 MCU 最经典的坑之一。 STM32H723 和很多 F1/F4/F7 的直觉式用法不太一样。它的 Cortex-M7 内核带有 32 KB I-Cache 和 32 KB D-Cache，同时系统内部又分成 D1 / D2 / D3 三个域，既有 AXI SRAM，也有 D2 SRAM、D3 SRAM，还保留了 ITCM / DTCM 这样的 TCM 内存路径。（见 DS13313, AN4891） 所以，很多人口中的“DMA 与 RAM 冲突”，其实往往不是“两个模块抢内存”这么朴素，而是下面三类问题混在了一起：  DMA 根本到不了那块 RAM DMA 能到，但 CPU 的 D-Cache...</div></div></div></a><a class="pagination-related" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法"><img class="cover" src="https://img.cdn1.vip/i/69b966ad97776_1773758125.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">IsaacLab入门级食用方法</div></div><div class="info-2"><div class="info-item-1">Isaac Lab External 项目完整工作流 本教程面向已经配置好Isaaclab强化学习环境的新手玩家 项目仓库：https://github.com/Leggedsys/legged_train/tree/main 第一次新建一个空的IsaacLab外部项目，除了跑一跑倒立摆的示例，我也不知道下一步要做什么。仓库是新的，我的目标是训练一条机器狗，下一步要干啥？：先放URDF ？写 env ？先写 PPO 配置？还是去啃官方教程？本人想做一篇文档教程作为参考，把训练一台机器狗这个事，完整记录一下。 整个过程其实比较简单：先把项目变成一个能被IsaacLab 识别的Python扩展，再把机器人资产接进来，然后围绕这台机器人写配置、场景、环境和奖励，最后再接上PPO训练与回放脚本。难点从来不在于某一步特别神秘，我们第一次做isaaclab项目时，大概已经知道我要做的无非就这些事，但不知道从何开始，也不知道这些文件到底是干啥的。只要这条线理顺了，后面想加入平地gait、rough terrain、抗扰动或者sim-to-real 扩展，其实都会顺很多。 项目环境准备 我的项目...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/16/quadruped_mpc_math_qp/" title="四足机器人 MPC 的数学建模与 QP 推导"><img class="cover" src="https://img.cdn1.vip/i/69b969f530f1b_1773758965.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-16</div><div class="info-item-2">四足机器人 MPC 的数学建模与 QP 推导</div></div><div class="info-2"><div class="info-item-1">四足机器人 MPC 的数学建模与 QP 推导 很多关于四足机器人 MPC 的文章，要么停留在“模型预测控制很适合动态 locomotion”的概念层面，要么直接从论文里搬出一组矩阵，读者知道符号长什么样，却不知道这些矩阵为什么会这样出现。真正做开发时，最难的部分并不是把现成公式抄进代码，而是要把几个问题真正想清楚：为什么整机建模时通常从单刚体模型开始，而不是直接从全身动力学开始；为什么优化变量通常选足端接触力，而不是关节力矩；连续时间动力学怎样走到离散时间模型；离散预测模型怎样进一步变成一个标准的二次规划问题；摩擦锥、摆动腿零力和法向力上下限这些约束又是怎样写进 QP 的。 这篇文章就只做一件事：把四足机器人 MPC 里最核心的数学链条，从建模一路推到 QP。它不是一篇 broad overview，也不是一篇以工程经验为主的调参手册，而是偏理论和可实现之间的那一层。写完这一篇之后，你至少应该能够回答下面几个关键问题。第一，MPC 在四足机器人中控制的对象到底是什么。第二，单刚体模型的状态变量和输入变量该怎样选。第三，为什么预测控制问题最终会落成一个 QP，而不是一堆看不出结构的...</div></div></div></a><a class="pagination-related" href="/2026/05/12/quadruped_reward_design/" title="四足机器人 Locomotion 奖励函数设计——从步行到奔跑，每一分奖励的来龙去脉"><img class="cover" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-12</div><div class="info-item-2">四足机器人 Locomotion 奖励函数设计——从步行到奔跑，每一分奖励的来龙去脉</div></div><div class="info-2"><div class="info-item-1">四足机器人 Locomotion 奖励函数设计——从步行到奔跑，每一分奖励的来龙去脉 如果你已经搭好了 Isaac Lab 环境、写好了 PPO 训练脚本、加载好了四足机器人的 URDF，然后满怀期待地敲下 python scripts/train.py，等着机器狗走出来——结果它要么原地抽搐，要么侧翻在地，要么转圈像个陀螺——恭喜你，欢迎来到奖励函数设计的世界。 强化学习社区有一句老话：“Reward is the hypothesis of the designer.” 在四足 locomotion 这个任务上，这句话格外准确。机器狗的策略网络可以有上百万参数，但决定它最终学会什么行为的，归根结底是你写在 compute_reward() 函数里的那几行代码。同样的网络结构、同样的超参数、同样的仿真环境，换一套权重系数，学出来的步态可能截然不同——有的沉稳如波士顿动力的 Spot，有的则像喝醉了的柯基。 然而，关于奖励函数的内容，大多数教程要么一笔带过（“我们使用了一组精心设计的奖励项，详见论文附录”），要么只给出最终公式而不解释为什么这么设。这篇博客的目标是把奖励函数的每个...</div></div></div></a><a class="pagination-related" href="/2026/03/17/isaaclab_prj/" title="IsaacLab入门级食用方法"><img class="cover" src="https://img.cdn1.vip/i/69b966ad97776_1773758125.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-17</div><div class="info-item-2">IsaacLab入门级食用方法</div></div><div class="info-2"><div class="info-item-1">Isaac Lab External 项目完整工作流 本教程面向已经配置好Isaaclab强化学习环境的新手玩家 项目仓库：https://github.com/Leggedsys/legged_train/tree/main 第一次新建一个空的IsaacLab外部项目，除了跑一跑倒立摆的示例，我也不知道下一步要做什么。仓库是新的，我的目标是训练一条机器狗，下一步要干啥？：先放URDF ？写 env ？先写 PPO 配置？还是去啃官方教程？本人想做一篇文档教程作为参考，把训练一台机器狗这个事，完整记录一下。 整个过程其实比较简单：先把项目变成一个能被IsaacLab 识别的Python扩展，再把机器人资产接进来，然后围绕这台机器人写配置、场景、环境和奖励，最后再接上PPO训练与回放脚本。难点从来不在于某一步特别神秘，我们第一次做isaaclab项目时，大概已经知道我要做的无非就这些事，但不知道从何开始，也不知道这些文件到底是干啥的。只要这条线理顺了，后面想加入平地gait、rough terrain、抗扰动或者sim-to-real 扩展，其实都会顺很多。 项目环境准备 我的项目...</div></div></div></a><a class="pagination-related" href="/2026/05/21/ppo_for_quadruped/" title="PPO 在四足机器人控制中的应用——从理论到调参实战"><img class="cover" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-21</div><div class="info-item-2">PPO 在四足机器人控制中的应用——从理论到调参实战</div></div><div class="info-2"><div class="info-item-1">PPO 在四足机器人控制中的应用——从理论到调参实战 如果你已经看过前面的 rsl_rl 源码解析，应该对 PPO 的工程实现有了清晰的了解。但那篇文章的重点是&quot;代码怎么写&quot;，本文则回答另一个问题：PPO 在四足机器人 locomotion 中到底是怎么工作的、参数怎么调、坑在哪里？ 如果你跑过四足 RL 训练，大概率遇到过这些场景：  训练两小时，loss 曲线看着很漂亮，结果机器人原地抽搐了一下就趴了 换了一组 reward 权重，PPO 就不收敛了，明明之前跑得好好的 试着把 clip range 从 0.2 调到 0.1，方差是小了，但怎么跑也跑不快 明明 GAE lambda 从 0.95 改到 0.99，步态反而更差了  这些都不是 bug，是 PPO 在连续控制问题——尤其是 locomotion——中的特有现象。本文从 locomotion 的视角重新理解 PPO 的每个组件，然后给出实战调参指南。  1. 重新理解 PPO——从 locomotion 的视角 PPO 的核心公式大家都很熟悉了： $$ L^{CLIP}(\theta) = \m...</div></div></div></a><a class="pagination-related" href="/2026/02/18/mpc/" title="(科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习"><img class="cover" src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-18</div><div class="info-item-2">(科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习</div></div><div class="info-2"><div class="info-item-1">四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习 四足机器人自从宇树机器狗出圈后得到频繁讨论，原因在于足式机器人几乎把机器人领域里核心的、先进的问题都搬到了一台机器上，要面对机构设计，电机驱动，运动学，动力学，状态估计，轨迹规划，全身控制，强化学习以及仿真到实机的迁移。所以这类足式机器人给作为初学者的我造成不小的困扰,问题不在于技术的细节，路线很多，但它们之间的关系不那么清晰，如何做到力位混合控制？如何将学习策略和模型控制结合？我们常常缺少一条完整的技术脉络。 当你开始做机器人，最关键的不是先选一个最先进的策略，而是看你的目标任务是要跑一条结构化的赛道？或者跑通用的locomotion?还是要面对复杂的环境？层出不穷的技术路线不应该简单堆叠在一起,而是要回答一个更实际的问题：如果要把一台四足机器人从能站、能迈步，逐步做到稳定奔跑、跳跃越障、复杂地形适应，甚至进一步做到学习型 locomotion，那么中间到底要跨过哪些层次，每一层又解决什么问题。 四足机器人的发展可以理解成一条不断抬高控制层级的路线。最底层解决的是几何问题，也就是腿在哪里、足端在哪里、关节该转多少；再...</div></div></div></a><a class="pagination-related" href="/2026/03/15/q-learning/" title="Q-learning"><img class="cover" src="https://img.cdn1.vip/i/6963150bcd40b_1768101131.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-15</div><div class="info-item-2">Q-learning</div></div><div class="info-2"><div class="info-item-1">Q-learning：从入门到理解，再到足式机器人中的应用 Q-learning 是强化学习（Reinforcement Learning, RL）中最经典的算法之一。很多人第一次接触强化学习，都是从它开始的。它结构简单、思想清晰，而且把强化学习中几个最核心的问题都体现得很完整：状态是什么、动作怎么选、奖励如何定义、以及智能体如何通过试错逐步学会更优策略。 对于初学者来说，Q-learning 是理解强化学习的最佳入口；对于做机器人，尤其是足式机器人的人来说，它虽然未必直接用于高维连续控制，但它背后的思想——通过与环境交互不断更新动作价值——仍然是后续很多现代算法的基础。 这篇文章会从以下几个方面展开：  Q-learning 解决的是什么问题 它的数学基础是什么 它为什么能学到“更好”的动作 具体更新公式如何理解 一个简单的 Python 示例 它在足式机器人中的意义与局限   1. 强化学习到底在做什么？ 在监督学习里，我们通常有一批带标签的数据，模型要做的是拟合输入和输出之间的映射。而在强化学习里，没有人直接告诉智能体“正确答案是什么”，智能体只能通过和环境不断交互，根据环...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">学微电子的破大学生</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">24</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">四足机器人控制统一技术文档（公式推导版）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0-%E6%80%BB%E4%BD%93%E5%BB%BA%E6%A8%A1%E5%AF%B9%E8%B1%A1%E4%B8%8E%E6%8E%A7%E5%88%B6%E9%93%BE"><span class="toc-number">1.1.</span> <span class="toc-text">0. 总体建模对象与控制链</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%9D%90%E6%A0%87%E7%B3%BB%E4%B8%8E%E5%9F%BA%E7%A1%80%E7%AC%A6%E5%8F%B7"><span class="toc-number">1.2.</span> <span class="toc-text">1. 坐标系与基础符号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%8D%95%E8%85%BF%E8%BF%90%E5%8A%A8%E5%AD%A6%EF%BC%9A%E6%AD%A3%E8%BF%90%E5%8A%A8%E5%AD%A6%E3%80%81%E9%80%86%E8%BF%90%E5%8A%A8%E5%AD%A6%E3%80%81%E9%9B%85%E5%8F%AF%E6%AF%94"><span class="toc-number">1.3.</span> <span class="toc-text">2. 单腿运动学：正运动学、逆运动学、雅可比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E9%BD%90%E6%AC%A1%E5%8F%98%E6%8D%A2%E4%B8%8E%E6%AD%A3%E8%BF%90%E5%8A%A8%E5%AD%A6"><span class="toc-number">1.3.1.</span> <span class="toc-text">2.1 齐次变换与正运动学</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">$$
+p(q)&#x3D;
+\begin{bmatrix}
+x \ y \ z
+\end{bmatrix}</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E9%80%86%E8%BF%90%E5%8A%A8%E5%AD%A6"><span class="toc-number">2.0.1.</span> <span class="toc-text">2.2 逆运动学</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E8%B6%B3%E7%AB%AF%E9%80%9F%E5%BA%A6%E9%9B%85%E5%8F%AF%E6%AF%94"><span class="toc-number">2.0.2.</span> <span class="toc-text">2.3 足端速度雅可比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E9%9D%99%E5%8A%9B%E6%98%A0%E5%B0%84"><span class="toc-number">2.0.3.</span> <span class="toc-text">2.4 静力映射</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%8D%95%E8%85%BF%E5%8A%A8%E5%8A%9B%E5%AD%A6"><span class="toc-number">2.1.</span> <span class="toc-text">3. 单腿动力学</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%BD%A2%E5%BC%8F"><span class="toc-number">2.1.1.</span> <span class="toc-text">3.1 拉格朗日形式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E8%B4%A8%E9%87%8F%E7%9F%A9%E9%98%B5%E7%9A%84%E9%9B%85%E5%8F%AF%E6%AF%94%E8%A1%A8%E8%BE%BE"><span class="toc-number">2.1.2.</span> <span class="toc-text">3.2 质量矩阵的雅可比表达</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E7%89%9B%E9%A1%BF-%E6%AC%A7%E6%8B%89%E9%80%92%E6%8E%A8%E5%BD%A2%E5%BC%8F"><span class="toc-number">2.1.3.</span> <span class="toc-text">3.3 牛顿-欧拉递推形式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%B5%AE%E5%8A%A8%E5%9F%BA%E5%BA%A7%E5%85%A8%E8%BA%AB%E5%8A%A8%E5%8A%9B%E5%AD%A6"><span class="toc-number">2.2.</span> <span class="toc-text">4. 浮动基座全身动力学</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%8A%B6%E6%80%81%E4%BC%B0%E8%AE%A1"><span class="toc-number">2.3.</span> <span class="toc-text">5. 状态估计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E5%A7%BF%E6%80%81%E4%BC%A0%E6%92%AD"><span class="toc-number">2.3.1.</span> <span class="toc-text">5.1 姿态传播</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E8%B6%B3%E7%AB%AF%E9%87%8C%E7%A8%8B%E8%AE%A1-EKF"><span class="toc-number">2.3.2.</span> <span class="toc-text">5.2 足端里程计&#x2F;EKF</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%AD%A5%E6%80%81%E3%80%81%E6%91%86%E8%85%BF%E8%BD%A8%E8%BF%B9%E3%80%81%E8%90%BD%E8%B6%B3%E7%82%B9%E8%A7%84%E5%88%92"><span class="toc-number">2.4.</span> <span class="toc-text">6. 步态、摆腿轨迹、落足点规划</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E6%8E%A5%E8%A7%A6%E5%BA%8F%E5%88%97"><span class="toc-number">2.4.1.</span> <span class="toc-text">6.1 接触序列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E6%91%86%E8%85%BF%E4%B8%89%E6%AC%A1-%E4%BA%94%E6%AC%A1%E5%A4%9A%E9%A1%B9%E5%BC%8F"><span class="toc-number">2.4.2.</span> <span class="toc-text">6.2 摆腿三次&#x2F;五次多项式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-Raibert-%E8%90%BD%E8%B6%B3%E7%82%B9%E5%90%AF%E5%8F%91%E5%BC%8F"><span class="toc-number">2.4.3.</span> <span class="toc-text">6.3 Raibert 落足点启发式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%8D%95%E5%88%9A%E4%BD%93%E6%A8%A1%E5%9E%8B%EF%BC%88SRB%EF%BC%89"><span class="toc-number">2.5.</span> <span class="toc-text">7. 单刚体模型（SRB）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E8%BF%9E%E7%BB%AD%E5%8A%A8%E5%8A%9B%E5%AD%A6"><span class="toc-number">2.5.1.</span> <span class="toc-text">7.1 连续动力学</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E7%BA%BF%E6%80%A7%E5%8C%96%E7%8A%B6%E6%80%81%E6%96%B9%E7%A8%8B"><span class="toc-number">2.5.2.</span> <span class="toc-text">7.2 线性化状态方程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E9%A2%84%E6%B5%8B%E6%96%B9%E7%A8%8B%EF%BC%88condensed-form%EF%BC%89"><span class="toc-number">2.5.3.</span> <span class="toc-text">7.3 预测方程（condensed form）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-MPC-%E5%BD%A2%E5%BC%8F%E5%8C%96%E4%B8%BA%E4%BA%8C%E6%AC%A1%E8%A7%84%E5%88%92"><span class="toc-number">2.6.</span> <span class="toc-text">8. MPC 形式化为二次规划</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E4%BB%A3%E4%BB%B7%E5%87%BD%E6%95%B0"><span class="toc-number">2.6.1.</span> <span class="toc-text">8.1 代价函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E6%8E%A5%E8%A7%A6%E7%BA%A6%E6%9D%9F"><span class="toc-number">2.6.2.</span> <span class="toc-text">8.2 接触约束</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-3-%E6%8E%A5%E8%A7%A6%E6%97%B6%E5%9F%9F%E9%95%BF%E5%BA%A6%E9%99%90%E5%88%B6"><span class="toc-number">2.6.3.</span> <span class="toc-text">8.3 接触时域长度限制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E5%85%A8%E8%BA%AB%E6%8E%A7%E5%88%B6-WBC"><span class="toc-number">2.7.</span> <span class="toc-text">9. 全身控制 WBC</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-%E4%BB%BB%E5%8A%A1%E7%A9%BA%E9%97%B4-PD-%E5%8A%A0%E9%80%9F%E5%BA%A6"><span class="toc-number">2.7.1.</span> <span class="toc-text">9.1 任务空间 PD 加速度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E5%9F%BA%E4%BA%8E%E4%BC%AA%E9%80%86-%E9%9B%B6%E7%A9%BA%E9%97%B4%E7%9A%84%E5%B1%82%E7%BA%A7-WBC"><span class="toc-number">2.7.2.</span> <span class="toc-text">9.2 基于伪逆&#x2F;零空间的层级 WBC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-3-%E5%8A%A8%E5%8A%9B%E5%AD%A6%E4%B8%80%E8%87%B4%E7%9A%84-WBC-QP"><span class="toc-number">2.7.3.</span> <span class="toc-text">9.3 动力学一致的 WBC-QP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-4-MPC-%E4%B8%8E-WBC-%E7%9A%84%E5%88%86%E5%B7%A5"><span class="toc-number">2.7.4.</span> <span class="toc-text">9.4 MPC 与 WBC 的分工</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E4%BB%8E%E5%85%A8%E8%BA%AB%E5%8A%A8%E5%8A%9B%E5%AD%A6%E5%88%B0%E5%85%B3%E8%8A%82%E5%8A%9B%E7%9F%A9%E6%8E%A7%E5%88%B6"><span class="toc-number">2.8.</span> <span class="toc-text">10. 从全身动力学到关节力矩控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0-RL"><span class="toc-number">2.9.</span> <span class="toc-text">11. 强化学习 RL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#11-1-MDP-%E5%AE%9A%E4%B9%89"><span class="toc-number">2.9.1.</span> <span class="toc-text">11.1 MDP 定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-2-%E5%A5%96%E5%8A%B1%E5%87%BD%E6%95%B0"><span class="toc-number">2.9.2.</span> <span class="toc-text">11.2 奖励函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-3-PPO"><span class="toc-number">2.9.3.</span> <span class="toc-text">11.3 PPO</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-4-%E5%9F%9F%E9%9A%8F%E6%9C%BA%E5%8C%96%E4%B8%8E-sim2real"><span class="toc-number">2.9.4.</span> <span class="toc-text">11.4 域随机化与 sim2real</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-5-Teacher-Student-Privileged-Learning"><span class="toc-number">2.9.5.</span> <span class="toc-text">11.5 Teacher-Student &#x2F; Privileged Learning</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E4%B8%80%E5%A5%97%E7%9C%9F%E6%AD%A3%E5%8F%AF%E8%90%BD%E5%9C%B0%E7%9A%84%E2%80%9C%E7%A0%94%E7%A9%B6%E7%BA%A7%E2%80%9D%E7%BB%9F%E4%B8%80%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="toc-number">2.10.</span> <span class="toc-text">12. 一套真正可落地的“研究级”统一控制器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#12-1-%E7%8A%B6%E6%80%81%E4%BC%B0%E8%AE%A1%E5%B1%82"><span class="toc-number">2.10.1.</span> <span class="toc-text">12.1 状态估计层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-2-%E8%A7%84%E5%88%92%E5%B1%82"><span class="toc-number">2.10.2.</span> <span class="toc-text">12.2 规划层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-3-%E5%8A%9B%E8%A7%84%E5%88%92%E5%B1%82%EF%BC%88MPC%EF%BC%89"><span class="toc-number">2.10.3.</span> <span class="toc-text">12.3 力规划层（MPC）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-4-%E5%85%A8%E8%BA%AB%E6%8E%A7%E5%88%B6%E5%B1%82%EF%BC%88WBC%EF%BC%89"><span class="toc-number">2.10.4.</span> <span class="toc-text">12.4 全身控制层（WBC）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-5-%E4%BD%8E%E5%B1%82%E6%8E%A7%E5%88%B6"><span class="toc-number">2.10.5.</span> <span class="toc-text">12.5 低层控制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-6-%E6%AE%8B%E5%B7%AE%E5%AD%A6%E4%B9%A0%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="toc-number">2.10.6.</span> <span class="toc-text">12.6 残差学习（可选）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#13-%E7%9C%9F%E6%AD%A3%E5%86%B3%E5%AE%9A%E4%B8%8A%E9%99%90%E7%9A%84%EF%BC%8C%E4%B8%8D%E5%8F%AA%E6%98%AF%E5%85%AC%E5%BC%8F"><span class="toc-number">2.11.</span> <span class="toc-text">13. 真正决定上限的，不只是公式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#13-1-%E5%8F%AF%E5%AE%9E%E7%8E%B0%E6%80%A7%E6%9D%A1%E4%BB%B6"><span class="toc-number">2.11.1.</span> <span class="toc-text">13.1 可实现性条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-2-%E4%B8%80%E6%9D%A1%E6%9C%80%E5%AE%9E%E7%94%A8%E7%9A%84%E5%AE%9E%E7%8E%B0%E9%A1%BA%E5%BA%8F"><span class="toc-number">2.11.2.</span> <span class="toc-text">13.2 一条最实用的实现顺序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-%E4%B8%80%E9%A1%B5%E6%80%BB%E5%85%AC%E5%BC%8F%E6%B8%85%E5%8D%95"><span class="toc-number">2.12.</span> <span class="toc-text">14. 一页总公式清单</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#14-1-%E5%8D%95%E8%85%BF%E8%BF%90%E5%8A%A8%E5%AD%A6"><span class="toc-number">2.12.1.</span> <span class="toc-text">14.1 单腿运动学</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-2-%E5%85%A8%E8%BA%AB%E5%8A%A8%E5%8A%9B%E5%AD%A6"><span class="toc-number">2.12.2.</span> <span class="toc-text">14.2 全身动力学</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-3-SRB-%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.12.3.</span> <span class="toc-text">14.3 SRB 模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-4-MPC"><span class="toc-number">2.12.4.</span> <span class="toc-text">14.4 MPC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-5-WBC"><span class="toc-number">2.12.5.</span> <span class="toc-text">14.5 WBC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-6-PPO"><span class="toc-number">2.12.6.</span> <span class="toc-text">14.6 PPO</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-%E6%9C%80%E5%90%8E%E4%B8%80%E6%9D%A1%E5%BB%BA%E8%AE%AE"><span class="toc-number">2.13.</span> <span class="toc-text">15. 最后一条建议</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/05/21/ppo_for_quadruped/" title="PPO 在四足机器人控制中的应用——从理论到调参实战"><img src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PPO 在四足机器人控制中的应用——从理论到调参实战"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/05/21/ppo_for_quadruped/" title="PPO 在四足机器人控制中的应用——从理论到调参实战">PPO 在四足机器人控制中的应用——从理论到调参实战</a><time datetime="2026-05-20T17:50:48.172Z" title="发表于 2026-05-21 01:50:48">2026-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/17/aigc_art_styles_guide/" title="风格考古学——AIGC时代的30种视觉语言与它们的前世今生"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="风格考古学——AIGC时代的30种视觉语言与它们的前世今生"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/05/17/aigc_art_styles_guide/" title="风格考古学——AIGC时代的30种视觉语言与它们的前世今生">风格考古学——AIGC时代的30种视觉语言与它们的前世今生</a><time datetime="2026-05-16T17:04:17.727Z" title="发表于 2026-05-17 01:04:17">2026-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/12/quadruped_reward_design/" title="四足机器人 Locomotion 奖励函数设计——从步行到奔跑，每一分奖励的来龙去脉"><img src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足机器人 Locomotion 奖励函数设计——从步行到奔跑，每一分奖励的来龙去脉"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/05/12/quadruped_reward_design/" title="四足机器人 Locomotion 奖励函数设计——从步行到奔跑，每一分奖励的来龙去脉">四足机器人 Locomotion 奖励函数设计——从步行到奔跑，每一分奖励的来龙去脉</a><time datetime="2026-05-12T04:36:46.416Z" title="发表于 2026-05-12 12:36:46">2026-05-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/09/dqn_algorithm_tutorial/" title="DQN算法超详尽教程——从Q-table到深度强化学习"><img src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="DQN算法超详尽教程——从Q-table到深度强化学习"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/05/09/dqn_algorithm_tutorial/" title="DQN算法超详尽教程——从Q-table到深度强化学习">DQN算法超详尽教程——从Q-table到深度强化学习</a><time datetime="2026-05-09T11:11:40.887Z" title="发表于 2026-05-09 19:11:40">2026-05-09</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/03/29/publicity_group/" title="运营组成长计划"><img src="https://img.cdn1.vip/i/69c8c30b2d8c3_1774764811.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="运营组成长计划"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/03/29/publicity_group/" title="运营组成长计划">运营组成长计划</a><time datetime="2026-03-29T06:11:09.397Z" title="发表于 2026-03-29 14:11:09">2026-03-29</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>

@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://zhxylabflow.xyz/2026/03/18/quadruped_control_theory_cn/</loc>
+    
+    <lastmod>2026-05-20</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://zhxylabflow.xyz/2026/05/21/ppo_for_quadruped/</loc>
     
     <lastmod>2026-05-20</lastmod>

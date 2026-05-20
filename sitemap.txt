@@ -1,3 +1,4 @@
+https://zhxylabflow.xyz/2026/03/18/quadruped_control_theory_cn/
 https://zhxylabflow.xyz/2026/05/21/ppo_for_quadruped/
 https://zhxylabflow.xyz/2026/05/17/aigc_art_styles_guide/
 https://zhxylabflow.xyz/2026/05/12/quadruped_reward_design/
