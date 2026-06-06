@@ -1,0 +1,616 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>损失函数的设计哲学——从直觉理解为什么损失函数要长这样 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="损失函数的设计哲学——从直觉理解为什么损失函数要长这样 如果你写过几个 PyTorch 训练脚本，大概已经对 nn.MSELoss 和 nn.CrossEntropyLoss 这两个名字烂熟于心。你可能也知道&quot;回归用 MSE，分类用 CrossEntropy&quot;这条经验法则，甚至背过交叉熵的公式： $$ \mathcal{L}{CE} &#x3D; -\sum{c} y_c \log(p_">
+<meta property="og:type" content="article">
+<meta property="og:title" content="损失函数的设计哲学——从直觉理解为什么损失函数要长这样">
+<meta property="og:url" content="https://zhxylabflow.xyz/2026/06/01/loss_function_philosophy/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="损失函数的设计哲学——从直觉理解为什么损失函数要长这样 如果你写过几个 PyTorch 训练脚本，大概已经对 nn.MSELoss 和 nn.CrossEntropyLoss 这两个名字烂熟于心。你可能也知道&quot;回归用 MSE，分类用 CrossEntropy&quot;这条经验法则，甚至背过交叉熵的公式： $$ \mathcal{L}{CE} &#x3D; -\sum{c} y_c \log(p_">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6958d73347225_1767429939.webp">
+<meta property="article:published_time" content="2026-06-01T06:30:00.000Z">
+<meta property="article:modified_time" content="2026-06-04T18:42:35.688Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="损失函数">
+<meta property="article:tag" content="数学">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6958d73347225_1767429939.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "损失函数的设计哲学——从直觉理解为什么损失函数要长这样",
+  "url": "https://zhxylabflow.xyz/2026/06/01/loss_function_philosophy/",
+  "image": "https://img.cdn1.vip/i/6958d73347225_1767429939.webp",
+  "datePublished": "2026-06-01T06:30:00.000Z",
+  "dateModified": "2026-06-04T18:42:35.688Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "https://zhxylabflow.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/2026/06/01/loss_function_philosophy/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '损失函数的设计哲学——从直觉理解为什么损失函数要长这样',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">19</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">损失函数的设计哲学——从直觉理解为什么损失函数要长这样</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">损失函数的设计哲学——从直觉理解为什么损失函数要长这样</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-01T06:30:00.000Z" title="发表于 2026-06-01 14:30:00">2026-06-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-06-04T18:42:35.688Z" title="更新于 2026-06-05 02:42:35">2026-06-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>损失函数的设计哲学——从直觉理解为什么损失函数要长这样</h1>
+<p>如果你写过几个 PyTorch 训练脚本，大概已经对 <code>nn.MSELoss</code> 和 <code>nn.CrossEntropyLoss</code> 这两个名字烂熟于心。你可能也知道&quot;回归用 MSE，分类用 CrossEntropy&quot;这条经验法则，甚至背过交叉熵的公式：</p>
+<p>$$<br>
+\mathcal{L}<em>{CE} = -\sum</em>{c} y_c \log(p_c)<br>
+$$</p>
+<p>但你有没有停下来想过——<strong>为什么？</strong></p>
+<p>为什么回归不直接用绝对误差（L1），非要用平方（L2）？为什么分类不用 MSE 做损失？为什么交叉熵里的那个 $\log$ 恰到好处，换成别的就不行？</p>
+<p>这些问题背后不是拍脑袋的巧合。每一种损失函数的设计，都是对人类认知目标的一种数学建模。这篇博客想做的，就是把几个最常用的损失函数从设计动机到数学形式拆一遍——不是为了背公式，而是为了理解<strong>如果换你来设计，你也会这么想</strong>。</p>
+<hr>
+<h2 id="1-先想清楚：损失函数到底在做什么">1. 先想清楚：损失函数到底在做什么</h2>
+<p>在说具体函数之前，先明确一个最基础的问题。</p>
+<p>训练一个模型，本质是一个 <strong>优化问题</strong>：</p>
+<p>$$<br>
+\theta^* = \arg\min_\theta \mathbb{E}<em>{(x,y)\sim\mathcal{D}} [\mathcal{L}(f</em>\theta(x), y)]<br>
+$$</p>
+<p>损失函数 $\mathcal{L}$ 是你的<strong>评判标准</strong>——模型输出 $\hat{y}$ 离真实标签 $y$ 有多远。梯度下降就是沿着这个&quot;有多远&quot;的方向，一步步把模型参数调得让输出更接近标签。</p>
+<p>但&quot;有多远&quot;这个距离，<strong>不是你说了算，是损失函数说了算</strong>。同一个预测结果，用不同损失函数测出来的&quot;距离&quot;天差地别，从而导致梯度方向和大小也天差地别。</p>
+<p>所以损失函数设计的本质是：<strong>我们想让模型在什么方向上、以多快的速度更新参数</strong>。</p>
+<p>这是全文的核心视角，带着它看后面的每个损失函数。</p>
+<hr>
+<h2 id="2-回归的起点：L1-和-L2-损失">2. 回归的起点：L1 和 L2 损失</h2>
+<h3 id="2-1-L2-Loss（MSE）——惩罚大错误">2.1 L2 Loss（MSE）——惩罚大错误</h3>
+<p>$$<br>
+\mathcal{L}_{L2} = (y - \hat{y})^2<br>
+$$</p>
+<p>L2 损失是最直观的想法：预测值和真实值越远，损失越大。而且因为平方的关系，<strong>偏离越大，惩罚增速越快</strong>。</p>
+<p>这意味着什么？</p>
+<ul>
+<li>一个误差为 3 的样本，损失是 9</li>
+<li>一个误差为 1 的样本，损失是 1</li>
+</ul>
+<p>前者对梯度的贡献是后者的 <strong>9 倍</strong>（绝对值差是 3 倍，平方后是 9 倍）。所以 MSE 会<strong>拼命优先消灭大误差样本</strong>，哪怕牺牲其他样本的精度。</p>
+<p><strong>这合理吗？</strong> 要看场景。如果你的数据噪声服从高斯分布（正态分布），MLE（最大似然估计）推导出来的刚好就是 MSE——那它不仅是合理的，还是理论最优的。但如果数据有离群点，MSE 会把大量精力花在拟合那一个离群点上，导致整体模型变差。</p>
+<h3 id="2-2-L1-Loss（MAE）——不怕离群点">2.2 L1 Loss（MAE）——不怕离群点</h3>
+<p>$$<br>
+\mathcal{L}_{L1} = |y - \hat{y}|<br>
+$$</p>
+<p>L1 损失对误差的惩罚是线性的。一个误差 3 的样本，损失就是 3；误差 1 就是 1。梯度恒定是 ±1（不考虑符号），不受误差大小影响。</p>
+<p>所以 L1 的好处是<strong>对离群点不敏感</strong>——一个离群点不会把整个梯度带偏。但也正因为梯度恒定，在误差接近零时，模型仍然以同样速率更新参数，这导致它<strong>在最优解附近容易震荡</strong>，收敛不如 MSE 平滑。</p>
+<h3 id="2-3-Huber-Loss——取两者之长">2.3 Huber Loss——取两者之长</h3>
+<p>$$<br>
+\mathcal{L}_{Huber} =<br>
+\begin{cases}<br>
+\frac{1}{2}(y - \hat{y})^2 &amp; \text{如果 } |y - \hat{y}| \leq \delta \<br>
+\delta|y - \hat{y}| - \frac{1}{2}\delta^2 &amp; \text{其他}<br>
+\end{cases}<br>
+$$</p>
+<p>Huber 的设计思路非常清晰：<strong>小误差用平方、大误差用线性</strong>。</p>
+<ul>
+<li>当误差小（$&lt;\delta$），它行为像 MSE，梯度线性减小，收敛平稳</li>
+<li>当误差大（$&gt;\delta$），它行为像 L1，梯度被截断在 $\pm\delta$，不被离群点带偏</li>
+</ul>
+<p>这个 $\delta$ 是你要设的超参数——它决定了&quot;多大算大误差&quot;。它的存在本身就体现了设计者的思考：<strong>同一个损失函数在不同尺度下应该有不同行为</strong>。</p>
+<p>Huber 损失的梯度：</p>
+<p>$$<br>
+\frac{\partial \mathcal{L}_{Huber}}{\partial \hat{y}} =<br>
+\begin{cases}<br>
+\hat{y} - y &amp; \text{如果 } |y - \hat{y}| \leq \delta \<br>
+\delta \cdot \text{sign}(\hat{y} - y) &amp; \text{其他}<br>
+\end{cases}<br>
+$$</p>
+<p>看这个梯度形式，你会发现它对大误差的惩罚是有上限的——不管你是差了 100 还是 1000，梯度最大就是 $\delta$。这对含有噪声数据的回归任务非常合适，也是为什么很多强化学习的 value 网络使用 Huber Loss（比如 DQN 就用它来稳定 TD-error 的梯度）。</p>
+<hr>
+<h2 id="3-分类任务的核心：CrossEntropy-为什么比-MSE-好">3. 分类任务的核心：CrossEntropy 为什么比 MSE 好</h2>
+<h3 id="3-1-先试一下：分类用-MSE-会怎样">3.1 先试一下：分类用 MSE 会怎样</h3>
+<p>假设一个二分类问题，标签 $y \in {0, 1}$，模型输出 $\hat{y} \in [0, 1]$（sigmoid 之后）。</p>
+<p>用 MSE：</p>
+<p>$$<br>
+\mathcal{L}_{MSE} = (y - \hat{y})^2<br>
+$$</p>
+<p>看梯度怎么传。令模型输出为 $z$（sigmoid 之前的 logit），sigmoid 为 $\sigma(z) = 1/(1+e^{-z})$，那么 $\hat{y} = \sigma(z)$。</p>
+<p>用链式法则：</p>
+<p>$$<br>
+\frac{\partial \mathcal{L}_{MSE}}{\partial z} = 2(\hat{y} - y) \cdot \sigma’(z)<br>
+$$</p>
+<p>而 sigmoid 的导数有个致命特性：<strong>当 $\hat{y}$ 接近 0 或 1 时，$\sigma’(z)$ 接近 0</strong>。</p>
+<p>这意味着什么？当模型的预测已经很确定（无论对错）的时候，梯度会变得非常非常小——<strong>学习几乎停滞</strong>。</p>
+<p>想象一个模型预测 $\hat{y}=0.99$，但真实标签是 $y=1$。虽然预测已经很接近正确值了，但 $\sigma’(z)$ 大约只有 0.01 量级，梯度被这个因子&quot;吃掉&quot;，更新极慢。更糟糕的是，如果模型预测 $\hat{y}=0.99$，真实标签是 $y=0$，它本应该大幅度调整，但因为 $\sigma’(z)$ 太小，同样学不动。</p>
+<p>这就是 MSE 在分类任务中的<strong>梯度消失问题</strong>。</p>
+<h3 id="3-2-交叉熵的设计：让梯度正比于误差">3.2 交叉熵的设计：让梯度正比于误差</h3>
+<p>二分类交叉熵（Binary Cross-Entropy, BCE）：</p>
+<p>$$<br>
+\mathcal{L}_{BCE} = -[y\log(\hat{y}) + (1-y)\log(1-\hat{y})]<br>
+$$</p>
+<p>为什么中间有个 $\log$？来看梯度：</p>
+<p>对正样本（$y=1$），损失简化为 $-\log(\hat{y})$，梯度：</p>
+<p>$$<br>
+\frac{\partial \mathcal{L}_{BCE}}{\partial z} = -(1 - \sigma(z)) = \hat{y} - 1<br>
+$$</p>
+<p>对负样本（$y=0$），损失简化为 $-\log(1-\hat{y})$，梯度：</p>
+<p>$$<br>
+\frac{\partial \mathcal{L}_{BCE}}{\partial z} = \sigma(z) = \hat{y}<br>
+$$</p>
+<p>统一写成：</p>
+<p>$$<br>
+\frac{\partial \mathcal{L}_{BCE}}{\partial z} = \hat{y} - y<br>
+$$</p>
+<p><strong>梯度直接正比于预测和标签的差值</strong>——完全不依赖 $\sigma’(z)$。模型错的离谱时，梯度就大；快对了，梯度就小。</p>
+<p>相比 MSE 中梯度被 $\sigma’(z)$ 压缩的问题，交叉熵的设计优雅地避开了这个陷阱。</p>
+<p>多分类版本就是 softmax + 交叉熵：</p>
+<p>$$<br>
+\mathcal{L}<em>{CE} = -\sum</em>{c=1}^{C} y_c \log\left(\frac{e^{z_c}}{\sum_{j}e^{z_j}}\right)<br>
+$$</p>
+<p>梯度形式同样简洁。对正确类别 $c^*$ 的 logit：</p>
+<p>$$<br>
+\frac{\partial \mathcal{L}<em>{CE}}{\partial z</em>{c^<em>}} = p_{c^</em>} - 1<br>
+$$</p>
+<p>对其他类别 $c \neq c^*$：</p>
+<p>$$<br>
+\frac{\partial \mathcal{L}<em>{CE}}{\partial z</em>{c}} = p_{c}<br>
+$$</p>
+<p>非常干净。每个梯度的方向都告诉模型：正确类别的 logit 往上拉，其他类别的 logit 往下压，幅度正比于当前的置信度偏差。</p>
+<h3 id="3-3-从信息论角度看交叉熵">3.3 从信息论角度看交叉熵</h3>
+<p>交叉熵还有一个更底层的解释视角：</p>
+<p>$$<br>
+H(p, q) = -\sum_{x} p(x) \log q(x)<br>
+$$</p>
+<p>这衡量的是<strong>用分布 q 来编码分布 p 的信息时，需要的额外比特数</strong>。最小化交叉熵就是在让模型分布 $q$ 尽可能接近真实分布 $p$——也就是在做 KL 散度最小化。</p>
+<p>这个视角给了一个直觉：<strong>分类问题的本质不是&quot;让数值接近&quot;，而是&quot;让分布匹配&quot;</strong>。用 MSE 去做分类，本质上是在用欧氏距离衡量分布差异，它不知道正确概率和错误概率之间的关系。而交叉熵天然懂。</p>
+<hr>
+<h2 id="4-对比损失：当任务涉及-相似性">4. 对比损失：当任务涉及&quot;相似性&quot;</h2>
+<h3 id="4-1-Contrastive-Loss——拉近正对，推远负对">4.1 Contrastive Loss——拉近正对，推远负对</h3>
+<p>$$<br>
+\mathcal{L}_{Contrastive} = (1-y)\cdot d^2 + y\cdot \max(0, m-d)^2<br>
+$$</p>
+<p>其中 $d$ 是两个样本嵌入的欧氏距离，$y=1$ 表示这对样本相似（正对），$y=0$ 表示不相似（负对），$m$ 是 margin。</p>
+<p>这个函数的设计哲学很直接：</p>
+<ul>
+<li><strong>正对</strong>：让它们靠近，距离的平方就是惩罚项</li>
+<li><strong>负对</strong>：只用管&quot;离得不够远的&quot;——距离超过 margin $m$ 的负对不产生任何损失</li>
+</ul>
+<p>为什么要设这个 margin？不是所有负对都应该被推得无限远。你只需要它们分离到一定程度就够了。没有 margin 的话，模型会试图把所有负对推到无限远，但这是不必要的——就像你不需要把&quot;猫&quot;和&quot;桌子&quot;的向量表示隔到天边，只要它们不混淆就行。</p>
+<h3 id="4-2-Triplet-Loss——你比我近就行">4.2 Triplet Loss——你比我近就行</h3>
+<p>$$<br>
+\mathcal{L}_{Triplet} = \max(0, d(a,p) - d(a,n) + m)<br>
+$$</p>
+<p>这里有一个 anchor 样本 $a$，一个正样本 $p$，一个负样本 $n$。损失只在<strong>负样本比正样本距离 anchor 还近</strong>（加上 margin）时产生。</p>
+<p>设计逻辑：<strong>只要正对已经比负对近，我就不管了</strong>。不需要绝对距离小，只需要相对距离对。这种&quot;相对而非绝对&quot;的思路在人脸识别、行人重识别等任务中效果显著。</p>
+<p>对比一下：Contrastive Loss 对每个样本对独立施压，Triplet Loss 对关系施压。它们的区别很像<strong>监督学习与排序学习</strong>的区别——前者关心绝对值，后者关心相对值。</p>
+<hr>
+<h2 id="5-KL-散度：当你想让分布靠近但不完全相等时">5. KL 散度：当你想让分布靠近但不完全相等时</h2>
+<p>$$<br>
+D_{KL}(p \parallel q) = \sum_{x} p(x) \log\frac{p(x)}{q(x)}<br>
+$$</p>
+<p>KL 散度最值得提的一点是：<strong>它不是对称的</strong>。$D_{KL}(p\parallel q) \neq D_{KL}(q\parallel p)$。</p>
+<p>这个不对称性恰恰是设计者的意图：</p>
+<ul>
+<li><strong>前向 KL（$D_{KL}(p\parallel q)$）</strong>：在 $p$ 有密度的地方，$q$ 必须有密度，否则损失极大。这叫 <strong>mode-covering</strong>——$q$ 会试图覆盖 $p$ 的所有峰值，哪怕这导致它在峰值之间分配概率。</li>
+<li><strong>反向 KL（$D_{KL}(q\parallel p)$）</strong>：在 $q$ 有密度而 $p$ 没有的地方，损失极大。这叫 <strong>mode-seeking</strong>——$q$ 会只拟合 $p$ 的主要模式，放弃次要模式，产生一个更集中的分布。</li>
+</ul>
+<p>你在用 VAE 时用的是前向 KL（$D_{KL}(q(z|x) \parallel p(z))$），让后验分布逼近先验。而在强化学习的策略优化（如 TRPO/PPO）中，你限制新旧策略的 KL 散度，用的方向取决于具体公式。</p>
+<p>这个不对称性不只是数学上的小细节——<strong>它决定了算法的行为是&quot;覆盖&quot;还是&quot;聚焦&quot;</strong>，设计时选哪个方向看你的任务需要哪种特性。</p>
+<hr>
+<h2 id="6-从-MLE-统一视角看损失函数">6. 从 MLE 统一视角看损失函数</h2>
+<p>讲到这里，你会发现很多损失函数都可以从**最大似然估计（MLE）**的角度统一理解：</p>
+<ul>
+<li>假设 $p(y|\hat{y}) = \mathcal{N}(\hat{y}, \sigma^2)$ → MLE 给出 MSE</li>
+<li>假设 $p(y|\hat{y}) = \text{Laplace}(\hat{y}, b)$ → MLE 给出 L1</li>
+<li>假设 $p(y|\hat{y}) = \text{Bernoulli}(\hat{y})$ → MLE 给出 BCE</li>
+<li>假设 $p(y|\hat{y}) = \text{Categorical}(\hat{y})$ → MLE 给出 CrossEntropy</li>
+</ul>
+<p><strong>每种损失函数背后都隐含了一个关于数据分布的假设。</strong> 你选择损失函数时，本质上是在选择你相信数据服从哪种分布。</p>
+<p>这不是学术上的马后炮——当你面对一个新问题，不知道用什么损失函数时，问自己：<strong>“我的数据噪声长什么样？”</strong> 零星的离群点？高斯噪声？离散类别？你的答案就是你的损失函数。</p>
+<hr>
+<h2 id="总结">总结</h2>
+<table>
+<thead>
+<tr>
+<th>损失函数</th>
+<th>适合场景</th>
+<th>核心设计思想</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MSE (L2)</td>
+<td>高斯噪声的回归</td>
+<td>平方惩罚，优先消灭大误差</td>
+</tr>
+<tr>
+<td>MAE (L1)</td>
+<td>含离群点的回归</td>
+<td>线性惩罚，不受离群点主导</td>
+</tr>
+<tr>
+<td>Huber</td>
+<td>通用回归</td>
+<td>小误差L2 + 大误差L1</td>
+</tr>
+<tr>
+<td>CrossEntropy</td>
+<td>分类</td>
+<td>梯度正比于误差，无梯度消失</td>
+</tr>
+<tr>
+<td>Contrastive</td>
+<td>度量学习</td>
+<td>正对拉近、负对推远到margin</td>
+</tr>
+<tr>
+<td>Triplet</td>
+<td>细粒度相似性</td>
+<td>只需相对距离，不要绝对距离</td>
+</tr>
+<tr>
+<td>KL Divergence</td>
+<td>分布匹配</td>
+<td>不对称性设计，选覆盖还是聚焦</td>
+</tr>
+</tbody>
+</table>
+<p>所有损失函数的共同目标都是让模型朝着正确的方向更新参数。区别在于：<strong>它们定义了&quot;正确&quot;的标准</strong>，而这个标准，决定了你模型最终学到的行为。</p>
+<hr>
+<p>下篇预告：优化器的直觉——SGD 为什么要有动量，Adam 又为什么好用。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz/2026/06/01/loss_function_philosophy/">https://zhxylabflow.xyz/2026/06/01/loss_function_philosophy/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zhxylabflow.xyz" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><a class="post-meta__tags" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><a class="post-meta__tags" href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/">损失函数</a><a class="post-meta__tags" href="/tags/%E6%95%B0%E5%AD%A6/">数学</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/06/03/optimizer_intuition/" title="优化器的直觉——从 SGD 到 Adam，每一步为什么这样走"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">优化器的直觉——从 SGD 到 Adam，每一步为什么这样走</div></div><div class="info-2"><div class="info-item-1">优化器的直觉——从 SGD 到 Adam，每一步为什么这样走 上一篇文章我们聊了损失函数的设计哲学——一个函数告诉你&quot;模型现在有多差&quot;。但知道有多差只是第一步，更关键的问题是：知道了差在哪，该怎么走？ 这就是优化器的工作。 从最早的梯度下降（SGD），到带动量（Momentum），到自适应学习率的 AdaGrad/RMSProp，再到集大成者 Adam——这条进化路径不是零散的拼凑，而是人们在实践中一步步回答同一个问题的过程： 用梯度更新参数时，怎么才能又快又稳地走到最优解？ 这篇博客会沿着这个进化路径，讲清楚每个优化器解决了什么问题、又是怎么解决的，以及它们各自在什么场景下好用。  1. SGD：最朴素的走法 $$ \theta_{t+1} = \theta_t - \eta \cdot g_t $$ vanilla SGD 的逻辑最简单不过：看梯度往哪指，就往哪走一步，步长固定为 $\eta$。 好在哪里？直觉、简单、参数少。在凸优化理论上，SGD 有很好的收敛保证。 但实际训练中问题一堆：  步长难选。设大了震荡甚至发散，设小了龟速收敛。而且一个好的步长...</div></div></div></a><a class="pagination-related" href="/2026/05/21/rtos_from_scratch_h723/" title="从零写一个 RTOS 内核——在 STM32H723 上"><img class="cover" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">从零写一个 RTOS 内核——在 STM32H723 上</div></div><div class="info-2"><div class="info-item-1">从零写一个 RTOS 内核——在 STM32H723 上 市面上有很多 RTOS：FreeRTOS、RT-Thread、μC/OS、Zephyr……它们都很好用，但用久了总有种隔靴搔痒的感觉——你知道怎么调 API，但不知道进去之后到底发生了什么。 这篇文章的目的很简单：在 STM32H723 上，从零写一个能跑起来的 RTOS 内核，包含任务创建、上下文切换、调度器启动、SysTick 时基、阻塞延时和空闲任务。 不依赖任何第三方 RTOS 源码，只靠 ARM Cortex-M7 的硬件特性和纯粹的 C + 内联汇编。写完以后，你将对 RTOS 的底层机制有一个肌肉记忆级别的理解。  全文代码均在 STM32H723 上实测通过，工具链为 ARM GCC。   1. 设计目标 在动手之前，想清楚我们要做什么、不做什么是很有必要的。 要做的：  多任务并发（伪并行，单核分时） 基于优先级的抢占式调度 SysTick 提供时基 阻塞延时（delay_ms 而不是 HAL_Delay） 空闲任务（没有任务执行时 CPU 进入 WFI）  不做的（后续可以单独写）：  任务间同步（信号...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/06/03/optimizer_intuition/" title="优化器的直觉——从 SGD 到 Adam，每一步为什么这样走"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-03</div><div class="info-item-2">优化器的直觉——从 SGD 到 Adam，每一步为什么这样走</div></div><div class="info-2"><div class="info-item-1">优化器的直觉——从 SGD 到 Adam，每一步为什么这样走 上一篇文章我们聊了损失函数的设计哲学——一个函数告诉你&quot;模型现在有多差&quot;。但知道有多差只是第一步，更关键的问题是：知道了差在哪，该怎么走？ 这就是优化器的工作。 从最早的梯度下降（SGD），到带动量（Momentum），到自适应学习率的 AdaGrad/RMSProp，再到集大成者 Adam——这条进化路径不是零散的拼凑，而是人们在实践中一步步回答同一个问题的过程： 用梯度更新参数时，怎么才能又快又稳地走到最优解？ 这篇博客会沿着这个进化路径，讲清楚每个优化器解决了什么问题、又是怎么解决的，以及它们各自在什么场景下好用。  1. SGD：最朴素的走法 $$ \theta_{t+1} = \theta_t - \eta \cdot g_t $$ vanilla SGD 的逻辑最简单不过：看梯度往哪指，就往哪走一步，步长固定为 $\eta$。 好在哪里？直觉、简单、参数少。在凸优化理论上，SGD 有很好的收敛保证。 但实际训练中问题一堆：  步长难选。设大了震荡甚至发散，设小了龟速收敛。而且一个好的步长...</div></div></div></a><a class="pagination-related" href="/2026/05/09/dqn_algorithm_tutorial/" title="DQN算法超详尽教程——从Q-table到深度强化学习"><img class="cover" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-09</div><div class="info-item-2">DQN算法超详尽教程——从Q-table到深度强化学习</div></div><div class="info-2"><div class="info-item-1">DQN 算法超详尽教程——从 Q-table 到深度强化学习 如果说 Q-learning 是强化学习的&quot;Hello World&quot;，那 DQN（Deep Q-Network）就是深度强化学习真正走出实验室、进入公众视野的里程碑。2013 年，DeepMind 的 Mnih 等人在 NIPS 发表 Playing Atari with Deep Reinforcement Learning，用一个卷积神经网络直接从原始像素输入学到了 Atari 2600 平台上 6 款游戏（后来扩展到 49 款）中超越人类专业玩家水平的控制策略。这篇工作的冲击力在于：它首次干净利落地证明了，深度神经网络可以在强化学习框架下进行稳定训练，而不需要任何手工特征工程。两年后，这篇论文的改进版登上了 Nature，标题只有三个词：Human-level control through deep reinforcement learning。从此，深度强化学习进入了爆发期。 DQN 之所以经典，不在于它用了多复杂的数学工具，而在于它用两个看似简单的工程技巧——经验回放（Experienc...</div></div></div></a><a class="pagination-related" href="/2026/06/05/rl_algorithm_design_aesthetics/" title="强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-05</div><div class="info-item-2">强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径</div></div><div class="info-2"><div class="info-item-1">强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径 前面两篇我们聊了损失函数和优化器的设计哲学。但有一个领域的损失函数和优化器设计，比监督学习更&quot;绕&quot;——强化学习。 在监督学习中，你的标签是上帝给的，错了就是错了。但在强化学习中，你只有一个延迟的、嘈杂的、稀疏的标量奖励信号。更麻烦的是：你在用当前策略收集的数据来更新这个策略本身，更新完你又拿新策略去跑数据——你的训练数据一直在变。 这种&quot;自己给自己出题，自己又去解题&quot;的循环，使得 RL 的算法设计比监督学习多了一层曲折。这篇博客会沿着 RL 的算法演进路径，拆解每个关键设计背后的直觉——不是为了列公式，而是为了理解为什么一个问题被反复用不同方式解决。  1. 核心难题：状态价值和动作价值 先确立两个基本概念。 在 RL 中，智能体需要回答的根本问题是：在某个状态下，做哪个动作最好？ 但&quot;好&quot;的定义是模糊的——好的动作会带来即时奖励，也可能带来长期回报。于是我们定义了两种价值函数：  状态价值 $V(s)$：从这个状态出发，按当前策略 $ \pi $，未...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">学微电子的破大学生</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">19</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">损失函数的设计哲学——从直觉理解为什么损失函数要长这样</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%85%88%E6%83%B3%E6%B8%85%E6%A5%9A%EF%BC%9A%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E5%88%B0%E5%BA%95%E5%9C%A8%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-number">1.1.</span> <span class="toc-text">1. 先想清楚：损失函数到底在做什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%9B%9E%E5%BD%92%E7%9A%84%E8%B5%B7%E7%82%B9%EF%BC%9AL1-%E5%92%8C-L2-%E6%8D%9F%E5%A4%B1"><span class="toc-number">1.2.</span> <span class="toc-text">2. 回归的起点：L1 和 L2 损失</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-L2-Loss%EF%BC%88MSE%EF%BC%89%E2%80%94%E2%80%94%E6%83%A9%E7%BD%9A%E5%A4%A7%E9%94%99%E8%AF%AF"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 L2 Loss（MSE）——惩罚大错误</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-L1-Loss%EF%BC%88MAE%EF%BC%89%E2%80%94%E2%80%94%E4%B8%8D%E6%80%95%E7%A6%BB%E7%BE%A4%E7%82%B9"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 L1 Loss（MAE）——不怕离群点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Huber-Loss%E2%80%94%E2%80%94%E5%8F%96%E4%B8%A4%E8%80%85%E4%B9%8B%E9%95%BF"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3 Huber Loss——取两者之长</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%88%86%E7%B1%BB%E4%BB%BB%E5%8A%A1%E7%9A%84%E6%A0%B8%E5%BF%83%EF%BC%9ACrossEntropy-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%AF%94-MSE-%E5%A5%BD"><span class="toc-number">1.3.</span> <span class="toc-text">3. 分类任务的核心：CrossEntropy 为什么比 MSE 好</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%85%88%E8%AF%95%E4%B8%80%E4%B8%8B%EF%BC%9A%E5%88%86%E7%B1%BB%E7%94%A8-MSE-%E4%BC%9A%E6%80%8E%E6%A0%B7"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 先试一下：分类用 MSE 会怎样</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BA%A4%E5%8F%89%E7%86%B5%E7%9A%84%E8%AE%BE%E8%AE%A1%EF%BC%9A%E8%AE%A9%E6%A2%AF%E5%BA%A6%E6%AD%A3%E6%AF%94%E4%BA%8E%E8%AF%AF%E5%B7%AE"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 交叉熵的设计：让梯度正比于误差</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E4%BB%8E%E4%BF%A1%E6%81%AF%E8%AE%BA%E8%A7%92%E5%BA%A6%E7%9C%8B%E4%BA%A4%E5%8F%89%E7%86%B5"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3 从信息论角度看交叉熵</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AF%B9%E6%AF%94%E6%8D%9F%E5%A4%B1%EF%BC%9A%E5%BD%93%E4%BB%BB%E5%8A%A1%E6%B6%89%E5%8F%8A-%E7%9B%B8%E4%BC%BC%E6%80%A7"><span class="toc-number">1.4.</span> <span class="toc-text">4. 对比损失：当任务涉及&quot;相似性&quot;</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-Contrastive-Loss%E2%80%94%E2%80%94%E6%8B%89%E8%BF%91%E6%AD%A3%E5%AF%B9%EF%BC%8C%E6%8E%A8%E8%BF%9C%E8%B4%9F%E5%AF%B9"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 Contrastive Loss——拉近正对，推远负对</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-Triplet-Loss%E2%80%94%E2%80%94%E4%BD%A0%E6%AF%94%E6%88%91%E8%BF%91%E5%B0%B1%E8%A1%8C"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 Triplet Loss——你比我近就行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-KL-%E6%95%A3%E5%BA%A6%EF%BC%9A%E5%BD%93%E4%BD%A0%E6%83%B3%E8%AE%A9%E5%88%86%E5%B8%83%E9%9D%A0%E8%BF%91%E4%BD%86%E4%B8%8D%E5%AE%8C%E5%85%A8%E7%9B%B8%E7%AD%89%E6%97%B6"><span class="toc-number">1.5.</span> <span class="toc-text">5. KL 散度：当你想让分布靠近但不完全相等时</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E4%BB%8E-MLE-%E7%BB%9F%E4%B8%80%E8%A7%86%E8%A7%92%E7%9C%8B%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="toc-number">1.6.</span> <span class="toc-text">6. 从 MLE 统一视角看损失函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/05/rl_algorithm_design_aesthetics/" title="强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径">强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径</a><time datetime="2026-06-05T06:30:00.000Z" title="发表于 2026-06-05 14:30:00">2026-06-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/03/optimizer_intuition/" title="优化器的直觉——从 SGD 到 Adam，每一步为什么这样走">优化器的直觉——从 SGD 到 Adam，每一步为什么这样走</a><time datetime="2026-06-03T06:30:00.000Z" title="发表于 2026-06-03 14:30:00">2026-06-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/01/loss_function_philosophy/" title="损失函数的设计哲学——从直觉理解为什么损失函数要长这样">损失函数的设计哲学——从直觉理解为什么损失函数要长这样</a><time datetime="2026-06-01T06:30:00.000Z" title="发表于 2026-06-01 14:30:00">2026-06-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/21/rtos_from_scratch_h723/" title="从零写一个 RTOS 内核——在 STM32H723 上"><img src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从零写一个 RTOS 内核——在 STM32H723 上"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/05/21/rtos_from_scratch_h723/" title="从零写一个 RTOS 内核——在 STM32H723 上">从零写一个 RTOS 内核——在 STM32H723 上</a><time datetime="2026-05-20T18:11:31.240Z" title="发表于 2026-05-21 02:11:31">2026-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/05/21/ppo_for_quadruped/" title="PPO 在四足机器人控制中的应用——从理论到调参实战"><img src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PPO 在四足机器人控制中的应用——从理论到调参实战"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/05/21/ppo_for_quadruped/" title="PPO 在四足机器人控制中的应用——从理论到调参实战">PPO 在四足机器人控制中的应用——从理论到调参实战</a><time datetime="2026-05-20T17:50:48.172Z" title="发表于 2026-05-21 01:50:48">2026-05-21</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>

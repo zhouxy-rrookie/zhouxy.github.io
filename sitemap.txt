@@ -1,3 +1,6 @@
+https://zhxylabflow.xyz/2026/06/01/loss_function_philosophy/
+https://zhxylabflow.xyz/2026/06/05/rl_algorithm_design_aesthetics/
+https://zhxylabflow.xyz/2026/06/03/optimizer_intuition/
 https://zhxylabflow.xyz/2026/05/21/rtos_from_scratch_h723/
 https://zhxylabflow.xyz/2026/03/18/quadruped_control_theory_cn/
 https://zhxylabflow.xyz/2026/05/21/ppo_for_quadruped/
@@ -45,6 +48,12 @@ https://zhxylabflow.xyz/tags/%E5%A5%96%E5%8A%B1%E5%87%BD%E6%95%B0/
 https://zhxylabflow.xyz/tags/python/
 https://zhxylabflow.xyz/tags/PPO/
 https://zhxylabflow.xyz/tags/RTOS/
+https://zhxylabflow.xyz/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/
+https://zhxylabflow.xyz/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/
+https://zhxylabflow.xyz/tags/%E6%95%B0%E5%AD%A6/
+https://zhxylabflow.xyz/tags/%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/
+https://zhxylabflow.xyz/tags/DRL/
+https://zhxylabflow.xyz/tags/%E4%BC%98%E5%8C%96%E5%99%A8/
 https://zhxylabflow.xyz/categories/%E8%AE%BE%E8%AE%A1/
 https://zhxylabflow.xyz/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/
 https://zhxylabflow.xyz/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/
@@ -52,3 +61,4 @@ https://zhxylabflow.xyz/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F
 https://zhxylabflow.xyz/categories/%E5%8D%8A%E5%AF%BC%E4%BD%93/
 https://zhxylabflow.xyz/categories/%E7%AE%A1%E7%90%86/
 https://zhxylabflow.xyz/categories/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/
+https://zhxylabflow.xyz/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/
