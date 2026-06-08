@@ -1180,17 +1180,97 @@ blockquote {
 }
 /* 22j. 单栏大图 + 双侧文字环绕 */
 .fx-wrap {
-  margin: 40px 0;
+  margin: 28px 0;
+  overflow: hidden;
 }
 .fx-wrap img {
   float: left;
-  width: 55%;
-  margin: 4px 28px 20px 0;
+  width: 48%;
+  margin: 4px 22px 14px 0;
 }
 .fx-wrap .fx-wrap-text {
   font-size: 0.9rem;
   color: #555;
   line-height: 1.7;
+}
+.fx-wrap .fx-wrap-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #aaa;
+  display: block;
+  margin-bottom: 4px;
+}
+.fx-wrap-right {
+  margin: 28px 0;
+  overflow: hidden;
+}
+.fx-wrap-right img {
+  float: right;
+  width: 48%;
+  margin: 4px 0 14px 22px;
+}
+.fx-wrap-right .fx-wrap-text {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.7;
+}
+.fx-wrap-right .fx-wrap-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #aaa;
+  display: block;
+  margin-bottom: 4px;
+}
+/* 图文穿插 · 小图浮于段落 */
+.fx-snippet {
+  margin: 18px 0;
+  overflow: hidden;
+}
+.fx-snippet img {
+  float: left;
+  width: 34%;
+  margin: 4px 14px 8px 0;
+}
+.fx-snippet .fx-snippet-text {
+  font-size: 0.82rem;
+  color: #555;
+  line-height: 1.6;
+}
+.fx-snippet .fx-snippet-text .fx-snippet-num {
+  font-weight: 800;
+  color: #111;
+}
+.fx-snippet .fx-snippet-text .fx-snippet-name {
+  font-size: 0.62rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+.fx-snippet-right {
+  margin: 18px 0;
+  overflow: hidden;
+}
+.fx-snippet-right img {
+  float: right;
+  width: 34%;
+  margin: 4px 0 8px 14px;
+}
+.fx-snippet-right .fx-snippet-text {
+  font-size: 0.82rem;
+  color: #555;
+  line-height: 1.6;
+}
+.fx-snippet-right .fx-snippet-text .fx-snippet-num {
+  font-weight: 800;
+  color: #111;
+}
+.fx-snippet-right .fx-snippet-text .fx-snippet-name {
+  font-size: 0.62rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
 }
 /* 22k. 艺术家卡片 */
 .fx-artist-card {
@@ -1314,8 +1394,16 @@ blockquote {
   color: #777;
 }
 [data-theme="dark"] .fx-asymmetric-text,
-[data-theme="dark"] .fx-wrap-text {
+[data-theme="dark"] .fx-wrap-text,
+[data-theme="dark"] .fx-snippet-text {
   color: #bbb;
+}
+[data-theme="dark"] [data-theme="dark"] .fx-wrap-label,
+[data-theme="dark"] [data-theme="dark"] .fx-snippet-name {
+  color: #777;
+}
+[data-theme="dark"] [data-theme="dark"] .fx-snippet-num {
+  color: #eee;
 }
 [data-theme="dark"] .fx-tip {
   background: #1a1a1a;
@@ -1385,10 +1473,13 @@ blockquote {
   .fx-quote-over .fx-quote-over-text {
     font-size: 1.3rem;
   }
-  .fx-wrap img {
+  .fx-wrap img,
+  .fx-wrap-right img,
+  .fx-snippet img,
+  .fx-snippet-right img {
     float: none;
     width: 100%;
-    margin: 0 0 16px 0;
+    margin: 0 0 12px 0;
   }
   .fx-checklist {
     grid-template-columns: 1fr;

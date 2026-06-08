@@ -131,193 +131,229 @@
     <url>/2026/05/17/aigc_art_styles_guide/</url>
     <content><![CDATA[
 
-风格田野指南
+田野指南
+30种AIGC视觉语言
 
-30种视觉语言及其AIGC实现豆包AI制图2026·6
-
-
-
-01 半调网点02 颗粒噪点03 厚涂04 水彩05 水墨06 低多边形07 等距08 像素09 故障艺术10 像素排序11 霓虹12 赛博朋克13 蒸汽波14 双重曝光15 剪影16 柔焦17 浮世绘18 线稿19 波普20 扁平21 胶片22 CinemaScope23 黏土24 玻璃25 Octane26 剪纸27 丝网印28 拼贴29 ASCII30 非遗
+全图豆包AI生成 · 2026
 
 
-这是一份为 AIGC 创作者准备的风 格速查手册。收录 30 种主流视 觉风格，按肌理→几何→光影→ 手绘→摄影→工艺六大类组织。 每种风格提供核心 Prompt、视 觉特征和一幅生成样图。所有图 片由豆包 AI 生成。
-手册中的 Prompt 均标注了适配 长宽比 --ar。推荐搭配 trending on artstation, 8k, hyperdetailed 等画质词使用。
-风格编号采用六位制：01–05 肌 理，06–10 几何，11–16 光影， 17–20 手绘，21–25 摄影与渲 染，26–30 手工与混合。左侧数 字对应下方详细条目。
+01 · 半调网点
 
 
-01
-02
-03
-04
-05
-06
-07
-08
-09
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
+1873 年，德国人 Georg Meisenbach 用一块刻满细密网格的玻璃屏把照片拆成了大小不一的圆点——本 来只是报纸印刷的一种妥协：油墨只能印纯色，要么黑要么白。Lichtenstein 在 1961 年把这个妥协放 大成了波普的视觉基因。那些本该藏在印刷品底层的网点突然变成了主角。此后你看到网点就想到印刷 品——这就是风格的形成。halftone dot pattern, Ben-Day dots, comic book style, bold primary colors, screen printing texture, Lichtenstein inspired, misregistration effect --ar 2:3
+
+
+02 · 颗粒噪点
+
+
+数码相机工程师花了几十年消灭噪点，胶片摄影师却花了一辈子迷恋它。Tri-X 400 的黑白颗粒里有 整个二十世纪的街头——Robert Frank 的美国人、森山大道的东京。清晰是一种谎言。噪点是反完美的 宣言；对 AI 来说，加噪点的本质是给完美到令人不安的渲染图加一道时光的划痕。你不会用噪点让画 面变脏，而是让它变老。film grain texture, Kodak Tri-X 400 pushed two stops, heavy noise in shadows, analog photography, grainy atmosphere, Cartier-Bresson sensibility --ar 4:5
+
+
+03 · 厚涂
+
+
+梵高在圣雷米精神病院画《星夜》——窗户是他唯一能看到天空的通道。用刮刀把颜料压上去，不是涂 抹，是堆砌，每一笔比前一笔高半毫米。侧光照过去，颜料凸起在画布上投出微小的阴影，那张画在发 光。厚涂的本质是把二维幻术做成三维事实。AI 需要理解的是颜料的物理厚度，不仅仅是色彩。impasto oil painting, thick palette knife strokes, three-dimensional paint layers, van Gogh energy, sculptural brushwork, heavy cadmium yellow, side-lighting reveals relief --ar 16:9
+
+
+04 · 水彩
+
+
+水彩可能是最诚实的画种——颜料滴在纸上的那一刻，画家就失去了一半的控制权。水往哪走，颜色就 往哪晕。纸的吸水性、空气的湿度、颜料的颗粒——每个变量都在改写最终画面。这种不可控恰好是 AI 最薄弱的一环：AI 倾向于给所有边缘做硬切，水彩需要的却是让边缘融化。watercolor, wet-on-wet blooms, cold-pressed paper, translucent washes, salt crystallization, delicate splatter, botanical illustration --ar 3:4
+
+
+05 · 水墨
+
+
+张彦远《历代名画记》："运墨而五色具。"焦、浓、重、淡、清。墨不是黑的，墨是五种颜色。北宋 范宽画《溪山行旅图》，一座山占了三分之二画面，山脚下的人比蚂蚁小——这不是透视法，是世界 观。人在山面前就该那么小。比西方的明暗对照法早了四百年。AI 最容易失手的是留白——它总想把 空白填满。但水墨的灵魂在那些没画上去的地方。Chinese ink wash, sumi-e, five tones of ink, xuan rice paper, misty mountains, negative space, Northern Song monumental --ar 9:16
 
 
 
-肌理与质感 01–05
-触觉先于视觉
-
-
-01 Halftone · 半调网点。 1873 年 Meisenbach 用玻璃网格屏把照片 拆解成圆点，是报纸印刷的妥协。 Lichtenstein 把这个妥协变成了波普 的视觉基因。Prompt：halftone dot pattern, Ben-Day dots, comic book style, bold primary colors, screen printing texture, Lichtenstein inspired --ar 2:3
-02 Grain · 颗粒噪点。 Tri-X 400 的黑白颗粒里有二十世纪的街头。 森山大道说清晰是一种谎言。加噪 点的本质是给过于完美的 AI 输出一 道时光的划痕。Prompt：film grain texture, Kodak Tri-X 400 pushed two stops, heavy noise in shadows, analog photography, grainy atmosphere --ar 4:5
-03 Impasto · 厚涂。 梵高在圣雷米 精神病院画《星夜》，他用刮刀把颜 料堆上去——堆，不是涂。每一笔比 前一笔高半毫米。侧光照过去颜料 凸起投下微影，画在发光。Prompt：impasto oil paint, thick palette knife strokes, sculptural brushwork, heavy pigment ridges, museum gallery lighting --ar 16:9
-04 Watercolor · 水彩。 最诚实的画 种。颜料碰纸的一瞬间，画家失去 一半控制权。水往哪流颜色往哪晕。 300gsm 冷压纸的纹理吸收颜料不均 匀，盐粒撒在湿颜料上会结晶成花。 Prompt：watercolor, wet-on-wet blooms, cold-pressed paper texture, translucent washes, salt crystallization --ar 3:4
-05 Ink Wash · 水墨。 张彦远：&quot;运 墨而五色具。&quot;焦、浓、重、淡、清， 五种灰度即五种颜色。北宋范宽画 山占了画面三分之二，山脚的人比 蚂蚁小。比西方明暗法早四百年。 Prompt：Chinese ink wash, sumi-e style, five tones of ink, xuan rice paper, misty mountains, negative space --ar 9:16
-
-💡 肌理提示： 凡画种都有"纸感"。水彩要冷压纸棉絮，水墨要宣纸渗化，厚涂要亚麻布经纬。在 Prompt 末尾加 `texture of [paper/canvas/film stock]` 能显著提升材质真实感。
-
-
-几何与构成 06–10
+几何与构成
 数学的浪漫
 
 
+06 · 低多边形
+
+
+1996 年《古墓丽影》的劳拉只有几百个三角面。2004 年《魔兽世界》发现面数越少辨识度越高——你用 八个三角面搭一棵树时只能留下最本质的轮廓。2014 年《纪念碑谷》把它变成了艺术语言本身，而非 3D 预算的边角料。low poly, faceted geometry, flat shading, triangular mesh, Monument Valley style, clean edges, geometric abstraction --ar 16:9
+
+
+07 · 等距视角
+
+
+三条轴各偏 120 度，没有消失点。你同时看到屋顶和地板——像一个拆了盖子的玩具屋。等距投影创造 的世界观很复杂：RPG 游戏对它爱不释手。从古埃及壁画到现代信息图，人类对上帝视角有天然的迷 恋。isometric view, 30-degree angle, no perspective, miniature diorama, grid-based layout, dollhouse cross-section --ar 1:1
+
+
+08 · 像素风
+
+
+1978 年《太空侵略者》，外星人不到 50 像素但没人认错——人脑会自动补完缺失信息。1990 年《时 空之轮》把 16 位像素推向艺术极限：32 色调色板、逐像素手工抖动、视差卷轴。那不是限制下的产 物，那是自律的美学，就像俳句只能十七音。pixel art, 16-bit style, dithering, 32 color palette, scanline CRT glow, parallax layers, Chrono Trigger aesthetic --ar 16:9
+
+
+09 · 故障艺术
+
+
+故障的历史是错误被发现、驯化、美化的历史。1965 年 Nam June Paik 摔了一台电视机接错了线—— 画面坏掉但他觉得好看。2000 年代 Rosa Menkman 写书建立理论：Glitch 不是技术失败，是技术向 我们展示它的内脏。RGB 色偏、压缩块、追踪条纹——这些碎片的背后是一整个数字亚文化。glitch art, RGB shift, screen tearing, data corruption, VHS tracking error, digital distortion, scanline artifacts --ar 2:3
+
+
+10 · 像素排序
+
+
+2012 年 Kim Asendorf 用 Processing 写了一小段代码，按亮度重新排列每一行像素。图像像冰川融化 一样向下流淌。如果你说故障艺术是失控的机器，像素排序就是失控的数学家。它比任何手工摧毁都更 冷、也更美。pixel sorting, brightness channel stretch, melting pixels, digital dissolution, vertical color ribbons, data bending --ar 16:9
 
 
 
-06
-低多边形
-Low Poly · 几何抽象
-面数越少辨识度越高。八个三角面搭一棵树只能留住本质轮廓。`low poly, faceted geometry, flat shading, triangular mesh, Monument Valley style --ar 16:9`
+光影与色彩
+夜中发光的文明
 
 
-07
-等距视角
-Isometric · 上帝视角
-三轴偏 120°，无消失点。屋顶和地板同时可见的玩具屋视角。`isometric view, 30-degree angle, no perspective, miniature diorama, grid layout --ar 1:1`
+11 · 霓虹灯
 
 
-08
-像素风
-Pixel Art · 16-bit 时代
-32 色调色板、逐像素抖动、卷轴视差。限制即自律，像俳句只能十七音。`pixel art, 16-bit style, dithering, limited palette, scanline CRT glow --ar 16:9`
+1910 年巴黎车展，Georges Claude 首次展示霓虹灯管。观众的反应是恐惧——发光的玻璃管像巫术。 1923 年第一块霓虹广告牌出现在洛杉矶之后，城市学会了在黑夜发光。到 Blade Runner 的时代，霓 虹已经不是广告了——它是文明的呼吸。个人体悟：每次用霓虹 prompt 都加一句 rain-soaked pavement，湿地面把灯光反射成碎片，比灯本身更迷人。neon lights, argon blue, neon pink, rain-soaked pavement, wet reflections, Blade Runner melancholia, Wong Kar-wai chromatic --ar 3:2
 
 
-09
-故障艺术
-Glitch Art · 数字内脏
-RGB 色偏、压缩块、VHS 追踪条纹。技术不是坏掉了，它在展示内脏。`glitch art, RGB shift, screen tearing, data corruption, VHS tracking error --ar 2:3`
+12 · 赛博朋克
 
 
-10
-像素排序
-Pixel Sorting · 数学摧毁
-按亮度重排每行像素，像冰川融化。更冷、也更美。`pixel sorting, brightness channel stretch, melting pixels, digital dissolution --ar 16:9`
+高科技，低生活。1982 年 Ridley Scott 拍《银翼杀手》设定了 2019 年的洛杉矶——那一年并没有什么 全息广告，但 Scott 预言的从来不是科技，是情绪。Syd Mead 设计的城市像发光的晶体，把人的孤独 压缩成街边一碗热汤面的水汽。cyberpunk megacity, neon canyons, holographic billboards, rain and steam, vertical skyscrapers, flying traffic, teal and magenta --ar 9:16
 
 
+13 · 蒸汽波
 
 
-光影与色彩 11–16
-夜色中发光的文明
+2011 年的某个互联网角落突然涌出粉紫色渐变、大卫石膏像、棕榈树剪影、Windows 95 对话框。没 人说得清这是什么风格，但有一股上头的力量——对从未经历过的 80 年代消费主义的想象性乡愁。评论 家说这是"资本主义的挽歌"，创作者说"我只是觉得好看"。vaporwave, pink cyan gradient, marble bust, palm tree silhouette, grid floor, VHS scanlines, katakana overlay --ar 1:1
 
 
-11 Neon · 霓虹灯。 1910 巴黎车展首次展示，观众以为是巫术。到《银翼杀手》成了城市的呼吸。加 rain-soaked pavement 让反射比灯本身更迷人。`neon lights, argon blue, neon pink, wet pavement reflections, Blade Runner melancholia --ar 3:2`
-12 Cyberpunk · 赛博朋克。 高科技低生活。全息广告在雨滴里闪烁，街边面摊的热蒸汽是唯一的暖。`cyberpunk megacity, neon canyons, holographic billboards, rain and steam, teal and magenta --ar 9:16`
-13 Vaporwave · 蒸汽波。 对从未经历过的 80 年代消费主义的想象性乡愁。石膏像、棕榈树、网格地板、Windows 95 光标。`vaporwave, pink cyan gradient, marble bust, palm tree silhouette, grid floor, VHS scanlines --ar 1:1`
-14 Double Exposure · 双重曝光。 忘过片按快门，废片变语言。Uelsmann 用七台放大机把脸填满森林。`double exposure, silhouette portrait, forest inside profile, in-camera overlay, mist threading --ar 4:5`
-15 Silhouette · 剪影。 去掉五官、肌理、冷暖。剩纯黑轮廓。越少的细节说出越多的话。`silhouette, stark contrast, jet black figure, vibrant sunset, golden hour --ar 16:9`
-16 Soft Focus · 梦幻柔焦。 镜头球差缺陷。好莱坞人像师把凡士林涂在 UV 镜上造出薄雾。`soft focus, golden hour backlight, Petzval swirly bokeh, ethereal bloom, rim light halo --ar 3:4`
+14 · 双重曝光
+
+
+胶片时代忘了过片就按第二下快门，两张照片叠在一起——本来是要扔掉的废片，被 1960 年代的暗房 魔法师回收成语言。Jerry Uelsmann 用七台放大机把一张人脸的轮廓填满森林。HBO《真探》第一季 片头把这种语言用到了极致：每一帧都在把一个灵魂叠进一片荒原。double exposure, silhouette portrait, forest inside profile, in-camera overlay, ethereal blending, mist threading --ar 4:5
+
+
+15 · 剪影
+
+
+当所有细节都归零时，画面才开始讲话。剪影的力量来自减法——你去掉了面孔的表情、服装的纹理、 皮肤的冷暖，剩下的只是一个纯黑形体。一棵树对着夕阳的剪影，可以同时是孤独、希望、开始、结 束。越少的东西通常说出越多的话。silhouette, stark contrast, jet black figure, vibrant sunset sky, acacia tree, golden hour, rule of thirds --ar 16:9
+
+
+16 · 梦幻柔焦
+
+
+柔焦本来是镜头球差的缺陷——高光溢出到暗部。1930 年代的好莱坞人像师发现这个缺陷让人脸裹上了 一层薄雾。他们往 UV 镜上涂凡士林模拟这种效果。黛德丽和嘉宝的那些神光，隔着一层凡士林。soft focus, golden hour backlight, Petzval swirly bokeh, ethereal bloom, rim light halo, dreamy haze --ar 3:4
 
 
 
-绘画与手绘 17–20
+绘画与手绘
 不用电的图像
 
 
-17 Ukiyo-e · 浮世绘。 江户匠人一 色一板，樱木刻线，一张画刻十几 块板。北斋的海浪传到欧洲之后直 接长进了梵高的《星空》。Prompt：ukiyo-e, woodblock print, flat colors, bold outlines, Hokusai waves, kozo washi paper --ar 2:3
-18 Line Art · 线稿素描。 0.05mm钢 笔和 0.5mm 马克笔同纸不同语。达 芬奇笔记本里那些犹豫的、自信的 线条即思想。Prompt：line art, fine pen work, cross-hatching, parchment background, Da Vinci sketchbook --ar 3:4
-19 Pop Art · 波普。 1962 沃霍尔展 32 罐汤。媒体说不是艺术是目录。 他笑了。如果超市货架和美术馆没 区别，什么叫艺术。Prompt：pop art, Warholian silk-screen, primary colors, Ben-Day dots, celebrity grid --ar 2:3
-20 Flat Illustration · 扁平插画。 瑞 士国际主义→数字时代通用语法。 无渐变无阴影，七色调色板解决一 切。Prompt：flat illustration, bold colors, no gradients, geometric shapes, mid-century modern --ar 16:9
+17 · 浮世绘
+
+
+一色一板，江户匠人用刀子把线条刻进樱木。葛饰北斋的海浪传到欧洲后，那些卷曲的浪尖直接长进 了梵高的《星空》。两种文明隔着太平洋，被同一根线条连在一起。ukiyo-e, woodblock print, flat colors, bold outlines, Hokusai waves, Edo period, bokashi gradient --ar 2:3
+
+
+18 · 线稿素描
+
+
+0.05mm 钢笔尖和 0.5mm 马克笔，在同一条纸上完全是两种语言。达·芬奇笔记本里那些飞行器和解 剖图——试探的、自信的、犹豫的、确认的线条——不是画的什么，而是画的过程本身，就是思想的痕 迹。line art, fine pen cross-hatching, sketchbook aesthetic, parchment background, Da Vinci draftsmanship --ar 3:4
+
+
+19 · 波普艺术
+
+
+1962 年安迪·沃霍尔在纽约展了 32 幅金宝汤罐头。媒体说这不是艺术是目录，沃霍尔笑了——要的就 是这个。波普问了最简单的问题：如果超市货架和美术馆画布没有区别，什么叫艺术？pop art, Warholian silk-screen, primary colors, thick black outlines, Ben-Day dots, serial reproduction --ar 2:3
+
+
+20 · 扁平插画
+
+
+源头是 1950 年代瑞士国际主义设计：用最少色彩、最简形状传递最明确的信息。扁平真正成为大众语 言是在数码时代——没有渐变没有阴影的图形在任何设备上一样清晰。Instagram、Google Material、 Airbnb 引导页——扁平是数字时代的普通话。flat illustration, bold colors, no gradients, clean shapes, vector art, mid-century modern poster --ar 16:9
 
 
 
-摄影与渲染 21–25
+摄影与渲染
 当数码有了重量
 
 
-21 胶片摄影 · Portra 400 暗部微绿，高光暖桃，反差低如薄雾。1998 年 Kodak 熬了三年。|| Prompt: Kodak Portra 400, warm amber tone, subtle film grain, soft contrast, golden hour kitchen light, nostalgic snapshot --ar 4:5
-22 CinemaScope · 1953 年宽银幕。电视 4:3 小方框，电影需要宽度。2.35:1 画幅让你同时看到悬崖多高、海多大、人多孤独。|| Prompt: cinematic shot, 2.35:1 anamorphic, teal-orange grade, shallow depth of field, film grain, Deakins lighting --ar 21:9
-23 黏土风 · Aardman 工作室 1989 捏出 Gromit。90 分钟片子等于 129600 次微调。AI 保留了圆润，没有手腕的酸痛。|| Prompt: claymation, plasticine texture, fingerprints on clay, stop-motion, Aardman style, handcrafted diorama --ar 4:3
-24 玻璃拟态 · 背景模糊透过来加 1px 白边，像磨砂玻璃悬空。macOS Big Sur ← 十四年 → Windows Vista。|| Prompt: glassmorphism, frosted glass, translucent panels, background blur, 1px white border, rainbow caustics --ar 1:1
-
-25 Octane 写实渲染 · 2010 年 OTOY 发布，第一个消费级 GPU 光线追踪。照片级真实从电影公司特权变成右键导出。|| Prompt: hyperrealistic 3D render, subsurface scattering, micro-droplets with refraction, Octane path tracing 4096 samples, razor sharp depth of field, the line between CGI and photography obliterated --ar 3:4
+21 · 胶片摄影
 
 
-手工与混合 26–30
+Kodak Portra 400。光是这个词就能让胶片玩家心跳。1998 年 Kodak 熬了三年：暗部微绿，高光暖 桃，反差低如薄雾。2022 年涨了三次价——用的人太多排产跟不上。胶片死了无数次，从来没死成。Kodak Portra 400, warm amber tone, subtle film grain, soft contrast, golden hour light, nostalgic snapshot --ar 4:5
+
+
+22 · CinemaScope
+
+
+1953 年 20 世纪福克斯推出宽银幕。当时电视是 4:3 的小方框，电影需要一种电视永远模仿不了的东 西——答案就是宽度。2.35:1 画幅让你同时看到悬崖多高、海多大、人多孤独。罗杰·迪金斯的每个 镜头都在说：宽度不是奢侈，是叙事。cinematic shot, 2.35:1 anamorphic, teal-orange grade, shallow depth of field, film grain, Deakins lighting --ar 21:9
+
+
+23 · 黏土风
+
+
+Aardman 工作室的 Nick Park 在 1989 年捏了一只叫 Gromit 的狗。每秒 24 帧，一部 90 分钟的片子 等于 129600 次手工微调。AI 版保留了圆润和指纹，但没有手腕的酸痛——有些东西是物理性的，算法 永远缺这个。claymation, plasticine texture, fingerprints on clay, stop-motion, Aardman style, handcrafted diorama --ar 4:3
+
+
+24 · 玻璃拟态
+
+
+2020 年 macOS Big Sur 和 2006 年 Windows Vista Aero 隔了 14 年，做了同一件事：让半透明面板 有厚度。背景模糊透过来 + 1px 白边 = 磨砂玻璃悬在空中。一个 UI 风格，两代操作系统，十五年的轮 回。glassmorphism, frosted glass, translucent panels, background blur, 1px white border, rainbow caustics --ar 1:1
+
+
+25 · Octane 写实
+
+
+2010 年新西兰 OTOY 发布 Octane Render——第一个消费级 GPU 光追渲染器。之前追踪一束光的反射 折射需要一台服务器。Octane 把照片级真实从电影公司特权变成了任何人的右键导出。octane render, path tracing, subsurface scattering, micro-droplets, studio key light, photorealism --ar 3:4
+
+
+
+手工与混合
 一种文明的指纹
 
 
-
-26
-剪纸
-Paper Cut
-3mm 纸间距投下薄影。纸、刀片和侧光造出深海。`paper cut art, layered paper, drop shadows, die-cut details, shadow box --ar 4:5`
+26 · 剪纸
 
 
-27
-丝网印刷
-Screen Print
-套色偏 0.5mm 比精准校准有生命力。墨是压进纸纤维的，你摸得到。`screen print, hand-pulled silkscreen, color misregistration, gig poster, DIY aesthetic --ar 2:3`
+一张纸隔 3mm 叠在另一张上，侧光照过去——每一层在下一层上投下薄影。Hari 和 Deepti 用彩纸、 刀片和光造出了深海。看起来像水里发光的珊瑚礁，实际上只是纸和光的合谋。paper cut art, layered paper, drop shadows between layers, die-cut details, shadow box, Hari & Deepti light box --ar 4:5
 
 
-28
-拼贴
-Collage
-达达派 1918 被骂神经病。剪下原来的语境塞进另一个，逼它说完全不同的话。`collage art, vintage magazine clippings, torn edges, mixed media, Dada sensibility --ar 3:4`
+27 · 丝网印刷
 
 
-29
-ASCII Art
-终端艺术
-1966 Bell Labs 折叠打印纸上的字符画。绿色磷光 CRT 里黑客的暗号。`ascii art, monospaced characters, amber phosphor CRT, terminal aesthetic --ar 4:3`
+灵魂在偏差。手工印 T 恤的蓝黄套色偏了 0.5mm——比任何精准校准更有生命力。独立乐队的演出海报 几乎全是丝网印，不是因为没数码打印，而是丝网的墨是压进纸纤维的，你可以摸到它。screen print, hand-pulled silkscreen, color misregistration, limited ink colors, gig poster, DIY aesthetic --ar 2:3
 
 
-30
-非遗国风
-Cloisonné
-铜丝掐蜂巢，八百度烧十几遍。AI 把掐丝做得太齐，不像手像机器。`cloisonné enamel, filigree gold wire, jewel-tone cells, phoenix motif, Jingdezhen craft --ar 2:3`
+28 · 拼贴
 
 
-💡 风格混搭公式： 浮世绘+赛博朋克=赛博浪人，水彩+剪纸=绘本插画，厚涂+霓虹=表现主义夜城，水墨+故障艺术=数字禅意。
+达达派 1918 年把报纸碎片贴画布上被骂神经病。Hannah Höch 用杂志剪报拼出了最有力量的女性主 义宣言。拼贴的暴力在于：把一个东西从原来的语境剪下来，塞进另一个语境，逼它说完全不同的话。collage art, vintage magazine clippings, torn edges, mixed media, surreal juxtaposition, Dada --ar 3:4
+
+
+29 · ASCII Art
+
+
+1966 年 Bell Labs 的 Ken Knowlton 用 IBM 7094 打印第一张 ASCII——当时没有屏幕，只有连续折叠 打印纸。后来 CRT 绿磷屏幕里的 @、%、# 拼出人脸，成了黑客社区的暗号。一张 80×25 字符的脸， 在绿色磷光里，有一种说不清的浪漫。ascii art, monospaced characters, amber phosphor CRT, terminal aesthetic, retro computing --ar 4:3
+
+
+30 · 非遗国风
+
+
+景泰蓝工序：铜丝掐蜂巢格子，各色珐琅釉填进去，八百度烧十几遍。每烧一次颜色会变。一只景泰蓝 凤凰，匠人花的工夫够 AI 出上千万个版本。但铜丝掐出来那 0.1mm 的不完美——AI 不给。cloisonné enamel, filigree gold wire, jewel-tone cells, phoenix motif, Jingdezhen craft, turquoise vermilion --ar 2:3
+
 
 
 附录
 Prompt 画质增强通用词
 
 
-类别关键词说明
-画质masterpiece, best quality, 8k, ultra detailed提升出分辨率
-光效volumetric lighting, god rays, rim lighting三维感
-质感intricate details, texture rich, hyperdetailed材质
-构图rule of thirds, dynamic composition, depth of field结构
-渲染octane render, unreal engine 5, trending on artstation引擎
+画质 · masterpiece, 8k, ultra detailed, sharp focus
+光效 · volumetric lighting, god rays, rim lighting
+质感 · intricate details, texture rich, hyperdetailed
+构图 · rule of thirds, dynamic composition, depth of field
 
-
+混搭公式： 浮世绘+赛博朋克=赛博浪人 &nbsp;·&nbsp; 水彩+剪纸=绘本插画 &nbsp;·&nbsp; 厚涂+霓虹=表现主义夜城 &nbsp;·&nbsp; 水墨+故障艺术=数字禅意
 全图豆包AI生成 · 2026.6 · 持续更新
-
 
 ]]></content>
       <categories>
@@ -327,8 +363,6 @@ Prompt 画质增强通用词
         <tag>AIGC</tag>
         <tag>美术风格</tag>
         <tag>设计</tag>
-        <tag>Stable Diffusion</tag>
-        <tag>Midjourney</tag>
       </tags>
   </entry>
   <entry>
