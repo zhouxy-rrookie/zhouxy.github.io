@@ -1,199 +1,205 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>风格考古学——AIGC时代的30种视觉语言与它们的前世今生</title>
-    <url>/2026/05/17/aigc_art_styles_guide/</url>
+    <title>零度以上——冬夜里的混凝土、冰与一盏灯</title>
+    <url>/2026/06/08/ai_art_magazine_vol1/</url>
     <content><![CDATA[
-2022年8月，Stable Diffusion 把人类几千年的视觉史塞进了一个 Latent Space。但问题来了——你总得知道你要什么，才能告诉 AI 你要什么。所以就有了这篇。
-※ 本文所有配图均由豆包 AI 生成。
-
-壹 · 肌理与质感
-人类第一次在平面上留下纹理，是在肖维岩洞里蘸着赭石往墙上拍手印。三万七千年后，我们还在干同样的事——只不过换成了 GPU。
-1. 半调网点
-1873 年，德国人 Georg Meisenbach 用一块刻满细密网格的玻璃屏，把照片拆成了大小不一的圆点。报纸印刷的油墨只有纯黑纯白，网点是唯一的妥协方式。但 Lichtenstein 在 1961 年把这个妥协放大成了主角——他把漫画格涂在巨大的画布上，网点不再是印刷缺陷，变成了波普的视觉基因。
-A striking pop art portrait rendered in bold halftone dot patterns, thick black comic-style outlines, high-contrast cyan, magenta, and yellow color separation, Ben-Day dots across skin tones, Roy Lichtenstein inspired, vintage newspaper rotogravure texture, slight misregistration of color plates, heroic comic book panel composition with speech bubble, bright studio lighting with crisp shadows, screen-printed pulp paper grain, retro 1960s advertising aesthetic --ar 2:3
-
-半调网点
-2. 颗粒噪点
-说实话，数码相机工程师花了几十年消灭噪点，胶片摄影师却花了一辈子迷恋它。Tri-X 400 的黑白颗粒里有整个二十世纪的街头。森山大道说：“清晰是一种谎言。”
-A contemplative street scene shot on Kodak Tri-X 400 pushed two stops, heavy grain structure visible throughout shadows and midtones, moody overcast afternoon light filtering through urban alleyways, subtle vignetting at frame edges, analog film texture with microscopic silver halide crystals, slight chemical staining on print edges, soft loss of shadow detail in deep blacks, nostalgic documentary photography style, Henri Cartier-Bresson compositional sensibility, worn leather jacket and cobblestone textures emerging from grain, accidental light leak bleeding in from upper right corner --ar 4:5
-
-颗粒噪点
-3. 厚涂
-梵高在圣雷米精神病院画《星夜》，窗户是他唯一能看到天空的通道。他用刮刀把颜料堆上去——堆，不是涂。每一笔比前一笔高半毫米。你看原画的时候侧光会让每道笔触下的微影亮起来。厚涂就是把二维幻术做成三维事实。
-An expressionist landscape with fiercely applied impasto oil paint, thick buttery strokes rising from the canvas like sculpted terrain, palette knife marks carving direction into every surface, Van Gogh's starry night energy swirling through cypress trees, deep ultramarine and cadmium yellow collide in raised ridges of pigment, side-lighting reveals the three-dimensional relief of each brushstroke, raw linen canvas peeking through unpainted gaps, the physical weight of paint palpable, museum gallery lighting casting micro-shadows across the textured surface, a single sunflower head built entirely from heavy dollops of chrome yellow --ar 16:9
-
-厚涂
-4. 水彩
-水彩是唯一诚实的画种——颜料碰纸的那一刻，你就失去了一半的控制权。水往哪走，颜色就往哪晕。这种不可控，恰好是 AI 最不擅长的事。
-A botanical illustration of wild roses executed in luminous watercolor, wet-on-wet blooms bleeding their petals into one another with uncontrollable grace, puddles of pigment pooling and drying in concentric rings, translucent washes of opera pink fading into pale sage green leaves, crisp dry-brush stem details contrasting with soft florals, 300gsm cold-pressed paper texture absorbing color unevenly, salt scattered onto wet pigment creating crystalline blossom effects, morning sunlight streaming through the paper fiber, delicate splatter from a flicked brush across the composition, float-mounted on cream mat board with deckled edges, studio window light --ar 3:4
-
-水彩
-5. 水墨
-张彦远在《历代名画记》里写：&quot;运墨而五色具。&quot;墨不是黑的——焦、浓、重、淡、清，五种灰度就是五种颜色。北宋范宽的《溪山行旅图》，一座山占了三分之二的画面，山脚下的人比蚂蚁还小。那不是透视法的问题，是世界观：人在山面前就该那么小。比西方的明暗法早了四百年。
-A mist-shrouded mountain landscape in the manner of Northern Song monumental ink painting, layered peaks fading into emptiness through atmospheric perspective, pine trees clinging to cliffs rendered in decisive dry brush strokes, a solitary fisherman in a skiff on still water the size of a fingernail, five distinct tones of ink from jet black to barely-there ash grey, raw xuan rice paper with its natural absorption creating soft halos around each brushstroke, vast negative space where clouds and water become indistinguishable, red seal stamp in lower corner as the sole color accent, scroll format vertical composition ascending toward heaven --ar 9:16
-
-水墨
-
-贰 · 几何与构成
-包豪斯的 Albers 讲过一句话：几何形态本身没意义，排列才让它活过来。
-6. 低多边形
-1996 年《古墓丽影》的劳拉只有几百个三角面。2014 年《纪念碑谷》把这件事做到极致——低多边形不再是没有预算的妥协，而是故意为之的美学语言。面数越少，辨识度反而越高。你用八个三角面搭一棵树的时候，只能留下它最本质的轮廓。
-A majestic stag constructed entirely from faceted low-poly triangles, crystalline geometry catching light at every angle, warm amber and copper gradients across the angular plane surfaces, flat ambient occlusion shading with no textures, a misty forest clearing rendered in the same polygonal language behind it, soft volumetric god rays piercing through angular canopy, the stag's faceted antlers branching into increasingly smaller triangles, subtle chromatic aberration at polygon edges where warm and cool tones meet, rendered in a clean studio environment with three-point lighting, reminiscent of Monument Valley elevated to high art --ar 16:9
-
-低多边形
-7. 等距视角
-三条轴各偏 120 度，没有消失点。你同时看到屋顶和地板，像一个拆了盖子的玩具屋。RPG 游戏对这个视角爱不释手，因为玩家需要上帝视角来做决策。
-A lovingly detailed isometric diorama of a medieval alchemist's workshop, every object placed with obsessive precision on the 30-degree grid, copper alembic and glass retorts catching warm candlelight from a central workbench, shelves of leather-bound grimoires and ceramic jars labeled in tiny Latin script, a sleeping cat curled on a rug woven in geometric Persian patterns, the roof removed to reveal the cross-section like a dollhouse, warm amber ambient light with exaggerated drop shadows, handcrafted miniature aesthetic with visible wood grain on every plank, a spiral staircase descending through a circular cutout in the floor, crisp vector-like flat shading, Pixar-meets-medieval art direction --ar 1:1
-
-等距视角
-8. 像素风
-1978 年《太空侵略者》，外星人不到 50 个像素，没人认错——人脑会自动补完。1990 年《时空之轮》把 16 位像素推到了艺术极限：32 色调色板、逐像素手工抖动、多卷轴视差。那不是一个技术限制下的产物，那是一种自律的美学，跟俳句只能十七音一样。
-A breathtaking pixel art landscape at sunset, golden hour light breaking through a 16-bit forest canopy, dithering patterns creating the illusion of transparency in the atmosphere, a palette limited to 32 carefully chosen colors from a retro console era, crisp hard-edged pixel clusters forming silhouettes of ancient ruins on a distant hill, a small cloaked traveler leaving a trail of 4-frame animated pixel dust, parallax-scrolling layers of mountains in progressively lighter blues, scanline CRT monitor glow softening the image edges, reminiscent of Chrono Trigger and Secret of Mana environment design --ar 16:9
-
-像素风
-9. 故障艺术
-1965 年，韩国艺术家 Nam June Paik 把一台电视机摔在地上，重新接错了线。画面坏掉了，但他觉得好看。2000 年代 Rosa Menkman 写书给故障艺术建了理论：Glitch 不是技术失败，是技术让我们看它的内脏。
-A classical marble statue of Venus de Milo violently corrupted by cascading digital glitches, horizontal bands of RGB channel separation shifting the image into spectral duplicates, scanline artifacts rippling across the surface like water disturbed by a dropped pebble, blocky compression artifacts blooming in the shadow areas where the algorithm lost data, a single frame of analog VHS tracking static frozen mid-scroll across the torso, pixel sorting algorithm dragging selected brightness values downward into chromatic streaks, the left portion replaced by cold magenta noise, the right portion bleeding cyan, only the face remaining hauntingly intact in the center, dark cyberpunk arrested decay aesthetic --ar 2:3
-
-故障艺术
-10. 像素排序
-2012 年，Kim Asendorf 用 Processing 写了一小段代码，按亮度重新排列每行像素。画面像冰川融化一样往下流淌。这种&quot;数学摧毁&quot;比任何人类手工都更冷、也更美。
-A serene mountain reflection in a lake undergoing controlled pixel sorting dissolution, the brightest highlights of the snowcaps stretching vertically into luminous threads that descend into the water, midtone pixels rising upward like digital smoke fading into the sky, the horizon line remaining sharp as the only anchor of reality, color channels gently pulling apart at the edges like fabric fraying, the water surface transformed into vertical ribbons of reflected color, minimal and meditative data destruction, cool arctic blue and white palette, the destructive process creating unexpected beauty --ar 16:9
-
-像素排序
-
-叁 · 光影与色彩
-人类花了十几万年走出黑暗，然后花了五十年把灯光做成艺术。
-11. 霓虹灯
-1910 年巴黎车展，Georges Claude 第一次展示霓虹灯管。观众的反应是恐惧——这东西发亮，像巫术。1923 年，第一块霓虹广告牌出现在洛杉矶。到《银翼杀手》时代，霓虹已经不是广告了，是城市的呼吸。
-我每次用霓虹灯提示词都会加一句 rain-soaked pavement——湿地面把灯光反射成碎片，比灯本身更迷人。
-A solitary neon sign glowing in a rain-soaked alleyway at 3am, the glass tubes filled with noble gases — argon casting ice blue, neon radiating hot coral pink, krypton pulsing pale lavender against the wet brick wall, each letter's reflection shattered into a thousand liquid fragments on the puddled asphalt below, steam rising from a subway grate and catching the colored light in its curling tendrils, the sign's transformer humming at the edge of hearing, bokeh circles of distant traffic lights dissolving into the fog, shallow depth of field focused on a single letter with the rest melting into soft abstraction, Wong Kar-wai chromatic sensibility, Blade Runner melancholia --ar 3:2
-
-霓虹灯
-12. 赛博朋克
-高科技，低生活。六个字把整个赛博朋克装进去了。1982 年《银翼杀手》设定的 2019 年没有飞来飞去的汽车，但 Syd Mead 设计的城市像一座发光的水晶体，把人的情绪压缩成了街边一碗面的热蒸汽。
-A vertigo-inducing upward gaze through the neon canyons of a cyberpunk megacity, mirrored skyscrapers climbing into low-hanging toxic cloud layer, holographic geisha advertisements fifty stories tall winking through the drizzle, flying taxi drones threading between buildings leaving trails of red and white light, street-level noodle bar with steaming broth lit by a single buzzing pink tube, a figure in a translucent raincoat with subtle cybernetic spine implants visible through the plastic, every wet surface reflecting a different color of neon — magenta from above, cyan from below, amber from the side, volumetric fog catching intersecting light beams, the architectural scale immense with human figures at street level barely visible specks, Syd Mead meets Masamune Shirow --ar 9:16
-
-赛博朋克
-13. 蒸汽波
-2011 年的互联网角落突然涌出大量粉色紫色渐变、大卫石膏像、棕榈树、Windows 95 对话框。没人说得清这是什么风格，但有一种上头的力量——对从未经历过的 80 年代消费主义的想象性乡愁。
-A classic vaporwave dreamscape anchored by a headless Hellenistic marble bust of Apollo on a chrome pedestal, behind it a sunset gradient melting from hot flamingo pink through lavender into digital cyan, the floor an infinite wireframe grid extending to an impossible vanishing point, a lone neon palm tree silhouette glowing magenta on the horizon, floating geometric shapes — a translucent crystal and a golden torus orbiting each other in the upper right, Japanese katakana text 「デジタル・ドリーム」 in bold outlined block letters across the sky, a pixelated cursor arrow from Macintosh System 7 frozen in the corner, VHS scanlines and slight chromatic aberration giving everything a tape-worn patina, nostalgia for a future that never arrived, Florida mall 1992 aesthetic --ar 1:1
-
-蒸汽波
-14. 双重曝光
-胶片时代忘了过片就按第二下快门，两张照片叠一起——本来是废片，被 1960 年代的艺术家回收成语言。Jerry Uelsmann 用七台放大机在暗房里把一个人脸填满了森林。后来 HBO 的《真探》把它用到极致：每一帧片头都在把一个灵魂叠进一片荒原。
-A delicate double exposure portrait, the left-facing profile of a young woman's silhouette filled entirely with a fog-shrouded redwood forest, ancient trees growing upward from her jawline and spreading canopies where her thoughts would be, a flock of starlings taking flight through her hair dissolving into the open sky, the forest floor visible in the space beneath her chin, morning mist threading between the tree trunks and softening the transition between face and foliage, monochromatic sepia tone with subtle split-toning — warm highlights cooling into blue shadows, the double exposure executed in-camera not composited, Sarah Moon meets Jerry Uelsmann --ar 4:5
-
-双重曝光
-15. 剪影
-去掉面孔的表情、服装的纹理、皮肤的冷暖，剩下一个纯黑的轮廓。奇怪的是，越少的细节有时候说出越多的话。一棵树对着夕阳的剪影，可以同时是孤独、希望、开始和结束。
-A lone acacia tree silhouetted against the most dramatic African sunset ever witnessed, the sky a symphony of burnt orange bleeding into blood crimson and fading to bruised purple, the sun a perfect molten gold disc bisecting the horizon, the tree's every branch and twig rendered in absolute jet black against the inferno behind it, a few distant birds suspended as punctuation marks in the orange glow, wispy cirrus clouds catching the last light and glowing like embers, the ground a simple flat black strip anchoring the lower edge, strictly following the rule of thirds composition, the emotional weight of an ending and a beginning happening simultaneously --ar 16:9
-
-剪影
-16. 梦幻柔焦
-柔焦本来是镜头球差的缺陷，高光边缘溢出到暗部。1930 年代好莱坞人像摄影师发现这个缺陷让人的脸变得像裹了一层薄雾。他们把凡士林涂在 UV 镜上模拟这种效果——黛德丽和嘉宝的那些神光，隔着一层凡士林。
-An ethereal portrait bathed in golden hour backlight with extreme soft focus bloom, the subject's hair catching rim light and dissolving into a halo of spun gold, a Petzval lens swirly bokeh spiraling the background into a creamy vortex, light spilling over the shoulders and wrapping around the silhouette, skin appearing luminous and almost translucent at the edges, a field of wildflowers behind rendered as soft white dots on an impressionist canvas, the entire scene shot through a stocking filter on a vintage medium format film camera, slight overexposure pushing the highlights into dream territory, the mood of a half-remembered summer memory, Deborah Turbeville meets early Sofia Coppola --ar 3:4
-
-梦幻柔焦
-
-肆 · 绘画与手绘
-17. 浮世绘
-Ukiyo-e，“浮世绘”——画这个浮动的、短暂的、不值得执着的人间。江户匠人用刀子把线条刻进樱木板，一色一板，一张画能刻十几块。北斋的《神奈川冲浪里》传到欧洲后，那些卷曲的浪尖直接长进了梵高的《星空》。两种文明隔着太平洋，被同一根海浪的线条连在一起。
-A dramatic ukiyo-e woodblock print depicting a crescent moon over Edo Bay at midnight, fishing boats with square sails reduced to bold black silhouettes against a Prussian blue night sky, waves rendered in Hokusai's claw-like curling crests overlapping in rhythmic patterns, subtle bokashi gradient shading from deep indigo to pale sky at the horizon, the moon itself carved from the paper's natural white with a faint ivory tint, a bridge in the middle distance with tiny travelers carrying paper lanterns, the composition employing traditional Japanese asymmetrical balance with the moon placed far to the right, printed on handmade kozo washi paper with characteristic laid lines and uneven fibers, limited to the traditional five Edo period pigments --ar 2:3
-
-浮世绘
-18. 线稿素描
-0.05 毫米的钢笔尖和 0.5 毫米的马克笔，在同一条纸上完全是两种语言。达·芬奇笔记本里的那些飞行器和解剖图，不只是发明了什么，更在于那些线条——试探的、自信的、犹豫的、确认的——就是思想的痕迹本迹。
-An architectural study of a Gothic cathedral's flying buttresses rendered in obsessive fine-line pen work, every stone joint and weathering crack documented with surgical precision, cross-hatching building density in the shadow areas beneath the vaulted arches, the line weight varying from hair-thin 0.05mm for distant details to bold 0.5mm for foreground structural elements, a faint perspective grid ghosted beneath the ink suggesting the geometric scaffolding of the drawing, aged parchment background with subtle foxing spots, the drawing appearing torn from a Moleskine and pinned to a corkboard, a small pencil note in the margin, Da Vinci sketchbook energy with modern architectural draftsmanship --ar 3:4
-
-线稿素描
-19. 波普艺术
-1962 年，安迪·沃霍尔在纽约展出了 32 幅《金宝汤罐头》。媒体的标题一片骂声——&quot;这不是艺术，是商店目录。&quot;沃霍尔说，对，我要的就是这个。波普问了一个简单的问题：如果超市货架和美术馆画布没有区别，什么叫艺术？
-A Warholian four-panel silk-screen portrait grid repeating the same face in four explosive color treatments, top left panel in acid yellow skin with electric blue shadows and hot pink hair, top right in candy apple red skin with lime green shadows and orange hair, lower panels inverted and distorted, each panel's registration deliberately off by two millimeters creating ghosted color halos, the coarse mesh of the silkscreen visible under magnification, ink bleeding slightly at the edges where the squeegee pressed too hard, acrylic paint on raw unprimed canvas, the subject's expression blank and iconic, the repetition transforming a single image into a meditation on celebrity and serial reproduction, 1964 The Factory era authenticity --ar 2:3
-
-波普艺术
-20. 扁平插画
-最早可以追溯到 1950 年代的瑞士国际主义设计。但扁平真正成为大众语言是在数码时代——当屏幕分辨率终于够高了，设计师发现没有渐变没有阴影的图形在任何设备上都清晰得惊人。Instagram、Google Material、Airbnb 引导页——扁平是数字时代的普通话。
-A vibrant flat illustration of a busy weekend farmers market, layered geometric shapes forming canvas awnings in alternating mustard yellow and terracotta, produce stalls overflowing with circles suggesting apples and oranges in bold vermilion and tangerine, figures reduced to essential silhouettes with rounded proportions — a mother carrying a baguette, a child holding a balloon, a vendor weighing vegetables — no facial features, no shadows, pure shape language, a color palette of exactly seven harmonized hues drawn from mid-century modern poster art, the entire scene floating on a warm cream background, Charley Harper minimalism meets contemporary illustration style, vector art aesthetic with crisp edges --ar 16:9
-
-扁平插画
-
-伍 · 摄影与 3D
-21. 胶片摄影
-Kodak Portra 400，光这个词就能让胶片玩家心跳。Portra 的乳剂配方 1998 年 Kodak 熬了三年——暗部微绿，高光带暖桃，反差低到像一层薄雾。2022 年 Kodak 涨了三次价，因为用的人太多排产跟不上。胶片死了无数回，从来没死成。
-An unhurried afternoon moment captured on Kodak Portra 400, a sunlit kitchen with dust motes dancing in a shaft of window light, the warm amber cast of golden hour filtered through sheer linen curtains, a half-peeled clementine on a worn wooden table with the spiral of peel curling outward, soft muted pastels in the Portra color space — the green of a potted herb rendered as sage, skin tones as warm peach, shadows tinted faintly olive, the characteristic Portra grain structure visible in the midtones holding detail beautifully, a subtle light leak blooming cyan in the bottom left corner, the quiet beauty of an ordinary Tuesday afternoon that will never happen again --ar 4:5
-
-胶片摄影
-22. CinemaScope 电影感
-1953年，20世纪福克斯推出宽银幕。当时电视是 4:3 的小方框，电影需要一种电视永远模仿不了的东西——答案就是宽度。2.35:1 的画幅让你同时看到悬崖有多高、海有多大、人有多孤独。罗杰·迪金斯的每个镜头都在说：宽度不是奢侈，是叙事。
-A lone figure standing at the edge of a windswept cliff at dawn rendered in full CinemaScope grandeur, the 2.35:1 anamorphic frame stretched wide to capture the immensity of the ocean below, teal shadows in the cliff face and orange rim light catching the figure's silhouette from a low sun behind, anamorphic lens flare streaking horizontally across the frame in cool blue, shallow depth of field with the foreground grass blades blurred into soft abstraction, the atmosphere thick with sea spray catching the morning light, film grain from a 35mm print adding texture to the gradients, the color grade a precise teal-and-orange split, Roger Deakins compositional rigor with Terrence Malick's reverence for natural light --ar 21:9
-
-CinemaScope 电影感
-23. 黏土风
-Aardman 工作室的 Nick Park 在 1989 年捏了一只叫 Gromit 的狗。每秒 24 帧，一部 90 分钟的片子等于 129600 次手工微调。AI 版的黏土保留了圆润和指纹，但没有那种手腕的酸痛。有些东西是物理性的，算法永远缺这个。
-A charming claymation diorama of a tiny hedgehog bakery, a plump hedgehog chef in a miniature apron rolling out dough on a flour-dusted counter, fingerprints visible in the green plasticine of his body and the brown clay of the countertop, a tiny oven glowing warm orange from within, fresh bread cooling on a rack each loaf showing the slight asymmetry of hand-sculpting, window light streaming in through a crooked frame, the entire scene shot in stop-motion with the characteristic 12-frames-per-second judder frozen into a single image, matte non-reflective surfaces everywhere, Aardman Animation warmth, the set about the size of a shoebox, macro photography capturing the wondrous detail of tiny things made by hand --ar 4:3
-
-黏土风
-24. 玻璃拟态
-2020 年 macOS Big Sur 和 Windows Vista Aero（2006），隔了 14 年做了同一件事：让半透明面板有厚度。背景模糊透过来，加上 1 像素的白边，就像一块磨砂玻璃悬在空气里。一个 UI 风格的诞生，两代操作系统，十五年的轮回。
-A product showcase of a minimalist smartwatch floating in a void of soft gradient light, the watch face rendered as a frosted glass panel with the background colors bleeding through in diffused abstraction, thin 1-pixel white borders defining the edges of the glass, subtle rainbow caustics where light bends through the curved display, the digital numerals on the watch face appearing to float above the surface with a gentle drop shadow, a soft radial blur behind the glass emphasizing the transparency effect, the watch band a perfect matte silicone in muted sage green, studio product photography lighting, a large softbox reflection curving across the glass face, Apple keynote elegance merged with modern glassmorphism --ar 1:1
-
-玻璃拟态
-25. Octane 写实渲染
-2010 年新西兰公司 OTOY 发布 Octane Render，第一个能在消费级 GPU 上追踪光线的渲染器。之前追踪一束光的反射折射需要一台服务器。Octane 把照片级真实从电影公司特权变成了任何人的右键导出。
-A hyperrealistic 3D render of a dewdrop-laden peony in full bloom, every petal modeled with subsurface scattering catching and transmitting light like living tissue, hundreds of micro-droplets of water behaving with physically accurate refraction bending the petal colors within each sphere, the flower emerging from total darkness lit by a single dramatic key light at 45 degrees, the depth of field so precise that the forward petals are razor-sharp while the back petals dissolve into creamy bokeh, the material properties of the petals impossibly convincing — velvety matte at the base transitioning to glossy at the tips, pollen grains scattered on the anthers rendered as individual geometry, Octane Render pathtracing eliminating all noise, the line between CGI and photography obliterated --ar 3:4
-
-Octane 写实渲染
-
-陆 · 手工与混合
-26. 剪纸
-Hari 和 Deepti 用彩纸、刀片和光造出了深海。一张纸叠在另一张纸上，隔 3 毫米，侧光一照，每层在下一层上投下影子。看起来像水里发光的珊瑚礁，实际上是纸和光的合谋。
-An exquisite multi-layer paper cut illustration of a coral reef ecosystem, the foreground a bright orange clownfish peeking from anemone tentacles cut from cream paper, a layer of sea fans in crimson cardstock behind them, a sea turtle swimming in the middle distance cut from mottled green paper, each layer separated by a 3mm gap casting thin crisp shadows onto the layer below, the paper fibers visible at every cut edge — the slight roughness of the blade's path through the stock, the deepest layer a dark navy ocean background with die-cut holes revealing "light" from behind, the entire composition inside a shadow box frame with warm gallery lighting from above, Hari and Deepti light box aesthetic --ar 4:5
-
-剪纸
-27. 丝网印刷
-丝网印的灵魂在偏差。手工印的 T 恤上，蓝和黄套色偏了 0.5 毫米——那个微小的偏移比精准的数码校准有生命力。独立乐队的演出海报几乎全是丝网印的，不是他们不用数码打印机，而是丝网印的墨是真压进纸纤维里的，你摸得到。
-A bold gig poster for a fictional indie band screen-printed in exactly three colors on French Paper Company 100lb cover stock, the first pass a flood of electric yellow forming the background and the band name in massive block letters, the second pass a layer of midnight blue creating the illustration of a howling wolf silhouette, the third pass a strike of fluorescent orange adding the venue name and date, deliberate 1mm misregistration between the blue and yellow passes creating a ghosted third color at the edges, the slight ink starvation at the top of the print where the squeegee pressure was uneven, the tactile tooth of the paper gripping the ink, the poster pinned to a brick wall with a single rusted thumbtack, the raw energy of DIY printmaking, screenprinting squeegee drags visible in large solid color areas --ar 2:3
-
-丝网印刷
-28. 拼贴
-达达派 1918 年把报纸碎片贴在画布上，被骂神经病。Hannah Höch 用杂志剪报拼出了二十世纪最有力的女性主义宣言，原标题长得像个玩笑：《用厨房刀切开德国最后一个魏玛啤酒肚文化时代》。拼贴的暴力在于，把一个东西从原来的语境里剪下来，塞进另一个语境，逼它说完全不同的话。
-A surrealist analog collage built from vintage National Geographic pages, a woman's face assembled from different photographs — lips from a 1950s lipstick ad, one eye from a Renaissance painting, the other from a black-and-white portrait of an elderly man — each fragment cut with slightly trembling scissors leaving rough white borders, botanical illustrations of fern fronds inserted as her hair, a Victorian anatomical heart diagram pasted over her chest, the entire composition constructed on cream cardboard with visible glue-stick streaks and the faint graphite lines of planning sketches still visible, the elements sourced from different decades giving each fragment its own yellowing, Hannah Hoch Dada sensibility meets contemporary mixed-media collage --ar 3:4
-
-拼贴
-29. ASCII Art
-1966 年 Bell Labs 的 Ken Knowlton 用 IBM 7094 打印出了第一张 ASCII 艺术——当时没有屏幕，输出介质是连续的折叠打印纸。后来终端变成了黑底绿字的 CRT，@、%、# 这些字符的密度拼出人脸，在绿色的磷光里有一种说不清的浪漫。黑客社区的暗号。
-A detailed ASCII art portrait rendered entirely in monospaced characters on an amber phosphor CRT monitor, the face emerging from a dense grid of characters mapping precisely to the luminance values of a photographic source, a faint flicker of the monitor refresh rate visible as horizontal scanlines, the warm amber glow of the terminal spilling onto a dark desk and illuminating a pair of hands on a mechanical keyboard, the monitor bezel visible framing the character art, the aesthetic of a university computer lab at 2am in 1986, the sublime beauty of representing human emotion through an 80x25 character grid, text-mode art transcending its technical constraints --ar 4:3
-
-ASCII Art
-30. 非遗国风
-景泰蓝的工序残忍——铜丝掐出蜂巢格子，珐琅釉料填进去，八百度高温烧。每烧一次颜色会变，反复十几遍。一只景泰蓝凤凰从设计到成品，匠人花的工夫够 AI 出上千万个版本。但铜丝掐出来的那 0.1 毫米的不完美，AI 做不到。我试过让它生成景泰蓝，它每次都把掐丝做得太齐太均，像机器而不是人的手。
-A magnificent cloisonné enamel phoenix soaring through clouds, each feather a separate cell defined by delicate brass filigree wires, the cells filled with jewel-toned enamels — imperial vermilion, lapis lazuli blue, malachite green, and luminous turquoise — polished to a glass-smooth surface, the gold wires catching light and tracing the phoenix's flowing form with calligraphic elegance, traditional auspicious cloud patterns rendered in the same painstaking technique surrounding the bird, a subtle luminous glow emanating from within the enamel as if backlit, the entire piece set against a dark void that makes the colors sing, macro detail capturing the micro-texture of the polished enamel surface, thousand-year-old cloisonné tradition married to a contemporary composition, Jingdezhen craftsmanship, museum-quality presentation --ar 2:3
-
-非遗国风
-
-画质通用词
-随手记在这里，不管你用哪个风格，末尾加一行不会错：
-masterpiece, best quality, 8k, ultra detailed, volumetric lighting, trending on artstation
 
 
-收录 30 种视觉风格，6 大分类
-全图 Midjourney / Stable Diffusion 直出
-风格自由混搭："浮世绘 + 赛博朋克" = 赛博浪人，"水彩 + 剪纸" = 绘本插画
 
-— 整理于 2026 年 5 月，持续更新 —
+
+混凝土会呼吸
+一些关于寒冷、寂静和光的照片。没有解释，只有注视。
+
+
+
+凌晨四点的城市你见过吗？不是那种刚散场的商业街——夜店门口还围着一群打车的人，不算。是真正的凌晨四点：高架桥上只有一辆除冰车，黄色的警灯以固定频率闪烁，路面是暗灰色的冰。港口集装箱区所有的龙门吊都静止了，唯一在动的是监控摄像头的红外探头，缓慢地转着，像一只机械猫头鹰。
+这些画面有一种奇怪的吸引力。不是因为&quot;美&quot;，是因为空。那种空了之后才显现的秩序感——所有灯都亮着，但是没有人在；所有机器都没有坏，但是没人操作。
+做这组照片的初衷很简单。我想看看，如果把一个地方所有的人类都暂时移走，留下路灯、留下没关的显示器、留下结了冰的走廊——留下的这些东西，能不能自己讲一个故事。
+
+
+第一章
+冰封工业
+
+
+冬夜的重型设施
+元素混凝土 · 金属锈 · 冰凌 · 灯光
+时刻4:00 AM
+
+
+
+
+
+01 · 水坝
+四百米的混凝土墙。横向的，不是竖直的——这意味着你站在它下面的时候，看不到它的顶端。墙面上深色的水渍冻在裂缝里，像血管。高处有一盏维护灯，亮着。不是那种好看的暖黄，是偏冷的琥珀色，高压钠灯特有的橙。光从灯罩边缘溢出来，在零下三十度的空气里形成一个几乎感受不到热度的光晕。有个人在走。离得太远看不清是谁，只能辨认出一件橘色的外套。猫道上有一顶黄色的安全帽——不知道是忘了拿还是故意留下的。
+
+
+
+
+
+02 · 冷却塔
+十二座。排成一列像一排沉默的巨人。这不是那种被废弃之后长出藤蔓的浪漫废墟——没那么抒情。只是混凝土上结了冰，裂缝里渗出的水冻成了半透明的帘子。最近的两座还在冒蒸汽。蒸汽是活的，意味着下面有管道还在运转，有人还在烧煤或者等待调度。一座已经"死掉"的工厂如果还在冒气，比彻底安静要不安得多。
+
+
+
+
+
+03 · 炼钢厂外墙
+夜里拍一个炼钢厂的侧面。整面墙是锈红色的波纹钢板，雪积在每一条波纹的凹槽里，像画上去的等高线。工厂还在运转——墙上的窗户透出一种不正常的橙红色光，正在出钢。墙脚的管道在滴水。滴下来的水碰到雪地，烫出一个杯子口大小的洞。热气从洞里慢慢升上来。这是工业摄影里最难拍的那一类细节：不是壮观的，是一个微小的、正在进行的热交换。
+
+
+方法 · 冷与暖的层次
+一组耐看的冬夜工业图，通常需要三层光：
+1. 主暖源（窗户 / 维护灯 / 探照灯）—— 用 warm amber / sodium vapor / tungsten
+2. 冷环境（雪地 / 夜空 / 冰面）—— 用 blue hour / twilight / polar night
+3. 次生暖（暖光打在雪或金属表面的反射）—— 用 warm light spill / soft glow on frost / orange reflection on ice
+三者缺一，画面要么冷到没有感情，要么暖到失真。
+
+
+
+港口龙门吊 · 午夜
+煤矿传送带 · 暴雪天
+钢厂内部 · 出钢时刻
+
+
+
+第二章
+深夜基础设施
+
+
+一个人也没有的公共空间
+元素候车亭 · 发电站 · 桥梁 · 管道
+时刻2:00 AM － 5:00 AM
+
+
+
+
+
+04 · 城市边缘变电站
+没有比一座深夜的变电站更安静的地方了。所有的变压器都在嗡嗡响，但这种低频的嗡鸣在雪地里反而衬托出更深的安静。瓷绝缘子上覆着一层薄冰，偶尔闪一下电晕——淡蓝色的，不是闪电，是空气中那一点电压的泄露。铁塔的红色航空障碍灯以六秒的间隔亮一次。你盯着它看了几次之后，开始用自己的呼吸配合它的节奏。然后它就不再是一盏灯了，变成了一个计时器。
+
+
+
+
+
+05 · 末班地铁始发站
+地下的站台。最后一班车已经发走了，但所有的灯都还亮着——荧光灯的冷白、安全出口的绿、售票机屏幕的蓝。站台椅子上坐着一个等夜班接班的清洁工，手机屏幕照着他的脸。轨道尽头有一个弯道，隧道深处有一盏维修灯在闪。拍这种场景的时候不要用闪光灯，让荧光管的曝光不足半档——暗一档的白色比正常的白色更像凌晨四点。
+
+
+
+
+
+06 · 跨江高压线塔
+一座两百米高的电塔，孤零零立在结冰的江面上。塔身刷了防锈的红丹，在雪地的映衬下红得刺眼。输电线结了雾凇，白色的冰晶包裹着电缆，像裹了糖霜的绳子。远处有一座桥。桥上每隔三十米一盏路灯，连成一条虚线。因为雾，每盏灯的间距不同——近的灯密集，远的灯稀疏。这就是为什么深夜的桥比白天的桥要长一半。
+
+
+"一座电塔如果有人在看守，那是工作场所。没有人看守，它是一个纪念碑。"
+
+
+空无一人的候车亭 · 凌晨
+跨海大桥检修通道
+积雪的燃气管道阀门站
+
+
+
+第三章
+极地航运
+
+
+冰、铁与航道
+元素破冰船 · 海冰 · 货轮 · 港口
+色调蓝黑 · 钢灰 · 暖黄
+
+
+
+
+
+07 · 破冰船
+最好拍的不是船冲破冰面那一瞬间——那一瞬间太快了，像爆炸。更好的是破冰船在碎冰中穿行之后的尾迹：一条深黑色的水道，两侧的冰块被推成锯齿状的矮墙，有些碎冰翻了面，露出了冰底那种介于蓝色和绿色之间的幽光。尾部驾驶室的窗户亮着灯，有一根烟囱在冒黑烟。甲板上的探照灯把光打到前方五百米的冰面上——光斑的边缘，你能看到一只海豹从冰洞里探出头。
+
+
+
+
+
+08 · 波罗的海渡轮
+一艘白色的滚装渡轮在浮冰中行驶，天色是下午两点但已经接近天黑的了那种深蓝。船身上漆着航运公司的名字，红蓝相间，在灰蓝色调的背景下是唯一跳脱出来的颜色。客舱层的窗户亮着暖光。隔着玻璃你能看到有人在吃晚餐——一个白色的碟子，一只握着叉子的手。这个画面最好的部分是，船上的人不知道自己正在被人观看。而观看的人正在另一段岸上，冻得手指发僵。
+
+
+
+
+
+09 · 冰封货港
+一个全年不冻港——不是不冻，是有人在铲冰。码头上有三台龙门吊，都停了。集装箱在雪地里叠成八层高，最上面一层的箱顶积着半米厚的雪。每排集装箱之间是一条深沟，堆高机的铲臂悬在半空——司机大概去吃饭了，驾驶室的灯还亮着。你仔细看的话，一台橙色集装箱的门缝里卡着一张海关封条。已经在雪里挂了几个月了。这个小细节让整个画面从风景照变成了叙事。
+
+
+方法 · 制造业 vs 自然
+工业摄影里最动人的关系是人工 vs 自然的磨损竞赛。雪落在钢梁上是软的，但你要拍钢梁上的锈迹——自然在赢。冰封住了阀门，但阀门还在流——工业在抵抗。这道张力是画面里不发声的叙事线。
+
+
+白令海拖网渔船 · 暴风雪
+北方航道 · 冰区灯塔
+北海油田补给船 · 夜
+
+
+
+第四章
+阈值与过渡
+
+
+介于此地和彼地之间
+元素走廊 · 通道 · 机场 · 隧道
+情绪既柔和又不舒适
+
+
+
+
+
+10 · 机场停机坪深夜
+不是因为下雪机场关了——是本来就没什么航班。空旷的停机坪，引导线被薄雪覆盖了三分之二，还能看到一点黄色的油漆。远处一辆除冰车正在给一架停着的支线客机喷除冰液，雾状的水雾在客机的翼灯下变成橙色。廊桥上有一扇窗户没关，窗帘被风吹得在玻璃外面飘。这个画面里最让人安定的元素是机场塔台的绿光——那种笔直的、不闪的、二十公里外就能看到的绿。
+
+
+
+
+
+11 · 雪中隧道的出口
+不是隧道里面，是你在隧道口外面，看着一条亮着橙色照明灯的长隧道从山体里通出来。隧道口结满了雾凇——因为里面的暖空气不断往外流，碰到外面的冷空气，水汽结冰的速度比自然积雪快十倍。隧道口像一个张着嘴在哈气的巨兽。有一辆重卡的尾灯正在远去，两个红点越变越小。你以为要很久，但只过了八秒，红点就拐弯消失了。
+
+
+
+
+
+12 · 渡轮内部凌晨
+一艘渡轮跑了一整夜。现在是早上五点半，乘客区一个人也没有。所有的座位都空着。但是每一个座位旁边的圆窗都亮着——不是灯，是曙光。海水把曙光反射成一种介于薄荷绿和灰之间的颜色，打在舱内地板上。吧台有一杯喝了一半的咖啡。一个侍者正在柜台后面擦杯子，但他似乎不赶时间。他知道离第一个乘客走进来还有二十分钟。
+
+
+"最好的光线，往往出现在没人醒着的时候。"
+
+
+大学图书馆一楼 · 夜读区
+酒店室内泳池 · 冬夜
+远郊公路 · 雾灯
+
+
+
+后记
+为什么要拍没人
+
+
+拍这些照片的时候我在想一个问题：为什么人和镜头都挤在有人类表情的地方？所有的摄影师都在拍笑、拍叫、拍眼泪、拍人群。没有人拍一座发电站在夜里的呼吸。没有为什么，就是觉得它应该被拍。
+当然有人会说这不算摄影——因为没有一个瞬间被&quot;捕捉&quot;到，这些场景是算出来的。但说实话，在暗房里给一张负片局部加光的时候，那个过程和三明治式的 prompt 反复调试没有本质区别。你都是在对一张尚未确定的图像说：这里亮一点，那里暗一点，这个角落留给我。
+一组好照片，不管来源是什么，最终只回答一个问题：这张图让你停下来了没有。如果停了，哪怕一秒，它就完成了任务。其余都是学术名词。
+
+
+2026 年 6 月
+
 
 ]]></content>
       <categories>
         <category>设计</category>
       </categories>
       <tags>
-        <tag>AIGC</tag>
-        <tag>美术风格</tag>
-        <tag>设计</tag>
-        <tag>Stable Diffusion</tag>
-        <tag>Midjourney</tag>
+        <tag>AI艺术</tag>
+        <tag>图集</tag>
       </tags>
   </entry>
   <entry>
@@ -588,6 +594,202 @@ C 语言并不直接支持面向对象，但这并不意味着它不能组织出
         <tag>嵌入式</tag>
         <tag>C语言</tag>
         <tag>机器人</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>风格考古学——AIGC时代的30种视觉语言与它们的前世今生</title>
+    <url>/2026/05/17/aigc_art_styles_guide/</url>
+    <content><![CDATA[
+2022年8月，Stable Diffusion 把人类几千年的视觉史塞进了一个 Latent Space。但问题来了——你总得知道你要什么，才能告诉 AI 你要什么。所以就有了这篇。
+※ 本文所有配图均由豆包 AI 生成。
+
+壹 · 肌理与质感
+人类第一次在平面上留下纹理，是在肖维岩洞里蘸着赭石往墙上拍手印。三万七千年后，我们还在干同样的事——只不过换成了 GPU。
+1. 半调网点
+1873 年，德国人 Georg Meisenbach 用一块刻满细密网格的玻璃屏，把照片拆成了大小不一的圆点。报纸印刷的油墨只有纯黑纯白，网点是唯一的妥协方式。但 Lichtenstein 在 1961 年把这个妥协放大成了主角——他把漫画格涂在巨大的画布上，网点不再是印刷缺陷，变成了波普的视觉基因。
+A striking pop art portrait rendered in bold halftone dot patterns, thick black comic-style outlines, high-contrast cyan, magenta, and yellow color separation, Ben-Day dots across skin tones, Roy Lichtenstein inspired, vintage newspaper rotogravure texture, slight misregistration of color plates, heroic comic book panel composition with speech bubble, bright studio lighting with crisp shadows, screen-printed pulp paper grain, retro 1960s advertising aesthetic --ar 2:3
+
+半调网点
+2. 颗粒噪点
+说实话，数码相机工程师花了几十年消灭噪点，胶片摄影师却花了一辈子迷恋它。Tri-X 400 的黑白颗粒里有整个二十世纪的街头。森山大道说：“清晰是一种谎言。”
+A contemplative street scene shot on Kodak Tri-X 400 pushed two stops, heavy grain structure visible throughout shadows and midtones, moody overcast afternoon light filtering through urban alleyways, subtle vignetting at frame edges, analog film texture with microscopic silver halide crystals, slight chemical staining on print edges, soft loss of shadow detail in deep blacks, nostalgic documentary photography style, Henri Cartier-Bresson compositional sensibility, worn leather jacket and cobblestone textures emerging from grain, accidental light leak bleeding in from upper right corner --ar 4:5
+
+颗粒噪点
+3. 厚涂
+梵高在圣雷米精神病院画《星夜》，窗户是他唯一能看到天空的通道。他用刮刀把颜料堆上去——堆，不是涂。每一笔比前一笔高半毫米。你看原画的时候侧光会让每道笔触下的微影亮起来。厚涂就是把二维幻术做成三维事实。
+An expressionist landscape with fiercely applied impasto oil paint, thick buttery strokes rising from the canvas like sculpted terrain, palette knife marks carving direction into every surface, Van Gogh's starry night energy swirling through cypress trees, deep ultramarine and cadmium yellow collide in raised ridges of pigment, side-lighting reveals the three-dimensional relief of each brushstroke, raw linen canvas peeking through unpainted gaps, the physical weight of paint palpable, museum gallery lighting casting micro-shadows across the textured surface, a single sunflower head built entirely from heavy dollops of chrome yellow --ar 16:9
+
+厚涂
+4. 水彩
+水彩是唯一诚实的画种——颜料碰纸的那一刻，你就失去了一半的控制权。水往哪走，颜色就往哪晕。这种不可控，恰好是 AI 最不擅长的事。
+A botanical illustration of wild roses executed in luminous watercolor, wet-on-wet blooms bleeding their petals into one another with uncontrollable grace, puddles of pigment pooling and drying in concentric rings, translucent washes of opera pink fading into pale sage green leaves, crisp dry-brush stem details contrasting with soft florals, 300gsm cold-pressed paper texture absorbing color unevenly, salt scattered onto wet pigment creating crystalline blossom effects, morning sunlight streaming through the paper fiber, delicate splatter from a flicked brush across the composition, float-mounted on cream mat board with deckled edges, studio window light --ar 3:4
+
+水彩
+5. 水墨
+张彦远在《历代名画记》里写：&quot;运墨而五色具。&quot;墨不是黑的——焦、浓、重、淡、清，五种灰度就是五种颜色。北宋范宽的《溪山行旅图》，一座山占了三分之二的画面，山脚下的人比蚂蚁还小。那不是透视法的问题，是世界观：人在山面前就该那么小。比西方的明暗法早了四百年。
+A mist-shrouded mountain landscape in the manner of Northern Song monumental ink painting, layered peaks fading into emptiness through atmospheric perspective, pine trees clinging to cliffs rendered in decisive dry brush strokes, a solitary fisherman in a skiff on still water the size of a fingernail, five distinct tones of ink from jet black to barely-there ash grey, raw xuan rice paper with its natural absorption creating soft halos around each brushstroke, vast negative space where clouds and water become indistinguishable, red seal stamp in lower corner as the sole color accent, scroll format vertical composition ascending toward heaven --ar 9:16
+
+水墨
+
+贰 · 几何与构成
+包豪斯的 Albers 讲过一句话：几何形态本身没意义，排列才让它活过来。
+6. 低多边形
+1996 年《古墓丽影》的劳拉只有几百个三角面。2014 年《纪念碑谷》把这件事做到极致——低多边形不再是没有预算的妥协，而是故意为之的美学语言。面数越少，辨识度反而越高。你用八个三角面搭一棵树的时候，只能留下它最本质的轮廓。
+A majestic stag constructed entirely from faceted low-poly triangles, crystalline geometry catching light at every angle, warm amber and copper gradients across the angular plane surfaces, flat ambient occlusion shading with no textures, a misty forest clearing rendered in the same polygonal language behind it, soft volumetric god rays piercing through angular canopy, the stag's faceted antlers branching into increasingly smaller triangles, subtle chromatic aberration at polygon edges where warm and cool tones meet, rendered in a clean studio environment with three-point lighting, reminiscent of Monument Valley elevated to high art --ar 16:9
+
+低多边形
+7. 等距视角
+三条轴各偏 120 度，没有消失点。你同时看到屋顶和地板，像一个拆了盖子的玩具屋。RPG 游戏对这个视角爱不释手，因为玩家需要上帝视角来做决策。
+A lovingly detailed isometric diorama of a medieval alchemist's workshop, every object placed with obsessive precision on the 30-degree grid, copper alembic and glass retorts catching warm candlelight from a central workbench, shelves of leather-bound grimoires and ceramic jars labeled in tiny Latin script, a sleeping cat curled on a rug woven in geometric Persian patterns, the roof removed to reveal the cross-section like a dollhouse, warm amber ambient light with exaggerated drop shadows, handcrafted miniature aesthetic with visible wood grain on every plank, a spiral staircase descending through a circular cutout in the floor, crisp vector-like flat shading, Pixar-meets-medieval art direction --ar 1:1
+
+等距视角
+8. 像素风
+1978 年《太空侵略者》，外星人不到 50 个像素，没人认错——人脑会自动补完。1990 年《时空之轮》把 16 位像素推到了艺术极限：32 色调色板、逐像素手工抖动、多卷轴视差。那不是一个技术限制下的产物，那是一种自律的美学，跟俳句只能十七音一样。
+A breathtaking pixel art landscape at sunset, golden hour light breaking through a 16-bit forest canopy, dithering patterns creating the illusion of transparency in the atmosphere, a palette limited to 32 carefully chosen colors from a retro console era, crisp hard-edged pixel clusters forming silhouettes of ancient ruins on a distant hill, a small cloaked traveler leaving a trail of 4-frame animated pixel dust, parallax-scrolling layers of mountains in progressively lighter blues, scanline CRT monitor glow softening the image edges, reminiscent of Chrono Trigger and Secret of Mana environment design --ar 16:9
+
+像素风
+9. 故障艺术
+1965 年，韩国艺术家 Nam June Paik 把一台电视机摔在地上，重新接错了线。画面坏掉了，但他觉得好看。2000 年代 Rosa Menkman 写书给故障艺术建了理论：Glitch 不是技术失败，是技术让我们看它的内脏。
+A classical marble statue of Venus de Milo violently corrupted by cascading digital glitches, horizontal bands of RGB channel separation shifting the image into spectral duplicates, scanline artifacts rippling across the surface like water disturbed by a dropped pebble, blocky compression artifacts blooming in the shadow areas where the algorithm lost data, a single frame of analog VHS tracking static frozen mid-scroll across the torso, pixel sorting algorithm dragging selected brightness values downward into chromatic streaks, the left portion replaced by cold magenta noise, the right portion bleeding cyan, only the face remaining hauntingly intact in the center, dark cyberpunk arrested decay aesthetic --ar 2:3
+
+故障艺术
+10. 像素排序
+2012 年，Kim Asendorf 用 Processing 写了一小段代码，按亮度重新排列每行像素。画面像冰川融化一样往下流淌。这种&quot;数学摧毁&quot;比任何人类手工都更冷、也更美。
+A serene mountain reflection in a lake undergoing controlled pixel sorting dissolution, the brightest highlights of the snowcaps stretching vertically into luminous threads that descend into the water, midtone pixels rising upward like digital smoke fading into the sky, the horizon line remaining sharp as the only anchor of reality, color channels gently pulling apart at the edges like fabric fraying, the water surface transformed into vertical ribbons of reflected color, minimal and meditative data destruction, cool arctic blue and white palette, the destructive process creating unexpected beauty --ar 16:9
+
+像素排序
+
+叁 · 光影与色彩
+人类花了十几万年走出黑暗，然后花了五十年把灯光做成艺术。
+11. 霓虹灯
+1910 年巴黎车展，Georges Claude 第一次展示霓虹灯管。观众的反应是恐惧——这东西发亮，像巫术。1923 年，第一块霓虹广告牌出现在洛杉矶。到《银翼杀手》时代，霓虹已经不是广告了，是城市的呼吸。
+我每次用霓虹灯提示词都会加一句 rain-soaked pavement——湿地面把灯光反射成碎片，比灯本身更迷人。
+A solitary neon sign glowing in a rain-soaked alleyway at 3am, the glass tubes filled with noble gases — argon casting ice blue, neon radiating hot coral pink, krypton pulsing pale lavender against the wet brick wall, each letter's reflection shattered into a thousand liquid fragments on the puddled asphalt below, steam rising from a subway grate and catching the colored light in its curling tendrils, the sign's transformer humming at the edge of hearing, bokeh circles of distant traffic lights dissolving into the fog, shallow depth of field focused on a single letter with the rest melting into soft abstraction, Wong Kar-wai chromatic sensibility, Blade Runner melancholia --ar 3:2
+
+霓虹灯
+12. 赛博朋克
+高科技，低生活。六个字把整个赛博朋克装进去了。1982 年《银翼杀手》设定的 2019 年没有飞来飞去的汽车，但 Syd Mead 设计的城市像一座发光的水晶体，把人的情绪压缩成了街边一碗面的热蒸汽。
+A vertigo-inducing upward gaze through the neon canyons of a cyberpunk megacity, mirrored skyscrapers climbing into low-hanging toxic cloud layer, holographic geisha advertisements fifty stories tall winking through the drizzle, flying taxi drones threading between buildings leaving trails of red and white light, street-level noodle bar with steaming broth lit by a single buzzing pink tube, a figure in a translucent raincoat with subtle cybernetic spine implants visible through the plastic, every wet surface reflecting a different color of neon — magenta from above, cyan from below, amber from the side, volumetric fog catching intersecting light beams, the architectural scale immense with human figures at street level barely visible specks, Syd Mead meets Masamune Shirow --ar 9:16
+
+赛博朋克
+13. 蒸汽波
+2011 年的互联网角落突然涌出大量粉色紫色渐变、大卫石膏像、棕榈树、Windows 95 对话框。没人说得清这是什么风格，但有一种上头的力量——对从未经历过的 80 年代消费主义的想象性乡愁。
+A classic vaporwave dreamscape anchored by a headless Hellenistic marble bust of Apollo on a chrome pedestal, behind it a sunset gradient melting from hot flamingo pink through lavender into digital cyan, the floor an infinite wireframe grid extending to an impossible vanishing point, a lone neon palm tree silhouette glowing magenta on the horizon, floating geometric shapes — a translucent crystal and a golden torus orbiting each other in the upper right, Japanese katakana text 「デジタル・ドリーム」 in bold outlined block letters across the sky, a pixelated cursor arrow from Macintosh System 7 frozen in the corner, VHS scanlines and slight chromatic aberration giving everything a tape-worn patina, nostalgia for a future that never arrived, Florida mall 1992 aesthetic --ar 1:1
+
+蒸汽波
+14. 双重曝光
+胶片时代忘了过片就按第二下快门，两张照片叠一起——本来是废片，被 1960 年代的艺术家回收成语言。Jerry Uelsmann 用七台放大机在暗房里把一个人脸填满了森林。后来 HBO 的《真探》把它用到极致：每一帧片头都在把一个灵魂叠进一片荒原。
+A delicate double exposure portrait, the left-facing profile of a young woman's silhouette filled entirely with a fog-shrouded redwood forest, ancient trees growing upward from her jawline and spreading canopies where her thoughts would be, a flock of starlings taking flight through her hair dissolving into the open sky, the forest floor visible in the space beneath her chin, morning mist threading between the tree trunks and softening the transition between face and foliage, monochromatic sepia tone with subtle split-toning — warm highlights cooling into blue shadows, the double exposure executed in-camera not composited, Sarah Moon meets Jerry Uelsmann --ar 4:5
+
+双重曝光
+15. 剪影
+去掉面孔的表情、服装的纹理、皮肤的冷暖，剩下一个纯黑的轮廓。奇怪的是，越少的细节有时候说出越多的话。一棵树对着夕阳的剪影，可以同时是孤独、希望、开始和结束。
+A lone acacia tree silhouetted against the most dramatic African sunset ever witnessed, the sky a symphony of burnt orange bleeding into blood crimson and fading to bruised purple, the sun a perfect molten gold disc bisecting the horizon, the tree's every branch and twig rendered in absolute jet black against the inferno behind it, a few distant birds suspended as punctuation marks in the orange glow, wispy cirrus clouds catching the last light and glowing like embers, the ground a simple flat black strip anchoring the lower edge, strictly following the rule of thirds composition, the emotional weight of an ending and a beginning happening simultaneously --ar 16:9
+
+剪影
+16. 梦幻柔焦
+柔焦本来是镜头球差的缺陷，高光边缘溢出到暗部。1930 年代好莱坞人像摄影师发现这个缺陷让人的脸变得像裹了一层薄雾。他们把凡士林涂在 UV 镜上模拟这种效果——黛德丽和嘉宝的那些神光，隔着一层凡士林。
+An ethereal portrait bathed in golden hour backlight with extreme soft focus bloom, the subject's hair catching rim light and dissolving into a halo of spun gold, a Petzval lens swirly bokeh spiraling the background into a creamy vortex, light spilling over the shoulders and wrapping around the silhouette, skin appearing luminous and almost translucent at the edges, a field of wildflowers behind rendered as soft white dots on an impressionist canvas, the entire scene shot through a stocking filter on a vintage medium format film camera, slight overexposure pushing the highlights into dream territory, the mood of a half-remembered summer memory, Deborah Turbeville meets early Sofia Coppola --ar 3:4
+
+梦幻柔焦
+
+肆 · 绘画与手绘
+17. 浮世绘
+Ukiyo-e，“浮世绘”——画这个浮动的、短暂的、不值得执着的人间。江户匠人用刀子把线条刻进樱木板，一色一板，一张画能刻十几块。北斋的《神奈川冲浪里》传到欧洲后，那些卷曲的浪尖直接长进了梵高的《星空》。两种文明隔着太平洋，被同一根海浪的线条连在一起。
+A dramatic ukiyo-e woodblock print depicting a crescent moon over Edo Bay at midnight, fishing boats with square sails reduced to bold black silhouettes against a Prussian blue night sky, waves rendered in Hokusai's claw-like curling crests overlapping in rhythmic patterns, subtle bokashi gradient shading from deep indigo to pale sky at the horizon, the moon itself carved from the paper's natural white with a faint ivory tint, a bridge in the middle distance with tiny travelers carrying paper lanterns, the composition employing traditional Japanese asymmetrical balance with the moon placed far to the right, printed on handmade kozo washi paper with characteristic laid lines and uneven fibers, limited to the traditional five Edo period pigments --ar 2:3
+
+浮世绘
+18. 线稿素描
+0.05 毫米的钢笔尖和 0.5 毫米的马克笔，在同一条纸上完全是两种语言。达·芬奇笔记本里的那些飞行器和解剖图，不只是发明了什么，更在于那些线条——试探的、自信的、犹豫的、确认的——就是思想的痕迹本迹。
+An architectural study of a Gothic cathedral's flying buttresses rendered in obsessive fine-line pen work, every stone joint and weathering crack documented with surgical precision, cross-hatching building density in the shadow areas beneath the vaulted arches, the line weight varying from hair-thin 0.05mm for distant details to bold 0.5mm for foreground structural elements, a faint perspective grid ghosted beneath the ink suggesting the geometric scaffolding of the drawing, aged parchment background with subtle foxing spots, the drawing appearing torn from a Moleskine and pinned to a corkboard, a small pencil note in the margin, Da Vinci sketchbook energy with modern architectural draftsmanship --ar 3:4
+
+线稿素描
+19. 波普艺术
+1962 年，安迪·沃霍尔在纽约展出了 32 幅《金宝汤罐头》。媒体的标题一片骂声——&quot;这不是艺术，是商店目录。&quot;沃霍尔说，对，我要的就是这个。波普问了一个简单的问题：如果超市货架和美术馆画布没有区别，什么叫艺术？
+A Warholian four-panel silk-screen portrait grid repeating the same face in four explosive color treatments, top left panel in acid yellow skin with electric blue shadows and hot pink hair, top right in candy apple red skin with lime green shadows and orange hair, lower panels inverted and distorted, each panel's registration deliberately off by two millimeters creating ghosted color halos, the coarse mesh of the silkscreen visible under magnification, ink bleeding slightly at the edges where the squeegee pressed too hard, acrylic paint on raw unprimed canvas, the subject's expression blank and iconic, the repetition transforming a single image into a meditation on celebrity and serial reproduction, 1964 The Factory era authenticity --ar 2:3
+
+波普艺术
+20. 扁平插画
+最早可以追溯到 1950 年代的瑞士国际主义设计。但扁平真正成为大众语言是在数码时代——当屏幕分辨率终于够高了，设计师发现没有渐变没有阴影的图形在任何设备上都清晰得惊人。Instagram、Google Material、Airbnb 引导页——扁平是数字时代的普通话。
+A vibrant flat illustration of a busy weekend farmers market, layered geometric shapes forming canvas awnings in alternating mustard yellow and terracotta, produce stalls overflowing with circles suggesting apples and oranges in bold vermilion and tangerine, figures reduced to essential silhouettes with rounded proportions — a mother carrying a baguette, a child holding a balloon, a vendor weighing vegetables — no facial features, no shadows, pure shape language, a color palette of exactly seven harmonized hues drawn from mid-century modern poster art, the entire scene floating on a warm cream background, Charley Harper minimalism meets contemporary illustration style, vector art aesthetic with crisp edges --ar 16:9
+
+扁平插画
+
+伍 · 摄影与 3D
+21. 胶片摄影
+Kodak Portra 400，光这个词就能让胶片玩家心跳。Portra 的乳剂配方 1998 年 Kodak 熬了三年——暗部微绿，高光带暖桃，反差低到像一层薄雾。2022 年 Kodak 涨了三次价，因为用的人太多排产跟不上。胶片死了无数回，从来没死成。
+An unhurried afternoon moment captured on Kodak Portra 400, a sunlit kitchen with dust motes dancing in a shaft of window light, the warm amber cast of golden hour filtered through sheer linen curtains, a half-peeled clementine on a worn wooden table with the spiral of peel curling outward, soft muted pastels in the Portra color space — the green of a potted herb rendered as sage, skin tones as warm peach, shadows tinted faintly olive, the characteristic Portra grain structure visible in the midtones holding detail beautifully, a subtle light leak blooming cyan in the bottom left corner, the quiet beauty of an ordinary Tuesday afternoon that will never happen again --ar 4:5
+
+胶片摄影
+22. CinemaScope 电影感
+1953年，20世纪福克斯推出宽银幕。当时电视是 4:3 的小方框，电影需要一种电视永远模仿不了的东西——答案就是宽度。2.35:1 的画幅让你同时看到悬崖有多高、海有多大、人有多孤独。罗杰·迪金斯的每个镜头都在说：宽度不是奢侈，是叙事。
+A lone figure standing at the edge of a windswept cliff at dawn rendered in full CinemaScope grandeur, the 2.35:1 anamorphic frame stretched wide to capture the immensity of the ocean below, teal shadows in the cliff face and orange rim light catching the figure's silhouette from a low sun behind, anamorphic lens flare streaking horizontally across the frame in cool blue, shallow depth of field with the foreground grass blades blurred into soft abstraction, the atmosphere thick with sea spray catching the morning light, film grain from a 35mm print adding texture to the gradients, the color grade a precise teal-and-orange split, Roger Deakins compositional rigor with Terrence Malick's reverence for natural light --ar 21:9
+
+CinemaScope 电影感
+23. 黏土风
+Aardman 工作室的 Nick Park 在 1989 年捏了一只叫 Gromit 的狗。每秒 24 帧，一部 90 分钟的片子等于 129600 次手工微调。AI 版的黏土保留了圆润和指纹，但没有那种手腕的酸痛。有些东西是物理性的，算法永远缺这个。
+A charming claymation diorama of a tiny hedgehog bakery, a plump hedgehog chef in a miniature apron rolling out dough on a flour-dusted counter, fingerprints visible in the green plasticine of his body and the brown clay of the countertop, a tiny oven glowing warm orange from within, fresh bread cooling on a rack each loaf showing the slight asymmetry of hand-sculpting, window light streaming in through a crooked frame, the entire scene shot in stop-motion with the characteristic 12-frames-per-second judder frozen into a single image, matte non-reflective surfaces everywhere, Aardman Animation warmth, the set about the size of a shoebox, macro photography capturing the wondrous detail of tiny things made by hand --ar 4:3
+
+黏土风
+24. 玻璃拟态
+2020 年 macOS Big Sur 和 Windows Vista Aero（2006），隔了 14 年做了同一件事：让半透明面板有厚度。背景模糊透过来，加上 1 像素的白边，就像一块磨砂玻璃悬在空气里。一个 UI 风格的诞生，两代操作系统，十五年的轮回。
+A product showcase of a minimalist smartwatch floating in a void of soft gradient light, the watch face rendered as a frosted glass panel with the background colors bleeding through in diffused abstraction, thin 1-pixel white borders defining the edges of the glass, subtle rainbow caustics where light bends through the curved display, the digital numerals on the watch face appearing to float above the surface with a gentle drop shadow, a soft radial blur behind the glass emphasizing the transparency effect, the watch band a perfect matte silicone in muted sage green, studio product photography lighting, a large softbox reflection curving across the glass face, Apple keynote elegance merged with modern glassmorphism --ar 1:1
+
+玻璃拟态
+25. Octane 写实渲染
+2010 年新西兰公司 OTOY 发布 Octane Render，第一个能在消费级 GPU 上追踪光线的渲染器。之前追踪一束光的反射折射需要一台服务器。Octane 把照片级真实从电影公司特权变成了任何人的右键导出。
+A hyperrealistic 3D render of a dewdrop-laden peony in full bloom, every petal modeled with subsurface scattering catching and transmitting light like living tissue, hundreds of micro-droplets of water behaving with physically accurate refraction bending the petal colors within each sphere, the flower emerging from total darkness lit by a single dramatic key light at 45 degrees, the depth of field so precise that the forward petals are razor-sharp while the back petals dissolve into creamy bokeh, the material properties of the petals impossibly convincing — velvety matte at the base transitioning to glossy at the tips, pollen grains scattered on the anthers rendered as individual geometry, Octane Render pathtracing eliminating all noise, the line between CGI and photography obliterated --ar 3:4
+
+Octane 写实渲染
+
+陆 · 手工与混合
+26. 剪纸
+Hari 和 Deepti 用彩纸、刀片和光造出了深海。一张纸叠在另一张纸上，隔 3 毫米，侧光一照，每层在下一层上投下影子。看起来像水里发光的珊瑚礁，实际上是纸和光的合谋。
+An exquisite multi-layer paper cut illustration of a coral reef ecosystem, the foreground a bright orange clownfish peeking from anemone tentacles cut from cream paper, a layer of sea fans in crimson cardstock behind them, a sea turtle swimming in the middle distance cut from mottled green paper, each layer separated by a 3mm gap casting thin crisp shadows onto the layer below, the paper fibers visible at every cut edge — the slight roughness of the blade's path through the stock, the deepest layer a dark navy ocean background with die-cut holes revealing "light" from behind, the entire composition inside a shadow box frame with warm gallery lighting from above, Hari and Deepti light box aesthetic --ar 4:5
+
+剪纸
+27. 丝网印刷
+丝网印的灵魂在偏差。手工印的 T 恤上，蓝和黄套色偏了 0.5 毫米——那个微小的偏移比精准的数码校准有生命力。独立乐队的演出海报几乎全是丝网印的，不是他们不用数码打印机，而是丝网印的墨是真压进纸纤维里的，你摸得到。
+A bold gig poster for a fictional indie band screen-printed in exactly three colors on French Paper Company 100lb cover stock, the first pass a flood of electric yellow forming the background and the band name in massive block letters, the second pass a layer of midnight blue creating the illustration of a howling wolf silhouette, the third pass a strike of fluorescent orange adding the venue name and date, deliberate 1mm misregistration between the blue and yellow passes creating a ghosted third color at the edges, the slight ink starvation at the top of the print where the squeegee pressure was uneven, the tactile tooth of the paper gripping the ink, the poster pinned to a brick wall with a single rusted thumbtack, the raw energy of DIY printmaking, screenprinting squeegee drags visible in large solid color areas --ar 2:3
+
+丝网印刷
+28. 拼贴
+达达派 1918 年把报纸碎片贴在画布上，被骂神经病。Hannah Höch 用杂志剪报拼出了二十世纪最有力的女性主义宣言，原标题长得像个玩笑：《用厨房刀切开德国最后一个魏玛啤酒肚文化时代》。拼贴的暴力在于，把一个东西从原来的语境里剪下来，塞进另一个语境，逼它说完全不同的话。
+A surrealist analog collage built from vintage National Geographic pages, a woman's face assembled from different photographs — lips from a 1950s lipstick ad, one eye from a Renaissance painting, the other from a black-and-white portrait of an elderly man — each fragment cut with slightly trembling scissors leaving rough white borders, botanical illustrations of fern fronds inserted as her hair, a Victorian anatomical heart diagram pasted over her chest, the entire composition constructed on cream cardboard with visible glue-stick streaks and the faint graphite lines of planning sketches still visible, the elements sourced from different decades giving each fragment its own yellowing, Hannah Hoch Dada sensibility meets contemporary mixed-media collage --ar 3:4
+
+拼贴
+29. ASCII Art
+1966 年 Bell Labs 的 Ken Knowlton 用 IBM 7094 打印出了第一张 ASCII 艺术——当时没有屏幕，输出介质是连续的折叠打印纸。后来终端变成了黑底绿字的 CRT，@、%、# 这些字符的密度拼出人脸，在绿色的磷光里有一种说不清的浪漫。黑客社区的暗号。
+A detailed ASCII art portrait rendered entirely in monospaced characters on an amber phosphor CRT monitor, the face emerging from a dense grid of characters mapping precisely to the luminance values of a photographic source, a faint flicker of the monitor refresh rate visible as horizontal scanlines, the warm amber glow of the terminal spilling onto a dark desk and illuminating a pair of hands on a mechanical keyboard, the monitor bezel visible framing the character art, the aesthetic of a university computer lab at 2am in 1986, the sublime beauty of representing human emotion through an 80x25 character grid, text-mode art transcending its technical constraints --ar 4:3
+
+ASCII Art
+30. 非遗国风
+景泰蓝的工序残忍——铜丝掐出蜂巢格子，珐琅釉料填进去，八百度高温烧。每烧一次颜色会变，反复十几遍。一只景泰蓝凤凰从设计到成品，匠人花的工夫够 AI 出上千万个版本。但铜丝掐出来的那 0.1 毫米的不完美，AI 做不到。我试过让它生成景泰蓝，它每次都把掐丝做得太齐太均，像机器而不是人的手。
+A magnificent cloisonné enamel phoenix soaring through clouds, each feather a separate cell defined by delicate brass filigree wires, the cells filled with jewel-toned enamels — imperial vermilion, lapis lazuli blue, malachite green, and luminous turquoise — polished to a glass-smooth surface, the gold wires catching light and tracing the phoenix's flowing form with calligraphic elegance, traditional auspicious cloud patterns rendered in the same painstaking technique surrounding the bird, a subtle luminous glow emanating from within the enamel as if backlit, the entire piece set against a dark void that makes the colors sing, macro detail capturing the micro-texture of the polished enamel surface, thousand-year-old cloisonné tradition married to a contemporary composition, Jingdezhen craftsmanship, museum-quality presentation --ar 2:3
+
+非遗国风
+
+画质通用词
+随手记在这里，不管你用哪个风格，末尾加一行不会错：
+masterpiece, best quality, 8k, ultra detailed, volumetric lighting, trending on artstation
+
+
+收录 30 种视觉风格，6 大分类
+全图 Midjourney / Stable Diffusion 直出
+风格自由混搭："浮世绘 + 赛博朋克" = 赛博浪人，"水彩 + 剪纸" = 绘本插画
+
+— 整理于 2026 年 5 月，持续更新 —
+
+]]></content>
+      <categories>
+        <category>设计</category>
+      </categories>
+      <tags>
+        <tag>AIGC</tag>
+        <tag>美术风格</tag>
+        <tag>设计</tag>
+        <tag>Stable Diffusion</tag>
+        <tag>Midjourney</tag>
       </tags>
   </entry>
   <entry>
@@ -1533,6 +1735,512 @@ CMSIS D-Cache functions for Cortex-M7
       </tags>
   </entry>
   <entry>
+    <title>损失函数的设计哲学——从直觉理解为什么损失函数要长这样</title>
+    <url>/2026/06/01/loss_function_philosophy/</url>
+    <content><![CDATA[损失函数的设计哲学——从直觉理解为什么损失函数要长这样
+如果你写过几个 PyTorch 训练脚本，大概已经对 nn.MSELoss 和 nn.CrossEntropyLoss 这两个名字烂熟于心。你可能也知道&quot;回归用 MSE，分类用 CrossEntropy&quot;这条经验法则，甚至背过交叉熵的公式：
+$$
+\mathcal{L}{CE} = -\sum{c} y_c \log(p_c)
+$$
+但你有没有停下来想过——为什么？
+为什么回归不直接用绝对误差（L1），非要用平方（L2）？为什么分类不用 MSE 做损失？为什么交叉熵里的那个 $\log$ 恰到好处，换成别的就不行？
+这些问题背后不是拍脑袋的巧合。每一种损失函数的设计，都是对人类认知目标的一种数学建模。这篇博客想做的，就是把几个最常用的损失函数从设计动机到数学形式拆一遍——不是为了背公式，而是为了理解如果换你来设计，你也会这么想。
+
+1. 先想清楚：损失函数到底在做什么
+在说具体函数之前，先明确一个最基础的问题。
+训练一个模型，本质是一个 优化问题：
+$$
+\theta^* = \arg\min_\theta \mathbb{E}{(x,y)\sim\mathcal{D}} [\mathcal{L}(f\theta(x), y)]
+$$
+损失函数 $\mathcal{L}$ 是你的评判标准——模型输出 $\hat{y}$ 离真实标签 $y$ 有多远。梯度下降就是沿着这个&quot;有多远&quot;的方向，一步步把模型参数调得让输出更接近标签。
+但&quot;有多远&quot;这个距离，不是你说了算，是损失函数说了算。同一个预测结果，用不同损失函数测出来的&quot;距离&quot;天差地别，从而导致梯度方向和大小也天差地别。
+所以损失函数设计的本质是：我们想让模型在什么方向上、以多快的速度更新参数。
+这是全文的核心视角，带着它看后面的每个损失函数。
+
+2. 回归的起点：L1 和 L2 损失
+2.1 L2 Loss（MSE）——惩罚大错误
+$$
+\mathcal{L}_{L2} = (y - \hat{y})^2
+$$
+L2 损失是最直观的想法：预测值和真实值越远，损失越大。而且因为平方的关系，偏离越大，惩罚增速越快。
+这意味着什么？
+
+一个误差为 3 的样本，损失是 9
+一个误差为 1 的样本，损失是 1
+
+前者对梯度的贡献是后者的 9 倍（绝对值差是 3 倍，平方后是 9 倍）。所以 MSE 会拼命优先消灭大误差样本，哪怕牺牲其他样本的精度。
+这合理吗？ 要看场景。如果你的数据噪声服从高斯分布（正态分布），MLE（最大似然估计）推导出来的刚好就是 MSE——那它不仅是合理的，还是理论最优的。但如果数据有离群点，MSE 会把大量精力花在拟合那一个离群点上，导致整体模型变差。
+2.2 L1 Loss（MAE）——不怕离群点
+$$
+\mathcal{L}_{L1} = |y - \hat{y}|
+$$
+L1 损失对误差的惩罚是线性的。一个误差 3 的样本，损失就是 3；误差 1 就是 1。梯度恒定是 ±1（不考虑符号），不受误差大小影响。
+所以 L1 的好处是对离群点不敏感——一个离群点不会把整个梯度带偏。但也正因为梯度恒定，在误差接近零时，模型仍然以同样速率更新参数，这导致它在最优解附近容易震荡，收敛不如 MSE 平滑。
+2.3 Huber Loss——取两者之长
+$$
+\mathcal{L}_{Huber} =
+\begin{cases}
+\frac{1}{2}(y - \hat{y})^2 &amp; \text{如果 } |y - \hat{y}| \leq \delta \
+\delta|y - \hat{y}| - \frac{1}{2}\delta^2 &amp; \text{其他}
+\end{cases}
+$$
+Huber 的设计思路非常清晰：小误差用平方、大误差用线性。
+
+当误差小（$&lt;\delta$），它行为像 MSE，梯度线性减小，收敛平稳
+当误差大（$&gt;\delta$），它行为像 L1，梯度被截断在 $\pm\delta$，不被离群点带偏
+
+这个 $\delta$ 是你要设的超参数——它决定了&quot;多大算大误差&quot;。它的存在本身就体现了设计者的思考：同一个损失函数在不同尺度下应该有不同行为。
+Huber 损失的梯度：
+$$
+\frac{\partial \mathcal{L}_{Huber}}{\partial \hat{y}} =
+\begin{cases}
+\hat{y} - y &amp; \text{如果 } |y - \hat{y}| \leq \delta \
+\delta \cdot \text{sign}(\hat{y} - y) &amp; \text{其他}
+\end{cases}
+$$
+看这个梯度形式，你会发现它对大误差的惩罚是有上限的——不管你是差了 100 还是 1000，梯度最大就是 $\delta$。这对含有噪声数据的回归任务非常合适，也是为什么很多强化学习的 value 网络使用 Huber Loss（比如 DQN 就用它来稳定 TD-error 的梯度）。
+
+3. 分类任务的核心：CrossEntropy 为什么比 MSE 好
+3.1 先试一下：分类用 MSE 会怎样
+假设一个二分类问题，标签 $y \in {0, 1}$，模型输出 $\hat{y} \in [0, 1]$（sigmoid 之后）。
+用 MSE：
+$$
+\mathcal{L}_{MSE} = (y - \hat{y})^2
+$$
+看梯度怎么传。令模型输出为 $z$（sigmoid 之前的 logit），sigmoid 为 $\sigma(z) = 1/(1+e^{-z})$，那么 $\hat{y} = \sigma(z)$。
+用链式法则：
+$$
+\frac{\partial \mathcal{L}_{MSE}}{\partial z} = 2(\hat{y} - y) \cdot \sigma’(z)
+$$
+而 sigmoid 的导数有个致命特性：当 $\hat{y}$ 接近 0 或 1 时，$\sigma’(z)$ 接近 0。
+这意味着什么？当模型的预测已经很确定（无论对错）的时候，梯度会变得非常非常小——学习几乎停滞。
+想象一个模型预测 $\hat{y}=0.99$，但真实标签是 $y=1$。虽然预测已经很接近正确值了，但 $\sigma’(z)$ 大约只有 0.01 量级，梯度被这个因子&quot;吃掉&quot;，更新极慢。更糟糕的是，如果模型预测 $\hat{y}=0.99$，真实标签是 $y=0$，它本应该大幅度调整，但因为 $\sigma’(z)$ 太小，同样学不动。
+这就是 MSE 在分类任务中的梯度消失问题。
+3.2 交叉熵的设计：让梯度正比于误差
+二分类交叉熵（Binary Cross-Entropy, BCE）：
+$$
+\mathcal{L}_{BCE} = -[y\log(\hat{y}) + (1-y)\log(1-\hat{y})]
+$$
+为什么中间有个 $\log$？来看梯度：
+对正样本（$y=1$），损失简化为 $-\log(\hat{y})$，梯度：
+$$
+\frac{\partial \mathcal{L}_{BCE}}{\partial z} = -(1 - \sigma(z)) = \hat{y} - 1
+$$
+对负样本（$y=0$），损失简化为 $-\log(1-\hat{y})$，梯度：
+$$
+\frac{\partial \mathcal{L}_{BCE}}{\partial z} = \sigma(z) = \hat{y}
+$$
+统一写成：
+$$
+\frac{\partial \mathcal{L}_{BCE}}{\partial z} = \hat{y} - y
+$$
+梯度直接正比于预测和标签的差值——完全不依赖 $\sigma’(z)$。模型错的离谱时，梯度就大；快对了，梯度就小。
+相比 MSE 中梯度被 $\sigma’(z)$ 压缩的问题，交叉熵的设计优雅地避开了这个陷阱。
+多分类版本就是 softmax + 交叉熵：
+$$
+\mathcal{L}{CE} = -\sum{c=1}^{C} y_c \log\left(\frac{e^{z_c}}{\sum_{j}e^{z_j}}\right)
+$$
+梯度形式同样简洁。对正确类别 $c^*$ 的 logit：
+$$
+\frac{\partial \mathcal{L}{CE}}{\partial z{c^}} = p_{c^} - 1
+$$
+对其他类别 $c \neq c^*$：
+$$
+\frac{\partial \mathcal{L}{CE}}{\partial z{c}} = p_{c}
+$$
+非常干净。每个梯度的方向都告诉模型：正确类别的 logit 往上拉，其他类别的 logit 往下压，幅度正比于当前的置信度偏差。
+3.3 从信息论角度看交叉熵
+交叉熵还有一个更底层的解释视角：
+$$
+H(p, q) = -\sum_{x} p(x) \log q(x)
+$$
+这衡量的是用分布 q 来编码分布 p 的信息时，需要的额外比特数。最小化交叉熵就是在让模型分布 $q$ 尽可能接近真实分布 $p$——也就是在做 KL 散度最小化。
+这个视角给了一个直觉：分类问题的本质不是&quot;让数值接近&quot;，而是&quot;让分布匹配&quot;。用 MSE 去做分类，本质上是在用欧氏距离衡量分布差异，它不知道正确概率和错误概率之间的关系。而交叉熵天然懂。
+
+4. 对比损失：当任务涉及&quot;相似性&quot;
+4.1 Contrastive Loss——拉近正对，推远负对
+$$
+\mathcal{L}_{Contrastive} = (1-y)\cdot d^2 + y\cdot \max(0, m-d)^2
+$$
+其中 $d$ 是两个样本嵌入的欧氏距离，$y=1$ 表示这对样本相似（正对），$y=0$ 表示不相似（负对），$m$ 是 margin。
+这个函数的设计哲学很直接：
+
+正对：让它们靠近，距离的平方就是惩罚项
+负对：只用管&quot;离得不够远的&quot;——距离超过 margin $m$ 的负对不产生任何损失
+
+为什么要设这个 margin？不是所有负对都应该被推得无限远。你只需要它们分离到一定程度就够了。没有 margin 的话，模型会试图把所有负对推到无限远，但这是不必要的——就像你不需要把&quot;猫&quot;和&quot;桌子&quot;的向量表示隔到天边，只要它们不混淆就行。
+4.2 Triplet Loss——你比我近就行
+$$
+\mathcal{L}_{Triplet} = \max(0, d(a,p) - d(a,n) + m)
+$$
+这里有一个 anchor 样本 $a$，一个正样本 $p$，一个负样本 $n$。损失只在负样本比正样本距离 anchor 还近（加上 margin）时产生。
+设计逻辑：只要正对已经比负对近，我就不管了。不需要绝对距离小，只需要相对距离对。这种&quot;相对而非绝对&quot;的思路在人脸识别、行人重识别等任务中效果显著。
+对比一下：Contrastive Loss 对每个样本对独立施压，Triplet Loss 对关系施压。它们的区别很像监督学习与排序学习的区别——前者关心绝对值，后者关心相对值。
+
+5. KL 散度：当你想让分布靠近但不完全相等时
+$$
+D_{KL}(p \parallel q) = \sum_{x} p(x) \log\frac{p(x)}{q(x)}
+$$
+KL 散度最值得提的一点是：它不是对称的。$D_{KL}(p\parallel q) \neq D_{KL}(q\parallel p)$。
+这个不对称性恰恰是设计者的意图：
+
+前向 KL（$D_{KL}(p\parallel q)$）：在 $p$ 有密度的地方，$q$ 必须有密度，否则损失极大。这叫 mode-covering——$q$ 会试图覆盖 $p$ 的所有峰值，哪怕这导致它在峰值之间分配概率。
+反向 KL（$D_{KL}(q\parallel p)$）：在 $q$ 有密度而 $p$ 没有的地方，损失极大。这叫 mode-seeking——$q$ 会只拟合 $p$ 的主要模式，放弃次要模式，产生一个更集中的分布。
+
+你在用 VAE 时用的是前向 KL（$D_{KL}(q(z|x) \parallel p(z))$），让后验分布逼近先验。而在强化学习的策略优化（如 TRPO/PPO）中，你限制新旧策略的 KL 散度，用的方向取决于具体公式。
+这个不对称性不只是数学上的小细节——它决定了算法的行为是&quot;覆盖&quot;还是&quot;聚焦&quot;，设计时选哪个方向看你的任务需要哪种特性。
+
+6. 从 MLE 统一视角看损失函数
+讲到这里，你会发现很多损失函数都可以从**最大似然估计（MLE）**的角度统一理解：
+
+假设 $p(y|\hat{y}) = \mathcal{N}(\hat{y}, \sigma^2)$ → MLE 给出 MSE
+假设 $p(y|\hat{y}) = \text{Laplace}(\hat{y}, b)$ → MLE 给出 L1
+假设 $p(y|\hat{y}) = \text{Bernoulli}(\hat{y})$ → MLE 给出 BCE
+假设 $p(y|\hat{y}) = \text{Categorical}(\hat{y})$ → MLE 给出 CrossEntropy
+
+每种损失函数背后都隐含了一个关于数据分布的假设。 你选择损失函数时，本质上是在选择你相信数据服从哪种分布。
+这不是学术上的马后炮——当你面对一个新问题，不知道用什么损失函数时，问自己：“我的数据噪声长什么样？” 零星的离群点？高斯噪声？离散类别？你的答案就是你的损失函数。
+
+总结
+
+
+
+损失函数
+适合场景
+核心设计思想
+
+
+
+
+MSE (L2)
+高斯噪声的回归
+平方惩罚，优先消灭大误差
+
+
+MAE (L1)
+含离群点的回归
+线性惩罚，不受离群点主导
+
+
+Huber
+通用回归
+小误差L2 + 大误差L1
+
+
+CrossEntropy
+分类
+梯度正比于误差，无梯度消失
+
+
+Contrastive
+度量学习
+正对拉近、负对推远到margin
+
+
+Triplet
+细粒度相似性
+只需相对距离，不要绝对距离
+
+
+KL Divergence
+分布匹配
+不对称性设计，选覆盖还是聚焦
+
+
+
+所有损失函数的共同目标都是让模型朝着正确的方向更新参数。区别在于：它们定义了&quot;正确&quot;的标准，而这个标准，决定了你模型最终学到的行为。
+
+下篇预告：优化器的直觉——SGD 为什么要有动量，Adam 又为什么好用。
+]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>深度学习</tag>
+        <tag>机器学习</tag>
+        <tag>损失函数</tag>
+        <tag>数学</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>优化器的直觉——从 SGD 到 Adam，每一步为什么这样走</title>
+    <url>/2026/06/03/optimizer_intuition/</url>
+    <content><![CDATA[优化器的直觉——从 SGD 到 Adam，每一步为什么这样走
+上一篇文章我们聊了损失函数的设计哲学——一个函数告诉你&quot;模型现在有多差&quot;。但知道有多差只是第一步，更关键的问题是：知道了差在哪，该怎么走？
+这就是优化器的工作。
+从最早的梯度下降（SGD），到带动量（Momentum），到自适应学习率的 AdaGrad/RMSProp，再到集大成者 Adam——这条进化路径不是零散的拼凑，而是人们在实践中一步步回答同一个问题的过程：
+用梯度更新参数时，怎么才能又快又稳地走到最优解？
+这篇博客会沿着这个进化路径，讲清楚每个优化器解决了什么问题、又是怎么解决的，以及它们各自在什么场景下好用。
+
+1. SGD：最朴素的走法
+$$
+\theta_{t+1} = \theta_t - \eta \cdot g_t
+$$
+vanilla SGD 的逻辑最简单不过：看梯度往哪指，就往哪走一步，步长固定为 $\eta$。
+好在哪里？直觉、简单、参数少。在凸优化理论上，SGD 有很好的收敛保证。
+但实际训练中问题一堆：
+
+步长难选。设大了震荡甚至发散，设小了龟速收敛。而且一个好的步长在训练初期和后期可能完全不同。
+梯度方向嘈杂。mini-batch 的梯度只是真实梯度的有偏估计，在陡峭方向上震荡严重。想象你在山谷中下坡，每一步都在左右乱晃，实际路径像个锯齿。
+在峡谷地形中效率极低。所谓峡谷（ravine）是指某个方向梯度极大而另一个方向梯度极小——比如损失函数在参数 $w_1$ 方向上非常陡，在 $w_2$ 方向上非常平缓。SGD 会在陡峭方向来回震荡，而在平缓方向几乎不动。形象地说，你每一步都踩在晃动的钢索上，但想去的地方其实在正前方。
+
+这些问题的核心是：梯度信息本身不够用——只有一阶信息，没有历史、没有曲率感知。
+于是人们开始想办法给它&quot;加点料&quot;。
+
+2. 动量（Momentum）：给下山的路加个惯性
+$$
+\begin{aligned}
+v_{t+1} &amp;= \beta v_t + g_t \
+\theta_{t+1} &amp;= \theta_t - \eta v_{t+1}
+\end{aligned}
+$$
+动量（Momentum）的思路简单又优雅：不要只看当前这一步的梯度，还要带着之前积累的&quot;动量&quot;走。
+直觉可以这样理解：想象你从山顶推一个铁球下山。铁球不会每步都被小石子带偏，因为它有惯性——之前积累的速度让它在一段时间内保持方向一致。
+动量在峡谷地形中尤其有用：
+
+在剧烈震荡的方向（陡峭方向），梯度正负交错，动量叠加后会相互抵消，震荡幅度大幅减少
+在缓慢变化的方向（平缓方向），梯度虽然小但方向恒定，动量会不断累积，加速前进
+
+所以动量做了两件好事：抑制震荡 × 加速平缓方向。
+折中的是 $\beta$ 这个超参数，通常取 0.9——意味着最新梯度权重为 1，前面 10 步左右累积的历史权重为 9，大约相当于用最近 $1/(1-\beta) \approx 10$ 步的平均梯度来更新。
+Nesterov 加速梯度（NAG）：往远处看一眼再走
+NAG 在动量的基础上做了一处小改动：先按照动量方向往前探头，再计算那个位置的梯度。
+$$
+\begin{aligned}
+v_{t+1} &amp;= \beta v_t + \nabla f(\theta_t - \eta\beta v_t) \
+\theta_{t+1} &amp;= \theta_t - \eta v_{t+1}
+\end{aligned}
+$$
+差别在哪？标准动量是在当前位置计算梯度，再沿着动量方向走。NAG 先沿着动量方向&quot;预览&quot;一下下一步的位置，在那个位置算梯度，然后综合两者。
+这个改动带来的效果是：NAG 在接近最优点时有过冲预判能力。当动量带你冲向山谷底部时，NAG 会在到达之前就&quot;看到&quot;坡开始向上，提前刹车减速。而标准动量要等到越过谷底、梯度反向之后才开始减速，容易过冲和震荡。
+很多研究中，NAG 比标准动量收敛更快、更稳定，这也是它在很多实践中被广泛使用的原因（比如 ResNet 的官方训练就用 NAG）。
+
+3. AdaGrad：让每个参数有自己的步长
+到现在为止，所有参数都共享同一个学习率 $\eta$。但这合理吗？
+考虑一个稀疏特征场景：特征 $A$ 在所有样本中几乎都是 0，只有少数几个样本有非零值；特征 $B$ 几乎每个样本都有值。对特征 $A$ 来说，它只在少数样本中收到梯度信号，每个信号都非常宝贵，需要珍惜地用大一点步长去学。对特征 $B$ 来说，每个样本都有梯度，步长小一点也没关系，反复微调即可。
+AdaGrad 的设计目标就是：让出现频率低的参数学习率大一些，出现频率高的参数学习率小一些。
+它的做法是累积每个参数的历史梯度的平方和：
+$$
+\theta_{t+1,i} = \theta_{t,i} - \frac{\eta}{\sqrt{G_{t,ii} + \epsilon}} \cdot g_{t,i}
+$$
+其中 $G_{t,ii} = \sum_{\tau=1}^{t} g_{\tau,i}^2$ 是参数 $i$ 从开始到当前所有梯度的平方和。
+核心直觉：如果一个参数历史上梯度一直很大，说明它频繁被更新，那它的学习率应该减小；如果一个参数罕见有梯度，它的累积平方和很小，学习率相对更大。
+AdaGrad 在稀疏数据上效果非常好（比如 NLP 中的词嵌入训练），但它有一个致命问题：累计平方和 $G_t$ 随着训练步数单调递增，学习率不断衰减，最终趋近于零，模型彻底停止学习。 这在非凸的深度网络中尤其严重——学了一段时间后你就学不动了。
+
+4. RMSProp：只记&quot;近期&quot;的梯度
+AdaGrad 的&quot;累积到死&quot;问题让 Geoff Hinton 在课堂上提出了 RMSProp（虽然他没正式发论文）。思路很简单：
+不要累积所有历史梯度，而是用指数移动平均（EMA）来维护梯度平方的估计。
+$$
+\begin{aligned}
+v_t &amp;= \beta v_{t-1} + (1-\beta) g_t^2 \
+\theta_{t+1} &amp;= \theta_t - \frac{\eta}{\sqrt{v_t + \epsilon}} \cdot g_t
+\end{aligned}
+$$
+注意 $g_t^2$ 表示 element-wise 平方。
+这个改动带来的变化是革命性的：
+
+$v_t$ 不再单调递增，而是对近期梯度做加权平均
+如果当前区域梯度大，$v_t$ 上升，学习率自动减小
+如果当前区域梯度小，$v_t$ 下降，学习率自动增大
+学习率可以上下波动，而不是像 AdaGrad 那样只会一路下跌
+
+在非凸优化（几乎所有深度网络都是）中，RMSProp 的表现远好于 AdaGrad，因为模型在不同区域需要的步长不同——陡峭区域要小步、平缓区域要大步。
+这个&quot;让学习率自适应梯度尺度&quot;的想法，是 Adam 的核心组件之一。
+
+5. Adam：集大成者
+$$
+\begin{aligned}
+m_t &amp;= \beta_1 m_{t-1} + (1-\beta_1) g_t \
+v_t &amp;= \beta_2 v_{t-1} + (1-\beta_2) g_t^2 \
+\hat{m}_t &amp;= \frac{m_t}{1-\beta_1^t}, \quad \hat{v}t = \frac{v_t}{1-\beta_2^t} \
+\theta{t+1} &amp;= \theta_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \cdot \hat{m}_t
+\end{aligned}
+$$
+Adam = Momentum + RMSProp，这个说法没错，但它不是简单的加法。Adam 的优雅在于它同时解决了三个问题：
+
+
+
+问题
+怎么解决的
+对应组件
+
+
+
+
+梯度方向嘈杂
+一阶动量 EMA 平滑梯度方向
+$m_t$
+
+
+不同参数尺度不同
+二阶动量 EMA 自适应调整步长
+$v_t$
+
+
+初始阶段偏差大
+偏差校正（bias correction）
+$\hat{m}_t, \hat{v}_t$
+
+
+
+第三个点是最容易被忽略的。在训练初期，$m_t$ 和 $v_t$ 都是从 $0$ 开始累加的，导致前几步的估计严重偏小。不做偏差校正的话，前几步的更新会特别大，然后迅速变小——这种&quot;开头猛冲然后急刹&quot;的行为对训练是不利的。
+偏差校正让初始阶段更平稳。随着 $t$ 增大，$1-\beta^t$ 趋近于 1，校正的作用逐渐消失。
+实际使用中，默认参数 $\beta_1=0.9$、$\beta_2=0.999$、$\epsilon=10^{-8}$ 在大多数场景下表现良好，这也是 Adam 被誉为&quot;收件即用&quot;优化器的原因。
+Adam 的弱点与变体
+Adam 也不是完美无缺。在有些任务中（尤其是 CV 中的大规模训练），Adam 的泛化能力不如带动量的 SGD。一个流行的解释是：Adam 的自适应步长在某些情况下会导致模型陷入损失平面的锐利极小值（sharp minima），而 SGD 更倾向于找到平坦极小值（flat minima），泛化更好。
+于是有了 AdamW（Adam with decoupled weight decay），它将 SGD 中的 weight decay（L2 正则化）从 Adam 的自适应更新中解耦出来。在大多数现代 Transformer 训练中，AdamW 已经是事实上的标准。如果你在用 PyTorch，torch.optim.AdamW 现在比 torch.optim.Adam 更推荐。
+另一个有意思的变体是 Nadam（Nesterov + Adam），加上 Nesterov 的&quot;往前看一步&quot;机制。
+
+6. 实际选择建议
+
+
+
+场景
+推荐优化器
+理由
+
+
+
+
+CV 分类/检测（大batch）
+SGD + Momentum (NAG)
+泛化好，易找 flat minima
+
+
+NLP / Transformer
+AdamW
+自适应步长适合不同词频，weight decay 解耦
+
+
+强化学习（value/policy 网络）
+Adam
+不需要最强泛化，要快速收敛
+
+
+GAN 训练
+Adam (常用)
+两网络动态博弈，稳定比泛化重要
+
+
+稀疏特征（推荐系统）
+Adam / AdaGrad
+自适应步长对稀疏特征友好
+
+
+资源受限 / 小模型
+SGD
+简单，少超参数，够用
+
+
+
+需要强调的是：没有绝对最好的优化器，只有最适合当前任务的。 如果你在跑一个新项目，先用 Adam 快速迭代验证想法，最后换 SGD+Momentum 再跑一轮——这是很多研究者和工程师的实际工作流。
+
+总结
+从 SGD 到 Adam 的进化史，本质上是人们在回答三个问题：
+
+如何抑制震荡、加速收敛？ → Momentum / NAG
+如何为每个参数自适应调整步长？ → AdaGrad / RMSProp
+如何把这俩结合起来并处理初始偏差？ → Adam
+
+每一步改进都来自一个具体的痛点：SGD 在峡谷中震荡 → 动量加惯性；固定学习率不适应不同参数 → AdaGrad 累积历史梯度；累积到死 → RMSProp 用指数动平均；缺少方向平滑 → Adam 融合一阶和二阶动量。
+理解了这个演进脉络，你选优化器就不再是&quot;大家都用 Adam 所以我也用&quot;，而是知道每个选择背后的 trade-off。
+
+下篇预告：强化学习算法的设计美学——从 Bellman 方程到 PPO 的直觉路径。
+]]></content>
+      <categories>
+        <category>机器学习</category>
+      </categories>
+      <tags>
+        <tag>深度学习</tag>
+        <tag>机器学习</tag>
+        <tag>数学</tag>
+        <tag>优化器</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>(科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习</title>
+    <url>/2026/02/18/mpc/</url>
+    <content><![CDATA[四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习
+四足机器人自从宇树机器狗出圈后得到频繁讨论，原因在于足式机器人几乎把机器人领域里核心的、先进的问题都搬到了一台机器上，要面对机构设计，电机驱动，运动学，动力学，状态估计，轨迹规划，全身控制，强化学习以及仿真到实机的迁移。所以这类足式机器人给作为初学者的我造成不小的困扰,问题不在于技术的细节，路线很多，但它们之间的关系不那么清晰，如何做到力位混合控制？如何将学习策略和模型控制结合？我们常常缺少一条完整的技术脉络。
+当你开始做机器人，最关键的不是先选一个最先进的策略，而是看你的目标任务是要跑一条结构化的赛道？或者跑通用的locomotion?还是要面对复杂的环境？层出不穷的技术路线不应该简单堆叠在一起,而是要回答一个更实际的问题：如果要把一台四足机器人从能站、能迈步，逐步做到稳定奔跑、跳跃越障、复杂地形适应，甚至进一步做到学习型 locomotion，那么中间到底要跨过哪些层次，每一层又解决什么问题。
+四足机器人的发展可以理解成一条不断抬高控制层级的路线。最底层解决的是几何问题，也就是腿在哪里、足端在哪里、关节该转多少；再往上一层，开始解决轨迹与时序问题，也就是摆动腿如何走、步态如何切换、机身姿态怎样补偿；继续往上，系统就不再满足于“把动作做出来”，而是要解决力和接触的问题，也就是支撑腿怎样提供地面反作用力、机身怎样维持平衡、接触切换如何保持稳定；再往后，控制器开始关心未来时域内的状态演化，于是出现 MPC；当问题空间进一步扩大到高维观测、复杂地形和非显式建模能力时，强化学习、模仿学习才开始真正进入主舞台。这个顺序不是绝对固定的，但如果缺少这种层次意识，很容易出现一种常见误区：把某一个方法当成答案，而忽略了它在整条系统链中的位置。
+一、四足机器人真正的起点，是运动学而不是“高级控制”
+只要是一台腿式机器人，首先就必须解决一个很朴素的问题：给定关节角，足端现在到底在什么位置；反过来，如果我希望足端去到某个位置，关节又该转到什么角度。前者是正运动学，后者是逆运动学。正运动学看起来只是一个“算位置”的工具，但它实际是状态可视化、足端误差计算、速度映射和调试分析的基础。如果没有正运动学，控制器甚至无法知道现在的腿究竟摆到了哪里。逆运动学更直接，它是从“我希望足端去哪里”到“电机应该怎么转”的桥梁。四足机器人的站立、下蹲、迈步、摆腿、落足，其实都离不开这一步。
+一旦逆运动学打通，机器人就获得了最原始的一种能力：把空间中的足端目标点，转换成关节命令并由驱动器执行。很多工程体系都是在这个意义上真正开始工作的。可以把这理解为四足机器人最早的操作系统：它不一定聪明，但它至少让腿开始听话。哪怕只完成了逆运动学部分，你的机器人就能开始牙牙学步，而运动的效果更多依赖于人为给定的参数。
+https://www.tup.com.cn/upload/books/yz/090429-01.pdf66
+并联腿可以参考:
+https://zhuanlan.zhihu.com/p/
+二、从逆运动学到足端轨迹，四足机器人第一次进入“会走路”而不是“会摆腿”
+仅仅有逆运动学，并不意味着机器人就会走。很多初学者在写出一套 IK 程序后，发现机器人确实能把腿摆到某个指定位置，但一旦连续运动起来，轨迹不顺、触地冲击大、步态节奏混乱、整机姿态飘动的问题就会集中暴露。原因很简单，逆运动学只解决了某一个瞬间的几何映射，却没有回答“这条腿应该沿着什么路径过去”以及“何时抬脚、何时落脚”的问题。
+这就引出了足端轨迹规划。对于摆动腿来说，足端轨迹并不只是从 A6 点移动到 B 点那么简单。一个好的足端轨迹至少要同时满足几个要求：摆动过程中不能刮地，落足时不能带来过大的冲击，抬腿高度要足以越过障碍，摆动相的时间分配要与整体步态节奏匹配，而且轨迹本身还要尽量平滑，以免在逆运动学和关节控制层诱发高频抖动。因此，工程里常见的三次样条、五次多项式、贝塞尔曲线、摆线轨迹，本质上都在做同一件事：给摆动腿构造一条既能完成几何任务、又足够平滑可执行的路径。
+在很多四足研究里，贝塞尔曲线之所以常被使用，一个重要原因就是它比较容易控制起点和终点附近的切向性质。对足端轨迹来说，这意味着触地前后的速度分布更容易设计，从而减小落足冲击。跳跃和高速步态研究里也经常看到三次多项式的使用，因为它能比较自然地约束位置、速度乃至加速度边界，让机体或腿部在起跳和落地阶段更连续。真正有经验的控制器，从来不会把足端轨迹看成一条纯几何曲线，它其实是步态、接触、姿态与执行器能力共同作用后的结果。
+换句话说，逆运动学让机器人从“不会动”变成“能动腿”，而足端轨迹规划和步态时序设计，则让它第一次从“会摆腿”进入“会走路”的范畴。
+三、为什么位置控制长期没有退出四足机器人的主舞台
+只要谈到四足机器人，总会有人觉得位置控制“太基础”或者“不够先进”。这种看法的问题在于，它把方法和适用场景割裂开了。控制方式从来不能脱离问题本身去评价。对于大量样机、竞赛平台和第一阶段原型机来说，位置控制不但没有过时，反而往往是最合理的出发点。
+原因并不复杂。位置控制最大的价值，在于它极其符合四足机器人早期开发的现实条件。首先，它实现简单，调试链条短，能迅速验证机械结构、逆运动学、轨迹规划和步态时序是否正确。其次，位置控制对于结构化环境非常有效。当场地是已知的，障碍高度和位置是可预估的，机器人的任务主要是完成固定动作时，位置控制完全可以支撑稳定、快速而且高度可复现的表现。再次，位置控制对硬件的要求相对友好。很多平台在关节力矩控制能力、状态估计质量和接触建模能力还不成熟时，直接上复杂动力学控制并不会更强，反而可能更不稳定。
+这也是为什么在很多比赛型四足或并联四足项目中，位置控制长期占据主流。因为这些系统真正需要的，不是对任意未知地形都最优，而是在给定任务中把动作做到最好。比赛场景强调的是通过率、速度、稳定性和有限周期内的可交付性，只要逆运动学、足端轨迹和机身姿态补偿做得扎实，位置控制就完全可以支撑跳跃、跨障和快速通过。早期大量优秀平台恰恰都是沿着这条路线建立起来的。它们并不是因为“不懂复杂控制”才使用位控，而是在当时的任务和硬件条件下，这就是最经济也最有效的系统组织方式。
+当然，位置控制也有明确边界。一旦任务从结构化场景走向复杂地形，接触不确定性和外部扰动显著增强，单纯靠几何轨迹跟踪就会出现根本性不足。问题不是它能不能把腿摆到指定位置，而是它没有直接回答“机器人此刻应该施加怎样的力才能维持平衡”的问题。也正是在这个意义上，四足控制才会从位置层逐步走向力层。
+四、四足机器人一旦真正离开平地，问题就从“几何”变成了“力”
+四足机器人在平地上按照预设轨迹迈步，看起来似乎已经完成了 locomotion 的主要任务。但只要环境稍微复杂一点，例如地面有坡度、有碎石、有高度突变，或者机器人需要提高速度、承受更大扰动，问题就会立刻发生变化。此时最关键的问题不再是“摆动腿怎么走”，而是“支撑腿在地面上究竟提供了怎样的力，机体为什么能稳定地被托住，又为什么会失稳”。
+这就是四足机器人控制中一个非常重要的转折点：从运动学主导，走向动力学主导。只要机器人与地面的接触开始起决定性作用，控制器就必须关心支撑力、摩擦锥、质心加速度、机身姿态耦合以及接触切换时的冲击问题。传统的位置控制虽然仍然可以继续使用，尤其是在摆动腿一侧，但仅靠它已经不足以解释整机的稳定运动。
+这一层最典型的思想，就是力位混合控制。它本身不是某个单一算法，而是一种非常自然的分工方式。摆动腿更适合做位置跟踪，因为它的任务是把足端送到预定落脚点；支撑腿更适合做力或阻抗控制，因为它的任务是通过地面反作用力来支撑机体、调节姿态并抵抗扰动。许多成熟的四足控制器本质上都遵循这个分工，只不过在实现层面上，有的用显式力控，有的用阻抗控制，有的通过优化求解接触力，有的则通过模板模型间接实现。
+一旦进入力层，柔顺性也会变得特别重要。四足机器人与地面是不断碰撞和切换接触的系统，如果控制过硬，触地瞬间就会出现大冲击，关节抖振、足端反弹、甚至整机结构受损都会随之而来。很多跳跃控制工作之所以在落地阶段专门加入修正项，就是因为它们意识到，真正决定动作能否实用的，不只是起跳能不能跳得起来，更是落地能不能稳稳接住。现代高性能关节执行器之所以反复强调低减速比、可回驱和高带宽，也正是因为它们让控制器第一次有能力在真实机器上“认真处理力”。
+五、模板模型的意义，不是简化问题，而是抓住最应该控制的量
+当系统开始认真对待动力学问题时，另一个现实困难就会立刻出现：整台四足机器人太复杂了。完整动力学模型维度高、耦合强、接触切换频繁，如果一开始就对整机做全量建模和实时求解，工程上往往很难承受。因此，四足控制里才会反复出现各种模板模型。模板模型的价值从来不只是“把问题弄简单”，而是帮我们抓住在当前阶段最值得控制的核心量。
+倒立摆模型的地位正是这样建立起来的。它把机器人抽象成质心与支撑点之间的关系，用低维方式描述平衡与速度演化，因此很适合做落脚点估计、速度调节和步态切换分析。再进一步，SLIP，也就是弹簧负载倒立摆，则把腿的弹性和身体的弹跳特性纳入进来，所以它特别适合解释跑动、跳跃和动态步态中的支撑相行为。许多四足跑跳控制之所以喜欢使用 SLIP，并不是因为它能完整描述一台机器人，而是因为它能很有效地抓住“身体像弹簧系统一样交换势能和动能”的本质。
+再往上一步，就是单刚体模型。它把机器人躯干看成刚体，把腿与地面的作用浓缩为若干接触点和接触力，这样一来，质心加速度、角动量变化、支撑力分配和摩擦约束就都可以在统一框架下表达。现代四足控制里，大量 VMC、接触力 QP、MPC 和上层规划，本质上都是在单刚体模型或其变体上展开。之所以几乎所有高动态四足平台都要经过这一步，是因为它恰好处在“既足够简单、又足够有物理意义”的那个位置。
+因此，模板模型并不是为了逃避真实机器人动力学，而是为了让控制器先学会抓住最关键的那几个量。你甚至可以说，四足技术路线中所谓“越来越高级”的过程，很大程度上就是模板模型越来越贴近真实系统、同时控制器处理约束和不确定性的能力越来越强的过程。
+六、VMC 的价值，在于它第一次把“想让身体怎么动”直接翻译成了“应该施加什么力”
+如果沿着上面的脉络继续往前走，VMC 会是一个非常自然的下一步。很多人第一次接触 VMC 时，往往会把它看成一种“比较直觉的力控”，这种理解并不算错，但还不够准确。VMC 真正的意义，在于它第一次把控制目标从几何轨迹层，明确地抬升到了虚拟力学层。
+所谓虚拟模型控制，本质上就是在机器人身上想象一些虚拟的弹簧、阻尼器或其他力学元件，再根据这些虚拟元件产生机体所需的虚拟力和虚拟力矩，最后通过雅可比映射到关节扭矩。这种思想之所以强大，在于它提供了一种非常自然的中间语言。以往我们只能说“把身体抬高一点”“把姿态扶正一点”“让机身往前加速一点”，而 VMC 把这些语言统一翻译成“在身体上施加某个虚拟力或虚拟力矩”。一旦翻译完成，剩下的工作就是通过腿部几何关系把这些力落到关节上。
+这使得 VMC 特别适合做机身高度控制、俯仰滚转姿态控制以及一些中低速动态步态中的支撑相控制。对很多四足原型机来说，VMC 往往是控制体系第一次从“纯几何”走向“动力学”的标志。它没有像优化控制那样一次性把所有约束都纳入进来，但已经能让系统围绕机体层面的目标进行闭环。
+在 trot 控制中，VMC 之所以经典，也是因为它非常符合支撑相与摆动相的分工逻辑。摆动腿仍然可以沿着预定轨迹摆动，而支撑腿则通过虚拟力学元件托住机身、调节姿态和速度。再配合状态机和接触检测，系统就能形成一套相当完整的 locomotion 结构。这套结构的重要性并不在于它是不是“最优”，而在于它第一次让整机表现出一种比较真实的动态协同。
+七、WBC 真正解决的，不是“控制更多东西”，而是“多个目标之间如何不互相打架”
+只要四足机器人继续朝复杂任务推进，就迟早会碰到一个问题：你想控制的量越来越多了。你既想让机身保持姿态，又想让质心跟踪速度，还想让摆动腿按轨迹落脚，同时又不能违反摩擦约束、法向力约束和关节力矩限制。到了这个阶段，系统就不再是“加一个控制器控制一个量”那么简单，因为不同目标之间会彼此耦合、彼此竞争，甚至直接冲突。
+WBC 的意义，正是在这里体现出来。它不只是“控制更多任务”，而是要回答多个任务如何在同一台机器人上同时成立。Whole-Body Control 本质上是一种整机层的任务协调框架。它允许你把姿态、速度、接触、摆动腿轨迹、力矩限制、关节约束等统一放到一个层级求解或优化求解框架里。换句话说，它真正要解决的是“谁优先、谁妥协、谁必须满足、谁可以近似满足”的问题。
+很多现代 WBC 都采用 QP 形式来写。给定期望质心加速度、摆动腿轨迹误差和一系列接触约束，通过二次规划求出满足约束的足端力或关节加速度，再通过动力学关系映射到执行器命令。它的优势并不在于形式上看起来更“高级”，而在于它能把原本彼此冲突的任务，放进同一个可计算的框架中。对四足机器人来说，这一点极其关键。因为机器人不是一个单目标系统，而是一个多任务多约束系统。如果缺少 WBC 这样的框架，很多局部正确的控制律一叠加，就会互相打架。
+也正因如此，VMC 与 WBC 最好的理解并不是替代关系，而是层次关系。VMC 可以负责构造机体层的目标，WBC 则负责在全身范围内协调这些目标与约束。很多高质量系统其实正是这样工作的：上层用直观的物理语言指定希望机器人怎么动，下层用更严格的数学框架来保证这些目标尽可能被实现。
+八、MPC 的出现，标志着系统第一次开始认真考虑“未来几步之后会怎样”
+如果说 WBC 解决的是当前时刻的多目标协调，那么 MPC 的核心贡献，就是把时间维度真正拉开了。它让四足控制器第一次不仅考虑“现在该怎么办”，还开始考虑“未来几步之后会怎样”。这件事之所以重要，是因为四足 locomotion 从来都不是一个静态问题。接触会切换，摆动腿会落地，质心会继续前移，身体会在几步之后才表现出当前决策的后果。只看当前误差，很多时候会让控制器显得“会反应，但不会预判”。
+MPC 之所以在四足领域如此重要，正因为它特别适合处理这种随时间展开的问题。以 MIT Cheetah 3 路线为代表的凸 MPC 框架，本质上就是在一个有限预测时域内，基于简化刚体模型预测机身未来状态，并求解一组满足接触和摩擦约束的地面反作用力，然后将这些反作用力转化为关节扭矩。它看起来像是在求“当前该施加什么力”，但真正特别之处在于，这个力是通过未来一段时间的整体行为反推出来的。
+这一步把四足 locomotion 推向了一个新的阶段。因为一旦控制器能在未来时域内规划支撑力，很多高速动态步态的问题就会一下子变得可控起来。加速、减速、转弯、抗扰动恢复、多步之间的平滑过渡，都可以在同一框架里被考虑。这也是为什么很多人第一次看到高水平四足平台时，会明显感觉它们的运动不再只是“腿在动”，而是整台机器的质心行为开始变得连贯、从容而且可预测。
+当然，MPC 的代价也非常清楚。它需要相对准确的模型，需要较好的状态估计，需要更强的计算能力，还要面对接触不确定性和实时优化的压力。因此，MPC 从来不是一个“想用就用”的装饰件，它只有在平台整体能力达到某个程度后，才会真正释放价值。这也解释了为什么高性能科研平台和少数能力很强的竞赛平台会更早拥抱 MPC，而很多一般性系统不会把它作为起点。
+九、locomotion 不是某个模块的名字，而是一整套移动能力的组织方式
+四足机器人领域里有个词被频繁使用，但也最容易被误解，那就是 locomotion。很多人把它简单翻译成“走路算法”或者“运动控制模块”，其实这都太窄了。在四足语境里，locomotion 更接近一整套使机器人可靠移动的能力组织方式。
+只要认真拆开看，就会发现 locomotion 几乎覆盖了从低层到高层的多种能力。它既包含步态时序和支撑摆动切换，也包含足端轨迹和落脚点设计；既依赖状态估计和机身速度控制，也依赖支撑力分配和接触处理；既可能包含 VMC、WBC、MPC 这类模型控制器，也可能包含 RL 这种学习型策略。换句话说，locomotion 不是某一个单独的算法模块，而是一整套围绕“让机器人持续而可靠地移动”建立起来的系统。
+从这个角度再回头看前面那些名词，它们之间的关系就会清晰很多。步态决定节奏，足端轨迹决定几何路径，模板模型决定你关注哪些物理量，VMC/WBC/MPC 决定你如何构造和分配控制目标，而 RL 则提供了另一种策略生成方式。它们不是平铺在纸面上的并列概念，而是在同一个 locomotion 问题中处于不同层次、扮演不同角色的部件。
+十、步态和足端轨迹之所以重要，不是因为它们“基础”，而是因为它们定义了整机运动的骨架
+在很多高层控制讨论中，步态和足端轨迹容易被低估，好像一旦进入 WBC、MPC 或 RL，这些东西就退到幕后了。其实恰恰相反。无论控制器多高级，整机运动最终都必须落回支撑相、摆动相和足端落脚这几件事上。也就是说，步态和足端轨迹不是过时的基础件，而是所有高层控制必须依附的骨架。
+所谓步态，本质上规定的是哪条腿在什么时刻支撑、哪条腿在什么时刻摆动、相位差是多少、占空比怎样分配，以及这些时序对稳定性、速度、能耗和灵活性产生什么影响。Walk、trot、pace、bound、gallop 之所以看起来像不同“风格”，其实背后都是不同的支撑序列和时序逻辑。对四足机器人来说，步态从来不是给动作起一个名字那么简单，而是在规定整机能量交换和接触模式的基础节奏。
+足端轨迹则是这个节奏在空间中的具体化。摆动腿走多高、多快、何时开始抬脚、何时准备落脚、落脚点如何随机身速度调节，这些都会直接决定机器人运动的平顺性和鲁棒性。哪怕在高水平控制系统中，摆动腿通常仍然依赖精心设计的轨迹或轨迹生成器，因为这部分问题非常适合通过几何方式解决。真正成熟的 locomotion 系统，往往不是用一种方法包办一切，而是让步态、足端轨迹、机身控制和接触力控制各司其职。
+十一、强化学习并没有推翻四足机器人学，而是把“怎么得到策略”这件事换了一种表达方式
+过去几年里，四足机器人最吸引眼球的变化，当然是强化学习的大规模进入。很多人因此产生一种印象：仿佛模型控制正在退场，强化学习将成为通用答案。这个判断其实过于简单。强化学习真正改变的，并不是四足机器人需要解决的问题，而是控制器获得策略的方式。
+无论是模型控制还是强化学习，最终都在试图得到某种意义上的最优策略。区别在于，模型控制通常要求研究者显式构造系统模型、任务目标和约束，然后通过推导或优化求解得到控制律；强化学习则是在定义观测、动作和奖励之后，通过大量交互数据去搜索一个高回报策略。它并没有取消状态估计、接触问题、执行器限制和仿真精度这些前提，只是把一部分显式求解工作，交给了策略搜索过程。
+四足机器人上强化学习之所以会爆发，并不是因为它突然神奇地解决了所有问题，而是因为一系列前提同时成熟了。快速仿真器让大规模并行采样成为可能，高性能而相对可负担的执行器让学习到的策略更有机会真实执行，PPO、SAC 等连续控制算法在大规模训练中变得更稳定，域随机化和 sim-to-real 技术则让策略不那么容易困死在仿真器里。也就是说，RL 的成功从来不是一个算法单独造成的，而是硬件、仿真、算法和系统工程共同成熟的结果。
+这也是为什么在四足 locomotion 中，PPO 会成为最常见的训练方法之一。它与大规模并行仿真适配性好，训练流程相对稳定，工程实现成熟，因此非常适合做基础 locomotion policy。而 SAC 之类 off-policy 方法则在样本效率方面更有吸引力，但链路复杂度也更高。AMP 这类方法更进一步，它关注的不仅是“完成任务”，而是“动作是否像某种自然示范”。这些方法并不是在互相替代，而是在不同层面扩展策略获得的方式。
+十二、sim-to-real 说明了一件最朴素也最重要的事：控制从来不是只在软件里成立
+任何一个做过四足强化学习的人，最终都会撞到 sim-to-real 这堵墙。仿真里很稳定的策略，上到实机就摔；仿真里动作很漂亮，实机却抖得一塌糊涂。表面看，这像是学习方法的问题；但从更深层讲，这恰恰说明四足机器人控制从来不是一个单纯的软件问题。
+仿真与现实之间的差异来源非常多。执行器会发热，通讯会有延迟，材料接触并不理想，脚垫并非刚体，摩擦系数随地面变化，电机模型并不精确，传感器噪声也比仿真中更复杂。更棘手的是，策略可能学会利用仿真器的某些漏洞，而这些漏洞在现实中根本不存在。于是，一套在仿真里看似优雅的策略，到了现实中就会立刻暴露脆弱性。
+所以 sim-to-real 的真正意义，在于迫使研究者重新承认机器人系统的整体性。域随机化当然重要，因为它让策略不那么依赖单一模型参数；动作和奖励设计也重要，因为不合理的奖励会鼓励策略学出高频震荡甚至 bang-bang 式动作；但更深层的前提，是整个平台必须在硬件和控制层面具备承接这些策略的能力。执行器要足够可控、结构要足够抗冲击、传感器和通讯要稳定、系统安全边界要清晰。没有这些，所谓“学习控制”往往只会停留在视频演示的阶段。
+因此，sim-to-real 不是强化学习的附属议题，而是整条四足技术路线在进入学习时代后必须共同面对的总考题。它提醒我们，仿真中学到的能力必须在真实物理世界中重新被证明，而这种证明从来都不是算法单独完成的。
+十三、所谓技术路线，最终不是概念排序，而是系统能力的分阶段展开
+如果把前面所有内容压缩成一句话，我会说，四足机器人的技术路线并不是运动学、VMC、WBC、MPC、RL 这些词的简单排列，而是一条系统能力逐层展开的路线。最开始，机器人先学会几何映射，也就是运动学与逆运动学；接着，它学会沿着平滑轨迹执行动作，也就是足端轨迹和位置控制；再往后，它开始认真对待支撑力与接触，也就是力位混合控制、柔顺性和模板模型；之后，系统进入机体层的动力学控制，于是出现 VMC；当目标与约束越来越多，控制器必须在全身范围内协调任务，于是出现 WBC；再往上一步，控制开始关注未来时域中的行为演化，于是出现 MPC；最后，当环境复杂度、观测维度和任务开放性进一步扩大，强化学习、模仿学习和 sim-to-real 才真正接管一部分策略生成工作。
+用这样的视角再去看四足机器人，就不会再执着于问“哪种方法最先进”。真正更有价值的问题是：在当前硬件条件、任务场景和工程阶段下，哪一层控制抽象最合适，哪一种方法最能解决眼前的问题，哪些前提还没有具备，哪些步骤不能跳过。很多时候，技术路线的难点并不在于不知道有什么方法，而在于能否判断系统此刻究竟应该停留在哪一层，又该向哪一层推进。
+十四、总结
+四足机器人之所以迷人，正在于它不是单一学科的产物。你无法只靠运动学把它做成，也无法只靠强化学习让它稳定工作；你不能忽视轨迹规划，也不能假装动力学和接触约束不存在；你既要接受很多系统最开始只能从位置控制起步，也必须承认高水平 locomotion 最终会走向更完整的动力学控制和学习控制。真正成熟的四足技术路线，从来不是排斥某一种方法，而是知道每一种方法在整条链路中的位置。
+所以，与其执着于“PPO 和 MPC 哪个更厉害”“WBC 会不会替代 VMC”，不如把视角放回系统本身。四足机器人不是从某个最强算法开始的，而是从运动学和轨迹起步，逐步进入力控、模板模型、整机协同、预测控制，再延伸到学习控制与 sim-to-real 的系统工程。只有在这个意义上去理解所谓技术路线，这些看似分散的概念才会真正连成一张图。
+]]></content>
+      <categories>
+        <category>强化学习</category>
+      </categories>
+      <tags>
+        <tag>机器人</tag>
+        <tag>强化学习</tag>
+        <tag>足式机器人</tag>
+        <tag>控制</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>光刻技术</title>
     <url>/2026/01/02/photoetching/</url>
     <content><![CDATA[光刻工艺
@@ -1705,86 +2413,308 @@ PAG(photo-acid generator)
       </tags>
   </entry>
   <entry>
-    <title>(科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习</title>
-    <url>/2026/02/18/mpc/</url>
-    <content><![CDATA[四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习
-四足机器人自从宇树机器狗出圈后得到频繁讨论，原因在于足式机器人几乎把机器人领域里核心的、先进的问题都搬到了一台机器上，要面对机构设计，电机驱动，运动学，动力学，状态估计，轨迹规划，全身控制，强化学习以及仿真到实机的迁移。所以这类足式机器人给作为初学者的我造成不小的困扰,问题不在于技术的细节，路线很多，但它们之间的关系不那么清晰，如何做到力位混合控制？如何将学习策略和模型控制结合？我们常常缺少一条完整的技术脉络。
-当你开始做机器人，最关键的不是先选一个最先进的策略，而是看你的目标任务是要跑一条结构化的赛道？或者跑通用的locomotion?还是要面对复杂的环境？层出不穷的技术路线不应该简单堆叠在一起,而是要回答一个更实际的问题：如果要把一台四足机器人从能站、能迈步，逐步做到稳定奔跑、跳跃越障、复杂地形适应，甚至进一步做到学习型 locomotion，那么中间到底要跨过哪些层次，每一层又解决什么问题。
-四足机器人的发展可以理解成一条不断抬高控制层级的路线。最底层解决的是几何问题，也就是腿在哪里、足端在哪里、关节该转多少；再往上一层，开始解决轨迹与时序问题，也就是摆动腿如何走、步态如何切换、机身姿态怎样补偿；继续往上，系统就不再满足于“把动作做出来”，而是要解决力和接触的问题，也就是支撑腿怎样提供地面反作用力、机身怎样维持平衡、接触切换如何保持稳定；再往后，控制器开始关心未来时域内的状态演化，于是出现 MPC；当问题空间进一步扩大到高维观测、复杂地形和非显式建模能力时，强化学习、模仿学习才开始真正进入主舞台。这个顺序不是绝对固定的，但如果缺少这种层次意识，很容易出现一种常见误区：把某一个方法当成答案，而忽略了它在整条系统链中的位置。
-一、四足机器人真正的起点，是运动学而不是“高级控制”
-只要是一台腿式机器人，首先就必须解决一个很朴素的问题：给定关节角，足端现在到底在什么位置；反过来，如果我希望足端去到某个位置，关节又该转到什么角度。前者是正运动学，后者是逆运动学。正运动学看起来只是一个“算位置”的工具，但它实际是状态可视化、足端误差计算、速度映射和调试分析的基础。如果没有正运动学，控制器甚至无法知道现在的腿究竟摆到了哪里。逆运动学更直接，它是从“我希望足端去哪里”到“电机应该怎么转”的桥梁。四足机器人的站立、下蹲、迈步、摆腿、落足，其实都离不开这一步。
-一旦逆运动学打通，机器人就获得了最原始的一种能力：把空间中的足端目标点，转换成关节命令并由驱动器执行。很多工程体系都是在这个意义上真正开始工作的。可以把这理解为四足机器人最早的操作系统：它不一定聪明，但它至少让腿开始听话。哪怕只完成了逆运动学部分，你的机器人就能开始牙牙学步，而运动的效果更多依赖于人为给定的参数。
-https://www.tup.com.cn/upload/books/yz/090429-01.pdf66
-并联腿可以参考:
-https://zhuanlan.zhihu.com/p/
-二、从逆运动学到足端轨迹，四足机器人第一次进入“会走路”而不是“会摆腿”
-仅仅有逆运动学，并不意味着机器人就会走。很多初学者在写出一套 IK 程序后，发现机器人确实能把腿摆到某个指定位置，但一旦连续运动起来，轨迹不顺、触地冲击大、步态节奏混乱、整机姿态飘动的问题就会集中暴露。原因很简单，逆运动学只解决了某一个瞬间的几何映射，却没有回答“这条腿应该沿着什么路径过去”以及“何时抬脚、何时落脚”的问题。
-这就引出了足端轨迹规划。对于摆动腿来说，足端轨迹并不只是从 A6 点移动到 B 点那么简单。一个好的足端轨迹至少要同时满足几个要求：摆动过程中不能刮地，落足时不能带来过大的冲击，抬腿高度要足以越过障碍，摆动相的时间分配要与整体步态节奏匹配，而且轨迹本身还要尽量平滑，以免在逆运动学和关节控制层诱发高频抖动。因此，工程里常见的三次样条、五次多项式、贝塞尔曲线、摆线轨迹，本质上都在做同一件事：给摆动腿构造一条既能完成几何任务、又足够平滑可执行的路径。
-在很多四足研究里，贝塞尔曲线之所以常被使用，一个重要原因就是它比较容易控制起点和终点附近的切向性质。对足端轨迹来说，这意味着触地前后的速度分布更容易设计，从而减小落足冲击。跳跃和高速步态研究里也经常看到三次多项式的使用，因为它能比较自然地约束位置、速度乃至加速度边界，让机体或腿部在起跳和落地阶段更连续。真正有经验的控制器，从来不会把足端轨迹看成一条纯几何曲线，它其实是步态、接触、姿态与执行器能力共同作用后的结果。
-换句话说，逆运动学让机器人从“不会动”变成“能动腿”，而足端轨迹规划和步态时序设计，则让它第一次从“会摆腿”进入“会走路”的范畴。
-三、为什么位置控制长期没有退出四足机器人的主舞台
-只要谈到四足机器人，总会有人觉得位置控制“太基础”或者“不够先进”。这种看法的问题在于，它把方法和适用场景割裂开了。控制方式从来不能脱离问题本身去评价。对于大量样机、竞赛平台和第一阶段原型机来说，位置控制不但没有过时，反而往往是最合理的出发点。
-原因并不复杂。位置控制最大的价值，在于它极其符合四足机器人早期开发的现实条件。首先，它实现简单，调试链条短，能迅速验证机械结构、逆运动学、轨迹规划和步态时序是否正确。其次，位置控制对于结构化环境非常有效。当场地是已知的，障碍高度和位置是可预估的，机器人的任务主要是完成固定动作时，位置控制完全可以支撑稳定、快速而且高度可复现的表现。再次，位置控制对硬件的要求相对友好。很多平台在关节力矩控制能力、状态估计质量和接触建模能力还不成熟时，直接上复杂动力学控制并不会更强，反而可能更不稳定。
-这也是为什么在很多比赛型四足或并联四足项目中，位置控制长期占据主流。因为这些系统真正需要的，不是对任意未知地形都最优，而是在给定任务中把动作做到最好。比赛场景强调的是通过率、速度、稳定性和有限周期内的可交付性，只要逆运动学、足端轨迹和机身姿态补偿做得扎实，位置控制就完全可以支撑跳跃、跨障和快速通过。早期大量优秀平台恰恰都是沿着这条路线建立起来的。它们并不是因为“不懂复杂控制”才使用位控，而是在当时的任务和硬件条件下，这就是最经济也最有效的系统组织方式。
-当然，位置控制也有明确边界。一旦任务从结构化场景走向复杂地形，接触不确定性和外部扰动显著增强，单纯靠几何轨迹跟踪就会出现根本性不足。问题不是它能不能把腿摆到指定位置，而是它没有直接回答“机器人此刻应该施加怎样的力才能维持平衡”的问题。也正是在这个意义上，四足控制才会从位置层逐步走向力层。
-四、四足机器人一旦真正离开平地，问题就从“几何”变成了“力”
-四足机器人在平地上按照预设轨迹迈步，看起来似乎已经完成了 locomotion 的主要任务。但只要环境稍微复杂一点，例如地面有坡度、有碎石、有高度突变，或者机器人需要提高速度、承受更大扰动，问题就会立刻发生变化。此时最关键的问题不再是“摆动腿怎么走”，而是“支撑腿在地面上究竟提供了怎样的力，机体为什么能稳定地被托住，又为什么会失稳”。
-这就是四足机器人控制中一个非常重要的转折点：从运动学主导，走向动力学主导。只要机器人与地面的接触开始起决定性作用，控制器就必须关心支撑力、摩擦锥、质心加速度、机身姿态耦合以及接触切换时的冲击问题。传统的位置控制虽然仍然可以继续使用，尤其是在摆动腿一侧，但仅靠它已经不足以解释整机的稳定运动。
-这一层最典型的思想，就是力位混合控制。它本身不是某个单一算法，而是一种非常自然的分工方式。摆动腿更适合做位置跟踪，因为它的任务是把足端送到预定落脚点；支撑腿更适合做力或阻抗控制，因为它的任务是通过地面反作用力来支撑机体、调节姿态并抵抗扰动。许多成熟的四足控制器本质上都遵循这个分工，只不过在实现层面上，有的用显式力控，有的用阻抗控制，有的通过优化求解接触力，有的则通过模板模型间接实现。
-一旦进入力层，柔顺性也会变得特别重要。四足机器人与地面是不断碰撞和切换接触的系统，如果控制过硬，触地瞬间就会出现大冲击，关节抖振、足端反弹、甚至整机结构受损都会随之而来。很多跳跃控制工作之所以在落地阶段专门加入修正项，就是因为它们意识到，真正决定动作能否实用的，不只是起跳能不能跳得起来，更是落地能不能稳稳接住。现代高性能关节执行器之所以反复强调低减速比、可回驱和高带宽，也正是因为它们让控制器第一次有能力在真实机器上“认真处理力”。
-五、模板模型的意义，不是简化问题，而是抓住最应该控制的量
-当系统开始认真对待动力学问题时，另一个现实困难就会立刻出现：整台四足机器人太复杂了。完整动力学模型维度高、耦合强、接触切换频繁，如果一开始就对整机做全量建模和实时求解，工程上往往很难承受。因此，四足控制里才会反复出现各种模板模型。模板模型的价值从来不只是“把问题弄简单”，而是帮我们抓住在当前阶段最值得控制的核心量。
-倒立摆模型的地位正是这样建立起来的。它把机器人抽象成质心与支撑点之间的关系，用低维方式描述平衡与速度演化，因此很适合做落脚点估计、速度调节和步态切换分析。再进一步，SLIP，也就是弹簧负载倒立摆，则把腿的弹性和身体的弹跳特性纳入进来，所以它特别适合解释跑动、跳跃和动态步态中的支撑相行为。许多四足跑跳控制之所以喜欢使用 SLIP，并不是因为它能完整描述一台机器人，而是因为它能很有效地抓住“身体像弹簧系统一样交换势能和动能”的本质。
-再往上一步，就是单刚体模型。它把机器人躯干看成刚体，把腿与地面的作用浓缩为若干接触点和接触力，这样一来，质心加速度、角动量变化、支撑力分配和摩擦约束就都可以在统一框架下表达。现代四足控制里，大量 VMC、接触力 QP、MPC 和上层规划，本质上都是在单刚体模型或其变体上展开。之所以几乎所有高动态四足平台都要经过这一步，是因为它恰好处在“既足够简单、又足够有物理意义”的那个位置。
-因此，模板模型并不是为了逃避真实机器人动力学，而是为了让控制器先学会抓住最关键的那几个量。你甚至可以说，四足技术路线中所谓“越来越高级”的过程，很大程度上就是模板模型越来越贴近真实系统、同时控制器处理约束和不确定性的能力越来越强的过程。
-六、VMC 的价值，在于它第一次把“想让身体怎么动”直接翻译成了“应该施加什么力”
-如果沿着上面的脉络继续往前走，VMC 会是一个非常自然的下一步。很多人第一次接触 VMC 时，往往会把它看成一种“比较直觉的力控”，这种理解并不算错，但还不够准确。VMC 真正的意义，在于它第一次把控制目标从几何轨迹层，明确地抬升到了虚拟力学层。
-所谓虚拟模型控制，本质上就是在机器人身上想象一些虚拟的弹簧、阻尼器或其他力学元件，再根据这些虚拟元件产生机体所需的虚拟力和虚拟力矩，最后通过雅可比映射到关节扭矩。这种思想之所以强大，在于它提供了一种非常自然的中间语言。以往我们只能说“把身体抬高一点”“把姿态扶正一点”“让机身往前加速一点”，而 VMC 把这些语言统一翻译成“在身体上施加某个虚拟力或虚拟力矩”。一旦翻译完成，剩下的工作就是通过腿部几何关系把这些力落到关节上。
-这使得 VMC 特别适合做机身高度控制、俯仰滚转姿态控制以及一些中低速动态步态中的支撑相控制。对很多四足原型机来说，VMC 往往是控制体系第一次从“纯几何”走向“动力学”的标志。它没有像优化控制那样一次性把所有约束都纳入进来，但已经能让系统围绕机体层面的目标进行闭环。
-在 trot 控制中，VMC 之所以经典，也是因为它非常符合支撑相与摆动相的分工逻辑。摆动腿仍然可以沿着预定轨迹摆动，而支撑腿则通过虚拟力学元件托住机身、调节姿态和速度。再配合状态机和接触检测，系统就能形成一套相当完整的 locomotion 结构。这套结构的重要性并不在于它是不是“最优”，而在于它第一次让整机表现出一种比较真实的动态协同。
-七、WBC 真正解决的，不是“控制更多东西”，而是“多个目标之间如何不互相打架”
-只要四足机器人继续朝复杂任务推进，就迟早会碰到一个问题：你想控制的量越来越多了。你既想让机身保持姿态，又想让质心跟踪速度，还想让摆动腿按轨迹落脚，同时又不能违反摩擦约束、法向力约束和关节力矩限制。到了这个阶段，系统就不再是“加一个控制器控制一个量”那么简单，因为不同目标之间会彼此耦合、彼此竞争，甚至直接冲突。
-WBC 的意义，正是在这里体现出来。它不只是“控制更多任务”，而是要回答多个任务如何在同一台机器人上同时成立。Whole-Body Control 本质上是一种整机层的任务协调框架。它允许你把姿态、速度、接触、摆动腿轨迹、力矩限制、关节约束等统一放到一个层级求解或优化求解框架里。换句话说，它真正要解决的是“谁优先、谁妥协、谁必须满足、谁可以近似满足”的问题。
-很多现代 WBC 都采用 QP 形式来写。给定期望质心加速度、摆动腿轨迹误差和一系列接触约束，通过二次规划求出满足约束的足端力或关节加速度，再通过动力学关系映射到执行器命令。它的优势并不在于形式上看起来更“高级”，而在于它能把原本彼此冲突的任务，放进同一个可计算的框架中。对四足机器人来说，这一点极其关键。因为机器人不是一个单目标系统，而是一个多任务多约束系统。如果缺少 WBC 这样的框架，很多局部正确的控制律一叠加，就会互相打架。
-也正因如此，VMC 与 WBC 最好的理解并不是替代关系，而是层次关系。VMC 可以负责构造机体层的目标，WBC 则负责在全身范围内协调这些目标与约束。很多高质量系统其实正是这样工作的：上层用直观的物理语言指定希望机器人怎么动，下层用更严格的数学框架来保证这些目标尽可能被实现。
-八、MPC 的出现，标志着系统第一次开始认真考虑“未来几步之后会怎样”
-如果说 WBC 解决的是当前时刻的多目标协调，那么 MPC 的核心贡献，就是把时间维度真正拉开了。它让四足控制器第一次不仅考虑“现在该怎么办”，还开始考虑“未来几步之后会怎样”。这件事之所以重要，是因为四足 locomotion 从来都不是一个静态问题。接触会切换，摆动腿会落地，质心会继续前移，身体会在几步之后才表现出当前决策的后果。只看当前误差，很多时候会让控制器显得“会反应，但不会预判”。
-MPC 之所以在四足领域如此重要，正因为它特别适合处理这种随时间展开的问题。以 MIT Cheetah 3 路线为代表的凸 MPC 框架，本质上就是在一个有限预测时域内，基于简化刚体模型预测机身未来状态，并求解一组满足接触和摩擦约束的地面反作用力，然后将这些反作用力转化为关节扭矩。它看起来像是在求“当前该施加什么力”，但真正特别之处在于，这个力是通过未来一段时间的整体行为反推出来的。
-这一步把四足 locomotion 推向了一个新的阶段。因为一旦控制器能在未来时域内规划支撑力，很多高速动态步态的问题就会一下子变得可控起来。加速、减速、转弯、抗扰动恢复、多步之间的平滑过渡，都可以在同一框架里被考虑。这也是为什么很多人第一次看到高水平四足平台时，会明显感觉它们的运动不再只是“腿在动”，而是整台机器的质心行为开始变得连贯、从容而且可预测。
-当然，MPC 的代价也非常清楚。它需要相对准确的模型，需要较好的状态估计，需要更强的计算能力，还要面对接触不确定性和实时优化的压力。因此，MPC 从来不是一个“想用就用”的装饰件，它只有在平台整体能力达到某个程度后，才会真正释放价值。这也解释了为什么高性能科研平台和少数能力很强的竞赛平台会更早拥抱 MPC，而很多一般性系统不会把它作为起点。
-九、locomotion 不是某个模块的名字，而是一整套移动能力的组织方式
-四足机器人领域里有个词被频繁使用，但也最容易被误解，那就是 locomotion。很多人把它简单翻译成“走路算法”或者“运动控制模块”，其实这都太窄了。在四足语境里，locomotion 更接近一整套使机器人可靠移动的能力组织方式。
-只要认真拆开看，就会发现 locomotion 几乎覆盖了从低层到高层的多种能力。它既包含步态时序和支撑摆动切换，也包含足端轨迹和落脚点设计；既依赖状态估计和机身速度控制，也依赖支撑力分配和接触处理；既可能包含 VMC、WBC、MPC 这类模型控制器，也可能包含 RL 这种学习型策略。换句话说，locomotion 不是某一个单独的算法模块，而是一整套围绕“让机器人持续而可靠地移动”建立起来的系统。
-从这个角度再回头看前面那些名词，它们之间的关系就会清晰很多。步态决定节奏，足端轨迹决定几何路径，模板模型决定你关注哪些物理量，VMC/WBC/MPC 决定你如何构造和分配控制目标，而 RL 则提供了另一种策略生成方式。它们不是平铺在纸面上的并列概念，而是在同一个 locomotion 问题中处于不同层次、扮演不同角色的部件。
-十、步态和足端轨迹之所以重要，不是因为它们“基础”，而是因为它们定义了整机运动的骨架
-在很多高层控制讨论中，步态和足端轨迹容易被低估，好像一旦进入 WBC、MPC 或 RL，这些东西就退到幕后了。其实恰恰相反。无论控制器多高级，整机运动最终都必须落回支撑相、摆动相和足端落脚这几件事上。也就是说，步态和足端轨迹不是过时的基础件，而是所有高层控制必须依附的骨架。
-所谓步态，本质上规定的是哪条腿在什么时刻支撑、哪条腿在什么时刻摆动、相位差是多少、占空比怎样分配，以及这些时序对稳定性、速度、能耗和灵活性产生什么影响。Walk、trot、pace、bound、gallop 之所以看起来像不同“风格”，其实背后都是不同的支撑序列和时序逻辑。对四足机器人来说，步态从来不是给动作起一个名字那么简单，而是在规定整机能量交换和接触模式的基础节奏。
-足端轨迹则是这个节奏在空间中的具体化。摆动腿走多高、多快、何时开始抬脚、何时准备落脚、落脚点如何随机身速度调节，这些都会直接决定机器人运动的平顺性和鲁棒性。哪怕在高水平控制系统中，摆动腿通常仍然依赖精心设计的轨迹或轨迹生成器，因为这部分问题非常适合通过几何方式解决。真正成熟的 locomotion 系统，往往不是用一种方法包办一切，而是让步态、足端轨迹、机身控制和接触力控制各司其职。
-十一、强化学习并没有推翻四足机器人学，而是把“怎么得到策略”这件事换了一种表达方式
-过去几年里，四足机器人最吸引眼球的变化，当然是强化学习的大规模进入。很多人因此产生一种印象：仿佛模型控制正在退场，强化学习将成为通用答案。这个判断其实过于简单。强化学习真正改变的，并不是四足机器人需要解决的问题，而是控制器获得策略的方式。
-无论是模型控制还是强化学习，最终都在试图得到某种意义上的最优策略。区别在于，模型控制通常要求研究者显式构造系统模型、任务目标和约束，然后通过推导或优化求解得到控制律；强化学习则是在定义观测、动作和奖励之后，通过大量交互数据去搜索一个高回报策略。它并没有取消状态估计、接触问题、执行器限制和仿真精度这些前提，只是把一部分显式求解工作，交给了策略搜索过程。
-四足机器人上强化学习之所以会爆发，并不是因为它突然神奇地解决了所有问题，而是因为一系列前提同时成熟了。快速仿真器让大规模并行采样成为可能，高性能而相对可负担的执行器让学习到的策略更有机会真实执行，PPO、SAC 等连续控制算法在大规模训练中变得更稳定，域随机化和 sim-to-real 技术则让策略不那么容易困死在仿真器里。也就是说，RL 的成功从来不是一个算法单独造成的，而是硬件、仿真、算法和系统工程共同成熟的结果。
-这也是为什么在四足 locomotion 中，PPO 会成为最常见的训练方法之一。它与大规模并行仿真适配性好，训练流程相对稳定，工程实现成熟，因此非常适合做基础 locomotion policy。而 SAC 之类 off-policy 方法则在样本效率方面更有吸引力，但链路复杂度也更高。AMP 这类方法更进一步，它关注的不仅是“完成任务”，而是“动作是否像某种自然示范”。这些方法并不是在互相替代，而是在不同层面扩展策略获得的方式。
-十二、sim-to-real 说明了一件最朴素也最重要的事：控制从来不是只在软件里成立
-任何一个做过四足强化学习的人，最终都会撞到 sim-to-real 这堵墙。仿真里很稳定的策略，上到实机就摔；仿真里动作很漂亮，实机却抖得一塌糊涂。表面看，这像是学习方法的问题；但从更深层讲，这恰恰说明四足机器人控制从来不是一个单纯的软件问题。
-仿真与现实之间的差异来源非常多。执行器会发热，通讯会有延迟，材料接触并不理想，脚垫并非刚体，摩擦系数随地面变化，电机模型并不精确，传感器噪声也比仿真中更复杂。更棘手的是，策略可能学会利用仿真器的某些漏洞，而这些漏洞在现实中根本不存在。于是，一套在仿真里看似优雅的策略，到了现实中就会立刻暴露脆弱性。
-所以 sim-to-real 的真正意义，在于迫使研究者重新承认机器人系统的整体性。域随机化当然重要，因为它让策略不那么依赖单一模型参数；动作和奖励设计也重要，因为不合理的奖励会鼓励策略学出高频震荡甚至 bang-bang 式动作；但更深层的前提，是整个平台必须在硬件和控制层面具备承接这些策略的能力。执行器要足够可控、结构要足够抗冲击、传感器和通讯要稳定、系统安全边界要清晰。没有这些，所谓“学习控制”往往只会停留在视频演示的阶段。
-因此，sim-to-real 不是强化学习的附属议题，而是整条四足技术路线在进入学习时代后必须共同面对的总考题。它提醒我们，仿真中学到的能力必须在真实物理世界中重新被证明，而这种证明从来都不是算法单独完成的。
-十三、所谓技术路线，最终不是概念排序，而是系统能力的分阶段展开
-如果把前面所有内容压缩成一句话，我会说，四足机器人的技术路线并不是运动学、VMC、WBC、MPC、RL 这些词的简单排列，而是一条系统能力逐层展开的路线。最开始，机器人先学会几何映射，也就是运动学与逆运动学；接着，它学会沿着平滑轨迹执行动作，也就是足端轨迹和位置控制；再往后，它开始认真对待支撑力与接触，也就是力位混合控制、柔顺性和模板模型；之后，系统进入机体层的动力学控制，于是出现 VMC；当目标与约束越来越多，控制器必须在全身范围内协调任务，于是出现 WBC；再往上一步，控制开始关注未来时域中的行为演化，于是出现 MPC；最后，当环境复杂度、观测维度和任务开放性进一步扩大，强化学习、模仿学习和 sim-to-real 才真正接管一部分策略生成工作。
-用这样的视角再去看四足机器人，就不会再执着于问“哪种方法最先进”。真正更有价值的问题是：在当前硬件条件、任务场景和工程阶段下，哪一层控制抽象最合适，哪一种方法最能解决眼前的问题，哪些前提还没有具备，哪些步骤不能跳过。很多时候，技术路线的难点并不在于不知道有什么方法，而在于能否判断系统此刻究竟应该停留在哪一层，又该向哪一层推进。
-十四、总结
-四足机器人之所以迷人，正在于它不是单一学科的产物。你无法只靠运动学把它做成，也无法只靠强化学习让它稳定工作；你不能忽视轨迹规划，也不能假装动力学和接触约束不存在；你既要接受很多系统最开始只能从位置控制起步，也必须承认高水平 locomotion 最终会走向更完整的动力学控制和学习控制。真正成熟的四足技术路线，从来不是排斥某一种方法，而是知道每一种方法在整条链路中的位置。
-所以，与其执着于“PPO 和 MPC 哪个更厉害”“WBC 会不会替代 VMC”，不如把视角放回系统本身。四足机器人不是从某个最强算法开始的，而是从运动学和轨迹起步，逐步进入力控、模板模型、整机协同、预测控制，再延伸到学习控制与 sim-to-real 的系统工程。只有在这个意义上去理解所谓技术路线，这些看似分散的概念才会真正连成一张图。
+    <title>PPO 在四足机器人控制中的应用——从理论到调参实战</title>
+    <url>/2026/05/21/ppo_for_quadruped/</url>
+    <content><![CDATA[PPO 在四足机器人控制中的应用——从理论到调参实战
+如果你已经看过前面的 rsl_rl 源码解析，应该对 PPO 的工程实现有了清晰的了解。但那篇文章的重点是&quot;代码怎么写&quot;，本文则回答另一个问题：PPO 在四足机器人 locomotion 中到底是怎么工作的、参数怎么调、坑在哪里？
+如果你跑过四足 RL 训练，大概率遇到过这些场景：
+
+训练两小时，loss 曲线看着很漂亮，结果机器人原地抽搐了一下就趴了
+换了一组 reward 权重，PPO 就不收敛了，明明之前跑得好好的
+试着把 clip range 从 0.2 调到 0.1，方差是小了，但怎么跑也跑不快
+明明 GAE lambda 从 0.95 改到 0.99，步态反而更差了
+
+这些都不是 bug，是 PPO 在连续控制问题——尤其是 locomotion——中的特有现象。本文从 locomotion 的视角重新理解 PPO 的每个组件，然后给出实战调参指南。
+
+1. 重新理解 PPO——从 locomotion 的视角
+PPO 的核心公式大家都很熟悉了：
+$$
+L^{CLIP}(\theta) = \mathbb{E}_t \left[ \min\left( r_t(\theta) \hat{A}_t, ; \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \hat{A}_t \right) \right]
+$$
+其中 $r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}$ 是新旧策略的比率，$\epsilon$ 是 clip 范围。
+但这个公式在 locomotion 语境下，有几个值得重新审视的地方。
+1.1 为什么 clip 在四足控制中尤其重要？
+对比 Atari 游戏和四足控制这两个场景：
+
+
+
+维度
+Atari 游戏
+四足 locomotion
+
+
+
+
+动作空间
+离散 (4-18 个按键)
+连续 (12-20 个关节)
+
+
+状态维度
+84×84 图像
+~50-100 维 (关节位置、速度、IMU)
+
+
+单次动作影响
+按键改变游戏状态
+力矩决定机器人是否摔倒
+
+
+策略更新风险
+输掉一局游戏
+仿真中收集到的 trajectory 数据完全不能用
+
+
+
+在四足控制中，策略的一个大幅度更新可能让机器人从&quot;能走&quot;变成&quot;摔倒&quot;，而摔倒后的 trajectory 数据质量极差。用这些数据继续更新，策略会进一步恶化——这就是 PPO 试图阻止的&quot;策略崩溃&quot;。
+clip 机制的核心作用是：限制每次更新的幅度，让策略平滑演化。这也是为什么四足 RL 几乎只用 PPO 或其变体（而不用 SAC 或 TD3）——不是因为那些算法不好，而是 PPO 的 conservative update 特性在物理控制中格外珍贵。
+1.2 GAE——locomotion 中的信用分配
+广义优势估计（GAE）在 locomotion 中的角色经常被低估：
+$$
+\hat{A}t^{GAE(\gamma,\lambda)} = \sum{l=0}^{\infty} (\gamma\lambda)^l \delta_{t+l}
+$$
+其中 $\delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)$ 是 TD 误差。
+在四足 locomotion 中，一个动作的后果往往延迟好几步才显现。比如：
+
+第 100 步迈出的腿落地姿势不对
+第 103 步身体开始倾斜
+第 105 步机器人摔倒
+
+GAE 的作用就是把第 100 步的&quot;坏决策&quot;与第 105 步的&quot;坏结果&quot;连接起来。$\lambda$ 控制这个连接的范围：
+
+$\lambda \to 0$：只看单步 TD 误差，噪声大但偏差小
+$\lambda \to 1$：看整个轨迹的累计回报，偏差大但方差小
+
+在 locomotion 中，$\lambda$ 通常取 0.95 左右，但这并不是万能的。稍后我们在调参部分会详细讨论。
+1.3 Actor-Critic 架构在四足控制中的特殊性
+很多入门教程把 actor-critic 画成一个共享 backbone 的架构，但在四足 locomotion 的实际实现中（如 rsl_rl），actor 和 critic 通常是分开的网络。这不是懒惰，而是有充分理由的：
+Actor 需要的表征 vs Critic 需要的表征是不同的：
+
+Actor 只关心&quot;在当前状态下输出什么力矩&quot;，它对 body 姿态的微小变化可能需要很敏感
+Critic 需要估计&quot;从当前状态出发的长期价值&quot;，更需要全局视角
+
+更重要的是，asymmetric actor-critic 在四足控制中几乎是标配：
+
+训练时：critic 可以看到 privileged information（真值速度、足端接触力、地面摩擦力系数等）
+部署时：actor 只能看到 sensor observations（IMU、关节编码器、可能还有深度相机）
+
+这意味着 actor 必须学会从受限的观测中推断 critic 看到的信息，这本身就是一种 implicit distillation。
+
+2. 四足 PPO 的超参选择
+当你从 Isaac Gym / Isaac Lab 或 rsl_rl 的默认配置开始训练时，一个自然的疑问是：这些默认值是怎么来的？它们为什么 work？
+2.1 学习率：为什么 locomotion 用 $5\times 10^{-5}$ 而不是 $3\times 10^{-4}$
+Atari 领域的 PPO 通常用 $2.5\times 10^{-4}$ 的学习率，但四足 locomotion 的常见设置是 $1\times 10^{-3}$（Adam，配合 learning rate schedule 衰减）。
+这看起来矛盾——locomotion 是更复杂的任务，为什么反而用更高的学习率？
+答案在于数据效率 vs 更新频率的权衡。在四足 RL 中：
+
+每个 rollout 收集数百万步数据（以 ANYmal 为例，一次更新基于约 2-8M 时间步）
+数据量远大于 Atari PPO 的 batch size（256-2048）
+更大的数据集允许更高的学习率而不导致过拟合
+
+实际上，rsl_rl 中 PPO 的默认学习率是 $1\times 10^{-3}$，配合 linear schedule 在训练过程中衰减到 0。
+但如果你的任务比较特殊（比如 reward 很稀疏、或者 domain randomization 很强），考虑降到 $3\times 10^{-4}$ 起步。
+2.2 Clip range：0.2 还是 0.1？
+标准 PPO 的 clip range 是 $\epsilon = 0.2$。但在四足 locomotion 实践中：
+
+$\epsilon = 0.2$：更激进的策略更新，训练更快但可能不稳定
+$\epsilon = 0.1$：更保守，适合复杂地形或稀疏 reward
+
+一个实用的判断方法：如果训练中回报（return）的波动超过 30%，考虑降低 clip range 或者增大 mini-batch size。
+2.3 GAE lambda 的选择
+
+
+
+$\lambda$
+效果
+适用场景
+
+
+
+
+0.90-0.93
+更关注近期奖励，降低方差
+reward 设计精细、dense reward
+
+
+0.95
+标准值
+绝大多数 locomotion 任务
+
+
+0.97-0.99
+更关注长期后果
+稀疏 reward、需要长期规划的步态
+
+
+
+一个常见的误区：不要为了追求稳定性把 $\lambda$ 设得太低。低 $\lambda$ 虽然降低了优势估计的方差，但在 locomotion 中会让策略变得短视——因为一个最佳步态的效果往往要在几步甚至十几步之后才能体现出来。
+2.4 Mini-batch size 与更新次数
+在 rsl_rl 中，PPO 的默认配置通常是在每个 epoch 对 collected data 做 5 次更新，每次 mini-batch size 约 8192-32768。
+关键直觉：
+
+更大的 mini-batch → 更稳定的梯度估计 → 可以用更高的学习率
+更多的更新次数 → 更好地利用 collected data → 数据效率更高
+
+但这两个参数并不是越大越好。实践中，如果你发现：
+
+训练后期 loss 振荡：增大 mini-batch size 或减少 epoch
+策略收敛太慢：尝试把 mini-batch size 减半，增加 epoch 数
+值函数（value）发散：优先检查 reward scaling 是否合理，其次才调 PPO 参数
+
+2.5 Entropy bonus 的作用
+$$
+L^{PPO} = L^{CLIP} - c_1 L^{VF} + c_2 S\pi_\theta
+$$
+$S\pi_\theta$ 是策略熵，$c_2$ 是熵系数。在四足控制中：
+
+默认值：$c_2 = 0.01$（rsl_rl）或 $c_2 = 0.0$（一些消融实验）
+熵系数太高：策略保持随机，步态抖动，关节力矩噪声大
+熵系数太低：策略过早确定化，可能陷入局部最优（比如只会匀速前进，不会调整步态适应地形变化）
+
+一个实用的策略：在训练初期（前 10% 的 iterations）设 $c_2 = 0.01-0.02$，然后线性衰减到 0。这样可以保证早期充分探索，后期策略确定化以提高性能。
+
+3. 实战调参指南
+3.1 Loss 曲线到底怎么看？
+在四足 RL 训练中，我通常会同时看这几条曲线来判断训练是否正常：
+
+
+
+曲线
+正常信号
+异常信号
+
+
+
+
+Total reward / episode
+持续上升后趋于平稳
+突然暴跌 → 策略崩溃
+
+
+Explained variance of V
+&gt; 0.8 且稳定
+&lt; 0.5 → critic 学不动了
+
+
+Policy entropy
+缓慢下降后趋于稳定
+某次 update 后骤降为 0 → 策略坍塌
+
+
+KL divergence
+&lt; 0.01 且平稳
+&gt; 0.02 → 更新太激进
+
+
+Clip fraction
+10-20% 被 clip
+&gt; 30% → clip range 需要增大或 policy 更新太激进
+
+
+
+3.2 策略崩溃后的恢复方法
+策略崩溃（policy collapse）在四足 RL 中很常见，表现为 episode reward 在某次 update 后骤降并无法恢复。常见原因和解决方法：
+原因 1：优势估计方差太大
+
+现象：value loss 骤升，explained variance 骤降
+解决：增大 GAE $\lambda$、增大 batch size、或者检查 reward 是否有 NaN
+
+原因 2：更新步长过大
+
+现象：clip fraction &gt; 30%，KL &gt; 0.02
+解决：降低学习率、减小 clip range、或者减小 max_grad_norm
+
+原因 3：reward 设计冲突
+
+现象：多项目标互相矛盾（如&quot;前进&quot;和&quot;节省能量&quot;在特定条件下冲突）
+解决：检查各 reward 项是否在同一量级，是否在某些 corner case 下互相抵消
+
+3.3 从随机到行走：训练过程中的阶段
+一个典型的四足 locomotion 训练会经历以下阶段：
+
+
+随机抽搐期（0-5% iterations）— 策略完全是随机的，机器人原地抖动
+
+此时 alive bonus 是主要的梯度来源
+如果这个阶段 reward 就为零，检查 reward scaling
+
+
+
+爬行期（5-20% iterations）— 开始学会站起来并缓慢移动
+
+速度跟踪 reward 开始生效
+关节限位 penalty 开始起作用，防止过度伸展
+
+
+
+稳定行走期（20-50% iterations）— 步态模式逐渐形成
+
+大多数 reward 项已收敛到合理范围
+策略开始产生有节奏的 gait pattern（通常是对角步态 trot）
+
+
+
+精细调优期（50-100% iterations）— 性能缓慢提升
+
+步态效率和鲁棒性持续提高
+此时 domain randomization 和地形难度可以逐渐增加
+
+
+
+3.4 实际训练脚本示例
+下面是一个基于 rsl_rl API 的 PPO 配置示例（重点参数已标注）：
+# ppo_cfg.pyfrom rsl_rl import PPOclass QuadrupedPPOCfg:    class algorithm:        # PPO 核心参数        class_name = &quot;PPO&quot;        num_learning_epochs = 5          # 每个 batch 更新 5 次        num_mini_batches = 4             # mini-batch 数量        clip_param = 0.2                 # 初始 clip range        gamma = 0.99                     # 折扣因子        lam = 0.95                       # GAE lambda        value_loss_coef = 1.0            # value loss 权重        entropy_coef = 0.01              # 策略熵权重        learning_rate = 1e-3             # 初始学习率        learning_rate_schedule = &quot;linear&quot; # 线性衰减到 0        max_grad_norm = 1.0              # 梯度裁剪    class runner:        policy_class_name = &quot;ActorCritic&quot;        num_steps_per_env = 24           # 每个环境的 rollout 步数        max_iterations = 1500            # 总训练迭代数                # 经验回放 buffer 相关        save_interval = 50               # 保存模型间隔        experiment_name = &quot;quadruped&quot;        run_name = &quot;&quot;        logger = &quot;tensorboard&quot;
+实际使用时，你可能会根据具体机器人（A1、Go1、ANYmal、Mini Cheetah）微调这些参数，但上面的配置是一个很好的起点。
+
+4. 常见问题排查
+Q1: 训练 loss 正常下降，但机器人就是不走路
+这通常不是 PPO 的问题，而是 reward 设计的问题。请检查：
+
+速度跟踪 reward 是否设得太低，被其他 penalty 项淹没了
+alive bonus 是否设得太高，导致&quot;站着不动&quot;比&quot;往前走&quot;的累积回报更高
+是否缺少对&quot;前进&quot;的直接激励（比如前沿速度奖励）
+
+Q2: 策略从能走到不能走（late training collapse）
+通常是 entropy 衰减到了零，策略已经确定化但陷入了局部最优。解决方法：
+
+增大 entropy coefficient 或加 entropy schedule
+增加 domain randomization，迫使策略保持鲁棒性
+检查是否在某个特定地形/状态下策略出现了盲点
+
+Q3: 训练速度太慢
+
+增大 num_steps_per_env 以减少 rollout 开销（但会增大 GPU 显存）
+减小 num_learning_epochs 或 num_mini_batches
+检查 max_grad_norm 是否设得太小（$0.1$ 通常太保守，$1.0$ 比较合理）
+
+Q4: Value loss 一直在增大
+这是最常见的 warning 信号。可能的原因：
+
+reward scale 太大：尝试把 reward 缩放到 $[0, 1]$ 或 $[-1, 1]$ 范围
+reward 中有 outlier：检查是否有某些 transition 中 reward 异常高/低
+critic 网络容量不足：增大 critic hidden dims
+使用 reward normalization（rsl_rl 中默认开启）
+
+
+5. 总结
+PPO 在四足 locomotion 中的成功不是偶然的——它的 conservative policy update、GAE 信用分配机制、以及灵活的 actor-critic 架构与物理控制问题完美契合。但默认参数只是起点，真正要让四足机器人从会走到会跑、从平底到复杂地形，需要对 PPO 的每个组件有深入理解。
+希望本文能帮你少走一些弯路。如果你在实践中遇到本文没有覆盖的问题，欢迎在评论区交流。
+
+相关文章推荐：
+
+rsl_rl 源码解析 — PPO 的工程实现
+四足机器人 Locomotion 奖励函数设计 — reward 的每个细节
+四足机器人控制理论——从 MPC 到全身控制 — PPO 之外的控制方法
+
 ]]></content>
       <categories>
         <category>强化学习</category>
       </categories>
       <tags>
-        <tag>机器人</tag>
         <tag>强化学习</tag>
         <tag>足式机器人</tag>
         <tag>控制</tag>
+        <tag>PPO</tag>
       </tags>
   </entry>
   <entry>
@@ -2396,6 +3326,1208 @@ Q-learning 教会我们的，不只是一个算法，而是一种“通过交互
         <tag>强化学习</tag>
         <tag>算法</tag>
         <tag>足式机器人</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>四足机器人控制统一技术文档（公式推导版）</title>
+    <url>/2026/03/18/quadruped_control_theory_cn/</url>
+    <content><![CDATA[四足机器人控制统一技术文档（公式推导版）
+
+目标：给出一套从单腿运动学 → 全身动力学 → MPC / WBC / RL 的统一数学体系。
+采用对象：主流 12 自由度串联四足（浮动基座 + 4 条 3 自由度腿）。
+说明：若你的本体是 8 自由度并联腿或五连杆腿，只需要替换“单腿几何闭环、雅可比、单腿惯性”部分；从浮动基座动力学、状态估计、MPC、WBC 到 RL 的整体框架不变。
+
+
+0. 总体建模对象与控制链
+四足机器人广义坐标选为
+$$
+q = \begin{bmatrix} p_B \ \Theta_B \ q_j \end{bmatrix}
+\in \mathbb{R}^{6+n},
+\qquad
+n=12,
+$$
+其中
+
+$p_B\in\mathbb{R}^3$：机身质心位置；
+$\Theta_B$：机身姿态参数（欧拉角或四元数最小参数）；
+$q_j\in\mathbb{R}^{12}$：12 个关节角；
+浮动基速度更适合写成
+$$
+\nu = \begin{bmatrix} v_B \ \omega_B \ \dot q_j \end{bmatrix}\in\mathbb{R}^{18}.
+$$
+
+一套完备控制链路写成
+$$
+\text{感知/估计} \to \text{步态/落足点/摆腿轨迹} \to \text{SRB-MPC} \to \text{WBC} \to \text{关节力矩控制} \to \text{执行器}.
+$$
+其中：
+
+状态估计输出 $\hat p_B,\hat v_B,\hat R_{WB},\hat\omega_B$；
+MPC 输出未来短时域内接触力 $\lambda = [f_1^T,\dots,f_4^T]^T$；
+WBC 将机身任务、足端任务、接触约束综合成 $\tau$；
+低层伺服 将 $\tau$、$q_d$、$\dot q_d$ 作用到电机。
+
+
+1. 坐标系与基础符号
+设：
+
+世界系 ${W}$；
+机体系 ${B}$；
+第 $i$ 条腿髋关节系 ${H_i}$；
+足端系 ${F_i}$。
+
+机身姿态用旋转矩阵
+$$
+R_{WB}\in SO(3),
+$$
+表示从机体系到世界系的方向变换。叉乘矩阵定义为
+$$
+[a]\times =
+\begin{bmatrix}
+0 &amp; -a_3 &amp; a_2 \
+a_3 &amp; 0 &amp; -a_1 \
+-a_2 &amp; a_1 &amp; 0
+\end{bmatrix},
+\qquad
+a\times b = [a]\times b.
+$$
+欧拉角 $\Theta = [\phi,\theta,\psi]^T$ 与机体角速度 $\omega_B$ 的映射为
+$$
+\dot \Theta = T(\phi,\theta),\omega_B,
+$$
+其中（ZYX 欧拉角）
+$$
+T(\phi,\theta)=
+\begin{bmatrix}
+1 &amp; \sin\phi\tan\theta &amp; \cos\phi\tan\theta \
+0 &amp; \cos\phi &amp; -\sin\phi \
+0 &amp; \sin\phi/\cos\theta &amp; \cos\phi/\cos\theta
+\end{bmatrix}.
+$$
+若直接用四元数 $q_{WB}$，则姿态传播更稳健：
+$$
+\dot q_{WB} = \frac12,\Omega(\omega_B) q_{WB},
+$$
+其中 $\Omega(\omega)$ 为标准四元数角速度矩阵。
+
+2. 单腿运动学：正运动学、逆运动学、雅可比
+以下以串联 3 自由度腿为例：
+
+$q_1$：髋外展/内收（绕 $x$ 轴）；
+$q_2$：髋俯仰；
+$q_3$：膝俯仰；
+大腿长 $l_2$，小腿长 $l_3$。
+
+为使公式最紧凑，先写成无髋部固定偏距的形式。若你的腿有固定侧向偏距 $d$，只需在齐次变换中增加常量平移即可。
+2.1 齐次变换与正运动学
+令
+$$
+{}^{H}T_F(q) = R_x(q_1)R_y(q_2),\mathrm{Trans}(0,0,-l_2),R_y(q_3),\mathrm{Trans}(0,0,-l_3).
+$$
+则足端相对髋关节的坐标为
+$$
+p(q)=
+\begin{bmatrix}
+x \ y \ z
+\end{bmatrix}
+\begin{bmatrix}
+
+l_2\sin q_2 - l_3\sin(q_2+q_3) \
+\sin q_1,\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big) \
+-\cos q_1,\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big)
+\end{bmatrix}.
+$$
+
+记
+$$
+q_{23}=q_2+q_3,
+\qquad
+r(q)=l_2\cos q_2+l_3\cos q_{23},
+$$
+则更紧凑地写成
+$$
+x = -l_2\sin q_2 - l_3\sin q_{23},
+\qquad
+y = \sin q_1,r,
+\qquad
+z = -\cos q_1,r.
+$$
+2.2 逆运动学
+先由 $y,z$ 求 $q_1$：
+$$
+\rho = \sqrt{y^2+z^2},
+\qquad
+q_1 = \operatorname{atan2}(y,-z).
+$$
+再将三维问题转成髋俯仰-膝俯仰平面二连杆问题。定义
+$$
+r = \sqrt{y^2+z^2},
+\qquad
+x_p = x,
+\qquad
+z_p = -r.
+$$
+则有
+$$
+D = \frac{x_p^2+z_p^2-l_2^2-l_3^2}{2l_2l_3}.
+$$
+膝关节两组解（肘上/肘下）为
+$$
+q_3 = \operatorname{atan2}(\pm\sqrt{1-D^2},D).
+$$
+再求髋俯仰角：
+$$
+q_2 = \operatorname{atan2}(-x_p,-z_p)
+- \operatorname{atan2}(l_3\sin q_3,,l_2+l_3\cos q_3).
+$$
+因此解析逆解为
+$$
+\boxed{
+\begin{aligned}
+q_1 &amp;= \operatorname{atan2}(y,-z),\
+q_3 &amp;= \operatorname{atan2}(\pm\sqrt{1-D^2},D),\
+q_2 &amp;= \operatorname{atan2}(-x,-\sqrt{y^2+z^2})
+- \operatorname{atan2}(l_3\sin q_3,,l_2+l_3\cos q_3).
+\end{aligned}}
+$$
+若存在固定侧向偏距 $d$，则将
+$$
+\rho = \sqrt{y^2+z^2},
+\qquad
+r = \sqrt{\rho^2-d^2}
+$$
+替代上式中的 $\sqrt{y^2+z^2}$，并将 $q_1$ 修正为
+$$
+q_1 = \operatorname{atan2}(y,-z) - \operatorname{atan2}(d,r).
+$$
+2.3 足端速度雅可比
+定义足端线速度
+$$
+\dot p = J(q)\dot q,
+\qquad
+q=[q_1,q_2,q_3]^T.
+$$
+由 $p(q)$ 对 $q$ 求偏导可得
+$$
+J(q)=
+\begin{bmatrix}
+0 &amp; -l_2\cos q_2 - l_3\cos q_{23} &amp; -l_3\cos q_{23} \
+\cos q_1,r &amp; -\sin q_1\big(l_2\sin q_2+l_3\sin q_{23}\big) &amp; -l_3\sin q_1\sin q_{23} \
+\sin q_1,r &amp; \cos q_1\big(l_2\sin q_2+l_3\sin q_{23}\big) &amp; l_3\cos q_1\sin q_{23}
+\end{bmatrix}.
+$$
+若考虑足端角速度，则 6 维雅可比为
+$$
+\mathcal J(q)=
+\begin{bmatrix}
+J_\omega(q) \
+J_v(q)
+\end{bmatrix},
+$$
+其中 $J_\omega$ 可通过关节轴在基坐标系下的方向向量逐列堆叠得到。
+2.4 静力映射
+由虚功原理
+$$
+\tau^T \delta q = f^T \delta p = f^T J,\delta q,
+$$
+故有
+$$
+\boxed{\tau = J^T f}.
+$$
+这是足端力控制、VMC、接触力分配与 WBC 的最基本桥梁。
+
+3. 单腿动力学
+3.1 拉格朗日形式
+令各连杆质心位置 $p_i(q)$、角速度 $\omega_i(q,\dot q)$，则系统动能
+$$
+T = \sum_{i=1}^3 \left( \frac12 m_i \dot p_i^T \dot p_i + \frac12 \omega_i^T I_i \omega_i \right),
+$$
+势能
+$$
+V = \sum_{i=1}^3 m_i g^T p_i.
+$$
+定义拉格朗日函数
+$$
+L(q,\dot q)=T-V.
+$$
+则动力学方程为
+$$
+\frac{d}{dt}\left(\frac{\partial L}{\partial \dot q}\right) - \frac{\partial L}{\partial q} = \tau.
+$$
+整理成标准形式：
+$$
+\boxed{M(q)\ddot q + C(q,\dot q)\dot q + g(q)=\tau + J_c^T\lambda.}
+$$
+其中 $\lambda$ 为接触约束力，若该腿处于摆动相，则 $\lambda=0$。
+3.2 质量矩阵的雅可比表达
+利用
+$$
+\dot p_i = J_{v,i}(q)\dot q,
+\qquad
+\omega_i = J_{\omega,i}(q)\dot q,
+$$
+可得
+$$
+M(q)=\sum_{i=1}^3 \left(m_i J_{v,i}^T J_{v,i} + J_{\omega,i}^T R_i I_i R_i^T J_{\omega,i}\right).
+$$
+重力项写成
+$$
+g(q)=\frac{\partial V}{\partial q}.
+$$
+科氏/离心项可由 Christoffel 符号表示：
+$$
+C_{ij}(q,\dot q)=\sum_{k=1}^n c_{ijk}(q)\dot q_k,
+$$
+$$
+c_{ijk}(q)=\frac12\left(\frac{\partial M_{ij}}{\partial q_k}+
+\frac{\partial M_{ik}}{\partial q_j}-
+\frac{\partial M_{jk}}{\partial q_i}\right).
+$$
+于是
+$$
+\sum_j C_{ij}\dot q_j
+=\sum_{j,k} c_{ijk}\dot q_j\dot q_k.
+$$
+3.3 牛顿-欧拉递推形式
+对于工程实现，常用递推牛顿-欧拉（RNEA）或组合刚体法（CRBA）：
+
+逆动力学：给定 $(q,\dot q,\ddot q)$ 计算 $\tau$；
+正动力学：给定 $(q,\dot q,\tau)$ 计算 $\ddot q$；
+惯量矩阵：CRBA 计算 $M(q)$。
+
+这一步是实现高带宽控制器时最常用的数值工具链。
+
+4. 浮动基座全身动力学
+四足机器人不是固定基机械臂，而是浮动基座系统。令广义速度
+$$
+\nu =
+\begin{bmatrix}
+v_B \
+\omega_B \
+\dot q_j
+\end{bmatrix},
+\qquad
+\dot \nu =
+\begin{bmatrix}
+\dot v_B \
+\dot \omega_B \
+\ddot q_j
+\end{bmatrix}.
+$$
+则全身动力学写成
+$$
+\boxed{M(q)\dot \nu + h(q,\nu)=S^T\tau + J_c(q)^T\lambda.}
+$$
+其中：
+
+$M(q)\in\mathbb{R}^{(6+n)\times(6+n)}$：全身惯量矩阵；
+$h(q,\nu)$：科氏、离心、重力、关节摩擦等并项；
+$S=[0_{n\times 6}\ I_n]$：执行器选择矩阵；
+$\tau\in\mathbb{R}^n$：关节力矩；
+$J_c\in\mathbb{R}^{3m\times(6+n)}$：接触雅可比；
+$\lambda\in\mathbb{R}^{3m}$：全部接触点的接触力。
+
+若某条腿处于支撑相且足端不滑动，则速度约束为
+$$
+J_c(q)\nu = 0,
+$$
+对时间求导得加速度约束
+$$
+J_c(q)\dot \nu + \dot J_c(q,\nu)\nu = 0.
+$$
+若处于摆动相，则对应接触雅可比行块删除。
+
+5. 状态估计
+状态估计至少需要估计
+$$
+\hat x = {\hat p_B,\hat v_B,\hat R_{WB},\hat \omega_B,\hat q_j,\hat{\dot q}_j}.
+$$
+5.1 姿态传播
+IMU 给出测量
+$$
+\omega_m = \omega_B + b_\omega + n_\omega,
+\qquad
+a_m = R_{BW}(\dot v_B-g) + b_a + n_a.
+$$
+若用四元数，姿态传播为
+$$
+\dot q_{WB} = \frac12\Omega(\omega_m-b_\omega) q_{WB}.
+$$
+5.2 足端里程计/EKF
+一种经典状态定义为
+$$
+X =
+\begin{bmatrix}
+p_B \
+v_B \
+p_{f_1}^W \
+p_{f_2}^W \
+p_{f_3}^W \
+p_{f_4}^W
+\end{bmatrix}.
+$$
+连续时间过程模型可写成
+$$
+\dot p_B = v_B,
+$$
+$$
+\dot v_B = R_{WB}(a_m-b_a-n_a)+g,
+$$
+$$
+\dot p_{f_i}^W = w_i,
+$$
+其中 $w_i$ 为足点随机游走。对支撑足令 $Q_{f_i}$ 很小，对摆动足令 $Q_{f_i}$ 很大。
+接触腿测量关系来自“世界系足端速度为零”：
+$$
+0 = v_B + \omega_B \times (R_{WB}p_{f_i}^B) + R_{WB}J_i(q)\dot q_i.
+$$
+等价写成观测方程
+$$
+z_i = 0 = H_i X + \eta_i.
+$$
+亦可用足端位置约束
+$$
+p_{f_i}^W = p_B + R_{WB}p_{f_i}^B(q_i).
+$$
+于是 EKF 递推为
+预测：
+$$
+\hat X_{k|k-1}=f(\hat X_{k-1|k-1},u_k),
+$$
+$$
+P_{k|k-1}=A_k P_{k-1|k-1}A_k^T + Q_k.
+$$
+更新：
+$$
+K_k = P_{k|k-1}H_k^T(H_k P_{k|k-1}H_k^T + R_k)^{-1},
+$$
+$$
+\hat X_{k|k}=\hat X_{k|k-1}+K_k(z_k-h(\hat X_{k|k-1})),
+$$
+$$
+P_{k|k}=(I-K_kH_k)P_{k|k-1}.
+$$
+
+6. 步态、摆腿轨迹、落足点规划
+设步态周期 $T_g$，第 $i$ 条腿接触相位函数为
+$$
+\sigma_i(t)\in{0,1},
+$$
+其中 $\sigma_i=1$ 表示支撑相，$\sigma_i=0$ 表示摆动相。
+6.1 接触序列
+对角小跑可以写成
+$$
+(\sigma_{LF},\sigma_{RH}) = 1- (\sigma_{RF},\sigma_{LH}),
+$$
+相差半周期。
+6.2 摆腿三次/五次多项式
+对单个方向分量 $s(t)$，若要求起终点位置速度加速度连续，常用五次多项式：
+$$
+s(t)=a_0+a_1 t+a_2 t^2+a_3 t^3+a_4 t^4+a_5 t^5.
+$$
+边界条件
+$$
+s(0)=s_0,\ \dot s(0)=\dot s_0,\ \ddot s(0)=\ddot s_0,
+$$
+$$
+s(T)=s_f,\ \dot s(T)=\dot s_f,\ \ddot s(T)=\ddot s_f
+$$
+解得系数向量
+$$
+a = A^{-1}b,
+$$
+其中 $A$ 为由边界条件构成的 $6\times 6$ 矩阵。
+竖直方向常写成抬脚峰值形式，例如中点抬高 $h_{sw}$：
+$$
+z_{foot}(s)=
+\begin{cases}
+z_0 + 2h_{sw}s^2, &amp; 0\le s &lt; 1/2,\
+z_f + 2h_{sw}(1-s)^2, &amp; 1/2\le s \le 1,
+\end{cases}
+$$
+其中 $s=t/T_{sw}$ 为归一化摆动相位。
+6.3 Raibert 落足点启发式
+设期望机身速度 $v_d$，实际速度 $v$，支撑时间 $T_{st}$，则一个常见足端名义落足点为
+$$
+p_{foot}^{ref} = p_B + \frac{T_{st}}{2}v_B + K_v(v_B-v_d) + K_\omega(\omega_B-\omega_d).
+$$
+若考虑偏航角速度控制，可在机体系下加入横向偏置项。
+
+7. 单刚体模型（SRB）
+MPC 最常见的模型是 Single Rigid Body：
+
+忽略腿惯量与腿角动量；
+将机器人简化为质量为 $m$、惯量为 $I_B$ 的刚体；
+控制输入为各支撑足接触力 $f_i$。
+
+7.1 连续动力学
+机身质心运动：
+$$
+\dot p = v,
+$$
+$$
+m\dot v = \sum_{i=1}^4 \sigma_i f_i + mg.
+$$
+机身角动量动力学：
+$$
+\dot R = R[\omega]_\times,
+$$
+$$
+I_W\dot \omega + \omega\times(I_W\omega)
+= \sum_{i=1}^4 \sigma_i (r_i-p)\times f_i,
+$$
+其中
+$$
+I_W = R I_B R^T.
+$$
+若采用小角速度线性化，忽略 $\omega\times(I_W\omega)$，则
+$$
+I_W\dot\omega \approx \sum_{i=1}^4 \sigma_i (r_i-p)\times f_i.
+$$
+7.2 线性化状态方程
+定义状态
+$$
+x = \begin{bmatrix} p \ v \ \Theta \ \omega \end{bmatrix},
+\qquad
+u = \begin{bmatrix} f_1 \ f_2 \ f_3 \ f_4 \end{bmatrix}.
+$$
+在小滚转/小俯仰条件下，可近似写成
+$$
+\dot \Theta \approx \omega.
+$$
+则连续线性模型可写成
+$$
+\dot x = A_c x + B_c u + d_c,
+$$
+其中
+$$
+A_c=
+\begin{bmatrix}
+0&amp;I&amp;0&amp;0\
+0&amp;0&amp;0&amp;0\
+0&amp;0&amp;0&amp;I\
+0&amp;0&amp;0&amp;0
+\end{bmatrix},
+$$
+$$
+B_c=
+\begin{bmatrix}
+0&amp;0&amp;0&amp;0\
+\frac1mI&amp;\frac1mI&amp;\frac1mI&amp;\frac1mI\
+0&amp;0&amp;0&amp;0\
+I_W^{-1}[r_1-p]\times &amp; I_W^{-1}[r_2-p]\times &amp; I_W^{-1}[r_3-p]\times &amp; I_W^{-1}[r_4-p]\times
+\end{bmatrix},
+$$
+$$
+d_c = \begin{bmatrix}0\g\0\0\end{bmatrix}.
+$$
+离散化后
+$$
+x_{k+1} = A_d x_k + B_d u_k + d_d,
+$$
+其中一阶 Euler 近似为
+$$
+A_d \approx I + A_c\Delta t,
+\qquad
+B_d \approx B_c\Delta t,
+\qquad
+d_d \approx d_c\Delta t.
+$$
+更精确可用矩阵指数：
+$$
+A_d=e^{A_c\Delta t},
+\qquad
+B_d=\int_0^{\Delta t} e^{A_c\tau}B_c,d\tau.
+$$
+7.3 预测方程（condensed form）
+预测时域长度为 $N$，定义
+$$
+X=
+\begin{bmatrix}
+x_1\x_2\\vdots\x_N
+\end{bmatrix},
+\qquad
+U=
+\begin{bmatrix}
+u_0\\nu_1\\vdots\\nu_{N-1}
+\end{bmatrix}.
+$$
+由离散模型递推可得
+$$
+\boxed{X=\mathcal A x_0 + \mathcal B U + \mathcal D.}
+$$
+其中
+$$
+\mathcal A=
+\begin{bmatrix}
+A_d\A_d^2\\vdots\A_d^N
+\end{bmatrix},
+$$
+$$
+\mathcal B=
+\begin{bmatrix}
+B_d &amp; 0 &amp; \cdots &amp; 0\
+A_dB_d &amp; B_d &amp; \cdots &amp; 0\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots\
+A_d^{N-1}B_d &amp; A_d^{N-2}B_d &amp; \cdots &amp; B_d
+\end{bmatrix}.
+$$
+
+8. MPC 形式化为二次规划
+8.1 代价函数
+令参考状态序列为 $X^{ref}$，则一个标准目标函数是
+$$
+\min_U \ \frac12(X-X^{ref})^TQ(X-X^{ref}) + \frac12 U^TRU + \frac12 \Delta U^T R_\Delta \Delta U.
+$$
+代入预测方程后变为标准 QP：
+$$
+\min_U \ \frac12 U^T H U + g^T U,
+$$
+其中
+$$
+H = \mathcal B^T Q \mathcal B + R + D_\Delta^T R_\Delta D_\Delta,
+$$
+$$
+g = \mathcal B^T Q(\mathcal A x_0 + \mathcal D - X^{ref}).
+$$
+8.2 接触约束
+对每个支撑足，约束法向力为
+$$
+0 \le f_{z,i} \le f_{z,i}^{max}.
+$$
+摩擦锥
+$$
+\sqrt{f_{x,i}^2 + f_{y,i}^2} \le \mu f_{z,i}
+$$
+常用金字塔近似为 4 个线性不等式：
+$$
+-\mu f_{z,i} \le f_{x,i} \le \mu f_{z,i},
+$$
+$$
+-\mu f_{z,i} \le f_{y,i} \le \mu f_{z,i}.
+$$
+摆动腿施加
+$$
+f_i = 0.
+$$
+于是所有约束可统一写成
+$$
+C U \le b,
+\qquad
+A_{eq}U = b_{eq}.
+$$
+8.3 接触时域长度限制
+若在预测时域内假设支撑足位置不变，则为了避免“一条腿在时域内经历支撑→摆动→再次支撑”的预测错误，通常要求
+$$
+N\Delta t \le \frac{T_g}{2}.
+$$
+
+9. 全身控制 WBC
+WBC 的目标是：在满足接触约束与动力学一致性的前提下，同时完成多个任务。典型任务：
+
+支撑足不滑动；
+机身姿态跟踪；
+机身质心位置/速度跟踪；
+摆动足轨迹跟踪；
+关节姿态/冗余整形。
+
+9.1 任务空间 PD 加速度
+对第 $k$ 个任务，定义任务变量 $x_k(q)$，其雅可比为 $J_k(q)$。加速度级任务方程为
+$$
+\ddot x_k = J_k \dot\nu + \dot J_k \nu.
+$$
+期望任务加速度常取
+$$
+\ddot x_k^* = \ddot x_k^{ref} + K_{d,k}(\dot x_k^{ref}-\dot x_k) + K_{p,k}(x_k^{ref}-x_k).
+$$
+于是理想等式为
+$$
+J_k \dot\nu = b_k,
+\qquad
+b_k = \ddot x_k^* - \dot J_k\nu.
+$$
+9.2 基于伪逆/零空间的层级 WBC
+对单任务最小范数解：
+$$
+\dot\nu^* = J^# b,
+\qquad
+J^# = J^T(JJ^T)^{-1}
+$$
+（行满秩情形；近奇异点时用阻尼伪逆）
+$$
+J^#_\lambda = J^T(JJ^T+\lambda^2 I)^{-1}.
+$$
+零空间投影矩阵：
+$$
+N = I - J^# J,
+\qquad
+JN=0.
+$$
+若有两层优先级：
+$$
+\dot\nu_1 = J_1^# b_1,
+$$
+$$
+\dot\nu_2 = \dot\nu_1 + (J_2N_1)^#(b_2-J_2\dot\nu_1),
+\qquad
+N_1=I-J_1^#J_1.
+$$
+递推到第 $k$ 层：
+$$
+\dot\nu_k = \dot\nu_{k-1} + (J_kN_{k-1})^#(b_k-J_k\dot\nu_{k-1}),
+$$
+$$
+N_k = N_{k-1} - (J_kN_{k-1})^# J_k N_{k-1}.
+$$
+这是层级逆运动学/加速度级 WBC 的核心公式。
+9.3 动力学一致的 WBC-QP
+更完整的做法是直接优化变量
+$$
+z = (\dot\nu,\tau,\lambda,s),
+$$
+其中 $s$ 为任务松弛变量。求解
+$$
+\min_z \ \frac12\sum_k |J_k\dot\nu - b_k - s_k|_{W_k}^2
+
+\frac12|\tau|{W\tau}^2
+\frac12|\lambda|{W\lambda}^2
+\frac12|s|_{W_s}^2,
+$$
+
+约束为
+$$
+M(q)\dot\nu + h(q,\nu)=S^T\tau + J_c^T\lambda,
+$$
+$$
+J_c\dot\nu + \dot J_c\nu = 0,
+$$
+$$
+A_f\lambda \le b_f,
+$$
+$$
+\tau_{min}\le \tau\le \tau_{max},
+\qquad
+\dot\nu_{min}\le \dot\nu\le \dot\nu_{max}.
+$$
+若将机身任务看得比摆动腿任务更重要，则可以用：
+
+lexicographic / hierarchical QP；
+或大权重差分近似优先级。
+
+9.4 MPC 与 WBC 的分工
+常用分工为：
+
+MPC：决定“机身如何受力”——求 $\lambda$；
+WBC：决定“全身如何运动”——求 $\dot\nu,\tau$；
+再通过动力学一致性将两者耦合。
+
+一种简洁耦合方式是把 MPC 求出的 $\lambda^{mpc}$ 作为 WBC-QP 的参考项：
+$$
+\min \cdots + \frac12|\lambda-\lambda^{mpc}|{W{mpc}}^2.
+$$
+
+10. 从全身动力学到关节力矩控制
+若 WBC 输出期望加速度 $\dot\nu^$ 与接触力 $\lambda^$，则关节力矩由动力学直接给出：
+$$
+S^T\tau = M\dot\nu^* + h - J_c^T\lambda^*.
+$$
+左乘 $S$ 得
+$$
+\boxed{\tau = S\big(M\dot\nu^* + h - J_c^T\lambda^*\big).}
+$$
+实际落地时常再叠加关节级阻抗：
+$$
+\tau_{cmd}=\tau + K_p(q_d-q)+K_d(\dot q_d-\dot q).
+$$
+若执行器只能做位置控制，则通常只能退化为
+$$
+\tau_{motor}=K_p(q_d-q)+K_d(\dot q_d-\dot q),
+$$
+此时“力控制”的上限受电机内环与减速器摩擦显著限制。
+
+11. 强化学习 RL
+RL 的价值不在于替代所有模型，而在于：
+
+学习难建模的接触与恢复策略；
+通过大规模仿真把经验压进策略网络；
+作为 residual policy 叠加到模型控制上。
+
+11.1 MDP 定义
+定义观测
+$$
+s_t = [R_{BW}g,\ v_B^B,\ \omega_B^B,\ q_j-q_j^{nom},\ \dot q_j,\ c_{cmd},\ \varphi_{gait},\ a_{t-1},\dots].
+$$
+常见动作形式：
+
+目标关节位置 $a_t=q_d$；
+目标关节阻抗偏置 $a_t=\Delta q_d$；
+直接力矩 $a_t=\tau$；
+残差动作 $a_t=\Delta \tau$，与模型控制叠加。
+
+残差控制最稳妥：
+$$
+\tau_{cmd}=\tau_{model}+\Delta\tau_\theta(s_t).
+$$
+11.2 奖励函数
+一个典型奖励可以写为
+$$
+r_t =
++w_v\exp!\left(-\frac{|v-v_{cmd}|^2}{\sigma_v^2}\right)
++w_\omega\exp!\left(-\frac{(\omega_z-\omega_{cmd})^2}{\sigma_\omega^2}\right)
+$$
+$$
+\qquad
+-w_q|q_j-q_j^{nom}|^2
+-w_{\dot q}|\dot q_j|^2
+-w_\tau|\tau|^2
+-w_{slip}\sum_i |v_{foot,i}^{tan}|^2
+-w_{jerk}|a_t-a_{t-1}|^2
+-w_{coll},\mathbf 1_{collision}.
+$$
+还可加入：
+
+足端离地高度奖励；
+足端着地时序奖励；
+机身俯仰/横滚稳定奖励；
+能耗、热损耗、冲击惩罚。
+
+11.3 PPO
+策略比值
+$$
+r_t(\theta)=\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}.
+$$
+广义优势估计（GAE）：
+$$
+\delta_t = r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t),
+$$
+$$
+\hat A_t = \sum_{l=0}^{\infty}(\gamma\lambda)^l \delta_{t+l}.
+$$
+PPO 目标函数：
+$$
+L^{clip}(\theta)=
+\mathbb E_t\Big[
+\min\big(r_t(\theta)\hat A_t,
+\operatorname{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_t\big)
+\Big].
+$$
+总损失常写为
+$$
+L(\theta,\phi)= -L^{clip}(\theta)
+
+c_v,\mathbb E\big[(V_\phi(s_t)-\hat R_t)^2\big]
+
+
+c_e,\mathbb E\big[\mathcal H(\pi_\theta(\cdot|s_t))\big].
+$$
+
+11.4 域随机化与 sim2real
+令环境参数集合
+$$
+\xi = {m, I, \mu, K_p, K_d, motor\ delay, sensor\ noise, latency, terrain, restitution, backlash}.
+$$
+训练目标改写为
+$$
+\theta^* = \arg\max_\theta
+\mathbb E_{\xi\sim p(\xi)}
+\mathbb E_{\tau\sim \pi_\theta,,P_\xi}
+\left[\sum_{t=0}^{T}\gamma^t r_t\right].
+$$
+这就是域随机化：
+$$
+\xi\sim p(\xi)
+$$
+在每个 episode 随机采样一次，使策略对参数不确定性鲁棒。
+11.5 Teacher-Student / Privileged Learning
+教师策略使用特权状态
+$$
+s_t^{priv} = [s_t,\ \text{真实地形、真实接触、真实扰动}].
+$$
+学生策略只用真实可测量量 $s_t$。蒸馏目标：
+$$
+\min_\theta \ \mathbb E|\pi_\theta(s_t)-\pi_{teacher}(s_t^{priv})|^2.
+$$
+
+12. 一套真正可落地的“研究级”统一控制器
+如果目标是“我照着就能做出一套先进而完整的机器狗控制”，推荐的统一形式是：
+12.1 状态估计层
+$$
+\hat x_t = \text{EKF/Invariant EKF}(IMU, q_j, \dot q_j, contact).
+$$
+12.2 规划层
+
+步态序列：$\sigma_i(t)$；
+摆腿轨迹：$p_{foot}^{sw}(t)$；
+机身参考：$x^{ref}(t)$；
+Raibert 落足点：$p_{foot}^{ref}$。
+
+12.3 力规划层（MPC）
+$$
+\lambda^{mpc}{0:N-1} = \arg\min_U \ \frac12 U^THU+g^TU,
+\quad \text{s.t. } CU\le b,\ A{eq}U=b_{eq}.
+$$
+取第一步：
+$$
+\lambda_t^{ref} = \lambda_0^{mpc}.
+$$
+12.4 全身控制层（WBC）
+$$
+(\dot\nu^,\tau^,\lambda^*) =
+\arg\min \sum_k |J_k\dot\nu-b_k|{W_k}^2 + |\lambda-\lambda_t^{ref}|{W_{mpc}}^2 + |\tau|{W\tau}^2
+$$
+$$
+\text{s.t. } M\dot\nu+h=S^T\tau+J_c^T\lambda,
+\quad J_c\dot\nu+\dot J_c\nu=0,
+\quad A_f\lambda\le b_f.
+$$
+12.5 低层控制
+$$
+\tau_{cmd}=\tau^*+K_p(q_d-q)+K_d(\dot q_d-\dot q).
+$$
+12.6 残差学习（可选）
+$$
+\tau_{final}=\tau_{cmd}+\Delta\tau_\theta(s_t).
+$$
+这是目前最稳健的“模型主导 + 学习补偿”的统一形式。
+
+13. 真正决定上限的，不只是公式
+从数学上，一条控制链要真的成立，还必须满足：
+13.1 可实现性条件
+
+
+驱动带宽足够：
+$$
+omega_c^{motor} \gg \omega_c^{controller}.
+$$
+
+
+关节力矩冗余足够：
+$$
+\tau_{max} &gt; \max_t |\tau_{cmd}(t)|.
+$$
+
+
+接触可行：
+$$
+\lambda \in \mathcal K_\mu,
+$$
+其中 $\mathcal K_\mu$ 为摩擦锥。
+
+
+估计误差受控：
+$$
+|x-\hat x| \le \varepsilon_x.
+$$
+
+
+模型误差受控：
+$$
+|M-\hat M|,\ |h-\hat h|,\ |J_c-\hat J_c| \text{ 足够小。}
+$$
+
+
+13.2 一条最实用的实现顺序
+
+单腿 FK/IK/J；
+单腿 PD 摆腿；
+单腿 $\tau=J^Tf$；
+四足站立静力分配；
+EKF 状态估计；
+步态调度 + 摆腿轨迹；
+SRB-MPC；
+WBC；
+全身逆动力学；
+RL residual / 端到端策略。
+
+
+14. 一页总公式清单
+14.1 单腿运动学
+$$
+p(q)=
+\begin{bmatrix}
+
+l_2\sin q_2 - l_3\sin(q_2+q_3) \
+\sin q_1\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big) \
+-\cos q_1\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big)
+\end{bmatrix}
+$$
+
+$$
+\dot p = J(q)\dot q,
+\qquad
+\tau = J^T f.
+$$
+14.2 全身动力学
+$$
+M(q)\dot\nu + h(q,\nu)=S^T\tau + J_c^T\lambda
+$$
+$$
+J_c\nu=0,
+\qquad
+J_c\dot\nu+\dot J_c\nu=0.
+$$
+14.3 SRB 模型
+$$
+\dot p=v,
+\qquad
+m\dot v=\sum_i \sigma_i f_i + mg,
+$$
+$$
+I_W\dot\omega + \omega\times(I_W\omega)=\sum_i \sigma_i (r_i-p)\times f_i.
+$$
+14.4 MPC
+$$
+x_{k+1}=A_dx_k+B_du_k+d_d,
+$$
+$$
+X=\mathcal A x_0 + \mathcal B U + \mathcal D,
+$$
+$$
+\min_U \frac12 U^THU+g^TU,
+\quad
+\text{s.t. } CU\le b.
+$$
+14.5 WBC
+$$
+\ddot x_k = J_k\dot\nu + \dot J_k\nu,
+$$
+$$
+\ddot x_k^*=\ddot x_k^{ref}+K_d(\dot x_k^{ref}-\dot x_k)+K_p(x_k^{ref}-x_k),
+$$
+$$
+\dot\nu_k = \dot\nu_{k-1} + (J_kN_{k-1})^#(b_k-J_k\dot\nu_{k-1}),
+$$
+或
+$$
+\min_{\dot\nu,\tau,\lambda} \sum_k |J_k\dot\nu-b_k|_{W_k}^2
+$$
+$$
+\text{s.t. } M\dot\nu+h=S^T\tau+J_c^T\lambda.
+$$
+14.6 PPO
+$$
+L^{clip}(\theta)=
+\mathbb E\left[\min\big(r_t\hat A_t,\operatorname{clip}(r_t,1-\epsilon,1+\epsilon)\hat A_t\big)\right]
+$$
+$$
+\hat A_t = \sum_{l=0}^{\infty}(\gamma\lambda)^l \delta_{t+l},
+\qquad
+\delta_t=r_t+\gamma V(s_{t+1})-V(s_t).
+$$
+
+15. 最后一条建议
+如果你只实现一条路线，优先做：
+$$
+\boxed{\text{状态估计} + \text{步态/摆腿} + \text{SRB-MPC} + \text{WBC} + \text{逆动力学}}
+$$
+如果你要把性能再往上推，再加：
+$$
+\boxed{\text{Residual RL} \quad \text{或} \quad \text{Teacher-Student RL}}
+$$
+这不是唯一路线，但它是最接近“理论完备、工程可落地、还能继续扩展到先进方法”的统一框架。
+]]></content>
+      <categories>
+        <category>足式机器人</category>
+      </categories>
+      <tags>
+        <tag>足式机器人</tag>
+        <tag>控制</tag>
+        <tag>MPC</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径</title>
+    <url>/2026/06/05/rl_algorithm_design_aesthetics/</url>
+    <content><![CDATA[强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径
+前面两篇我们聊了损失函数和优化器的设计哲学。但有一个领域的损失函数和优化器设计，比监督学习更&quot;绕&quot;——强化学习。
+在监督学习中，你的标签是上帝给的，错了就是错了。但在强化学习中，你只有一个延迟的、嘈杂的、稀疏的标量奖励信号。更麻烦的是：你在用当前策略收集的数据来更新这个策略本身，更新完你又拿新策略去跑数据——你的训练数据一直在变。
+这种&quot;自己给自己出题，自己又去解题&quot;的循环，使得 RL 的算法设计比监督学习多了一层曲折。这篇博客会沿着 RL 的算法演进路径，拆解每个关键设计背后的直觉——不是为了列公式，而是为了理解为什么一个问题被反复用不同方式解决。
+
+1. 核心难题：状态价值和动作价值
+先确立两个基本概念。
+在 RL 中，智能体需要回答的根本问题是：在某个状态下，做哪个动作最好？
+但&quot;好&quot;的定义是模糊的——好的动作会带来即时奖励，也可能带来长期回报。于是我们定义了两种价值函数：
+
+状态价值 $V(s)$：从这个状态出发，按当前策略 $ \pi $，未来期望总回报是多少
+动作价值 $Q(s,a)$：在这个状态执行动作 $a$，之后按当前策略 $ \pi $，未来期望总回报是多少
+
+它们通过 Bellman 方程关联：
+$$
+V(s) = \max_a Q(s,a)
+$$
+或者更标准地，通过时序一致性：
+$$
+Q(s,a) = r(s,a) + \gamma \mathbb{E}_{s’ \sim P(\cdot | s,a)} [V(s’)]
+$$
+这句话直白地说就是：一个动作的价值 = 立即回报 + 折损后的后续状态价值。
+这个式子看似简单，但它蕴含了整个 RL 算法设计的核心 tension：你教的（价值估计）和你要学的（策略）是同一个东西的回声——你用当前的估计去更新自己，形成自我指涉的循环。后面所有的算法，本质上都是不同方式来处理这个循环的稳定性问题。
+
+2. Q-learning：用一个近似去逼近另一个近似
+$$
+Q(s,a) \leftarrow Q(s,a) + \alpha [r + \gamma \max_{a’} Q(s’, a’) - Q(s,a)]
+$$
+Q-learning 的核心思想是：用 TD target ($r + \gamma \max_{a’} Q(s’,a’)$) 作为&quot;伪标签&quot;去更新 $Q(s,a)$。TD target 本身也是 $Q$ 函数的估计，所以这个更新是在用一个近似去逼近另一个近似。
+这带来两个问题：
+1. 过度估计（Overestimation Bias）
+$\max_{a’} Q(s’,a’)$ 天然会高估——因为如果 $Q$ 对每个动作的估计有随机误差，取最大值会选中误差为正的那个。误差叠加，Q 值越学越虚高。
+2. Bootstrapping 的误差累积
+每一步更新都依赖于下一步的估计，误差会沿着时间步传导和放大。在复杂环境中，这种误差传播可以导致价值估计的级联偏离。
+Double Q-learning：把选择器和评估器分开
+解决方案出奇简洁：用两个独立的 Q 网络，一个负责选动作，另一个负责估价值。
+$$
+Q_1(s,a) \leftarrow Q_1(s,a) + \alpha [r + \gamma Q_2(s’, \arg\max_{a’} Q_1(s’, a’)) - Q_1(s,a)]
+$$
+选动作用 $Q_1$，估值用 $Q_2$。误差被正负抵消的概率大于被叠加放大的概率，有效缓解了高估问题。这就像两个裁判：一个说你该打这个球，另一个说这球值多少分——如果同一个裁判又选又评，他很容易给自己的选择打高分。
+
+3. DQN：当深度网络遇上 Q-learning
+2013 年，Mnih 等人把 Q-learning 搬到深度网络上（DQN），在 Atari 游戏上取得了突破。但光替换网络架构远远不够，他们还加了两项关键创新。
+3.1 经验回放（Experience Replay）
+打破数据之间的时序相关性。监督学习假设数据是 i.i.d. 的，但 RL 的 $s_{t+1}$ 直接依赖于 $s_t, a_t$——前后状态强相关。用这样的时序数据做 SGD，梯度方差极大，网络很难收敛。
+经验回放的解决方案：把经历存起来，随机采样训练。每个 transition 来自不同的时间步、不同的 episode，相关性被打破。同时，一条经验可以复用多次，提升了样本效率。
+3.2 Target Network
+DQN 面临的同一个问题，只是换了形式。如果 $Q$ 网络在时刻 $t$ 和目标值 $r + \gamma \max Q(s’, a’)$ 都用同一个网络计算，这个网络在更新自己，而目标也在跟着变——就像在移动的靶子上射箭。
+DQN 的做法是：维持一个冻结的 target network $Q^-$，每隔 $C$ 步才复制一次主网络的参数。
+$$
+y_t = r_t + \gamma \max_{a’} Q^-(s_{t+1}, a’)
+$$
+这样 target 在一个固定周期内不变，避免了&quot;自己追自己尾巴&quot;的情况。
+这两个设计的直觉可以简化为：
+
+经验回放 → 别让数据太相关，否则梯度像喝了假酒
+Target Network → 别让目标跑太快，否则你永远追不上
+
+
+4. Policy Gradient：直接学策略不香吗？
+Q-learning 学派在学价值函数，然后根据价值选动作。那能不能直接学一个策略 $\pi_\theta(a|s)$，然后用梯度上升去最大化期望回报？
+这就是 Policy Gradient 的思路，核心是 Policy Gradient Theorem：
+$$
+\nabla J(\theta) = \mathbb{E}{\tau \sim \pi\theta} \left[ \sum_t \nabla_\theta \log \pi_\theta(a_t|s_t) \cdot G_t \right]
+$$
+直白翻译：收集一组交互轨迹，如果一个 trajectory 的总回报 $G_t$ 高，就增加这条轨迹上每个动作的概率；如果回报低，就降低概率。
+但这有一个问题：方差极大。 同一个策略跑两次，第一次可能不小心通关了，第二次可能开局就死。两条轨迹的 $G_t$ 差天差地别，梯度方向会受到&quot;运气好&quot;或&quot;运气差&quot;的强烈影响。
+于是有了 REINFORCE with baseline：减掉一个基线 $b(s)$ 来降低方差。
+$$
+\nabla J(\theta) = \mathbb{E} \left[ \sum_t \nabla_\theta \log \pi_\theta(a_t|s_t) \cdot (G_t - b(s_t)) \right]
+$$
+但这样做还不够——$G_t$ 本身的方差仍然很大。
+
+5. Actor-Critic：两种思路的结合
+如果既学价值函数，又学策略呢？
+Actor-Critic 的做法是：Actor 负责学策略（做什么），Critic 负责学价值函数（做得好不好）。 Critic 的输出充当一个更稳定的&quot;打分&quot;信号，替代掉 $G_t$。
+$$
+\nabla J(\theta) = \mathbb{E} \left[ \nabla_\theta \log \pi_\theta(a|s) \cdot \delta \right]
+$$
+其中 $\delta = r + \gamma V(s’) - V(s)$ 是 TD-error——衡量当前 Critic 认为这个动作比预期好还是差。
+
+$\delta &gt; 0$：这个动作比 Critic 预期好 → 提升它的概率
+$\delta &lt; 0$：这个动作比预期差 → 降低它的概率
+
+Critic 会不断学习，让自己对 $V(s)$ 的估计越来越准；Actor 则根据越来越准的 Critic 信号调整策略。两者互相促进，形成了 RL 中一个经典的共生结构。
+但这种共生也有风险：Critic 和 Actor 是彼此依赖的，如果 Critic 学偏了，Actor 就会往错误方向走，然后收集到歪数据再训练 Critic——恶化循环。 几乎所有高级算法都在处理这个问题。
+
+6. PPO：稳定压倒一切
+从 REINFORCE 到 A2C/A3C，Policy Gradient 方法已经能在很多任务上工作了，但有一个核心痛点：样本效率低，而且一次更新太大就会崩。
+所谓&quot;一次更新太大&quot;，指的是 $\pi_\theta$ 一步偏离 $\pi_{\theta_{old}}$ 太多。一旦走歪，新策略收集的数据就会和旧策略偏差太大，Critic 的那个假设就失效了——你不再能可靠地用旧数据来更新新策略。
+TRPO 的解决思路
+TRPO（Trust Region Policy Optimization）的做法是：限制每次更新的步长，保证新旧策略的 KL 散度不超过 $\delta$。
+$$
+\max_\theta \mathbb{E} \left[ \frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} A(s,a) \right] \quad \text{s.t. } D_{KL}(\pi_{\theta_{old}} \parallel \pi_\theta) \leq \delta
+$$
+它把优化问题变成了一个带约束的优化，然后用共轭梯度等方法求解。理论上漂亮，但实现复杂、计算量大。
+PPO 的简化：用 Clip 代替约束
+PPO 的想法更直接粗暴：如果不限制步长，那就限制收益。 它不对更新幅度做约束，而是对目标函数做了裁剪：
+$$
+L^{CLIP}(\theta) = \mathbb{E} \left[ \min\left( r_t(\theta) \hat{A}_t, \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \hat{A}_t \right) \right]
+$$
+其中 $r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}$ 是新旧策略的比值。
+直觉是这样的：
+
+如果 $\hat{A}_t &gt; 0$（这个动作好）：$r_t(\theta)$ 希望变大（提升这个动作的概率），但 clip 限制了它最大涨到 $1+\epsilon$——步子不要迈太大
+如果 $\hat{A}_t &lt; 0$（这个动作不好）：$r_t(\theta)$ 希望变小，但 clip 限制了它最小跌到 $1-\epsilon$
+
+PPO 的 “clip” 是一个极有工程美感的操作。TRPO 需要一个复杂的二次规划求解器来处理约束；PPO 只用了一行 torch.clamp 就达到类似效果。它没有 TRPO 的严格保证，但实践中往往更好用。
+你几乎可以这样说：PPO 之所以成功，不是因为它在理论上比 TRPO 更优，而是因为它把 TRPO 的&quot;复杂约束&quot;变成了一个可以一行代码实现的&quot;粗糙但有效&quot;的裁剪。
+PPO 在今天的主流 RL 库中几乎是标配。从 Isaac Lab 中的四足机器人训练，到 LLM 的 RLHF 微调，PPO 的身影无处不在。
+
+7. 算法演进的底层脉络
+把几大算法串起来，你会看到一条清晰的设计进化路径：
+
+
+
+阶段
+代表算法
+核心创新
+解决了什么
+
+
+
+
+基础理论
+Q-learning
+Bellman 更新
+让价值函数自洽
+
+
+加上深度
+DQN
+经验回放 + Target Network
+打破相关性 + 稳定目标
+
+
+直接学策略
+REINFORCE
+Policy Gradient Theorem
+不用学 V 也能优化
+
+
+结合两者
+A2C / A3C
+Actor-Critic
+用 V 降方差、稳梯度
+
+
+稳定训练
+TRPO / PPO
+Trust Region / Clip
+防止一次更新崩掉
+
+
+
+这条路径的内在动力是：RL 的训练稳定性问题比监督学习严重得多。 在监督学习中，标签是固定的，数据分布也不是你改参数就变的。但在 RL 中，你更新一次策略，整个数据分布就变了——下一批数据的 “难易程度”、&quot;反馈信号&quot;完全取决于你刚刚更新的策略。
+所以每一代算法都在努力做同一件事：让这个&quot;自指&quot;的循环稳定下来。
+从 DQN 的 target network（隔一段时间冻结目标），到 TRPO 的约束优化（限制策略变化幅度），到 PPO 的 clip（用简单粗暴的方式限制变化），再到 SAC 的熵正则化（鼓励探索来避免策略坍塌）——它们本质上是同一个焦虑的多种解法。
+
+8. 一个贯穿三篇的 meta 视角
+最后，我想用一个小小的 meta 视角把这三篇串起来。
+损失函数、优化器、RL 算法——这三个主题看似独立，但它们背后是同一个问题：
+怎么让一个数学上的优化过程，在现实生活中稳定、高效地运行？
+
+损失函数定义了&quot;好&quot;的标准
+优化器定义了&quot;怎么走&quot;的方案
+RL 算法则在更高维度上定义了&quot;数据从哪来、目标往哪去&quot;
+
+你会发现，高级的算法设计者都有一个共同特质：他们知道什么时候该加约束，什么时候该放松约束。
+MSE 到 Huber 是加了&quot;对大误差的容忍边界&quot;，Adam 的 bias correction 是加了&quot;初始阶段的校正&quot;，PPO 的 clip 是加了&quot;动作概率比值的边界&quot;——看似不同的操作，本质上都是在划定一个安全的信任区间，在这个区间内信任梯度信号，超出区间则谨慎对待。
+这就是所有优化算法背后那个最朴素的设计直觉：相信梯度，但别全信。
+
+总结
+
+Bellman 方程奠定了价值学习的基石，包办了整个 RL 的递归结构
+Q-learning 用 TD target 做自举更新，DQN 用经验回放和 target network 解决了深度化的两大难题
+Policy Gradient 方法跳过了价值函数直接优化策略，Actor-Critic 把它们结合起来
+TRPO/PPO 的核心贡献是解决&quot;更新太大就崩&quot;的问题，PPO 用 clip 以极简方式达成目标
+所有 RL 算法的底层焦虑都是稳定性——因为数据分布会随策略变化，形成了自指循环
+
+从第一篇的损失函数、到第二篇的优化器、再到这一篇的 RL 算法，这三篇文章共同呈现了一个渐变：越复杂的问题，你的&quot;优化工具&quot;就需要越多的约束和机制来保持稳定。 但这个思路是通用的——理解每个约束和机制为什么存在，比记住公式本身重要得多。
+]]></content>
+      <categories>
+        <category>强化学习</category>
+      </categories>
+      <tags>
+        <tag>强化学习</tag>
+        <tag>数学</tag>
+        <tag>算法设计</tag>
+        <tag>DRL</tag>
       </tags>
   </entry>
   <entry>
@@ -3726,1318 +5858,6 @@ Runner / OnPolicyRunner：理解训练主循环如何调 act -&gt; env.step -&gt
       </tags>
   </entry>
   <entry>
-    <title>PPO 在四足机器人控制中的应用——从理论到调参实战</title>
-    <url>/2026/05/21/ppo_for_quadruped/</url>
-    <content><![CDATA[PPO 在四足机器人控制中的应用——从理论到调参实战
-如果你已经看过前面的 rsl_rl 源码解析，应该对 PPO 的工程实现有了清晰的了解。但那篇文章的重点是&quot;代码怎么写&quot;，本文则回答另一个问题：PPO 在四足机器人 locomotion 中到底是怎么工作的、参数怎么调、坑在哪里？
-如果你跑过四足 RL 训练，大概率遇到过这些场景：
-
-训练两小时，loss 曲线看着很漂亮，结果机器人原地抽搐了一下就趴了
-换了一组 reward 权重，PPO 就不收敛了，明明之前跑得好好的
-试着把 clip range 从 0.2 调到 0.1，方差是小了，但怎么跑也跑不快
-明明 GAE lambda 从 0.95 改到 0.99，步态反而更差了
-
-这些都不是 bug，是 PPO 在连续控制问题——尤其是 locomotion——中的特有现象。本文从 locomotion 的视角重新理解 PPO 的每个组件，然后给出实战调参指南。
-
-1. 重新理解 PPO——从 locomotion 的视角
-PPO 的核心公式大家都很熟悉了：
-$$
-L^{CLIP}(\theta) = \mathbb{E}_t \left[ \min\left( r_t(\theta) \hat{A}_t, ; \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \hat{A}_t \right) \right]
-$$
-其中 $r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}$ 是新旧策略的比率，$\epsilon$ 是 clip 范围。
-但这个公式在 locomotion 语境下，有几个值得重新审视的地方。
-1.1 为什么 clip 在四足控制中尤其重要？
-对比 Atari 游戏和四足控制这两个场景：
-
-
-
-维度
-Atari 游戏
-四足 locomotion
-
-
-
-
-动作空间
-离散 (4-18 个按键)
-连续 (12-20 个关节)
-
-
-状态维度
-84×84 图像
-~50-100 维 (关节位置、速度、IMU)
-
-
-单次动作影响
-按键改变游戏状态
-力矩决定机器人是否摔倒
-
-
-策略更新风险
-输掉一局游戏
-仿真中收集到的 trajectory 数据完全不能用
-
-
-
-在四足控制中，策略的一个大幅度更新可能让机器人从&quot;能走&quot;变成&quot;摔倒&quot;，而摔倒后的 trajectory 数据质量极差。用这些数据继续更新，策略会进一步恶化——这就是 PPO 试图阻止的&quot;策略崩溃&quot;。
-clip 机制的核心作用是：限制每次更新的幅度，让策略平滑演化。这也是为什么四足 RL 几乎只用 PPO 或其变体（而不用 SAC 或 TD3）——不是因为那些算法不好，而是 PPO 的 conservative update 特性在物理控制中格外珍贵。
-1.2 GAE——locomotion 中的信用分配
-广义优势估计（GAE）在 locomotion 中的角色经常被低估：
-$$
-\hat{A}t^{GAE(\gamma,\lambda)} = \sum{l=0}^{\infty} (\gamma\lambda)^l \delta_{t+l}
-$$
-其中 $\delta_t = r_t + \gamma V(s_{t+1}) - V(s_t)$ 是 TD 误差。
-在四足 locomotion 中，一个动作的后果往往延迟好几步才显现。比如：
-
-第 100 步迈出的腿落地姿势不对
-第 103 步身体开始倾斜
-第 105 步机器人摔倒
-
-GAE 的作用就是把第 100 步的&quot;坏决策&quot;与第 105 步的&quot;坏结果&quot;连接起来。$\lambda$ 控制这个连接的范围：
-
-$\lambda \to 0$：只看单步 TD 误差，噪声大但偏差小
-$\lambda \to 1$：看整个轨迹的累计回报，偏差大但方差小
-
-在 locomotion 中，$\lambda$ 通常取 0.95 左右，但这并不是万能的。稍后我们在调参部分会详细讨论。
-1.3 Actor-Critic 架构在四足控制中的特殊性
-很多入门教程把 actor-critic 画成一个共享 backbone 的架构，但在四足 locomotion 的实际实现中（如 rsl_rl），actor 和 critic 通常是分开的网络。这不是懒惰，而是有充分理由的：
-Actor 需要的表征 vs Critic 需要的表征是不同的：
-
-Actor 只关心&quot;在当前状态下输出什么力矩&quot;，它对 body 姿态的微小变化可能需要很敏感
-Critic 需要估计&quot;从当前状态出发的长期价值&quot;，更需要全局视角
-
-更重要的是，asymmetric actor-critic 在四足控制中几乎是标配：
-
-训练时：critic 可以看到 privileged information（真值速度、足端接触力、地面摩擦力系数等）
-部署时：actor 只能看到 sensor observations（IMU、关节编码器、可能还有深度相机）
-
-这意味着 actor 必须学会从受限的观测中推断 critic 看到的信息，这本身就是一种 implicit distillation。
-
-2. 四足 PPO 的超参选择
-当你从 Isaac Gym / Isaac Lab 或 rsl_rl 的默认配置开始训练时，一个自然的疑问是：这些默认值是怎么来的？它们为什么 work？
-2.1 学习率：为什么 locomotion 用 $5\times 10^{-5}$ 而不是 $3\times 10^{-4}$
-Atari 领域的 PPO 通常用 $2.5\times 10^{-4}$ 的学习率，但四足 locomotion 的常见设置是 $1\times 10^{-3}$（Adam，配合 learning rate schedule 衰减）。
-这看起来矛盾——locomotion 是更复杂的任务，为什么反而用更高的学习率？
-答案在于数据效率 vs 更新频率的权衡。在四足 RL 中：
-
-每个 rollout 收集数百万步数据（以 ANYmal 为例，一次更新基于约 2-8M 时间步）
-数据量远大于 Atari PPO 的 batch size（256-2048）
-更大的数据集允许更高的学习率而不导致过拟合
-
-实际上，rsl_rl 中 PPO 的默认学习率是 $1\times 10^{-3}$，配合 linear schedule 在训练过程中衰减到 0。
-但如果你的任务比较特殊（比如 reward 很稀疏、或者 domain randomization 很强），考虑降到 $3\times 10^{-4}$ 起步。
-2.2 Clip range：0.2 还是 0.1？
-标准 PPO 的 clip range 是 $\epsilon = 0.2$。但在四足 locomotion 实践中：
-
-$\epsilon = 0.2$：更激进的策略更新，训练更快但可能不稳定
-$\epsilon = 0.1$：更保守，适合复杂地形或稀疏 reward
-
-一个实用的判断方法：如果训练中回报（return）的波动超过 30%，考虑降低 clip range 或者增大 mini-batch size。
-2.3 GAE lambda 的选择
-
-
-
-$\lambda$
-效果
-适用场景
-
-
-
-
-0.90-0.93
-更关注近期奖励，降低方差
-reward 设计精细、dense reward
-
-
-0.95
-标准值
-绝大多数 locomotion 任务
-
-
-0.97-0.99
-更关注长期后果
-稀疏 reward、需要长期规划的步态
-
-
-
-一个常见的误区：不要为了追求稳定性把 $\lambda$ 设得太低。低 $\lambda$ 虽然降低了优势估计的方差，但在 locomotion 中会让策略变得短视——因为一个最佳步态的效果往往要在几步甚至十几步之后才能体现出来。
-2.4 Mini-batch size 与更新次数
-在 rsl_rl 中，PPO 的默认配置通常是在每个 epoch 对 collected data 做 5 次更新，每次 mini-batch size 约 8192-32768。
-关键直觉：
-
-更大的 mini-batch → 更稳定的梯度估计 → 可以用更高的学习率
-更多的更新次数 → 更好地利用 collected data → 数据效率更高
-
-但这两个参数并不是越大越好。实践中，如果你发现：
-
-训练后期 loss 振荡：增大 mini-batch size 或减少 epoch
-策略收敛太慢：尝试把 mini-batch size 减半，增加 epoch 数
-值函数（value）发散：优先检查 reward scaling 是否合理，其次才调 PPO 参数
-
-2.5 Entropy bonus 的作用
-$$
-L^{PPO} = L^{CLIP} - c_1 L^{VF} + c_2 S\pi_\theta
-$$
-$S\pi_\theta$ 是策略熵，$c_2$ 是熵系数。在四足控制中：
-
-默认值：$c_2 = 0.01$（rsl_rl）或 $c_2 = 0.0$（一些消融实验）
-熵系数太高：策略保持随机，步态抖动，关节力矩噪声大
-熵系数太低：策略过早确定化，可能陷入局部最优（比如只会匀速前进，不会调整步态适应地形变化）
-
-一个实用的策略：在训练初期（前 10% 的 iterations）设 $c_2 = 0.01-0.02$，然后线性衰减到 0。这样可以保证早期充分探索，后期策略确定化以提高性能。
-
-3. 实战调参指南
-3.1 Loss 曲线到底怎么看？
-在四足 RL 训练中，我通常会同时看这几条曲线来判断训练是否正常：
-
-
-
-曲线
-正常信号
-异常信号
-
-
-
-
-Total reward / episode
-持续上升后趋于平稳
-突然暴跌 → 策略崩溃
-
-
-Explained variance of V
-&gt; 0.8 且稳定
-&lt; 0.5 → critic 学不动了
-
-
-Policy entropy
-缓慢下降后趋于稳定
-某次 update 后骤降为 0 → 策略坍塌
-
-
-KL divergence
-&lt; 0.01 且平稳
-&gt; 0.02 → 更新太激进
-
-
-Clip fraction
-10-20% 被 clip
-&gt; 30% → clip range 需要增大或 policy 更新太激进
-
-
-
-3.2 策略崩溃后的恢复方法
-策略崩溃（policy collapse）在四足 RL 中很常见，表现为 episode reward 在某次 update 后骤降并无法恢复。常见原因和解决方法：
-原因 1：优势估计方差太大
-
-现象：value loss 骤升，explained variance 骤降
-解决：增大 GAE $\lambda$、增大 batch size、或者检查 reward 是否有 NaN
-
-原因 2：更新步长过大
-
-现象：clip fraction &gt; 30%，KL &gt; 0.02
-解决：降低学习率、减小 clip range、或者减小 max_grad_norm
-
-原因 3：reward 设计冲突
-
-现象：多项目标互相矛盾（如&quot;前进&quot;和&quot;节省能量&quot;在特定条件下冲突）
-解决：检查各 reward 项是否在同一量级，是否在某些 corner case 下互相抵消
-
-3.3 从随机到行走：训练过程中的阶段
-一个典型的四足 locomotion 训练会经历以下阶段：
-
-
-随机抽搐期（0-5% iterations）— 策略完全是随机的，机器人原地抖动
-
-此时 alive bonus 是主要的梯度来源
-如果这个阶段 reward 就为零，检查 reward scaling
-
-
-
-爬行期（5-20% iterations）— 开始学会站起来并缓慢移动
-
-速度跟踪 reward 开始生效
-关节限位 penalty 开始起作用，防止过度伸展
-
-
-
-稳定行走期（20-50% iterations）— 步态模式逐渐形成
-
-大多数 reward 项已收敛到合理范围
-策略开始产生有节奏的 gait pattern（通常是对角步态 trot）
-
-
-
-精细调优期（50-100% iterations）— 性能缓慢提升
-
-步态效率和鲁棒性持续提高
-此时 domain randomization 和地形难度可以逐渐增加
-
-
-
-3.4 实际训练脚本示例
-下面是一个基于 rsl_rl API 的 PPO 配置示例（重点参数已标注）：
-# ppo_cfg.pyfrom rsl_rl import PPOclass QuadrupedPPOCfg:    class algorithm:        # PPO 核心参数        class_name = &quot;PPO&quot;        num_learning_epochs = 5          # 每个 batch 更新 5 次        num_mini_batches = 4             # mini-batch 数量        clip_param = 0.2                 # 初始 clip range        gamma = 0.99                     # 折扣因子        lam = 0.95                       # GAE lambda        value_loss_coef = 1.0            # value loss 权重        entropy_coef = 0.01              # 策略熵权重        learning_rate = 1e-3             # 初始学习率        learning_rate_schedule = &quot;linear&quot; # 线性衰减到 0        max_grad_norm = 1.0              # 梯度裁剪    class runner:        policy_class_name = &quot;ActorCritic&quot;        num_steps_per_env = 24           # 每个环境的 rollout 步数        max_iterations = 1500            # 总训练迭代数                # 经验回放 buffer 相关        save_interval = 50               # 保存模型间隔        experiment_name = &quot;quadruped&quot;        run_name = &quot;&quot;        logger = &quot;tensorboard&quot;
-实际使用时，你可能会根据具体机器人（A1、Go1、ANYmal、Mini Cheetah）微调这些参数，但上面的配置是一个很好的起点。
-
-4. 常见问题排查
-Q1: 训练 loss 正常下降，但机器人就是不走路
-这通常不是 PPO 的问题，而是 reward 设计的问题。请检查：
-
-速度跟踪 reward 是否设得太低，被其他 penalty 项淹没了
-alive bonus 是否设得太高，导致&quot;站着不动&quot;比&quot;往前走&quot;的累积回报更高
-是否缺少对&quot;前进&quot;的直接激励（比如前沿速度奖励）
-
-Q2: 策略从能走到不能走（late training collapse）
-通常是 entropy 衰减到了零，策略已经确定化但陷入了局部最优。解决方法：
-
-增大 entropy coefficient 或加 entropy schedule
-增加 domain randomization，迫使策略保持鲁棒性
-检查是否在某个特定地形/状态下策略出现了盲点
-
-Q3: 训练速度太慢
-
-增大 num_steps_per_env 以减少 rollout 开销（但会增大 GPU 显存）
-减小 num_learning_epochs 或 num_mini_batches
-检查 max_grad_norm 是否设得太小（$0.1$ 通常太保守，$1.0$ 比较合理）
-
-Q4: Value loss 一直在增大
-这是最常见的 warning 信号。可能的原因：
-
-reward scale 太大：尝试把 reward 缩放到 $[0, 1]$ 或 $[-1, 1]$ 范围
-reward 中有 outlier：检查是否有某些 transition 中 reward 异常高/低
-critic 网络容量不足：增大 critic hidden dims
-使用 reward normalization（rsl_rl 中默认开启）
-
-
-5. 总结
-PPO 在四足 locomotion 中的成功不是偶然的——它的 conservative policy update、GAE 信用分配机制、以及灵活的 actor-critic 架构与物理控制问题完美契合。但默认参数只是起点，真正要让四足机器人从会走到会跑、从平底到复杂地形，需要对 PPO 的每个组件有深入理解。
-希望本文能帮你少走一些弯路。如果你在实践中遇到本文没有覆盖的问题，欢迎在评论区交流。
-
-相关文章推荐：
-
-rsl_rl 源码解析 — PPO 的工程实现
-四足机器人 Locomotion 奖励函数设计 — reward 的每个细节
-四足机器人控制理论——从 MPC 到全身控制 — PPO 之外的控制方法
-
-]]></content>
-      <categories>
-        <category>强化学习</category>
-      </categories>
-      <tags>
-        <tag>强化学习</tag>
-        <tag>足式机器人</tag>
-        <tag>控制</tag>
-        <tag>PPO</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>四足机器人控制统一技术文档（公式推导版）</title>
-    <url>/2026/03/18/quadruped_control_theory_cn/</url>
-    <content><![CDATA[四足机器人控制统一技术文档（公式推导版）
-
-目标：给出一套从单腿运动学 → 全身动力学 → MPC / WBC / RL 的统一数学体系。
-采用对象：主流 12 自由度串联四足（浮动基座 + 4 条 3 自由度腿）。
-说明：若你的本体是 8 自由度并联腿或五连杆腿，只需要替换“单腿几何闭环、雅可比、单腿惯性”部分；从浮动基座动力学、状态估计、MPC、WBC 到 RL 的整体框架不变。
-
-
-0. 总体建模对象与控制链
-四足机器人广义坐标选为
-$$
-q = \begin{bmatrix} p_B \ \Theta_B \ q_j \end{bmatrix}
-\in \mathbb{R}^{6+n},
-\qquad
-n=12,
-$$
-其中
-
-$p_B\in\mathbb{R}^3$：机身质心位置；
-$\Theta_B$：机身姿态参数（欧拉角或四元数最小参数）；
-$q_j\in\mathbb{R}^{12}$：12 个关节角；
-浮动基速度更适合写成
-$$
-\nu = \begin{bmatrix} v_B \ \omega_B \ \dot q_j \end{bmatrix}\in\mathbb{R}^{18}.
-$$
-
-一套完备控制链路写成
-$$
-\text{感知/估计} \to \text{步态/落足点/摆腿轨迹} \to \text{SRB-MPC} \to \text{WBC} \to \text{关节力矩控制} \to \text{执行器}.
-$$
-其中：
-
-状态估计输出 $\hat p_B,\hat v_B,\hat R_{WB},\hat\omega_B$；
-MPC 输出未来短时域内接触力 $\lambda = [f_1^T,\dots,f_4^T]^T$；
-WBC 将机身任务、足端任务、接触约束综合成 $\tau$；
-低层伺服 将 $\tau$、$q_d$、$\dot q_d$ 作用到电机。
-
-
-1. 坐标系与基础符号
-设：
-
-世界系 ${W}$；
-机体系 ${B}$；
-第 $i$ 条腿髋关节系 ${H_i}$；
-足端系 ${F_i}$。
-
-机身姿态用旋转矩阵
-$$
-R_{WB}\in SO(3),
-$$
-表示从机体系到世界系的方向变换。叉乘矩阵定义为
-$$
-[a]\times =
-\begin{bmatrix}
-0 &amp; -a_3 &amp; a_2 \
-a_3 &amp; 0 &amp; -a_1 \
--a_2 &amp; a_1 &amp; 0
-\end{bmatrix},
-\qquad
-a\times b = [a]\times b.
-$$
-欧拉角 $\Theta = [\phi,\theta,\psi]^T$ 与机体角速度 $\omega_B$ 的映射为
-$$
-\dot \Theta = T(\phi,\theta),\omega_B,
-$$
-其中（ZYX 欧拉角）
-$$
-T(\phi,\theta)=
-\begin{bmatrix}
-1 &amp; \sin\phi\tan\theta &amp; \cos\phi\tan\theta \
-0 &amp; \cos\phi &amp; -\sin\phi \
-0 &amp; \sin\phi/\cos\theta &amp; \cos\phi/\cos\theta
-\end{bmatrix}.
-$$
-若直接用四元数 $q_{WB}$，则姿态传播更稳健：
-$$
-\dot q_{WB} = \frac12,\Omega(\omega_B) q_{WB},
-$$
-其中 $\Omega(\omega)$ 为标准四元数角速度矩阵。
-
-2. 单腿运动学：正运动学、逆运动学、雅可比
-以下以串联 3 自由度腿为例：
-
-$q_1$：髋外展/内收（绕 $x$ 轴）；
-$q_2$：髋俯仰；
-$q_3$：膝俯仰；
-大腿长 $l_2$，小腿长 $l_3$。
-
-为使公式最紧凑，先写成无髋部固定偏距的形式。若你的腿有固定侧向偏距 $d$，只需在齐次变换中增加常量平移即可。
-2.1 齐次变换与正运动学
-令
-$$
-{}^{H}T_F(q) = R_x(q_1)R_y(q_2),\mathrm{Trans}(0,0,-l_2),R_y(q_3),\mathrm{Trans}(0,0,-l_3).
-$$
-则足端相对髋关节的坐标为
-$$
-p(q)=
-\begin{bmatrix}
-x \ y \ z
-\end{bmatrix}
-\begin{bmatrix}
-
-l_2\sin q_2 - l_3\sin(q_2+q_3) \
-\sin q_1,\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big) \
--\cos q_1,\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big)
-\end{bmatrix}.
-$$
-
-记
-$$
-q_{23}=q_2+q_3,
-\qquad
-r(q)=l_2\cos q_2+l_3\cos q_{23},
-$$
-则更紧凑地写成
-$$
-x = -l_2\sin q_2 - l_3\sin q_{23},
-\qquad
-y = \sin q_1,r,
-\qquad
-z = -\cos q_1,r.
-$$
-2.2 逆运动学
-先由 $y,z$ 求 $q_1$：
-$$
-\rho = \sqrt{y^2+z^2},
-\qquad
-q_1 = \operatorname{atan2}(y,-z).
-$$
-再将三维问题转成髋俯仰-膝俯仰平面二连杆问题。定义
-$$
-r = \sqrt{y^2+z^2},
-\qquad
-x_p = x,
-\qquad
-z_p = -r.
-$$
-则有
-$$
-D = \frac{x_p^2+z_p^2-l_2^2-l_3^2}{2l_2l_3}.
-$$
-膝关节两组解（肘上/肘下）为
-$$
-q_3 = \operatorname{atan2}(\pm\sqrt{1-D^2},D).
-$$
-再求髋俯仰角：
-$$
-q_2 = \operatorname{atan2}(-x_p,-z_p)
-- \operatorname{atan2}(l_3\sin q_3,,l_2+l_3\cos q_3).
-$$
-因此解析逆解为
-$$
-\boxed{
-\begin{aligned}
-q_1 &amp;= \operatorname{atan2}(y,-z),\
-q_3 &amp;= \operatorname{atan2}(\pm\sqrt{1-D^2},D),\
-q_2 &amp;= \operatorname{atan2}(-x,-\sqrt{y^2+z^2})
-- \operatorname{atan2}(l_3\sin q_3,,l_2+l_3\cos q_3).
-\end{aligned}}
-$$
-若存在固定侧向偏距 $d$，则将
-$$
-\rho = \sqrt{y^2+z^2},
-\qquad
-r = \sqrt{\rho^2-d^2}
-$$
-替代上式中的 $\sqrt{y^2+z^2}$，并将 $q_1$ 修正为
-$$
-q_1 = \operatorname{atan2}(y,-z) - \operatorname{atan2}(d,r).
-$$
-2.3 足端速度雅可比
-定义足端线速度
-$$
-\dot p = J(q)\dot q,
-\qquad
-q=[q_1,q_2,q_3]^T.
-$$
-由 $p(q)$ 对 $q$ 求偏导可得
-$$
-J(q)=
-\begin{bmatrix}
-0 &amp; -l_2\cos q_2 - l_3\cos q_{23} &amp; -l_3\cos q_{23} \
-\cos q_1,r &amp; -\sin q_1\big(l_2\sin q_2+l_3\sin q_{23}\big) &amp; -l_3\sin q_1\sin q_{23} \
-\sin q_1,r &amp; \cos q_1\big(l_2\sin q_2+l_3\sin q_{23}\big) &amp; l_3\cos q_1\sin q_{23}
-\end{bmatrix}.
-$$
-若考虑足端角速度，则 6 维雅可比为
-$$
-\mathcal J(q)=
-\begin{bmatrix}
-J_\omega(q) \
-J_v(q)
-\end{bmatrix},
-$$
-其中 $J_\omega$ 可通过关节轴在基坐标系下的方向向量逐列堆叠得到。
-2.4 静力映射
-由虚功原理
-$$
-\tau^T \delta q = f^T \delta p = f^T J,\delta q,
-$$
-故有
-$$
-\boxed{\tau = J^T f}.
-$$
-这是足端力控制、VMC、接触力分配与 WBC 的最基本桥梁。
-
-3. 单腿动力学
-3.1 拉格朗日形式
-令各连杆质心位置 $p_i(q)$、角速度 $\omega_i(q,\dot q)$，则系统动能
-$$
-T = \sum_{i=1}^3 \left( \frac12 m_i \dot p_i^T \dot p_i + \frac12 \omega_i^T I_i \omega_i \right),
-$$
-势能
-$$
-V = \sum_{i=1}^3 m_i g^T p_i.
-$$
-定义拉格朗日函数
-$$
-L(q,\dot q)=T-V.
-$$
-则动力学方程为
-$$
-\frac{d}{dt}\left(\frac{\partial L}{\partial \dot q}\right) - \frac{\partial L}{\partial q} = \tau.
-$$
-整理成标准形式：
-$$
-\boxed{M(q)\ddot q + C(q,\dot q)\dot q + g(q)=\tau + J_c^T\lambda.}
-$$
-其中 $\lambda$ 为接触约束力，若该腿处于摆动相，则 $\lambda=0$。
-3.2 质量矩阵的雅可比表达
-利用
-$$
-\dot p_i = J_{v,i}(q)\dot q,
-\qquad
-\omega_i = J_{\omega,i}(q)\dot q,
-$$
-可得
-$$
-M(q)=\sum_{i=1}^3 \left(m_i J_{v,i}^T J_{v,i} + J_{\omega,i}^T R_i I_i R_i^T J_{\omega,i}\right).
-$$
-重力项写成
-$$
-g(q)=\frac{\partial V}{\partial q}.
-$$
-科氏/离心项可由 Christoffel 符号表示：
-$$
-C_{ij}(q,\dot q)=\sum_{k=1}^n c_{ijk}(q)\dot q_k,
-$$
-$$
-c_{ijk}(q)=\frac12\left(\frac{\partial M_{ij}}{\partial q_k}+
-\frac{\partial M_{ik}}{\partial q_j}-
-\frac{\partial M_{jk}}{\partial q_i}\right).
-$$
-于是
-$$
-\sum_j C_{ij}\dot q_j
-=\sum_{j,k} c_{ijk}\dot q_j\dot q_k.
-$$
-3.3 牛顿-欧拉递推形式
-对于工程实现，常用递推牛顿-欧拉（RNEA）或组合刚体法（CRBA）：
-
-逆动力学：给定 $(q,\dot q,\ddot q)$ 计算 $\tau$；
-正动力学：给定 $(q,\dot q,\tau)$ 计算 $\ddot q$；
-惯量矩阵：CRBA 计算 $M(q)$。
-
-这一步是实现高带宽控制器时最常用的数值工具链。
-
-4. 浮动基座全身动力学
-四足机器人不是固定基机械臂，而是浮动基座系统。令广义速度
-$$
-\nu =
-\begin{bmatrix}
-v_B \
-\omega_B \
-\dot q_j
-\end{bmatrix},
-\qquad
-\dot \nu =
-\begin{bmatrix}
-\dot v_B \
-\dot \omega_B \
-\ddot q_j
-\end{bmatrix}.
-$$
-则全身动力学写成
-$$
-\boxed{M(q)\dot \nu + h(q,\nu)=S^T\tau + J_c(q)^T\lambda.}
-$$
-其中：
-
-$M(q)\in\mathbb{R}^{(6+n)\times(6+n)}$：全身惯量矩阵；
-$h(q,\nu)$：科氏、离心、重力、关节摩擦等并项；
-$S=[0_{n\times 6}\ I_n]$：执行器选择矩阵；
-$\tau\in\mathbb{R}^n$：关节力矩；
-$J_c\in\mathbb{R}^{3m\times(6+n)}$：接触雅可比；
-$\lambda\in\mathbb{R}^{3m}$：全部接触点的接触力。
-
-若某条腿处于支撑相且足端不滑动，则速度约束为
-$$
-J_c(q)\nu = 0,
-$$
-对时间求导得加速度约束
-$$
-J_c(q)\dot \nu + \dot J_c(q,\nu)\nu = 0.
-$$
-若处于摆动相，则对应接触雅可比行块删除。
-
-5. 状态估计
-状态估计至少需要估计
-$$
-\hat x = {\hat p_B,\hat v_B,\hat R_{WB},\hat \omega_B,\hat q_j,\hat{\dot q}_j}.
-$$
-5.1 姿态传播
-IMU 给出测量
-$$
-\omega_m = \omega_B + b_\omega + n_\omega,
-\qquad
-a_m = R_{BW}(\dot v_B-g) + b_a + n_a.
-$$
-若用四元数，姿态传播为
-$$
-\dot q_{WB} = \frac12\Omega(\omega_m-b_\omega) q_{WB}.
-$$
-5.2 足端里程计/EKF
-一种经典状态定义为
-$$
-X =
-\begin{bmatrix}
-p_B \
-v_B \
-p_{f_1}^W \
-p_{f_2}^W \
-p_{f_3}^W \
-p_{f_4}^W
-\end{bmatrix}.
-$$
-连续时间过程模型可写成
-$$
-\dot p_B = v_B,
-$$
-$$
-\dot v_B = R_{WB}(a_m-b_a-n_a)+g,
-$$
-$$
-\dot p_{f_i}^W = w_i,
-$$
-其中 $w_i$ 为足点随机游走。对支撑足令 $Q_{f_i}$ 很小，对摆动足令 $Q_{f_i}$ 很大。
-接触腿测量关系来自“世界系足端速度为零”：
-$$
-0 = v_B + \omega_B \times (R_{WB}p_{f_i}^B) + R_{WB}J_i(q)\dot q_i.
-$$
-等价写成观测方程
-$$
-z_i = 0 = H_i X + \eta_i.
-$$
-亦可用足端位置约束
-$$
-p_{f_i}^W = p_B + R_{WB}p_{f_i}^B(q_i).
-$$
-于是 EKF 递推为
-预测：
-$$
-\hat X_{k|k-1}=f(\hat X_{k-1|k-1},u_k),
-$$
-$$
-P_{k|k-1}=A_k P_{k-1|k-1}A_k^T + Q_k.
-$$
-更新：
-$$
-K_k = P_{k|k-1}H_k^T(H_k P_{k|k-1}H_k^T + R_k)^{-1},
-$$
-$$
-\hat X_{k|k}=\hat X_{k|k-1}+K_k(z_k-h(\hat X_{k|k-1})),
-$$
-$$
-P_{k|k}=(I-K_kH_k)P_{k|k-1}.
-$$
-
-6. 步态、摆腿轨迹、落足点规划
-设步态周期 $T_g$，第 $i$ 条腿接触相位函数为
-$$
-\sigma_i(t)\in{0,1},
-$$
-其中 $\sigma_i=1$ 表示支撑相，$\sigma_i=0$ 表示摆动相。
-6.1 接触序列
-对角小跑可以写成
-$$
-(\sigma_{LF},\sigma_{RH}) = 1- (\sigma_{RF},\sigma_{LH}),
-$$
-相差半周期。
-6.2 摆腿三次/五次多项式
-对单个方向分量 $s(t)$，若要求起终点位置速度加速度连续，常用五次多项式：
-$$
-s(t)=a_0+a_1 t+a_2 t^2+a_3 t^3+a_4 t^4+a_5 t^5.
-$$
-边界条件
-$$
-s(0)=s_0,\ \dot s(0)=\dot s_0,\ \ddot s(0)=\ddot s_0,
-$$
-$$
-s(T)=s_f,\ \dot s(T)=\dot s_f,\ \ddot s(T)=\ddot s_f
-$$
-解得系数向量
-$$
-a = A^{-1}b,
-$$
-其中 $A$ 为由边界条件构成的 $6\times 6$ 矩阵。
-竖直方向常写成抬脚峰值形式，例如中点抬高 $h_{sw}$：
-$$
-z_{foot}(s)=
-\begin{cases}
-z_0 + 2h_{sw}s^2, &amp; 0\le s &lt; 1/2,\
-z_f + 2h_{sw}(1-s)^2, &amp; 1/2\le s \le 1,
-\end{cases}
-$$
-其中 $s=t/T_{sw}$ 为归一化摆动相位。
-6.3 Raibert 落足点启发式
-设期望机身速度 $v_d$，实际速度 $v$，支撑时间 $T_{st}$，则一个常见足端名义落足点为
-$$
-p_{foot}^{ref} = p_B + \frac{T_{st}}{2}v_B + K_v(v_B-v_d) + K_\omega(\omega_B-\omega_d).
-$$
-若考虑偏航角速度控制，可在机体系下加入横向偏置项。
-
-7. 单刚体模型（SRB）
-MPC 最常见的模型是 Single Rigid Body：
-
-忽略腿惯量与腿角动量；
-将机器人简化为质量为 $m$、惯量为 $I_B$ 的刚体；
-控制输入为各支撑足接触力 $f_i$。
-
-7.1 连续动力学
-机身质心运动：
-$$
-\dot p = v,
-$$
-$$
-m\dot v = \sum_{i=1}^4 \sigma_i f_i + mg.
-$$
-机身角动量动力学：
-$$
-\dot R = R[\omega]_\times,
-$$
-$$
-I_W\dot \omega + \omega\times(I_W\omega)
-= \sum_{i=1}^4 \sigma_i (r_i-p)\times f_i,
-$$
-其中
-$$
-I_W = R I_B R^T.
-$$
-若采用小角速度线性化，忽略 $\omega\times(I_W\omega)$，则
-$$
-I_W\dot\omega \approx \sum_{i=1}^4 \sigma_i (r_i-p)\times f_i.
-$$
-7.2 线性化状态方程
-定义状态
-$$
-x = \begin{bmatrix} p \ v \ \Theta \ \omega \end{bmatrix},
-\qquad
-u = \begin{bmatrix} f_1 \ f_2 \ f_3 \ f_4 \end{bmatrix}.
-$$
-在小滚转/小俯仰条件下，可近似写成
-$$
-\dot \Theta \approx \omega.
-$$
-则连续线性模型可写成
-$$
-\dot x = A_c x + B_c u + d_c,
-$$
-其中
-$$
-A_c=
-\begin{bmatrix}
-0&amp;I&amp;0&amp;0\
-0&amp;0&amp;0&amp;0\
-0&amp;0&amp;0&amp;I\
-0&amp;0&amp;0&amp;0
-\end{bmatrix},
-$$
-$$
-B_c=
-\begin{bmatrix}
-0&amp;0&amp;0&amp;0\
-\frac1mI&amp;\frac1mI&amp;\frac1mI&amp;\frac1mI\
-0&amp;0&amp;0&amp;0\
-I_W^{-1}[r_1-p]\times &amp; I_W^{-1}[r_2-p]\times &amp; I_W^{-1}[r_3-p]\times &amp; I_W^{-1}[r_4-p]\times
-\end{bmatrix},
-$$
-$$
-d_c = \begin{bmatrix}0\g\0\0\end{bmatrix}.
-$$
-离散化后
-$$
-x_{k+1} = A_d x_k + B_d u_k + d_d,
-$$
-其中一阶 Euler 近似为
-$$
-A_d \approx I + A_c\Delta t,
-\qquad
-B_d \approx B_c\Delta t,
-\qquad
-d_d \approx d_c\Delta t.
-$$
-更精确可用矩阵指数：
-$$
-A_d=e^{A_c\Delta t},
-\qquad
-B_d=\int_0^{\Delta t} e^{A_c\tau}B_c,d\tau.
-$$
-7.3 预测方程（condensed form）
-预测时域长度为 $N$，定义
-$$
-X=
-\begin{bmatrix}
-x_1\x_2\\vdots\x_N
-\end{bmatrix},
-\qquad
-U=
-\begin{bmatrix}
-u_0\\nu_1\\vdots\\nu_{N-1}
-\end{bmatrix}.
-$$
-由离散模型递推可得
-$$
-\boxed{X=\mathcal A x_0 + \mathcal B U + \mathcal D.}
-$$
-其中
-$$
-\mathcal A=
-\begin{bmatrix}
-A_d\A_d^2\\vdots\A_d^N
-\end{bmatrix},
-$$
-$$
-\mathcal B=
-\begin{bmatrix}
-B_d &amp; 0 &amp; \cdots &amp; 0\
-A_dB_d &amp; B_d &amp; \cdots &amp; 0\
-\vdots &amp; \vdots &amp; \ddots &amp; \vdots\
-A_d^{N-1}B_d &amp; A_d^{N-2}B_d &amp; \cdots &amp; B_d
-\end{bmatrix}.
-$$
-
-8. MPC 形式化为二次规划
-8.1 代价函数
-令参考状态序列为 $X^{ref}$，则一个标准目标函数是
-$$
-\min_U \ \frac12(X-X^{ref})^TQ(X-X^{ref}) + \frac12 U^TRU + \frac12 \Delta U^T R_\Delta \Delta U.
-$$
-代入预测方程后变为标准 QP：
-$$
-\min_U \ \frac12 U^T H U + g^T U,
-$$
-其中
-$$
-H = \mathcal B^T Q \mathcal B + R + D_\Delta^T R_\Delta D_\Delta,
-$$
-$$
-g = \mathcal B^T Q(\mathcal A x_0 + \mathcal D - X^{ref}).
-$$
-8.2 接触约束
-对每个支撑足，约束法向力为
-$$
-0 \le f_{z,i} \le f_{z,i}^{max}.
-$$
-摩擦锥
-$$
-\sqrt{f_{x,i}^2 + f_{y,i}^2} \le \mu f_{z,i}
-$$
-常用金字塔近似为 4 个线性不等式：
-$$
--\mu f_{z,i} \le f_{x,i} \le \mu f_{z,i},
-$$
-$$
--\mu f_{z,i} \le f_{y,i} \le \mu f_{z,i}.
-$$
-摆动腿施加
-$$
-f_i = 0.
-$$
-于是所有约束可统一写成
-$$
-C U \le b,
-\qquad
-A_{eq}U = b_{eq}.
-$$
-8.3 接触时域长度限制
-若在预测时域内假设支撑足位置不变，则为了避免“一条腿在时域内经历支撑→摆动→再次支撑”的预测错误，通常要求
-$$
-N\Delta t \le \frac{T_g}{2}.
-$$
-
-9. 全身控制 WBC
-WBC 的目标是：在满足接触约束与动力学一致性的前提下，同时完成多个任务。典型任务：
-
-支撑足不滑动；
-机身姿态跟踪；
-机身质心位置/速度跟踪；
-摆动足轨迹跟踪；
-关节姿态/冗余整形。
-
-9.1 任务空间 PD 加速度
-对第 $k$ 个任务，定义任务变量 $x_k(q)$，其雅可比为 $J_k(q)$。加速度级任务方程为
-$$
-\ddot x_k = J_k \dot\nu + \dot J_k \nu.
-$$
-期望任务加速度常取
-$$
-\ddot x_k^* = \ddot x_k^{ref} + K_{d,k}(\dot x_k^{ref}-\dot x_k) + K_{p,k}(x_k^{ref}-x_k).
-$$
-于是理想等式为
-$$
-J_k \dot\nu = b_k,
-\qquad
-b_k = \ddot x_k^* - \dot J_k\nu.
-$$
-9.2 基于伪逆/零空间的层级 WBC
-对单任务最小范数解：
-$$
-\dot\nu^* = J^# b,
-\qquad
-J^# = J^T(JJ^T)^{-1}
-$$
-（行满秩情形；近奇异点时用阻尼伪逆）
-$$
-J^#_\lambda = J^T(JJ^T+\lambda^2 I)^{-1}.
-$$
-零空间投影矩阵：
-$$
-N = I - J^# J,
-\qquad
-JN=0.
-$$
-若有两层优先级：
-$$
-\dot\nu_1 = J_1^# b_1,
-$$
-$$
-\dot\nu_2 = \dot\nu_1 + (J_2N_1)^#(b_2-J_2\dot\nu_1),
-\qquad
-N_1=I-J_1^#J_1.
-$$
-递推到第 $k$ 层：
-$$
-\dot\nu_k = \dot\nu_{k-1} + (J_kN_{k-1})^#(b_k-J_k\dot\nu_{k-1}),
-$$
-$$
-N_k = N_{k-1} - (J_kN_{k-1})^# J_k N_{k-1}.
-$$
-这是层级逆运动学/加速度级 WBC 的核心公式。
-9.3 动力学一致的 WBC-QP
-更完整的做法是直接优化变量
-$$
-z = (\dot\nu,\tau,\lambda,s),
-$$
-其中 $s$ 为任务松弛变量。求解
-$$
-\min_z \ \frac12\sum_k |J_k\dot\nu - b_k - s_k|_{W_k}^2
-
-\frac12|\tau|{W\tau}^2
-\frac12|\lambda|{W\lambda}^2
-\frac12|s|_{W_s}^2,
-$$
-
-约束为
-$$
-M(q)\dot\nu + h(q,\nu)=S^T\tau + J_c^T\lambda,
-$$
-$$
-J_c\dot\nu + \dot J_c\nu = 0,
-$$
-$$
-A_f\lambda \le b_f,
-$$
-$$
-\tau_{min}\le \tau\le \tau_{max},
-\qquad
-\dot\nu_{min}\le \dot\nu\le \dot\nu_{max}.
-$$
-若将机身任务看得比摆动腿任务更重要，则可以用：
-
-lexicographic / hierarchical QP；
-或大权重差分近似优先级。
-
-9.4 MPC 与 WBC 的分工
-常用分工为：
-
-MPC：决定“机身如何受力”——求 $\lambda$；
-WBC：决定“全身如何运动”——求 $\dot\nu,\tau$；
-再通过动力学一致性将两者耦合。
-
-一种简洁耦合方式是把 MPC 求出的 $\lambda^{mpc}$ 作为 WBC-QP 的参考项：
-$$
-\min \cdots + \frac12|\lambda-\lambda^{mpc}|{W{mpc}}^2.
-$$
-
-10. 从全身动力学到关节力矩控制
-若 WBC 输出期望加速度 $\dot\nu^$ 与接触力 $\lambda^$，则关节力矩由动力学直接给出：
-$$
-S^T\tau = M\dot\nu^* + h - J_c^T\lambda^*.
-$$
-左乘 $S$ 得
-$$
-\boxed{\tau = S\big(M\dot\nu^* + h - J_c^T\lambda^*\big).}
-$$
-实际落地时常再叠加关节级阻抗：
-$$
-\tau_{cmd}=\tau + K_p(q_d-q)+K_d(\dot q_d-\dot q).
-$$
-若执行器只能做位置控制，则通常只能退化为
-$$
-\tau_{motor}=K_p(q_d-q)+K_d(\dot q_d-\dot q),
-$$
-此时“力控制”的上限受电机内环与减速器摩擦显著限制。
-
-11. 强化学习 RL
-RL 的价值不在于替代所有模型，而在于：
-
-学习难建模的接触与恢复策略；
-通过大规模仿真把经验压进策略网络；
-作为 residual policy 叠加到模型控制上。
-
-11.1 MDP 定义
-定义观测
-$$
-s_t = [R_{BW}g,\ v_B^B,\ \omega_B^B,\ q_j-q_j^{nom},\ \dot q_j,\ c_{cmd},\ \varphi_{gait},\ a_{t-1},\dots].
-$$
-常见动作形式：
-
-目标关节位置 $a_t=q_d$；
-目标关节阻抗偏置 $a_t=\Delta q_d$；
-直接力矩 $a_t=\tau$；
-残差动作 $a_t=\Delta \tau$，与模型控制叠加。
-
-残差控制最稳妥：
-$$
-\tau_{cmd}=\tau_{model}+\Delta\tau_\theta(s_t).
-$$
-11.2 奖励函数
-一个典型奖励可以写为
-$$
-r_t =
-+w_v\exp!\left(-\frac{|v-v_{cmd}|^2}{\sigma_v^2}\right)
-+w_\omega\exp!\left(-\frac{(\omega_z-\omega_{cmd})^2}{\sigma_\omega^2}\right)
-$$
-$$
-\qquad
--w_q|q_j-q_j^{nom}|^2
--w_{\dot q}|\dot q_j|^2
--w_\tau|\tau|^2
--w_{slip}\sum_i |v_{foot,i}^{tan}|^2
--w_{jerk}|a_t-a_{t-1}|^2
--w_{coll},\mathbf 1_{collision}.
-$$
-还可加入：
-
-足端离地高度奖励；
-足端着地时序奖励；
-机身俯仰/横滚稳定奖励；
-能耗、热损耗、冲击惩罚。
-
-11.3 PPO
-策略比值
-$$
-r_t(\theta)=\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}.
-$$
-广义优势估计（GAE）：
-$$
-\delta_t = r_t + \gamma V_\phi(s_{t+1}) - V_\phi(s_t),
-$$
-$$
-\hat A_t = \sum_{l=0}^{\infty}(\gamma\lambda)^l \delta_{t+l}.
-$$
-PPO 目标函数：
-$$
-L^{clip}(\theta)=
-\mathbb E_t\Big[
-\min\big(r_t(\theta)\hat A_t,
-\operatorname{clip}(r_t(\theta),1-\epsilon,1+\epsilon)\hat A_t\big)
-\Big].
-$$
-总损失常写为
-$$
-L(\theta,\phi)= -L^{clip}(\theta)
-
-c_v,\mathbb E\big[(V_\phi(s_t)-\hat R_t)^2\big]
-
-
-c_e,\mathbb E\big[\mathcal H(\pi_\theta(\cdot|s_t))\big].
-$$
-
-11.4 域随机化与 sim2real
-令环境参数集合
-$$
-\xi = {m, I, \mu, K_p, K_d, motor\ delay, sensor\ noise, latency, terrain, restitution, backlash}.
-$$
-训练目标改写为
-$$
-\theta^* = \arg\max_\theta
-\mathbb E_{\xi\sim p(\xi)}
-\mathbb E_{\tau\sim \pi_\theta,,P_\xi}
-\left[\sum_{t=0}^{T}\gamma^t r_t\right].
-$$
-这就是域随机化：
-$$
-\xi\sim p(\xi)
-$$
-在每个 episode 随机采样一次，使策略对参数不确定性鲁棒。
-11.5 Teacher-Student / Privileged Learning
-教师策略使用特权状态
-$$
-s_t^{priv} = [s_t,\ \text{真实地形、真实接触、真实扰动}].
-$$
-学生策略只用真实可测量量 $s_t$。蒸馏目标：
-$$
-\min_\theta \ \mathbb E|\pi_\theta(s_t)-\pi_{teacher}(s_t^{priv})|^2.
-$$
-
-12. 一套真正可落地的“研究级”统一控制器
-如果目标是“我照着就能做出一套先进而完整的机器狗控制”，推荐的统一形式是：
-12.1 状态估计层
-$$
-\hat x_t = \text{EKF/Invariant EKF}(IMU, q_j, \dot q_j, contact).
-$$
-12.2 规划层
-
-步态序列：$\sigma_i(t)$；
-摆腿轨迹：$p_{foot}^{sw}(t)$；
-机身参考：$x^{ref}(t)$；
-Raibert 落足点：$p_{foot}^{ref}$。
-
-12.3 力规划层（MPC）
-$$
-\lambda^{mpc}{0:N-1} = \arg\min_U \ \frac12 U^THU+g^TU,
-\quad \text{s.t. } CU\le b,\ A{eq}U=b_{eq}.
-$$
-取第一步：
-$$
-\lambda_t^{ref} = \lambda_0^{mpc}.
-$$
-12.4 全身控制层（WBC）
-$$
-(\dot\nu^,\tau^,\lambda^*) =
-\arg\min \sum_k |J_k\dot\nu-b_k|{W_k}^2 + |\lambda-\lambda_t^{ref}|{W_{mpc}}^2 + |\tau|{W\tau}^2
-$$
-$$
-\text{s.t. } M\dot\nu+h=S^T\tau+J_c^T\lambda,
-\quad J_c\dot\nu+\dot J_c\nu=0,
-\quad A_f\lambda\le b_f.
-$$
-12.5 低层控制
-$$
-\tau_{cmd}=\tau^*+K_p(q_d-q)+K_d(\dot q_d-\dot q).
-$$
-12.6 残差学习（可选）
-$$
-\tau_{final}=\tau_{cmd}+\Delta\tau_\theta(s_t).
-$$
-这是目前最稳健的“模型主导 + 学习补偿”的统一形式。
-
-13. 真正决定上限的，不只是公式
-从数学上，一条控制链要真的成立，还必须满足：
-13.1 可实现性条件
-
-
-驱动带宽足够：
-$$
-omega_c^{motor} \gg \omega_c^{controller}.
-$$
-
-
-关节力矩冗余足够：
-$$
-\tau_{max} &gt; \max_t |\tau_{cmd}(t)|.
-$$
-
-
-接触可行：
-$$
-\lambda \in \mathcal K_\mu,
-$$
-其中 $\mathcal K_\mu$ 为摩擦锥。
-
-
-估计误差受控：
-$$
-|x-\hat x| \le \varepsilon_x.
-$$
-
-
-模型误差受控：
-$$
-|M-\hat M|,\ |h-\hat h|,\ |J_c-\hat J_c| \text{ 足够小。}
-$$
-
-
-13.2 一条最实用的实现顺序
-
-单腿 FK/IK/J；
-单腿 PD 摆腿；
-单腿 $\tau=J^Tf$；
-四足站立静力分配；
-EKF 状态估计；
-步态调度 + 摆腿轨迹；
-SRB-MPC；
-WBC；
-全身逆动力学；
-RL residual / 端到端策略。
-
-
-14. 一页总公式清单
-14.1 单腿运动学
-$$
-p(q)=
-\begin{bmatrix}
-
-l_2\sin q_2 - l_3\sin(q_2+q_3) \
-\sin q_1\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big) \
--\cos q_1\big(l_2\cos q_2 + l_3\cos(q_2+q_3)\big)
-\end{bmatrix}
-$$
-
-$$
-\dot p = J(q)\dot q,
-\qquad
-\tau = J^T f.
-$$
-14.2 全身动力学
-$$
-M(q)\dot\nu + h(q,\nu)=S^T\tau + J_c^T\lambda
-$$
-$$
-J_c\nu=0,
-\qquad
-J_c\dot\nu+\dot J_c\nu=0.
-$$
-14.3 SRB 模型
-$$
-\dot p=v,
-\qquad
-m\dot v=\sum_i \sigma_i f_i + mg,
-$$
-$$
-I_W\dot\omega + \omega\times(I_W\omega)=\sum_i \sigma_i (r_i-p)\times f_i.
-$$
-14.4 MPC
-$$
-x_{k+1}=A_dx_k+B_du_k+d_d,
-$$
-$$
-X=\mathcal A x_0 + \mathcal B U + \mathcal D,
-$$
-$$
-\min_U \frac12 U^THU+g^TU,
-\quad
-\text{s.t. } CU\le b.
-$$
-14.5 WBC
-$$
-\ddot x_k = J_k\dot\nu + \dot J_k\nu,
-$$
-$$
-\ddot x_k^*=\ddot x_k^{ref}+K_d(\dot x_k^{ref}-\dot x_k)+K_p(x_k^{ref}-x_k),
-$$
-$$
-\dot\nu_k = \dot\nu_{k-1} + (J_kN_{k-1})^#(b_k-J_k\dot\nu_{k-1}),
-$$
-或
-$$
-\min_{\dot\nu,\tau,\lambda} \sum_k |J_k\dot\nu-b_k|_{W_k}^2
-$$
-$$
-\text{s.t. } M\dot\nu+h=S^T\tau+J_c^T\lambda.
-$$
-14.6 PPO
-$$
-L^{clip}(\theta)=
-\mathbb E\left[\min\big(r_t\hat A_t,\operatorname{clip}(r_t,1-\epsilon,1+\epsilon)\hat A_t\big)\right]
-$$
-$$
-\hat A_t = \sum_{l=0}^{\infty}(\gamma\lambda)^l \delta_{t+l},
-\qquad
-\delta_t=r_t+\gamma V(s_{t+1})-V(s_t).
-$$
-
-15. 最后一条建议
-如果你只实现一条路线，优先做：
-$$
-\boxed{\text{状态估计} + \text{步态/摆腿} + \text{SRB-MPC} + \text{WBC} + \text{逆动力学}}
-$$
-如果你要把性能再往上推，再加：
-$$
-\boxed{\text{Residual RL} \quad \text{或} \quad \text{Teacher-Student RL}}
-$$
-这不是唯一路线，但它是最接近“理论完备、工程可落地、还能继续扩展到先进方法”的统一框架。
-]]></content>
-      <categories>
-        <category>足式机器人</category>
-      </categories>
-      <tags>
-        <tag>足式机器人</tag>
-        <tag>控制</tag>
-        <tag>MPC</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>从零写一个 RTOS 内核——在 STM32H723 上</title>
     <url>/2026/05/21/rtos_from_scratch_h723/</url>
     <content><![CDATA[从零写一个 RTOS 内核——在 STM32H723 上
@@ -5246,624 +6066,6 @@ RTOS 没有神秘感了。它就是一行行实实在在的代码，每个字节
         <tag>嵌入式</tag>
         <tag>STM32</tag>
         <tag>RTOS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>损失函数的设计哲学——从直觉理解为什么损失函数要长这样</title>
-    <url>/2026/06/01/loss_function_philosophy/</url>
-    <content><![CDATA[损失函数的设计哲学——从直觉理解为什么损失函数要长这样
-如果你写过几个 PyTorch 训练脚本，大概已经对 nn.MSELoss 和 nn.CrossEntropyLoss 这两个名字烂熟于心。你可能也知道&quot;回归用 MSE，分类用 CrossEntropy&quot;这条经验法则，甚至背过交叉熵的公式：
-$$
-\mathcal{L}{CE} = -\sum{c} y_c \log(p_c)
-$$
-但你有没有停下来想过——为什么？
-为什么回归不直接用绝对误差（L1），非要用平方（L2）？为什么分类不用 MSE 做损失？为什么交叉熵里的那个 $\log$ 恰到好处，换成别的就不行？
-这些问题背后不是拍脑袋的巧合。每一种损失函数的设计，都是对人类认知目标的一种数学建模。这篇博客想做的，就是把几个最常用的损失函数从设计动机到数学形式拆一遍——不是为了背公式，而是为了理解如果换你来设计，你也会这么想。
-
-1. 先想清楚：损失函数到底在做什么
-在说具体函数之前，先明确一个最基础的问题。
-训练一个模型，本质是一个 优化问题：
-$$
-\theta^* = \arg\min_\theta \mathbb{E}{(x,y)\sim\mathcal{D}} [\mathcal{L}(f\theta(x), y)]
-$$
-损失函数 $\mathcal{L}$ 是你的评判标准——模型输出 $\hat{y}$ 离真实标签 $y$ 有多远。梯度下降就是沿着这个&quot;有多远&quot;的方向，一步步把模型参数调得让输出更接近标签。
-但&quot;有多远&quot;这个距离，不是你说了算，是损失函数说了算。同一个预测结果，用不同损失函数测出来的&quot;距离&quot;天差地别，从而导致梯度方向和大小也天差地别。
-所以损失函数设计的本质是：我们想让模型在什么方向上、以多快的速度更新参数。
-这是全文的核心视角，带着它看后面的每个损失函数。
-
-2. 回归的起点：L1 和 L2 损失
-2.1 L2 Loss（MSE）——惩罚大错误
-$$
-\mathcal{L}_{L2} = (y - \hat{y})^2
-$$
-L2 损失是最直观的想法：预测值和真实值越远，损失越大。而且因为平方的关系，偏离越大，惩罚增速越快。
-这意味着什么？
-
-一个误差为 3 的样本，损失是 9
-一个误差为 1 的样本，损失是 1
-
-前者对梯度的贡献是后者的 9 倍（绝对值差是 3 倍，平方后是 9 倍）。所以 MSE 会拼命优先消灭大误差样本，哪怕牺牲其他样本的精度。
-这合理吗？ 要看场景。如果你的数据噪声服从高斯分布（正态分布），MLE（最大似然估计）推导出来的刚好就是 MSE——那它不仅是合理的，还是理论最优的。但如果数据有离群点，MSE 会把大量精力花在拟合那一个离群点上，导致整体模型变差。
-2.2 L1 Loss（MAE）——不怕离群点
-$$
-\mathcal{L}_{L1} = |y - \hat{y}|
-$$
-L1 损失对误差的惩罚是线性的。一个误差 3 的样本，损失就是 3；误差 1 就是 1。梯度恒定是 ±1（不考虑符号），不受误差大小影响。
-所以 L1 的好处是对离群点不敏感——一个离群点不会把整个梯度带偏。但也正因为梯度恒定，在误差接近零时，模型仍然以同样速率更新参数，这导致它在最优解附近容易震荡，收敛不如 MSE 平滑。
-2.3 Huber Loss——取两者之长
-$$
-\mathcal{L}_{Huber} =
-\begin{cases}
-\frac{1}{2}(y - \hat{y})^2 &amp; \text{如果 } |y - \hat{y}| \leq \delta \
-\delta|y - \hat{y}| - \frac{1}{2}\delta^2 &amp; \text{其他}
-\end{cases}
-$$
-Huber 的设计思路非常清晰：小误差用平方、大误差用线性。
-
-当误差小（$&lt;\delta$），它行为像 MSE，梯度线性减小，收敛平稳
-当误差大（$&gt;\delta$），它行为像 L1，梯度被截断在 $\pm\delta$，不被离群点带偏
-
-这个 $\delta$ 是你要设的超参数——它决定了&quot;多大算大误差&quot;。它的存在本身就体现了设计者的思考：同一个损失函数在不同尺度下应该有不同行为。
-Huber 损失的梯度：
-$$
-\frac{\partial \mathcal{L}_{Huber}}{\partial \hat{y}} =
-\begin{cases}
-\hat{y} - y &amp; \text{如果 } |y - \hat{y}| \leq \delta \
-\delta \cdot \text{sign}(\hat{y} - y) &amp; \text{其他}
-\end{cases}
-$$
-看这个梯度形式，你会发现它对大误差的惩罚是有上限的——不管你是差了 100 还是 1000，梯度最大就是 $\delta$。这对含有噪声数据的回归任务非常合适，也是为什么很多强化学习的 value 网络使用 Huber Loss（比如 DQN 就用它来稳定 TD-error 的梯度）。
-
-3. 分类任务的核心：CrossEntropy 为什么比 MSE 好
-3.1 先试一下：分类用 MSE 会怎样
-假设一个二分类问题，标签 $y \in {0, 1}$，模型输出 $\hat{y} \in [0, 1]$（sigmoid 之后）。
-用 MSE：
-$$
-\mathcal{L}_{MSE} = (y - \hat{y})^2
-$$
-看梯度怎么传。令模型输出为 $z$（sigmoid 之前的 logit），sigmoid 为 $\sigma(z) = 1/(1+e^{-z})$，那么 $\hat{y} = \sigma(z)$。
-用链式法则：
-$$
-\frac{\partial \mathcal{L}_{MSE}}{\partial z} = 2(\hat{y} - y) \cdot \sigma’(z)
-$$
-而 sigmoid 的导数有个致命特性：当 $\hat{y}$ 接近 0 或 1 时，$\sigma’(z)$ 接近 0。
-这意味着什么？当模型的预测已经很确定（无论对错）的时候，梯度会变得非常非常小——学习几乎停滞。
-想象一个模型预测 $\hat{y}=0.99$，但真实标签是 $y=1$。虽然预测已经很接近正确值了，但 $\sigma’(z)$ 大约只有 0.01 量级，梯度被这个因子&quot;吃掉&quot;，更新极慢。更糟糕的是，如果模型预测 $\hat{y}=0.99$，真实标签是 $y=0$，它本应该大幅度调整，但因为 $\sigma’(z)$ 太小，同样学不动。
-这就是 MSE 在分类任务中的梯度消失问题。
-3.2 交叉熵的设计：让梯度正比于误差
-二分类交叉熵（Binary Cross-Entropy, BCE）：
-$$
-\mathcal{L}_{BCE} = -[y\log(\hat{y}) + (1-y)\log(1-\hat{y})]
-$$
-为什么中间有个 $\log$？来看梯度：
-对正样本（$y=1$），损失简化为 $-\log(\hat{y})$，梯度：
-$$
-\frac{\partial \mathcal{L}_{BCE}}{\partial z} = -(1 - \sigma(z)) = \hat{y} - 1
-$$
-对负样本（$y=0$），损失简化为 $-\log(1-\hat{y})$，梯度：
-$$
-\frac{\partial \mathcal{L}_{BCE}}{\partial z} = \sigma(z) = \hat{y}
-$$
-统一写成：
-$$
-\frac{\partial \mathcal{L}_{BCE}}{\partial z} = \hat{y} - y
-$$
-梯度直接正比于预测和标签的差值——完全不依赖 $\sigma’(z)$。模型错的离谱时，梯度就大；快对了，梯度就小。
-相比 MSE 中梯度被 $\sigma’(z)$ 压缩的问题，交叉熵的设计优雅地避开了这个陷阱。
-多分类版本就是 softmax + 交叉熵：
-$$
-\mathcal{L}{CE} = -\sum{c=1}^{C} y_c \log\left(\frac{e^{z_c}}{\sum_{j}e^{z_j}}\right)
-$$
-梯度形式同样简洁。对正确类别 $c^*$ 的 logit：
-$$
-\frac{\partial \mathcal{L}{CE}}{\partial z{c^}} = p_{c^} - 1
-$$
-对其他类别 $c \neq c^*$：
-$$
-\frac{\partial \mathcal{L}{CE}}{\partial z{c}} = p_{c}
-$$
-非常干净。每个梯度的方向都告诉模型：正确类别的 logit 往上拉，其他类别的 logit 往下压，幅度正比于当前的置信度偏差。
-3.3 从信息论角度看交叉熵
-交叉熵还有一个更底层的解释视角：
-$$
-H(p, q) = -\sum_{x} p(x) \log q(x)
-$$
-这衡量的是用分布 q 来编码分布 p 的信息时，需要的额外比特数。最小化交叉熵就是在让模型分布 $q$ 尽可能接近真实分布 $p$——也就是在做 KL 散度最小化。
-这个视角给了一个直觉：分类问题的本质不是&quot;让数值接近&quot;，而是&quot;让分布匹配&quot;。用 MSE 去做分类，本质上是在用欧氏距离衡量分布差异，它不知道正确概率和错误概率之间的关系。而交叉熵天然懂。
-
-4. 对比损失：当任务涉及&quot;相似性&quot;
-4.1 Contrastive Loss——拉近正对，推远负对
-$$
-\mathcal{L}_{Contrastive} = (1-y)\cdot d^2 + y\cdot \max(0, m-d)^2
-$$
-其中 $d$ 是两个样本嵌入的欧氏距离，$y=1$ 表示这对样本相似（正对），$y=0$ 表示不相似（负对），$m$ 是 margin。
-这个函数的设计哲学很直接：
-
-正对：让它们靠近，距离的平方就是惩罚项
-负对：只用管&quot;离得不够远的&quot;——距离超过 margin $m$ 的负对不产生任何损失
-
-为什么要设这个 margin？不是所有负对都应该被推得无限远。你只需要它们分离到一定程度就够了。没有 margin 的话，模型会试图把所有负对推到无限远，但这是不必要的——就像你不需要把&quot;猫&quot;和&quot;桌子&quot;的向量表示隔到天边，只要它们不混淆就行。
-4.2 Triplet Loss——你比我近就行
-$$
-\mathcal{L}_{Triplet} = \max(0, d(a,p) - d(a,n) + m)
-$$
-这里有一个 anchor 样本 $a$，一个正样本 $p$，一个负样本 $n$。损失只在负样本比正样本距离 anchor 还近（加上 margin）时产生。
-设计逻辑：只要正对已经比负对近，我就不管了。不需要绝对距离小，只需要相对距离对。这种&quot;相对而非绝对&quot;的思路在人脸识别、行人重识别等任务中效果显著。
-对比一下：Contrastive Loss 对每个样本对独立施压，Triplet Loss 对关系施压。它们的区别很像监督学习与排序学习的区别——前者关心绝对值，后者关心相对值。
-
-5. KL 散度：当你想让分布靠近但不完全相等时
-$$
-D_{KL}(p \parallel q) = \sum_{x} p(x) \log\frac{p(x)}{q(x)}
-$$
-KL 散度最值得提的一点是：它不是对称的。$D_{KL}(p\parallel q) \neq D_{KL}(q\parallel p)$。
-这个不对称性恰恰是设计者的意图：
-
-前向 KL（$D_{KL}(p\parallel q)$）：在 $p$ 有密度的地方，$q$ 必须有密度，否则损失极大。这叫 mode-covering——$q$ 会试图覆盖 $p$ 的所有峰值，哪怕这导致它在峰值之间分配概率。
-反向 KL（$D_{KL}(q\parallel p)$）：在 $q$ 有密度而 $p$ 没有的地方，损失极大。这叫 mode-seeking——$q$ 会只拟合 $p$ 的主要模式，放弃次要模式，产生一个更集中的分布。
-
-你在用 VAE 时用的是前向 KL（$D_{KL}(q(z|x) \parallel p(z))$），让后验分布逼近先验。而在强化学习的策略优化（如 TRPO/PPO）中，你限制新旧策略的 KL 散度，用的方向取决于具体公式。
-这个不对称性不只是数学上的小细节——它决定了算法的行为是&quot;覆盖&quot;还是&quot;聚焦&quot;，设计时选哪个方向看你的任务需要哪种特性。
-
-6. 从 MLE 统一视角看损失函数
-讲到这里，你会发现很多损失函数都可以从**最大似然估计（MLE）**的角度统一理解：
-
-假设 $p(y|\hat{y}) = \mathcal{N}(\hat{y}, \sigma^2)$ → MLE 给出 MSE
-假设 $p(y|\hat{y}) = \text{Laplace}(\hat{y}, b)$ → MLE 给出 L1
-假设 $p(y|\hat{y}) = \text{Bernoulli}(\hat{y})$ → MLE 给出 BCE
-假设 $p(y|\hat{y}) = \text{Categorical}(\hat{y})$ → MLE 给出 CrossEntropy
-
-每种损失函数背后都隐含了一个关于数据分布的假设。 你选择损失函数时，本质上是在选择你相信数据服从哪种分布。
-这不是学术上的马后炮——当你面对一个新问题，不知道用什么损失函数时，问自己：“我的数据噪声长什么样？” 零星的离群点？高斯噪声？离散类别？你的答案就是你的损失函数。
-
-总结
-
-
-
-损失函数
-适合场景
-核心设计思想
-
-
-
-
-MSE (L2)
-高斯噪声的回归
-平方惩罚，优先消灭大误差
-
-
-MAE (L1)
-含离群点的回归
-线性惩罚，不受离群点主导
-
-
-Huber
-通用回归
-小误差L2 + 大误差L1
-
-
-CrossEntropy
-分类
-梯度正比于误差，无梯度消失
-
-
-Contrastive
-度量学习
-正对拉近、负对推远到margin
-
-
-Triplet
-细粒度相似性
-只需相对距离，不要绝对距离
-
-
-KL Divergence
-分布匹配
-不对称性设计，选覆盖还是聚焦
-
-
-
-所有损失函数的共同目标都是让模型朝着正确的方向更新参数。区别在于：它们定义了&quot;正确&quot;的标准，而这个标准，决定了你模型最终学到的行为。
-
-下篇预告：优化器的直觉——SGD 为什么要有动量，Adam 又为什么好用。
-]]></content>
-      <categories>
-        <category>机器学习</category>
-      </categories>
-      <tags>
-        <tag>深度学习</tag>
-        <tag>机器学习</tag>
-        <tag>损失函数</tag>
-        <tag>数学</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径</title>
-    <url>/2026/06/05/rl_algorithm_design_aesthetics/</url>
-    <content><![CDATA[强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径
-前面两篇我们聊了损失函数和优化器的设计哲学。但有一个领域的损失函数和优化器设计，比监督学习更&quot;绕&quot;——强化学习。
-在监督学习中，你的标签是上帝给的，错了就是错了。但在强化学习中，你只有一个延迟的、嘈杂的、稀疏的标量奖励信号。更麻烦的是：你在用当前策略收集的数据来更新这个策略本身，更新完你又拿新策略去跑数据——你的训练数据一直在变。
-这种&quot;自己给自己出题，自己又去解题&quot;的循环，使得 RL 的算法设计比监督学习多了一层曲折。这篇博客会沿着 RL 的算法演进路径，拆解每个关键设计背后的直觉——不是为了列公式，而是为了理解为什么一个问题被反复用不同方式解决。
-
-1. 核心难题：状态价值和动作价值
-先确立两个基本概念。
-在 RL 中，智能体需要回答的根本问题是：在某个状态下，做哪个动作最好？
-但&quot;好&quot;的定义是模糊的——好的动作会带来即时奖励，也可能带来长期回报。于是我们定义了两种价值函数：
-
-状态价值 $V(s)$：从这个状态出发，按当前策略 $ \pi $，未来期望总回报是多少
-动作价值 $Q(s,a)$：在这个状态执行动作 $a$，之后按当前策略 $ \pi $，未来期望总回报是多少
-
-它们通过 Bellman 方程关联：
-$$
-V(s) = \max_a Q(s,a)
-$$
-或者更标准地，通过时序一致性：
-$$
-Q(s,a) = r(s,a) + \gamma \mathbb{E}_{s’ \sim P(\cdot | s,a)} [V(s’)]
-$$
-这句话直白地说就是：一个动作的价值 = 立即回报 + 折损后的后续状态价值。
-这个式子看似简单，但它蕴含了整个 RL 算法设计的核心 tension：你教的（价值估计）和你要学的（策略）是同一个东西的回声——你用当前的估计去更新自己，形成自我指涉的循环。后面所有的算法，本质上都是不同方式来处理这个循环的稳定性问题。
-
-2. Q-learning：用一个近似去逼近另一个近似
-$$
-Q(s,a) \leftarrow Q(s,a) + \alpha [r + \gamma \max_{a’} Q(s’, a’) - Q(s,a)]
-$$
-Q-learning 的核心思想是：用 TD target ($r + \gamma \max_{a’} Q(s’,a’)$) 作为&quot;伪标签&quot;去更新 $Q(s,a)$。TD target 本身也是 $Q$ 函数的估计，所以这个更新是在用一个近似去逼近另一个近似。
-这带来两个问题：
-1. 过度估计（Overestimation Bias）
-$\max_{a’} Q(s’,a’)$ 天然会高估——因为如果 $Q$ 对每个动作的估计有随机误差，取最大值会选中误差为正的那个。误差叠加，Q 值越学越虚高。
-2. Bootstrapping 的误差累积
-每一步更新都依赖于下一步的估计，误差会沿着时间步传导和放大。在复杂环境中，这种误差传播可以导致价值估计的级联偏离。
-Double Q-learning：把选择器和评估器分开
-解决方案出奇简洁：用两个独立的 Q 网络，一个负责选动作，另一个负责估价值。
-$$
-Q_1(s,a) \leftarrow Q_1(s,a) + \alpha [r + \gamma Q_2(s’, \arg\max_{a’} Q_1(s’, a’)) - Q_1(s,a)]
-$$
-选动作用 $Q_1$，估值用 $Q_2$。误差被正负抵消的概率大于被叠加放大的概率，有效缓解了高估问题。这就像两个裁判：一个说你该打这个球，另一个说这球值多少分——如果同一个裁判又选又评，他很容易给自己的选择打高分。
-
-3. DQN：当深度网络遇上 Q-learning
-2013 年，Mnih 等人把 Q-learning 搬到深度网络上（DQN），在 Atari 游戏上取得了突破。但光替换网络架构远远不够，他们还加了两项关键创新。
-3.1 经验回放（Experience Replay）
-打破数据之间的时序相关性。监督学习假设数据是 i.i.d. 的，但 RL 的 $s_{t+1}$ 直接依赖于 $s_t, a_t$——前后状态强相关。用这样的时序数据做 SGD，梯度方差极大，网络很难收敛。
-经验回放的解决方案：把经历存起来，随机采样训练。每个 transition 来自不同的时间步、不同的 episode，相关性被打破。同时，一条经验可以复用多次，提升了样本效率。
-3.2 Target Network
-DQN 面临的同一个问题，只是换了形式。如果 $Q$ 网络在时刻 $t$ 和目标值 $r + \gamma \max Q(s’, a’)$ 都用同一个网络计算，这个网络在更新自己，而目标也在跟着变——就像在移动的靶子上射箭。
-DQN 的做法是：维持一个冻结的 target network $Q^-$，每隔 $C$ 步才复制一次主网络的参数。
-$$
-y_t = r_t + \gamma \max_{a’} Q^-(s_{t+1}, a’)
-$$
-这样 target 在一个固定周期内不变，避免了&quot;自己追自己尾巴&quot;的情况。
-这两个设计的直觉可以简化为：
-
-经验回放 → 别让数据太相关，否则梯度像喝了假酒
-Target Network → 别让目标跑太快，否则你永远追不上
-
-
-4. Policy Gradient：直接学策略不香吗？
-Q-learning 学派在学价值函数，然后根据价值选动作。那能不能直接学一个策略 $\pi_\theta(a|s)$，然后用梯度上升去最大化期望回报？
-这就是 Policy Gradient 的思路，核心是 Policy Gradient Theorem：
-$$
-\nabla J(\theta) = \mathbb{E}{\tau \sim \pi\theta} \left[ \sum_t \nabla_\theta \log \pi_\theta(a_t|s_t) \cdot G_t \right]
-$$
-直白翻译：收集一组交互轨迹，如果一个 trajectory 的总回报 $G_t$ 高，就增加这条轨迹上每个动作的概率；如果回报低，就降低概率。
-但这有一个问题：方差极大。 同一个策略跑两次，第一次可能不小心通关了，第二次可能开局就死。两条轨迹的 $G_t$ 差天差地别，梯度方向会受到&quot;运气好&quot;或&quot;运气差&quot;的强烈影响。
-于是有了 REINFORCE with baseline：减掉一个基线 $b(s)$ 来降低方差。
-$$
-\nabla J(\theta) = \mathbb{E} \left[ \sum_t \nabla_\theta \log \pi_\theta(a_t|s_t) \cdot (G_t - b(s_t)) \right]
-$$
-但这样做还不够——$G_t$ 本身的方差仍然很大。
-
-5. Actor-Critic：两种思路的结合
-如果既学价值函数，又学策略呢？
-Actor-Critic 的做法是：Actor 负责学策略（做什么），Critic 负责学价值函数（做得好不好）。 Critic 的输出充当一个更稳定的&quot;打分&quot;信号，替代掉 $G_t$。
-$$
-\nabla J(\theta) = \mathbb{E} \left[ \nabla_\theta \log \pi_\theta(a|s) \cdot \delta \right]
-$$
-其中 $\delta = r + \gamma V(s’) - V(s)$ 是 TD-error——衡量当前 Critic 认为这个动作比预期好还是差。
-
-$\delta &gt; 0$：这个动作比 Critic 预期好 → 提升它的概率
-$\delta &lt; 0$：这个动作比预期差 → 降低它的概率
-
-Critic 会不断学习，让自己对 $V(s)$ 的估计越来越准；Actor 则根据越来越准的 Critic 信号调整策略。两者互相促进，形成了 RL 中一个经典的共生结构。
-但这种共生也有风险：Critic 和 Actor 是彼此依赖的，如果 Critic 学偏了，Actor 就会往错误方向走，然后收集到歪数据再训练 Critic——恶化循环。 几乎所有高级算法都在处理这个问题。
-
-6. PPO：稳定压倒一切
-从 REINFORCE 到 A2C/A3C，Policy Gradient 方法已经能在很多任务上工作了，但有一个核心痛点：样本效率低，而且一次更新太大就会崩。
-所谓&quot;一次更新太大&quot;，指的是 $\pi_\theta$ 一步偏离 $\pi_{\theta_{old}}$ 太多。一旦走歪，新策略收集的数据就会和旧策略偏差太大，Critic 的那个假设就失效了——你不再能可靠地用旧数据来更新新策略。
-TRPO 的解决思路
-TRPO（Trust Region Policy Optimization）的做法是：限制每次更新的步长，保证新旧策略的 KL 散度不超过 $\delta$。
-$$
-\max_\theta \mathbb{E} \left[ \frac{\pi_\theta(a|s)}{\pi_{\theta_{old}}(a|s)} A(s,a) \right] \quad \text{s.t. } D_{KL}(\pi_{\theta_{old}} \parallel \pi_\theta) \leq \delta
-$$
-它把优化问题变成了一个带约束的优化，然后用共轭梯度等方法求解。理论上漂亮，但实现复杂、计算量大。
-PPO 的简化：用 Clip 代替约束
-PPO 的想法更直接粗暴：如果不限制步长，那就限制收益。 它不对更新幅度做约束，而是对目标函数做了裁剪：
-$$
-L^{CLIP}(\theta) = \mathbb{E} \left[ \min\left( r_t(\theta) \hat{A}_t, \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \hat{A}_t \right) \right]
-$$
-其中 $r_t(\theta) = \frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}$ 是新旧策略的比值。
-直觉是这样的：
-
-如果 $\hat{A}_t &gt; 0$（这个动作好）：$r_t(\theta)$ 希望变大（提升这个动作的概率），但 clip 限制了它最大涨到 $1+\epsilon$——步子不要迈太大
-如果 $\hat{A}_t &lt; 0$（这个动作不好）：$r_t(\theta)$ 希望变小，但 clip 限制了它最小跌到 $1-\epsilon$
-
-PPO 的 “clip” 是一个极有工程美感的操作。TRPO 需要一个复杂的二次规划求解器来处理约束；PPO 只用了一行 torch.clamp 就达到类似效果。它没有 TRPO 的严格保证，但实践中往往更好用。
-你几乎可以这样说：PPO 之所以成功，不是因为它在理论上比 TRPO 更优，而是因为它把 TRPO 的&quot;复杂约束&quot;变成了一个可以一行代码实现的&quot;粗糙但有效&quot;的裁剪。
-PPO 在今天的主流 RL 库中几乎是标配。从 Isaac Lab 中的四足机器人训练，到 LLM 的 RLHF 微调，PPO 的身影无处不在。
-
-7. 算法演进的底层脉络
-把几大算法串起来，你会看到一条清晰的设计进化路径：
-
-
-
-阶段
-代表算法
-核心创新
-解决了什么
-
-
-
-
-基础理论
-Q-learning
-Bellman 更新
-让价值函数自洽
-
-
-加上深度
-DQN
-经验回放 + Target Network
-打破相关性 + 稳定目标
-
-
-直接学策略
-REINFORCE
-Policy Gradient Theorem
-不用学 V 也能优化
-
-
-结合两者
-A2C / A3C
-Actor-Critic
-用 V 降方差、稳梯度
-
-
-稳定训练
-TRPO / PPO
-Trust Region / Clip
-防止一次更新崩掉
-
-
-
-这条路径的内在动力是：RL 的训练稳定性问题比监督学习严重得多。 在监督学习中，标签是固定的，数据分布也不是你改参数就变的。但在 RL 中，你更新一次策略，整个数据分布就变了——下一批数据的 “难易程度”、&quot;反馈信号&quot;完全取决于你刚刚更新的策略。
-所以每一代算法都在努力做同一件事：让这个&quot;自指&quot;的循环稳定下来。
-从 DQN 的 target network（隔一段时间冻结目标），到 TRPO 的约束优化（限制策略变化幅度），到 PPO 的 clip（用简单粗暴的方式限制变化），再到 SAC 的熵正则化（鼓励探索来避免策略坍塌）——它们本质上是同一个焦虑的多种解法。
-
-8. 一个贯穿三篇的 meta 视角
-最后，我想用一个小小的 meta 视角把这三篇串起来。
-损失函数、优化器、RL 算法——这三个主题看似独立，但它们背后是同一个问题：
-怎么让一个数学上的优化过程，在现实生活中稳定、高效地运行？
-
-损失函数定义了&quot;好&quot;的标准
-优化器定义了&quot;怎么走&quot;的方案
-RL 算法则在更高维度上定义了&quot;数据从哪来、目标往哪去&quot;
-
-你会发现，高级的算法设计者都有一个共同特质：他们知道什么时候该加约束，什么时候该放松约束。
-MSE 到 Huber 是加了&quot;对大误差的容忍边界&quot;，Adam 的 bias correction 是加了&quot;初始阶段的校正&quot;，PPO 的 clip 是加了&quot;动作概率比值的边界&quot;——看似不同的操作，本质上都是在划定一个安全的信任区间，在这个区间内信任梯度信号，超出区间则谨慎对待。
-这就是所有优化算法背后那个最朴素的设计直觉：相信梯度，但别全信。
-
-总结
-
-Bellman 方程奠定了价值学习的基石，包办了整个 RL 的递归结构
-Q-learning 用 TD target 做自举更新，DQN 用经验回放和 target network 解决了深度化的两大难题
-Policy Gradient 方法跳过了价值函数直接优化策略，Actor-Critic 把它们结合起来
-TRPO/PPO 的核心贡献是解决&quot;更新太大就崩&quot;的问题，PPO 用 clip 以极简方式达成目标
-所有 RL 算法的底层焦虑都是稳定性——因为数据分布会随策略变化，形成了自指循环
-
-从第一篇的损失函数、到第二篇的优化器、再到这一篇的 RL 算法，这三篇文章共同呈现了一个渐变：越复杂的问题，你的&quot;优化工具&quot;就需要越多的约束和机制来保持稳定。 但这个思路是通用的——理解每个约束和机制为什么存在，比记住公式本身重要得多。
-]]></content>
-      <categories>
-        <category>强化学习</category>
-      </categories>
-      <tags>
-        <tag>强化学习</tag>
-        <tag>数学</tag>
-        <tag>算法设计</tag>
-        <tag>DRL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>优化器的直觉——从 SGD 到 Adam，每一步为什么这样走</title>
-    <url>/2026/06/03/optimizer_intuition/</url>
-    <content><![CDATA[优化器的直觉——从 SGD 到 Adam，每一步为什么这样走
-上一篇文章我们聊了损失函数的设计哲学——一个函数告诉你&quot;模型现在有多差&quot;。但知道有多差只是第一步，更关键的问题是：知道了差在哪，该怎么走？
-这就是优化器的工作。
-从最早的梯度下降（SGD），到带动量（Momentum），到自适应学习率的 AdaGrad/RMSProp，再到集大成者 Adam——这条进化路径不是零散的拼凑，而是人们在实践中一步步回答同一个问题的过程：
-用梯度更新参数时，怎么才能又快又稳地走到最优解？
-这篇博客会沿着这个进化路径，讲清楚每个优化器解决了什么问题、又是怎么解决的，以及它们各自在什么场景下好用。
-
-1. SGD：最朴素的走法
-$$
-\theta_{t+1} = \theta_t - \eta \cdot g_t
-$$
-vanilla SGD 的逻辑最简单不过：看梯度往哪指，就往哪走一步，步长固定为 $\eta$。
-好在哪里？直觉、简单、参数少。在凸优化理论上，SGD 有很好的收敛保证。
-但实际训练中问题一堆：
-
-步长难选。设大了震荡甚至发散，设小了龟速收敛。而且一个好的步长在训练初期和后期可能完全不同。
-梯度方向嘈杂。mini-batch 的梯度只是真实梯度的有偏估计，在陡峭方向上震荡严重。想象你在山谷中下坡，每一步都在左右乱晃，实际路径像个锯齿。
-在峡谷地形中效率极低。所谓峡谷（ravine）是指某个方向梯度极大而另一个方向梯度极小——比如损失函数在参数 $w_1$ 方向上非常陡，在 $w_2$ 方向上非常平缓。SGD 会在陡峭方向来回震荡，而在平缓方向几乎不动。形象地说，你每一步都踩在晃动的钢索上，但想去的地方其实在正前方。
-
-这些问题的核心是：梯度信息本身不够用——只有一阶信息，没有历史、没有曲率感知。
-于是人们开始想办法给它&quot;加点料&quot;。
-
-2. 动量（Momentum）：给下山的路加个惯性
-$$
-\begin{aligned}
-v_{t+1} &amp;= \beta v_t + g_t \
-\theta_{t+1} &amp;= \theta_t - \eta v_{t+1}
-\end{aligned}
-$$
-动量（Momentum）的思路简单又优雅：不要只看当前这一步的梯度，还要带着之前积累的&quot;动量&quot;走。
-直觉可以这样理解：想象你从山顶推一个铁球下山。铁球不会每步都被小石子带偏，因为它有惯性——之前积累的速度让它在一段时间内保持方向一致。
-动量在峡谷地形中尤其有用：
-
-在剧烈震荡的方向（陡峭方向），梯度正负交错，动量叠加后会相互抵消，震荡幅度大幅减少
-在缓慢变化的方向（平缓方向），梯度虽然小但方向恒定，动量会不断累积，加速前进
-
-所以动量做了两件好事：抑制震荡 × 加速平缓方向。
-折中的是 $\beta$ 这个超参数，通常取 0.9——意味着最新梯度权重为 1，前面 10 步左右累积的历史权重为 9，大约相当于用最近 $1/(1-\beta) \approx 10$ 步的平均梯度来更新。
-Nesterov 加速梯度（NAG）：往远处看一眼再走
-NAG 在动量的基础上做了一处小改动：先按照动量方向往前探头，再计算那个位置的梯度。
-$$
-\begin{aligned}
-v_{t+1} &amp;= \beta v_t + \nabla f(\theta_t - \eta\beta v_t) \
-\theta_{t+1} &amp;= \theta_t - \eta v_{t+1}
-\end{aligned}
-$$
-差别在哪？标准动量是在当前位置计算梯度，再沿着动量方向走。NAG 先沿着动量方向&quot;预览&quot;一下下一步的位置，在那个位置算梯度，然后综合两者。
-这个改动带来的效果是：NAG 在接近最优点时有过冲预判能力。当动量带你冲向山谷底部时，NAG 会在到达之前就&quot;看到&quot;坡开始向上，提前刹车减速。而标准动量要等到越过谷底、梯度反向之后才开始减速，容易过冲和震荡。
-很多研究中，NAG 比标准动量收敛更快、更稳定，这也是它在很多实践中被广泛使用的原因（比如 ResNet 的官方训练就用 NAG）。
-
-3. AdaGrad：让每个参数有自己的步长
-到现在为止，所有参数都共享同一个学习率 $\eta$。但这合理吗？
-考虑一个稀疏特征场景：特征 $A$ 在所有样本中几乎都是 0，只有少数几个样本有非零值；特征 $B$ 几乎每个样本都有值。对特征 $A$ 来说，它只在少数样本中收到梯度信号，每个信号都非常宝贵，需要珍惜地用大一点步长去学。对特征 $B$ 来说，每个样本都有梯度，步长小一点也没关系，反复微调即可。
-AdaGrad 的设计目标就是：让出现频率低的参数学习率大一些，出现频率高的参数学习率小一些。
-它的做法是累积每个参数的历史梯度的平方和：
-$$
-\theta_{t+1,i} = \theta_{t,i} - \frac{\eta}{\sqrt{G_{t,ii} + \epsilon}} \cdot g_{t,i}
-$$
-其中 $G_{t,ii} = \sum_{\tau=1}^{t} g_{\tau,i}^2$ 是参数 $i$ 从开始到当前所有梯度的平方和。
-核心直觉：如果一个参数历史上梯度一直很大，说明它频繁被更新，那它的学习率应该减小；如果一个参数罕见有梯度，它的累积平方和很小，学习率相对更大。
-AdaGrad 在稀疏数据上效果非常好（比如 NLP 中的词嵌入训练），但它有一个致命问题：累计平方和 $G_t$ 随着训练步数单调递增，学习率不断衰减，最终趋近于零，模型彻底停止学习。 这在非凸的深度网络中尤其严重——学了一段时间后你就学不动了。
-
-4. RMSProp：只记&quot;近期&quot;的梯度
-AdaGrad 的&quot;累积到死&quot;问题让 Geoff Hinton 在课堂上提出了 RMSProp（虽然他没正式发论文）。思路很简单：
-不要累积所有历史梯度，而是用指数移动平均（EMA）来维护梯度平方的估计。
-$$
-\begin{aligned}
-v_t &amp;= \beta v_{t-1} + (1-\beta) g_t^2 \
-\theta_{t+1} &amp;= \theta_t - \frac{\eta}{\sqrt{v_t + \epsilon}} \cdot g_t
-\end{aligned}
-$$
-注意 $g_t^2$ 表示 element-wise 平方。
-这个改动带来的变化是革命性的：
-
-$v_t$ 不再单调递增，而是对近期梯度做加权平均
-如果当前区域梯度大，$v_t$ 上升，学习率自动减小
-如果当前区域梯度小，$v_t$ 下降，学习率自动增大
-学习率可以上下波动，而不是像 AdaGrad 那样只会一路下跌
-
-在非凸优化（几乎所有深度网络都是）中，RMSProp 的表现远好于 AdaGrad，因为模型在不同区域需要的步长不同——陡峭区域要小步、平缓区域要大步。
-这个&quot;让学习率自适应梯度尺度&quot;的想法，是 Adam 的核心组件之一。
-
-5. Adam：集大成者
-$$
-\begin{aligned}
-m_t &amp;= \beta_1 m_{t-1} + (1-\beta_1) g_t \
-v_t &amp;= \beta_2 v_{t-1} + (1-\beta_2) g_t^2 \
-\hat{m}_t &amp;= \frac{m_t}{1-\beta_1^t}, \quad \hat{v}t = \frac{v_t}{1-\beta_2^t} \
-\theta{t+1} &amp;= \theta_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \cdot \hat{m}_t
-\end{aligned}
-$$
-Adam = Momentum + RMSProp，这个说法没错，但它不是简单的加法。Adam 的优雅在于它同时解决了三个问题：
-
-
-
-问题
-怎么解决的
-对应组件
-
-
-
-
-梯度方向嘈杂
-一阶动量 EMA 平滑梯度方向
-$m_t$
-
-
-不同参数尺度不同
-二阶动量 EMA 自适应调整步长
-$v_t$
-
-
-初始阶段偏差大
-偏差校正（bias correction）
-$\hat{m}_t, \hat{v}_t$
-
-
-
-第三个点是最容易被忽略的。在训练初期，$m_t$ 和 $v_t$ 都是从 $0$ 开始累加的，导致前几步的估计严重偏小。不做偏差校正的话，前几步的更新会特别大，然后迅速变小——这种&quot;开头猛冲然后急刹&quot;的行为对训练是不利的。
-偏差校正让初始阶段更平稳。随着 $t$ 增大，$1-\beta^t$ 趋近于 1，校正的作用逐渐消失。
-实际使用中，默认参数 $\beta_1=0.9$、$\beta_2=0.999$、$\epsilon=10^{-8}$ 在大多数场景下表现良好，这也是 Adam 被誉为&quot;收件即用&quot;优化器的原因。
-Adam 的弱点与变体
-Adam 也不是完美无缺。在有些任务中（尤其是 CV 中的大规模训练），Adam 的泛化能力不如带动量的 SGD。一个流行的解释是：Adam 的自适应步长在某些情况下会导致模型陷入损失平面的锐利极小值（sharp minima），而 SGD 更倾向于找到平坦极小值（flat minima），泛化更好。
-于是有了 AdamW（Adam with decoupled weight decay），它将 SGD 中的 weight decay（L2 正则化）从 Adam 的自适应更新中解耦出来。在大多数现代 Transformer 训练中，AdamW 已经是事实上的标准。如果你在用 PyTorch，torch.optim.AdamW 现在比 torch.optim.Adam 更推荐。
-另一个有意思的变体是 Nadam（Nesterov + Adam），加上 Nesterov 的&quot;往前看一步&quot;机制。
-
-6. 实际选择建议
-
-
-
-场景
-推荐优化器
-理由
-
-
-
-
-CV 分类/检测（大batch）
-SGD + Momentum (NAG)
-泛化好，易找 flat minima
-
-
-NLP / Transformer
-AdamW
-自适应步长适合不同词频，weight decay 解耦
-
-
-强化学习（value/policy 网络）
-Adam
-不需要最强泛化，要快速收敛
-
-
-GAN 训练
-Adam (常用)
-两网络动态博弈，稳定比泛化重要
-
-
-稀疏特征（推荐系统）
-Adam / AdaGrad
-自适应步长对稀疏特征友好
-
-
-资源受限 / 小模型
-SGD
-简单，少超参数，够用
-
-
-
-需要强调的是：没有绝对最好的优化器，只有最适合当前任务的。 如果你在跑一个新项目，先用 Adam 快速迭代验证想法，最后换 SGD+Momentum 再跑一轮——这是很多研究者和工程师的实际工作流。
-
-总结
-从 SGD 到 Adam 的进化史，本质上是人们在回答三个问题：
-
-如何抑制震荡、加速收敛？ → Momentum / NAG
-如何为每个参数自适应调整步长？ → AdaGrad / RMSProp
-如何把这俩结合起来并处理初始偏差？ → Adam
-
-每一步改进都来自一个具体的痛点：SGD 在峡谷中震荡 → 动量加惯性；固定学习率不适应不同参数 → AdaGrad 累积历史梯度；累积到死 → RMSProp 用指数动平均；缺少方向平滑 → Adam 融合一阶和二阶动量。
-理解了这个演进脉络，你选优化器就不再是&quot;大家都用 Adam 所以我也用&quot;，而是知道每个选择背后的 trade-off。
-
-下篇预告：强化学习算法的设计美学——从 Bellman 方程到 PPO 的直觉路径。
-]]></content>
-      <categories>
-        <category>机器学习</category>
-      </categories>
-      <tags>
-        <tag>深度学习</tag>
-        <tag>机器学习</tag>
-        <tag>数学</tag>
-        <tag>优化器</tag>
       </tags>
   </entry>
 </search>
