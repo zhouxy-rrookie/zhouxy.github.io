@@ -1,4 +1,3 @@
-https://zhxylabflow.xyz/2026/06/08/ai_art_magazine_vol1/
 https://zhxylabflow.xyz/2026/05/17/aigc_art_styles_guide/
 https://zhxylabflow.xyz/2026/06/01/loss_function_philosophy/
 https://zhxylabflow.xyz/2026/06/03/optimizer_intuition/
@@ -24,7 +23,6 @@ https://zhxylabflow.xyz/categories/index.html
 https://zhxylabflow.xyz/tags/index.html
 https://zhxylabflow.xyz/about/index.html
 https://zhxylabflow.xyz/
-https://zhxylabflow.xyz/tags/%E5%9B%BE%E9%9B%86/
 https://zhxylabflow.xyz/tags/AIGC/
 https://zhxylabflow.xyz/tags/%E7%BE%8E%E6%9C%AF%E9%A3%8E%E6%A0%BC/
 https://zhxylabflow.xyz/tags/%E8%AE%BE%E8%AE%A1/
@@ -44,14 +42,14 @@ https://zhxylabflow.xyz/tags/%E6%95%B0%E5%AD%A6/
 https://zhxylabflow.xyz/tags/%E4%BC%98%E5%8C%96%E5%99%A8/
 https://zhxylabflow.xyz/tags/%E5%BE%AE%E7%94%B5%E5%AD%90/
 https://zhxylabflow.xyz/tags/%E9%9B%86%E6%88%90%E7%94%B5%E8%B7%AF/
-https://zhxylabflow.xyz/tags/%E7%AE%A1%E7%90%86/
-https://zhxylabflow.xyz/tags/%E8%BF%90%E8%90%A5/
 https://zhxylabflow.xyz/tags/PPO/
 https://zhxylabflow.xyz/tags/MPC/
 https://zhxylabflow.xyz/tags/%E4%BC%98%E5%8C%96/
-https://zhxylabflow.xyz/tags/%E5%A5%96%E5%8A%B1%E5%87%BD%E6%95%B0/
+https://zhxylabflow.xyz/tags/%E7%AE%A1%E7%90%86/
+https://zhxylabflow.xyz/tags/%E8%BF%90%E8%90%A5/
 https://zhxylabflow.xyz/tags/%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/
 https://zhxylabflow.xyz/tags/DRL/
+https://zhxylabflow.xyz/tags/%E5%A5%96%E5%8A%B1%E5%87%BD%E6%95%B0/
 https://zhxylabflow.xyz/tags/RTOS/
 https://zhxylabflow.xyz/tags/python/
 https://zhxylabflow.xyz/categories/%E8%AE%BE%E8%AE%A1/
@@ -60,5 +58,5 @@ https://zhxylabflow.xyz/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F
 https://zhxylabflow.xyz/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/
 https://zhxylabflow.xyz/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/
 https://zhxylabflow.xyz/categories/%E5%8D%8A%E5%AF%BC%E4%BD%93/
-https://zhxylabflow.xyz/categories/%E7%AE%A1%E7%90%86/
 https://zhxylabflow.xyz/categories/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/
+https://zhxylabflow.xyz/categories/%E7%AE%A1%E7%90%86/
