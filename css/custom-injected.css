@@ -1007,163 +1007,163 @@ blockquote {
    ============================================================ */
 /* 22a. 全幅封面图 */
 .fx-cover {
-  margin: 0 -48px 32px -48px;
+  margin: 0 -48px 40px -48px;
+  position: relative;
 }
 .fx-cover img {
   width: 100%;
   display: block;
 }
 .fx-cover .fx-cover-title {
-  padding: 24px 48px 0 48px;
+  padding: 28px 48px 0 48px;
 }
 .fx-cover .fx-cover-title h2 {
-  font-size: 2.2rem;
+  font-size: 2.6rem;
   font-weight: 900;
-  line-height: 1.15;
-  letter-spacing: -0.5px;
+  line-height: 1.1;
+  letter-spacing: -1px;
   border: none !important;
   margin: 0;
   color: #111;
 }
-.fx-cover .fx-cover-title .fx-cover-sub {
-  font-size: 1.1rem;
-  color: #888;
-  margin-top: 8px;
-  font-weight: 400;
+/* 22b. 大号章节编号 */
+.fx-bignum {
+  font-size: 8rem;
+  font-weight: 900;
+  line-height: 0.85;
+  color: #eee;
+  margin: 60px 0 -30px -8px;
+  letter-spacing: -6px;
+  user-select: none;
 }
-/* 22b. 艺术家资料卡 */
-.fx-artist-card {
-  border-top: 1px solid #222;
-  border-bottom: 1px solid #222;
-  padding: 16px 0;
-  margin: 24px 0;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  font-size: 0.82rem;
-  color: #555;
-}
-.fx-artist-card .fx-artist-card-name {
-  font-weight: 800;
-  font-size: 1.15rem;
-  color: #111;
-  flex: 1 0 100%;
-}
-.fx-artist-card .fx-artist-card-item {
-  padding-right: 18px;
-  margin-right: 18px;
-  border-right: 1px solid #ddd;
-}
-.fx-artist-card .fx-artist-card-item:last-child {
-  border-right: none;
-}
-.fx-artist-card .fx-artist-card-label {
-  color: #999;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  font-size: 0.7rem;
-  display: block;
-}
-/* 22c. Q&A 访谈块 */
-.fx-qa {
-  margin: 28px 0;
-}
-.fx-qa .fx-qa-q {
+.fx-bignum + .fx-section-title {
+  font-size: 1.8rem;
   font-weight: 700;
-  font-size: 1.05rem;
+  margin: 0 0 36px 0;
   color: #111;
-  margin: 20px 0 6px 0;
-  position: relative;
+  letter-spacing: -0.5px;
+  border: none !important;
 }
-.fx-qa .fx-qa-q::before {
-  content: "Q.";
-  color: #c00;
-  margin-right: 6px;
-  font-style: italic;
+/* 22c. 满宽出血图 */
+.fx-fullbleed {
+  margin: 40px -48px;
 }
-.fx-qa .fx-qa-a {
-  color: #444;
-  margin: 0 0 0 0;
-  padding-left: 16px;
-  border-left: none;
-  font-style: normal;
-}
-/* 22d. 图片标注（数字编号） */
-.fx-annotated {
-  position: relative;
-  margin: 28px 0;
-}
-.fx-annotated img {
+.fx-fullbleed img {
   width: 100%;
   display: block;
 }
-.fx-annotated .fx-note {
-  position: absolute;
+.fx-fullbleed .fx-fullbleed-caption {
+  padding: 6px 48px 0 48px;
+  font-size: 0.75rem;
+  color: #999;
+  text-align: right;
 }
-.fx-annotated .fx-note .fx-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  background: #c00;
-  color: #fff;
-  border-radius: 50%;
-  font-size: 0.7rem;
-  font-weight: 800;
-  margin-right: 6px;
-  flex-shrink: 0;
-}
-.fx-notes-list {
-  margin-top: 14px;
-  padding: 0;
-  list-style: none;
-}
-.fx-notes-list .fx-notes-item {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
-  font-size: 0.88rem;
-  color: #444;
-  line-height: 1.5;
-}
-.fx-notes-list .fx-notes-item .fx-notes-num {
-  font-weight: 800;
-  color: #c00;
-  font-size: 0.85rem;
-  flex-shrink: 0;
-  min-width: 18px;
-}
-/* 22e. 大号引用（跨列） */
-.fx-pullquote {
-  font-size: 1.6rem;
-  font-weight: 400;
-  line-height: 1.3;
-  color: #222;
-  text-align: center;
-  padding: 32px 16%;
-  margin: 36px 0;
-  font-family: "Georgia", "Times New Roman", serif;
-  font-style: italic;
+/* 22d. 文字压图 */
+.fx-textover {
   position: relative;
+  margin: 40px 0;
 }
-.fx-pullquote::before {
-  content: "\201C";
-  font-size: 5rem;
-  color: #c00;
+.fx-textover img {
+  width: 100%;
+  display: block;
+}
+.fx-textover .fx-textover-text {
   position: absolute;
-  left: 50%;
-  top: -10px;
-  transform: translateX(-50%);
-  opacity: 0.25;
-  line-height: 1;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 60px 32px 28px 32px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.6;
 }
-/* 22f. 图片画廊 */
+.fx-textover .fx-textover-text .fx-textover-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  opacity: 0.7;
+  display: block;
+  margin-bottom: 6px;
+}
+/* 22e. 不对称双栏 (2:1) */
+.fx-asymmetric {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 28px;
+  margin: 40px 0;
+  align-items: start;
+}
+.fx-asymmetric img {
+  width: 100%;
+  display: block;
+}
+.fx-asymmetric .fx-asymmetric-text {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.7;
+}
+/* 22f. 侧注（浮动在文字旁） */
+.fx-sidenote {
+  float: right;
+  width: 200px;
+  margin: 6px -40px 16px 24px;
+  padding: 12px 14px;
+  font-size: 0.78rem;
+  color: #999;
+  line-height: 1.5;
+  border-left: 1px solid #ddd;
+  font-style: italic;
+}
+/* 22g. 图三连 + 大小不一 */
+.fx-triptych {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 14px;
+  margin: 40px 0;
+}
+.fx-triptych img {
+  width: 100%;
+  display: block;
+  height: 100%;
+  object-fit: cover;
+}
+.fx-triptych figure {
+  margin: 0;
+}
+.fx-triptych figure:first-child {
+  grid-row: span 2;
+}
+/* 22h. 引用压在图上 */
+.fx-quote-over {
+  position: relative;
+  margin: 40px 0;
+}
+.fx-quote-over img {
+  width: 100%;
+  display: block;
+}
+.fx-quote-over .fx-quote-over-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2rem;
+  font-weight: 400;
+  font-style: italic;
+  color: #fff;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  text-align: center;
+  line-height: 1.3;
+  font-family: "Georgia", "Times New Roman", serif;
+  max-width: 80%;
+}
+/* 22i. 等宽画廊 */
 .fx-gallery {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-  margin: 28px 0;
+  gap: 14px;
+  margin: 40px 0;
 }
 .fx-gallery figure {
   margin: 0;
@@ -1173,107 +1173,148 @@ blockquote {
   display: block;
 }
 .fx-gallery .fx-gallery-caption {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: #999;
-  margin-top: 3px;
+  margin-top: 4px;
   text-align: center;
-  line-height: 1.3;
 }
-/* 22g. 侧边提示框 */
+/* 22j. 单栏大图 + 双侧文字环绕 */
+.fx-wrap {
+  margin: 40px 0;
+}
+.fx-wrap img {
+  float: left;
+  width: 55%;
+  margin: 4px 28px 20px 0;
+}
+.fx-wrap .fx-wrap-text {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.7;
+}
+/* 22k. 艺术家卡片 */
+.fx-artist-card {
+  border-top: 2px solid #111;
+  border-bottom: 1px solid #eee;
+  padding: 14px 0;
+  margin: 36px 0;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: #777;
+}
+.fx-artist-card .fx-artist-card-name {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #111;
+  flex: 1 0 100%;
+}
+.fx-artist-card .fx-artist-card-item {
+  padding-right: 14px;
+  margin-right: 14px;
+  border-right: 1px solid #eee;
+}
+.fx-artist-card .fx-artist-card-item:last-child {
+  border-right: none;
+}
+.fx-artist-card .fx-artist-card-label {
+  color: #bbb;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 0.65rem;
+  display: block;
+}
+/* 22l. 提示框 */
 .fx-tip {
   background: #fafafa;
-  border: 1px solid #eaeaea;
-  padding: 16px 20px;
-  margin: 20px 0;
-  font-size: 0.88rem;
-  color: #555;
+  border: 1px solid #eee;
+  padding: 14px 18px;
+  margin: 28px 0;
+  font-size: 0.82rem;
+  color: #666;
   line-height: 1.6;
 }
 .fx-tip .fx-tip-title {
   font-weight: 800;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #c00;
-  margin-bottom: 8px;
-}
-/* 22h. 章节标题 */
-.fx-section {
-  margin: 48px 0 32px 0;
-}
-.fx-section .fx-section-label {
   font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 4px;
-  color: #c00;
-  margin-bottom: 4px;
-}
-.fx-section .fx-section-title {
-  font-size: 2rem;
-  font-weight: 900;
-  line-height: 1.2;
+  letter-spacing: 2px;
   color: #111;
-  letter-spacing: -0.5px;
-  border-bottom: none !important;
+  margin-bottom: 6px;
 }
-/* 22i. 双栏文字 */
+/* 22m. 大号引用 */
+.fx-pullquote {
+  font-size: 1.8rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: #222;
+  text-align: center;
+  padding: 40px 12%;
+  margin: 48px 0;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-style: italic;
+}
+.fx-pullquote::before {
+  content: "\201C";
+  font-size: 5rem;
+  color: #ddd;
+  display: block;
+  line-height: 0.6;
+  margin-bottom: 14px;
+}
+/* 22n. 双栏 */
 .fx-col2 {
   column-count: 2;
-  column-gap: 32px;
-  margin: 20px 0;
+  column-gap: 36px;
+  margin: 24px 0;
   font-size: 0.9rem;
-  line-height: 1.65;
+  line-height: 1.7;
 }
 .fx-col2 p {
   margin-top: 0;
 }
-/* 22j. 图片 + 侧边文字 */
-.fx-image-side {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 24px;
+/* 22o. 标记列表 */
+.fx-checklist {
+  list-style: none;
+  padding: 0;
   margin: 28px 0;
-  align-items: start;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 24px;
 }
-.fx-image-side img {
-  width: 100%;
-}
-.fx-image-side .fx-image-side-text {
-  font-size: 0.88rem;
+.fx-checklist li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.85rem;
   color: #555;
-  line-height: 1.65;
 }
-.fx-image-side .fx-image-side-text .fx-image-side-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: #999;
-  display: block;
-  margin-bottom: 8px;
+/* 暗色模式 */
+[data-theme="dark"] .fx-bignum {
+  color: #2a2a2a;
 }
-/* 22k. 暗色模式覆盖 */
-[data-theme="dark"] .fx-cover-title h2,
-[data-theme="dark"] .fx-section-title,
-[data-theme="dark"] .fx-artist-card-name {
+[data-theme="dark"] .fx-bignum + .fx-section-title {
+  color: #eee;
+}
+[data-theme="dark"] .fx-cover-title h2 {
   color: #eee;
 }
 [data-theme="dark"] .fx-artist-card {
-  border-color: #444;
+  border-top-color: #eee;
+  border-bottom-color: #333;
   color: #aaa;
+}
+[data-theme="dark"] .fx-artist-card-name {
+  color: #eee;
 }
 [data-theme="dark"] .fx-artist-card-item {
   border-right-color: #444;
 }
-[data-theme="dark"] .fx-qa-q {
-  color: #eee;
+[data-theme="dark"] .fx-artist-card-label {
+  color: #777;
 }
-[data-theme="dark"] .fx-qa-a {
-  color: #bbb;
-}
-[data-theme="dark"] .fx-pullquote {
-  color: #ddd;
-}
-[data-theme="dark"] .fx-notes-item {
+[data-theme="dark"] .fx-asymmetric-text,
+[data-theme="dark"] .fx-wrap-text {
   color: #bbb;
 }
 [data-theme="dark"] .fx-tip {
@@ -1281,37 +1322,76 @@ blockquote {
   border-color: #333;
   color: #aaa;
 }
-[data-theme="dark"] .fx-image-side-text {
-  color: #bbb;
+[data-theme="dark"] .fx-tip-title {
+  color: #eee;
 }
-[data-theme="dark"] .fx-col2 {
-  color: #ccc;
+[data-theme="dark"] .fx-sidenote {
+  border-left-color: #444;
+  color: #888;
 }
-[data-theme="dark"] .fx-artist-card-label,
+[data-theme="dark"] .fx-pullquote {
+  color: #ddd;
+}
+[data-theme="dark"] .fx-pullquote::before {
+  color: #333;
+}
+[data-theme="dark"] .fx-checklist li {
+  border-bottom-color: #333;
+  color: #aaa;
+}
 [data-theme="dark"] .fx-gallery-caption,
-[data-theme="dark"] .fx-cover-sub,
-[data-theme="dark"] .fx-image-side-label {
+[data-theme="dark"] .fx-fullbleed-caption {
   color: #777;
 }
 @media (max-width: 768px) {
-  .fx-gallery {
-    grid-template-columns: 1fr 1fr;
+  .fx-asymmetric,
+  .fx-triptych {
+    grid-template-columns: 1fr;
+  }
+  .fx-sidenote {
+    float: none;
+    width: auto;
+    margin: 16px 0;
   }
   .fx-col2 {
     column-count: 1;
   }
-  .fx-image-side {
-    grid-template-columns: 1fr;
-  }
   .fx-cover {
-    margin: 0 -20px 24px -20px;
+    margin: 0 -20px 28px -20px;
+  }
+  .fx-fullbleed {
+    margin: 28px -20px;
+  }
+  .fx-fullbleed .fx-fullbleed-caption {
+    padding: 4px 20px 0 20px;
   }
   .fx-cover .fx-cover-title {
-    padding: 16px 20px 0 20px;
+    padding: 20px 20px 0 20px;
   }
-  .fx-pullquote {
-    font-size: 1.2rem;
-    padding: 24px 8%;
+  .fx-cover .fx-cover-title h2 {
+    font-size: 1.6rem;
+  }
+  .fx-bignum {
+    font-size: 5rem;
+    margin: 40px 0 -20px -4px;
+  }
+  .fx-gallery {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fx-textover .fx-textover-text {
+    padding: 30px 16px 16px 16px;
+    font-size: 0.85rem;
+  }
+  .fx-quote-over .fx-quote-over-text {
+    font-size: 1.3rem;
+  }
+  .fx-wrap img {
+    float: none;
+    width: 100%;
+    margin: 0 0 16px 0;
+  }
+  .fx-checklist {
+    grid-template-columns: 1fr;
   }
 }
 @-moz-keyframes fade-up {
