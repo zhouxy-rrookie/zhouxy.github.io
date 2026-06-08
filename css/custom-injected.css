@@ -1394,6 +1394,260 @@ blockquote {
     grid-template-columns: 1fr;
   }
 }
+/* ============================================================
+   23. 密集图鉴风格（随性拥挤 · 信息密度高）
+   ============================================================ */
+/* 23a. 图鉴网格 4列 */
+.fx-catalog-grid4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 8px;
+  margin: 16px 0;
+}
+.fx-catalog-grid4 img {
+  width: 100%;
+  display: block;
+}
+.fx-catalog-grid4 figure {
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+}
+.fx-catalog-grid4 .fx-cat-num {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #fff;
+  background: rgba(0,0,0,0.5);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+/* 23b. 图鉴网格 3列 */
+.fx-catalog-grid3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin: 14px 0;
+}
+/* 23c. 紧凑信息卡 */
+.fx-info-card {
+  border: 1px solid #e8e8e8;
+  padding: 8px 10px;
+  margin: 0;
+  background: #fdfdfd;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: #555;
+}
+.fx-info-card .fx-info-card-num {
+  font-size: 0.6rem;
+  color: #bbb;
+  float: right;
+}
+.fx-info-card .fx-info-card-title {
+  font-weight: 700;
+  color: #111;
+  font-size: 0.78rem;
+  display: block;
+  margin-bottom: 2px;
+}
+.fx-info-card .fx-info-card-sub {
+  color: #999;
+  font-size: 0.65rem;
+  display: block;
+  margin-bottom: 3px;
+}
+/* 23d. 密集栏 */
+.fx-compact-col3 {
+  column-count: 3;
+  column-gap: 16px;
+  column-rule: 1px solid #eee;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: #555;
+  margin: 16px 0;
+}
+.fx-compact-col3 p {
+  margin-top: 0;
+  break-inside: avoid;
+}
+/* 23e. 风格索引条 */
+.fx-index-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 14px 0;
+  padding: 10px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  font-size: 0.68rem;
+  color: #999;
+}
+.fx-index-bar .fx-index-item {
+  padding: 2px 8px;
+  background: #f8f8f8;
+  border-radius: 2px;
+  cursor: default;
+}
+/* 23f. 双列紧凑列表 */
+.fx-compact-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 20px;
+  margin: 12px 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  color: #555;
+}
+.fx-compact-list li {
+  padding: 4px 0;
+  border-bottom: 1px dotted #eee;
+  break-inside: avoid;
+}
+/* 23g. 技巧便签 */
+.fx-sticky-note {
+  border-left: 3px solid #ffd700;
+  background: #fffef5;
+  padding: 8px 12px;
+  margin: 10px 0;
+  font-size: 0.72rem;
+  color: #870;
+  line-height: 1.4;
+  break-inside: avoid;
+}
+/* 23h. 密集章节头 */
+.fx-dense-section {
+  border-top: 3px double #ddd;
+  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+  margin: 24px 0 14px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.7rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+.fx-dense-section .fx-dense-section-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #111;
+  text-transform: none;
+  letter-spacing: 0;
+}
+/* 23i. Prompt便签（极窄） */
+.fx-prompt-mini {
+  background: #fafafa;
+  border: 1px solid #eee;
+  padding: 6px 10px;
+  font-size: 0.65rem;
+  font-family: "SF Mono", "Fira Code", monospace;
+  line-height: 1.4;
+  color: #666;
+  margin: 6px 0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+/* 23j. 表格样式 */
+.fx-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.72rem;
+  margin: 12px 0;
+}
+.fx-table th,
+.fx-table td {
+  padding: 5px 8px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+.fx-table th {
+  font-weight: 700;
+  color: #111;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: #fafafa;
+}
+.fx-table td {
+  color: #555;
+}
+/* 暗色 */
+[data-theme="dark"] .fx-info-card {
+  background: #1a1a1a;
+  border-color: #2a2a2a;
+  color: #aaa;
+}
+[data-theme="dark"] .fx-info-card-title {
+  color: #eee;
+}
+[data-theme="dark"] .fx-info-card-num {
+  color: #555;
+}
+[data-theme="dark"] .fx-compact-col3,
+[data-theme="dark"] .fx-compact-list li {
+  color: #aaa;
+}
+[data-theme="dark"] .fx-compact-col3 {
+  column-rule-color: #2a2a2a;
+}
+[data-theme="dark"] .fx-index-bar {
+  border-color: #2a2a2a;
+}
+[data-theme="dark"] .fx-index-item {
+  background: #222;
+  color: #888;
+}
+[data-theme="dark"] .fx-sticky-note {
+  background: #1a1a0a;
+  border-left-color: #870;
+  color: #aaa800;
+}
+[data-theme="dark"] .fx-dense-section {
+  border-color: #2a2a2a;
+  color: #777;
+}
+[data-theme="dark"] .fx-dense-section-title {
+  color: #eee;
+}
+[data-theme="dark"] .fx-prompt-mini {
+  background: #1a1a1a;
+  border-color: #2a2a2a;
+  color: #999;
+}
+[data-theme="dark"] .fx-table th {
+  background: #1a1a1a;
+  color: #eee;
+}
+[data-theme="dark"] .fx-table td {
+  color: #aaa;
+}
+[data-theme="dark"] .fx-compact-list li {
+  border-color: #2a2a2a;
+}
+[data-theme="dark"] .fx-table th,
+[data-theme="dark"] .fx-table td {
+  border-bottom-color: #2a2a2a;
+}
+@media (max-width: 768px) {
+  .fx-catalog-grid4 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fx-catalog-grid3 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fx-compact-col3 {
+    column-count: 1;
+  }
+  .fx-compact-list {
+    grid-template-columns: 1fr;
+  }
+}
 @-moz-keyframes fade-up {
   to {
     opacity: 1;

@@ -1,3 +1,4 @@
+https://zhxylabflow.xyz/2026/05/17/aigc_art_styles_guide/
 https://zhxylabflow.xyz/2026/06/08/ai_art_magazine_vol1/
 https://zhxylabflow.xyz/2026/06/01/loss_function_philosophy/
 https://zhxylabflow.xyz/2026/06/03/optimizer_intuition/
@@ -5,7 +6,6 @@ https://zhxylabflow.xyz/2026/06/05/rl_algorithm_design_aesthetics/
 https://zhxylabflow.xyz/2026/05/21/rtos_from_scratch_h723/
 https://zhxylabflow.xyz/2026/03/18/quadruped_control_theory_cn/
 https://zhxylabflow.xyz/2026/05/21/ppo_for_quadruped/
-https://zhxylabflow.xyz/2026/05/17/aigc_art_styles_guide/
 https://zhxylabflow.xyz/2026/05/12/quadruped_reward_design/
 https://zhxylabflow.xyz/2026/05/09/dqn_algorithm_tutorial/
 https://zhxylabflow.xyz/2026/03/16/quadruped_mpc_math_qp/
