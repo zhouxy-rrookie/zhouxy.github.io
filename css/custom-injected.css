@@ -1738,6 +1738,211 @@ blockquote {
   .fx-compact-list {
     grid-template-columns: 1fr;
   }
+  .fx-page {
+    flex-direction: column;
+    gap: 16px !important;
+  }
+  .fx-page-r {
+    flex-direction: column-reverse;
+    gap: 16px !important;
+  }
+  .fx-page img,
+  .fx-page-r img {
+    max-width: 100% !important;
+  }
+  .fx-page .fx-page-text,
+  .fx-page-r .fx-page-text {
+    flex: none !important;
+    max-width: 100% !important;
+  }
+  .fx-page .fx-page-side,
+  .fx-page-r .fx-page-side {
+    flex: none !important;
+    max-width: 100% !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+}
+/* ============================================================
+   24. 杂志对页排版（密集拼贴 · 图文杂糅）
+   ============================================================ */
+/* 页分隔 */
+.fx-page-break {
+  border: none;
+  border-top: 2px solid #111;
+  margin: 48px 0;
+  width: 100%;
+}
+/* 对页 · 左图右文 + 侧栏 */
+.fx-page {
+  display: flex;
+  gap: 20px;
+  margin: 36px 0;
+  align-items: flex-start;
+}
+.fx-page .fx-page-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #555;
+}
+.fx-page .fx-page-text .fx-page-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #bbb;
+  display: block;
+  margin-bottom: 6px;
+}
+.fx-page .fx-page-side {
+  flex: 0 0 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 16px;
+  border-left: 1px solid #eee;
+}
+.fx-page .fx-page-side img {
+  width: 100%;
+  display: block;
+}
+.fx-page .fx-page-side .fx-page-side-note {
+  font-size: 0.65rem;
+  color: #999;
+  line-height: 1.4;
+}
+/* 对页 · 右图左文 */
+.fx-page-r {
+  display: flex;
+  gap: 20px;
+  margin: 36px 0;
+  align-items: flex-start;
+}
+.fx-page-r .fx-page-text {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #555;
+}
+.fx-page-r .fx-page-text .fx-page-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #bbb;
+  display: block;
+  margin-bottom: 6px;
+}
+.fx-page-r .fx-page-side {
+  flex: 0 0 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 16px;
+  border-right: 1px solid #eee;
+}
+.fx-page-r .fx-page-side img {
+  width: 100%;
+  display: block;
+}
+.fx-page-r .fx-page-side .fx-page-side-note {
+  font-size: 0.65rem;
+  color: #999;
+  line-height: 1.4;
+}
+/* 拼贴 · 不规整多图网格 */
+.fx-collage {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 10px;
+  margin: 36px 0;
+}
+.fx-collage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.fx-collage .fx-collage-big {
+  grid-row: span 2;
+}
+.fx-collage .fx-collage-note {
+  grid-column: 1/-1;
+  font-size: 0.7rem;
+  color: #999;
+  text-align: right;
+  margin-top: -2px;
+}
+/* 拼贴 · 六宫格不等分 */
+.fx-masonry {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin: 36px 0;
+}
+.fx-masonry img {
+  width: 100%;
+  display: block;
+}
+.fx-masonry .fx-masonry-wide {
+  grid-column: span 2;
+}
+.fx-masonry .fx-masonry-tall {
+  grid-row: span 2;
+}
+.fx-masonry .fx-masonry-text {
+  padding: 12px;
+  font-size: 0.72rem;
+  color: #666;
+  line-height: 1.5;
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  border: 1px solid #eee;
+}
+/* 标签漂浮 */
+.fx-tag-float {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #fff;
+  background: rgba(0,0,0,0.55);
+  padding: 2px 8px;
+}
+/* 暗色 */
+[data-theme="dark"] .fx-page-break {
+  border-top-color: #eee;
+}
+[data-theme="dark"] .fx-page-text {
+  color: #bbb;
+}
+[data-theme="dark"] .fx-page-label {
+  color: #777;
+}
+[data-theme="dark"] .fx-page-side {
+  border-left-color: #333;
+}
+[data-theme="dark"] .fx-page-r .fx-page-side {
+  border-right-color: #333;
+}
+[data-theme="dark"] .fx-page-side-note {
+  color: #888;
+}
+[data-theme="dark"] .fx-collage-note {
+  color: #777;
+}
+[data-theme="dark"] .fx-masonry-text {
+  background: #1a1a1a;
+  border-color: #2a2a2a;
+  color: #aaa;
 }
 @-moz-keyframes fade-up {
   to {
