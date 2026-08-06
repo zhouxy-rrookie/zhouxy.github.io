@@ -1,0 +1,15 @@
+- class_name: 友情链接
+  class_desc: 一起交流的小伙伴
+  link_list:
+    - name: firommao
+      link: https://www.firommao.top/
+      avatar: https://img.cdn1.vip/i/69ba25f9dabcd_1773807097.webp
+      descr: 相同成分的博客
+    - name: 策悟斋
+      link: https://blog.zuquanzhi.top
+      avatar: https://img.cdn1.vip/i/6a0a89ffe8f81_1779075583.webp
+      descr: 全之的个人博客，一个相对安静的角落
+    - name: Yu Wang
+      link: https://martian-array.github.io
+      avatar: https://img.cdn1.vip/i/6a0af1693608f_1779102057.webp
+      descr: 机器人爱好者 & 足式

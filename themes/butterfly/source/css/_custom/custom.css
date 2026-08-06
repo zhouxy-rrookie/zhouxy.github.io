@@ -1,0 +1,19 @@
+/* 用更精准的父级选择器+!important强制覆盖 */
+#article-container .article-card-wrap .article-card {
+  /* 核心：半透明背景（数值0.8可改） */
+  background-color: rgba(255, 255, 255, 0.5) !important;
+  /* 毛玻璃效果（可选） */
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  /* 边框也设为半透明，避免突兀 */
+  border: none !important;
+  /* 强制显示背景色（防止主题默认隐藏） */
+  background-image: none !important;
+}
+
+/* 悬浮效果也同步加高优先级 */
+#article-container .article-card-wrap .article-card:hover {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+}
