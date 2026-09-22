@@ -1,5 +1,5 @@
 ---
-title: 从零写一个安卓蓝牙遥控 App——USB 串口、UVC 图传与自定义通信协议
+title: 给机器人写了个安卓蓝牙遥控 App
 mathjax: true
 tags: 
     - 嵌入式

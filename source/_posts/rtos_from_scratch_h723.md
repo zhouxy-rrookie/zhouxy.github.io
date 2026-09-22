@@ -1,5 +1,5 @@
 ---
-title: 从零写一个 RTOS 内核——在 STM32H723 上
+title: 在 STM32H723 上手写一个 RTOS 内核
 mathjax: true
 tags:
     - STM32

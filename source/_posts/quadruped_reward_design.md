@@ -1,5 +1,5 @@
 ---
-title: 四足机器人 Locomotion 奖励函数设计——从步行到奔跑，每一分奖励的来龙去脉
+title: 奖励函数才是四足 RL 的灵魂
 mathjax: true
 tags:
     - 足式机器人

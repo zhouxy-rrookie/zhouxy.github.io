@@ -1,5 +1,5 @@
 ---
-title: C语言中的函数指针与虚函数表模拟
+title: 用函数指针在 C 里模拟虚函数表
 mathjax: true
 tags: 
     - 嵌入式

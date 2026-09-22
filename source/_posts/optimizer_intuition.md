@@ -1,5 +1,5 @@
 ---
-title: 优化器的直觉——从 SGD 到 Adam，每一步为什么这样走
+title: SGD 到 Adam，优化器到底在干什么
 date: 2026-06-03 14:30:00
 mathjax: true
 tags:

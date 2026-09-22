@@ -1,5 +1,5 @@
 ---
-title: IsaacLab入门级食用方法
+title: IsaacLab 入门踩坑记录
 mathjax: true
 tags:
     - 足式机器人

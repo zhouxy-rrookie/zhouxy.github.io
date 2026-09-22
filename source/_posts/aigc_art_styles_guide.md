@@ -1,5 +1,5 @@
 ---
-title: 风格田野指南——30种AIGC视觉语言速查
+title: 30 种 AIGC 视觉风格速查
 mathjax: false
 tags:
     - AIGC

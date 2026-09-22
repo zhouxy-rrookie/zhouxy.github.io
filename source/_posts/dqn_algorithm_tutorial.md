@@ -1,5 +1,5 @@
 ---
-title: DQN算法超详尽教程——从Q-table到深度强化学习
+title: 从 Q-learning 到 DQN，一步步推演
 mathjax: true
 tags:
     - 强化学习

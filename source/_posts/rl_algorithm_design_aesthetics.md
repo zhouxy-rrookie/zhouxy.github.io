@@ -1,5 +1,5 @@
 ---
-title: 强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径
+title: 从 Bellman 到 PPO，RL 为什么这么设计
 date: 2026-06-05 14:30:00
 mathjax: true
 tags:

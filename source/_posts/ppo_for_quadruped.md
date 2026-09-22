@@ -1,5 +1,5 @@
 ---
-title: PPO 在四足机器人控制中的应用——从理论到调参实战
+title: 四足 RL 调参实录：PPO 那些让人抓狂的参数
 mathjax: true
 tags:
     - 强化学习

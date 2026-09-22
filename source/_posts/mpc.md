@@ -1,5 +1,5 @@
 ---
-title: (科普向)四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习
+title: 四足机器人的几条控制路线：运动学、WBC、MPC、RL
 mathjax: true
 tags:
     - 足式机器人

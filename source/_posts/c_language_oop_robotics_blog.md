@@ -1,5 +1,5 @@
 ---
-title: C语言模拟面向对象
+title: 在 C 语言里玩面向对象
 mathjax: true
 tags: 
     - 嵌入式
