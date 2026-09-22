@@ -1,0 +1,711 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波 做机器人，尤其是四足、无人机这类要「知道自己在哪、姿态什么样」的机器，状态估计是绕不过去的一关。 IMU 很便宜，但它给的是角速度和加速度，不是姿态、更不是速度。你想知道机身现在朝哪、在往哪动、走多快，都得靠「估」。于是就有了一整排算法：互补滤波、Mahony、Madgwick、EKF、UKF、MSCK">
+<meta property="og:type" content="article">
+<meta property="og:title" content="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波">
+<meta property="og:url" content="https://zhxylabflow.xyz/2026/09/23/attitude_state_estimation/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波 做机器人，尤其是四足、无人机这类要「知道自己在哪、姿态什么样」的机器，状态估计是绕不过去的一关。 IMU 很便宜，但它给的是角速度和加速度，不是姿态、更不是速度。你想知道机身现在朝哪、在往哪动、走多快，都得靠「估」。于是就有了一整排算法：互补滤波、Mahony、Madgwick、EKF、UKF、MSCK">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp">
+<meta property="article:published_time" content="2026-09-22T19:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-22T18:10:22.863Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="状态估计">
+<meta property="article:tag" content="IMU">
+<meta property="article:tag" content="Mahony">
+<meta property="article:tag" content="EKF">
+<meta property="article:tag" content="卡尔曼滤波">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波",
+  "url": "https://zhxylabflow.xyz/2026/09/23/attitude_state_estimation/",
+  "image": "https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp",
+  "datePublished": "2026-09-22T19:00:00.000Z",
+  "dateModified": "2026-09-22T18:10:22.863Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "https://zhxylabflow.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/2026/09/23/attitude_state_estimation/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">44</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-22T19:00:00.000Z" title="发表于 2026-09-23 03:00:00">2026-09-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-22T18:10:22.863Z" title="更新于 2026-09-23 02:10:22">2026-09-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</h1>
+<p>做机器人，尤其是四足、无人机这类要「知道自己在哪、姿态什么样」的机器，状态估计是绕不过去的一关。</p>
+<p>IMU 很便宜，但它给的是角速度和加速度，不是姿态、更不是速度。你想知道机身现在朝哪、在往哪动、走多快，都得靠「估」。于是就有了一整排算法：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波……名字一堆，经常分不清谁是谁、什么时候该用谁。</p>
+<p>这篇文章把它们从头到尾捋一遍，讲清每个算法在解决什么问题、核心思想是什么、数学上怎么推出来的、彼此什么关系，最后落到四足机器人的实际场景。我自己在四足机器人上用 BMI088 做过 Mahony 姿态估计，互补滤波那部分会带上真实代码。</p>
+<h2 id="先理清：状态估计到底在估什么">先理清：状态估计到底在估什么</h2>
+<p>以四足机器人为例，状态估计要回答三类问题：</p>
+<ol>
+<li><strong>姿态</strong>：机身当前的 roll / pitch / yaw，或者用四元数、旋转矩阵表示。</li>
+<li><strong>线速度 / 位置</strong>：机身往哪动、走多快、到哪了。</li>
+<li><strong>零偏</strong>：陀螺和加速度计都有零偏（bias），而且随温度漂移，得在线估出来，否则积分一下就废。</li>
+</ol>
+<p>这三类量里，姿态最容易，光靠 IMU 就能估个八九不离十；线速度和位置难，单靠 IMU 积分会漂，必须引入别的观测（腿部里程计、视觉、GPS）来校正。理解了这条主线，下面每个算法该放在哪就清楚了。</p>
+<h2 id="互补滤波：把两个传感器「拼」起来">互补滤波：把两个传感器「拼」起来</h2>
+<p>互补滤波是所有姿态估计里最朴素的思想，先把它搞懂，后面的 Mahony、Madgwick 都是它的变种。</p>
+<p>核心矛盾在于：陀螺和加速度计各有各的毛病。</p>
+<ul>
+<li><strong>陀螺</strong>：短时准、高频响应好，但积分会漂（零偏被积分成线性增长的误差）。</li>
+<li><strong>加速度计</strong>：能测重力方向，长期不漂，但噪声大、对振动和机动加速度敏感。</li>
+</ul>
+<p>互补滤波的思路就是：<strong>对陀螺高通、对加速度计低通</strong>，把两者的优势拼起来。</p>
+<p>从频域看这件事最清楚。设真实姿态为 $\theta$，陀螺积分给出的估计记为 $\hat\theta_{gyro}$，它的误差主要集中在低频（漂移），加速度计反算的角度 $\hat\theta_{acc}$ 的误差主要集中在高频（噪声）。互补滤波就是让最终的估计等于：</p>
+<p>$$<br>
+\hat\theta(s) = G_{high}(s),\hat\theta_{gyro}(s) + G_{low}(s),\hat\theta_{acc}(s)<br>
+$$</p>
+<p>其中 $G_{high}$ 是高通滤波器（放行陀螺的高频部分），$G_{low}$ 是低通滤波器（放行加速度计的低频部分），并且满足 $G_{high} + G_{low} = 1$。这样，低频段信加速度计（压掉陀螺漂移），高频段信陀螺（压掉加速度计噪声），两头都占了便宜。</p>
+<p>离散形式的一维互补滤波长这样：</p>
+<p>$$<br>
+\theta_k = \alpha,(\theta_{k-1} + \omega_k \Delta t) + (1-\alpha),\theta_{acc}<br>
+$$</p>
+<p>$\theta_{acc}$ 是加速度计算出的角度（比如 $\arctan(a_y / a_z)$），$\alpha$ 一般取 0.9 以上，表示更信陀螺。物理含义很直白：角度主要靠陀螺积分递推，加速度计偶尔把它往回拉一点，防止漂走。</p>
+<h2 id="Mahony：四元数版的互补滤波">Mahony：四元数版的互补滤波</h2>
+<p>一维互补滤波只能管一个轴，真实姿态是三维的，得用四元数。Mahony 就是「四元数 + PI 修正」的互补滤波，2008 年 Robert Mahony 那篇经典论文提出的。</p>
+<h3 id="误差怎么来">误差怎么来</h3>
+<p>核心是构造一个「姿态误差」。设当前四元数 $q$ 对应的旋转矩阵为 $R(q)$，那么它推算出的重力方向（假设重力在导航系是 $[0,0,1]$）是：</p>
+<p>$$<br>
+\hat{v} = R(q)^T \begin{bmatrix}0\0\1\end{bmatrix}<br>
+$$</p>
+<p>而加速度计测到的是真实的重力方向 $a$（静止时）。两者不一致，就说明姿态估计有误差。误差向量取叉乘：</p>
+<p>$$<br>
+e = a \times \hat{v}<br>
+$$</p>
+<p>这个 $e$ 的方向是「要把 $\hat{v}$ 转到 $a$ 需要绕的轴」，大小是夹角的正弦，本质就是一个姿态误差的旋转向量表示。</p>
+<h3 id="PI-修正">PI 修正</h3>
+<p>Mahony 用 PI 控制器把误差转成陀螺的修正量：</p>
+<p>$$<br>
+\omega_{corr} = K_p, e + K_i \int e, dt<br>
+$$</p>
+<p>这里的 $K_p$ 是比例项，负责快速拉回误差；$K_i$ 是积分项，负责把陀螺零偏慢慢估计出来——这正是互补滤波「加速度计低频校正」的体现，零偏被当成一个慢变量积分掉。</p>
+<h3 id="四元数更新">四元数更新</h3>
+<p>用修正后的角速度 $\omega = \omega_{meas} + \omega_{corr}$ 更新四元数，用四元数运动学：</p>
+<p>$$<br>
+\dot{q} = \frac{1}{2} q \otimes \omega = \frac{1}{2}\begin{bmatrix}0\ \omega_x\ \omega_y\ \omega_z\end{bmatrix} \otimes q<br>
+$$</p>
+<p>写成离散递推就是那套经典的四元数一阶更新公式。</p>
+<p>我在四足机器人 V1 上就是这么做的：BMI088 出角速度和加速度，Mahony 出姿态角，拿去做机身姿态闭环。核心代码：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 归一化加速度</span></span><br><span class="line"><span class="comment">// 误差 = 重力方向的叉乘</span></span><br><span class="line"><span class="type">float</span> ex = ay*vz - az*vy;</span><br><span class="line"><span class="type">float</span> ey = az*vx - ax*vz;</span><br><span class="line"><span class="type">float</span> ez = ax*vy - ay*vx;</span><br><span class="line"></span><br><span class="line"><span class="comment">// PI 修正，积分项顺带估零偏</span></span><br><span class="line">gyro_bias_x += Ki * ex * dt;</span><br><span class="line">gyro_bias_y += Ki * ey * dt;</span><br><span class="line">gyro_bias_z += Ki * ez * dt;</span><br><span class="line">gx += Kp * ex + gyro_bias_x;</span><br><span class="line">gy += Kp * ey + gyro_bias_y;</span><br><span class="line">gz += Kp * ez + gyro_bias_z;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 四元数一阶更新</span></span><br><span class="line">q0 += (-q1*gx - q2*gy - q3*gz) * <span class="number">0.5f</span> * dt;</span><br><span class="line">q1 += ( q0*gx + q2*gz - q3*gy) * <span class="number">0.5f</span> * dt;</span><br><span class="line">q2 += ( q0*gy - q1*gz + q3*gx) * <span class="number">0.5f</span> * dt;</span><br><span class="line">q3 += ( q0*gz + q1*gy - q2*gx) * <span class="number">0.5f</span> * dt;</span><br></pre></td></tr></table></figure>
+<p>Mahony 的好处是轻量、好调，两个参数 $K_p$、$K_i$，在 MCU 上跑毫无压力。缺点是它本质是「启发式」的互补，没有显式建模噪声，你没法说它是「最优」的。</p>
+<h3 id="Mahony-为什么收敛：一个-Lyapunov-视角">Mahony 为什么收敛：一个 Lyapunov 视角</h3>
+<p>Mahony 论文里一个漂亮的地方是，它的收敛性可以用 Lyapunov 函数严格证明。这里给一个简化版思路（完整证明看原论文）。</p>
+<p>设真实姿态是 $R$，估计是 $\hat{R}$，误差旋转 $\tilde{R} = \hat{R}R^T$。用旋转误差角 $\phi$（即 $\tilde{R}$ 的旋转角，满足 $\operatorname{tr}(\tilde{R}) = 1 + 2\cos\phi$）构造 Lyapunov 函数：</p>
+<p>$$<br>
+V = 2 - 2\cos\phi = \operatorname{tr}(I - \tilde{R}) \ge 0<br>
+$$</p>
+<p>$V = 0$ 当且仅当 $\tilde{R} = I$（$\phi = 0$，估计完全正确）。对 $V$ 求导，代入误差动力学（含陀螺修正项 $\omega_{corr} = K_p e$），可以推出：</p>
+<p>$$<br>
+\dot{V} \le 0<br>
+$$</p>
+<p>而且只在 $\tilde{R} = I$ 处取等号。由 LaSalle 不变集原理，估计姿态会收敛到正确姿态（只靠重力向量时，收敛到「roll/pitch 正确、yaw 不确定」的集合——因为重力方向不包含 yaw 信息）。</p>
+<p>这就是为什么 Mahony 不是「拍脑袋」的互补滤波，而是有严格收敛保证的。</p>
+<h2 id="Madgwick：用梯度下降求四元数">Madgwick：用梯度下降求四元数</h2>
+<p>Madgwick 和 Mahony 是同一类东西（都是互补滤波），区别在「怎么修正」。</p>
+<p>Madgwick 把姿态估计写成一个<strong>最优化问题</strong>：找到一个四元数 $q$，让它推算出的重力方向尽量接近加速度计测到的方向。误差函数可以写成：</p>
+<p>$$<br>
+f(q) = \hat{v}(q) - a<br>
+$$</p>
+<p>然后<strong>用梯度下降</strong>去最小化它，每一步沿着负梯度方向走：</p>
+<p>$$<br>
+q_{k+1} = q_k - \mu \frac{\nabla f(q_k)}{\lVert \nabla f(q_k) \rVert}<br>
+$$</p>
+<p>其中 $\nabla f$ 是误差函数对四元数的雅可比，$\mu$ 是步长。这个梯度下降的估计，再和陀螺积分的结果做一次融合，得到最终姿态。</p>
+<p>Madgwick 的优势是参数少、对调参不敏感（主要就是一个步长 $\mu$），而且它天然能把磁力计信息加进来校正 yaw。很多无人机飞控里 Madgwick 比 Mahony 更常见。</p>
+<p>两条怎么选：追求简单可控、想自己理解每一步，用 Mahony；想要开箱即用、少调参，用 Madgwick。性能上两者半斤八两，都是「够用」级别。</p>
+<h2 id="卡尔曼滤波：从「启发式」到「最优估计」">卡尔曼滤波：从「启发式」到「最优估计」</h2>
+<p>互补滤波够用，但它是「凑出来」的，没有最优性保证。卡尔曼滤波（KF）则是严格意义上<strong>在线性高斯假设下的最小方差最优估计</strong>。这一节把 KF 的推导完整走一遍，后面 EKF、UKF 都是它的延伸。</p>
+<h3 id="模型假设">模型假设</h3>
+<p>线性高斯系统：</p>
+<p>$$<br>
+x_k = F x_{k-1} + w_k, \quad w_k \sim \mathcal{N}(0, Q)<br>
+$$</p>
+<p>$$<br>
+z_k = H x_k + v_k, \quad v_k \sim \mathcal{N}(0, R)<br>
+$$</p>
+<p>$x$ 是状态，$z$ 是观测，$F$ 是状态转移，$H$ 是观测矩阵，$Q$、$R$ 分别是过程噪声和观测噪声的协方差。</p>
+<h3 id="预测">预测</h3>
+<p>先根据模型往前推，得到先验估计和先验协方差：</p>
+<p>$$<br>
+\hat{x}<em>k^- = F \hat{x}</em>{k-1}<br>
+$$</p>
+<p>$$<br>
+P_k^- = F P_{k-1} F^T + Q<br>
+$$</p>
+<p>第二项 $Q$ 是「模型本身不可靠」的那部分，预测越不靠谱，$P^-$ 就越大。</p>
+<h3 id="更新与增益的推导">更新与增益的推导</h3>
+<p>更新就是拿观测去修正先验，形式设为：</p>
+<p>$$<br>
+\hat{x}_k = \hat{x}_k^- + K(z_k - H \hat{x}_k^-)<br>
+$$</p>
+<p>$z_k - H\hat{x}_k^-$ 叫<strong>新息</strong>（innovation），是「观测比预测多了什么」。问题在于增益 $K$ 怎么取。</p>
+<p>我们把后验误差协方差写出来，再对 $K$ 求最小化。设后验误差 $e_k = x_k - \hat{x}_k$，代入更新式并展开，得到后验协方差：</p>
+<p>$$<br>
+P_k = (I - KH) P_k^- (I - KH)^T + K R K^T<br>
+$$</p>
+<p>展开：</p>
+<p>$$<br>
+P_k = P_k^- - KHP_k^- - P_k^- H^T K^T + K(H P_k^- H^T + R) K^T<br>
+$$</p>
+<p>记 $S = H P_k^- H^T + R$（这就是新息的协方差）。我们想最小化 $P_k$ 的迹（等价于最小化均方误差）。用矩阵求导 $\frac{\partial}{\partial K}\operatorname{tr}(P_k) = 0$：</p>
+<p>$$<br>
+-2(P_k^- H^T)^T + 2 K S = 0<br>
+$$</p>
+<p>解出：</p>
+<p>$$<br>
+K = P_k^- H^T S^{-1} = P_k^- H^T (H P_k^- H^T + R)^{-1}<br>
+$$</p>
+<p>这就是卡尔曼增益。把 $K$ 代回去，后验协方差简化为：</p>
+<p>$$<br>
+P_k = (I - KH) P_k^-<br>
+$$</p>
+<h3 id="增益的直觉">增益的直觉</h3>
+<p>这个 $K$ 不是拍脑袋定的，它自动权衡了两头：</p>
+<ul>
+<li>如果 $P^-$ 很大（预测很不确定），$K$ 就大，更多信观测；</li>
+<li>如果 $R$ 很大（观测很吵），$K$ 就小，更多信预测。</li>
+</ul>
+<p>这就是卡尔曼滤波比互补滤波高明的地方：噪声是显式建模的，增益是推导出来的。</p>
+<h2 id="EKF：把卡尔曼滤波搬到非线性系统上">EKF：把卡尔曼滤波搬到非线性系统上</h2>
+<p>问题在于，姿态和运动模型都是非线性的——四元数更新、旋转矩阵、腿部运动学，没一个是线性的。标准 KF 只处理线性系统，于是有了 EKF（扩展卡尔曼滤波）。</p>
+<p>EKF 的思路粗暴但有效：<strong>把非线性函数在当前估计点处做一阶泰勒展开，用雅可比矩阵代替线性系统里的 $F$ 和 $H$</strong>。</p>
+<p>设状态转移和观测分别是非线性函数 $f$、$h$：</p>
+<p>$$<br>
+x_k = f(x_{k-1}) + w_k, \quad z_k = h(x_k) + v_k<br>
+$$</p>
+<p>在当前估计点线性化：</p>
+<p>$$<br>
+F = \frac{\partial f}{\partial x}\bigg|<em>{\hat{x}}, \quad H = \frac{\partial h}{\partial x}\bigg|</em>{\hat{x}}<br>
+$$</p>
+<p>拿到雅可比之后，预测-更新两步和标准 KF 一模一样：</p>
+<p>$$<br>
+\hat{x}<em>k^- = f(\hat{x}</em>{k-1}), \quad P_k^- = F P_{k-1} F^T + Q<br>
+$$</p>
+<p>$$<br>
+K = P_k^- H^T (H P_k^- H^T + R)^{-1}<br>
+$$</p>
+<p>$$<br>
+\hat{x}_k = \hat{x}_k^- + K(z_k - h(\hat{x}_k^-)), \quad P_k = (I - KH) P_k^-<br>
+$$</p>
+<p>姿态估计里，EKF 的状态向量通常是 $[q, \omega_{bias}, v, p]$ 这类，观测是加速度计、磁力计、腿部里程计给的量。</p>
+<p>EKF 的毛病也来自这个「一阶近似」：系统非线性很强时，一阶截断误差会累积，导致协方差被低估、滤波发散。而且雅可比矩阵要手推、要维护，状态维数一大，计算量也上来了。</p>
+<h3 id="一个完整的姿态-EKF-实例">一个完整的姿态 EKF 实例</h3>
+<p>上面是通用公式，落到姿态上，常用的是<strong>误差状态 EKF（ES-EKF）</strong>。原因很实际：四元数有 4 个参数但只有 3 个自由度，直接在四元数上做 EKF 会破坏单位模约束，所以大家在「误差」上做滤波，误差是 3 维的，不会有约束问题。</p>
+<p><strong>状态</strong>：误差状态 $\delta x = [\delta\theta^T,\ \delta b_g^T]^T \in \mathbb{R}^6$，其中 $\delta\theta$ 是姿态误差（角轴表示），$\delta b_g$ 是陀螺零偏误差。名义状态（被传播的）是四元数 $q$ 和零偏 $b_g$。</p>
+<p><strong>传播</strong>：名义状态用测量角速度积分，零偏当作慢变量：</p>
+<p>$$<br>
+\dot{q} = \frac{1}{2} q \otimes (\omega_m - b_g), \quad \dot{b}_g = 0<br>
+$$</p>
+<p>误差状态的线性动力学：</p>
+<p>$$<br>
+\delta\dot{\theta} = -[\hat\omega]_\times,\delta\theta - \delta b_g, \quad \delta\dot{b}<em>g = n</em>{bg}<br>
+$$</p>
+<p>其中 $\hat\omega = \omega_m - b_g$，$[\cdot]_\times$ 是叉乘的反对称矩阵：</p>
+<p>$$<br>
+[\omega]_\times = \begin{bmatrix} 0 &amp; -\omega_z &amp; \omega_y \ \omega_z &amp; 0 &amp; -\omega_x \ -\omega_y &amp; \omega_x &amp; 0 \end{bmatrix}<br>
+$$</p>
+<p>所以误差状态转移矩阵是：</p>
+<p>$$<br>
+F = \begin{bmatrix} -[\hat\omega]<em>\times &amp; -I</em>{3\times3} \ 0 &amp; 0 \end{bmatrix}<br>
+$$</p>
+<p>离散化 $\Phi \approx I + F\Delta t$，协方差预测：</p>
+<p>$$<br>
+P_k^- = \Phi P_{k-1}\Phi^T + Q<br>
+$$</p>
+<p><strong>观测</strong>：加速度计测到的是比力，静止时就是重力方向。预测观测 $\hat{a} = R(\hat{q})^T g$，残差 $r = a_m - \hat{a}$。观测对误差状态的雅可比（结构如此，具体符号随约定）：</p>
+<p>$$<br>
+H = \begin{bmatrix} [R(\hat{q})^T g]<em>\times &amp; 0</em>{3\times3} \end{bmatrix}<br>
+$$</p>
+<p><strong>更新</strong>：按标准 EKF 更新算出 $\delta\hat{x} = K r$，再把误差「合」回名义状态：</p>
+<p>$$<br>
+\hat{q} \leftarrow \hat{q} \otimes \begin{bmatrix}1\ \frac{1}{2}\delta\theta\end{bmatrix}, \quad \hat{b}_g \leftarrow \hat{b}_g + \delta\hat{b}_g<br>
+$$</p>
+<p>这一套就是四足、无人机上 IMU 姿态估计的标准做法。它比 Mahony 重，但能显式建模噪声、能顺带估零偏，而且容易扩展到「IMU + 腿部里程计」融合线速度——把状态向量扩成 $[\delta\theta, \delta v, \delta p, \delta b_g, \delta b_a]$，把腿部里程计的速度当观测加进去就行。</p>
+<h2 id="UKF：别线性化了，直接采样">UKF：别线性化了，直接采样</h2>
+<p>既然 EKF 的痛点是「线性化丢掉高阶信息」，UKF（无迹卡尔曼滤波）干脆不线性化了。</p>
+<p>它的做法是：在当前状态附近按规则撒一组 <strong>sigma 点</strong>，把这些点<strong>原封不动地送进非线性函数</strong>，再根据这些点变换后的分布重新算出均值和协方差。这套流程叫<strong>无迹变换（Unscented Transform）</strong>。</p>
+<h3 id="sigma-点的选取">sigma 点的选取</h3>
+<p>对 $n$ 维状态、均值 $\hat{x}$、协方差 $P$，取 $2n+1$ 个点：</p>
+<p>$$<br>
+\chi_0 = \hat{x}, \quad<br>
+\chi_i = \hat{x} + \left(\sqrt{(n+\lambda)P}\right)<em>i, \quad<br>
+\chi</em>{i+n} = \hat{x} - \left(\sqrt{(n+\lambda)P}\right)_i<br>
+$$</p>
+<p>其中 $\left(\sqrt{(n+\lambda)P}\right)_i$ 是矩阵平方根的第 $i$ 列（通常用 Cholesky 分解）。缩放参数：</p>
+<p>$$<br>
+\lambda = \alpha^2(n+\kappa) - n<br>
+$$</p>
+<p>$\alpha$ 控制 sigma 点散布的范围，$\kappa$ 是次级缩放，$\beta$ 用来纳入先验分布信息（高斯时取 2）。</p>
+<p>权重：</p>
+<p>$$<br>
+W_0^{(m)} = \frac{\lambda}{n+\lambda}, \quad W_0^{©} = \frac{\lambda}{n+\lambda} + (1-\alpha^2+\beta), \quad W_i^{(m)} = W_i^{©} = \frac{1}{2(n+\lambda)}<br>
+$$</p>
+<h3 id="传播">传播</h3>
+<p>每个 sigma 点过一遍非线性函数 $\chi_i’ = f(\chi_i)$，然后按权重重新合成均值和协方差：</p>
+<p>$$<br>
+\hat{x}’ = \sum_i W_i^{(m)} \chi_i’, \quad P’ = \sum_i W_i^{©}(\chi_i’ - \hat{x}‘)(\chi_i’ - \hat{x}')^T + Q<br>
+$$</p>
+<p>因为不做泰勒展开，UKF 对非线性的逼近精度相当于「二阶」，通常比 EKF（一阶）更准，尤其是强非线性系统。代价是每一拍要多算 $2n+1$ 次状态传播，计算量更大。好处是不用推雅可比，工程实现反而省心。</p>
+<p>一句话：EKF 推雅可比、便宜；UKF 采样、更准但更贵。状态维数不高（姿态 + 零偏，6~9 维）时，UKF 是性价比很高的选择。</p>
+<h3 id="EKF-和-UKF-到底差多少">EKF 和 UKF 到底差多少</h3>
+<p>一句话概括精度差异：EKF 是<strong>一阶近似</strong>（泰勒展开到一阶），UKF 是<strong>二阶近似</strong>（无迹变换对均值和协方差的传播精确到二阶矩）。对高斯分布的非线性传播，UKF 算出的后验均值和协方差比 EKF 更接近真实值。</p>
+<p>具体到姿态：当初始姿态误差较大（比如刚上电、不知道朝哪）、或者角速度很大（强非线性）时，EKF 的线性化误差会让协方差被低估、估计偏掉，严重时发散；UKF 因为直接采样传播，能扛住更大的非线性和不确定性。</p>
+<p>代价也明确：UKF 每一拍要传播 $2n+1 = 13$ 个 sigma 点（对 6 维状态），计算量大约是 EKF 的几倍。所以工程选型很现实——状态维数低（≤ 9 维）、精度要求高、又不想手推雅可比，用 UKF；追求实时性、状态维数高、雅可比能推出来，用 EKF。</p>
+<h2 id="MSCKF：视觉惯性里程计（VIO）的核心">MSCKF：视觉惯性里程计（VIO）的核心</h2>
+<p>前面都是「IMU + 少量观测」的姿态/速度估计。一旦上了视觉，问题就升级成 VIO（视觉惯性里程计），而 VIO 里最有名的滤波框架就是 MSCKF（多状态约束卡尔曼滤波）。</p>
+<h3 id="为什么需要它">为什么需要它</h3>
+<p>纯 EKF 做 VIO 时，如果想把特征点的 3D 位置也放进状态向量，状态维度会随特征点数量爆炸——几百个点就是上千维，协方差矩阵大到没法实时算。</p>
+<p>MSCKF 的关键想法是：<strong>不把特征点放进状态</strong>，而是维护一个「IMU 状态 + 最近 N 个相机位姿」的滑动窗口。</p>
+<p>状态向量长这样：</p>
+<p>$$<br>
+x = \begin{bmatrix} x_{IMU} \ x_{c_1} \ x_{c_2} \ \vdots \ x_{c_N} \end{bmatrix}<br>
+$$</p>
+<p>其中 $x_{IMU} = [q, p, v, b_g, b_a]$（姿态、位置、速度、陀螺零偏、加速度计零偏），$x_{c_i} = [q_{c_i}, p_{c_i}]$ 是第 $i$ 个相机位姿。</p>
+<h3 id="特征点的约束">特征点的约束</h3>
+<p>一个 3D 特征点 $f_j$ 如果被多个相机位姿观测到，它在每个相机里的投影 $z_{ij}$ 都是观测。观测方程：</p>
+<p>$$<br>
+z_{ij} = h(x_{c_i}, f_j) + n_{ij}<br>
+$$</p>
+<p>直接用它，$f_j$ 就得进状态。MSCKF 的 trick 是：<strong>把残差投影到 $f_j$ 的雅可比矩阵的左零空间上</strong>，把 $f_j$ 从方程里消掉。</p>
+<p>设观测对 $f_j$ 的雅可比是 $H_{f_j}$，找到它的左零空间 $V$（满足 $V^T H_{f_j} = 0$），对残差方程左乘 $V^T$：</p>
+<p>$$<br>
+V^T r = V^T H_x \tilde{x} + V^T n<br>
+$$</p>
+<p>$f_j$ 那一项被消掉了，剩下的只和相机位姿状态 $x$ 有关。这就是「多状态约束」——同一个特征点在多个相机位姿之间建立的约束，用完之后这个特征点就丢弃，不进状态、不占维度。</p>
+<p>VINS-Mono、OpenVINS 这些主流 VIO，底层都是 MSCKF（或它的亲戚）。四足和无人机在 GPS 拒止的室内环境里定位，靠的就是它。</p>
+<h3 id="测量模型和零空间投影，细看">测量模型和零空间投影，细看</h3>
+<p>补一下 MSCKF 的数学细节。设相机投影函数 $\pi(\cdot)$，一个特征点 $f_j$ 在第 $i$ 个相机位姿里的观测：</p>
+<p>$$<br>
+z_{ij} = \pi\big(R_{c_i}^T(f_j - p_{c_i})\big) + n_{ij}<br>
+$$</p>
+<p>残差 $r_{ij} = z_{ij} - \hat{z}_{ij}$，线性化：</p>
+<p>$$<br>
+r_{ij} \approx H_{x_{ij}}\tilde{x} + H_{f_{ij}}\tilde{f}<em>j + n</em>{ij}<br>
+$$</p>
+<p>$H_{f_{ij}}$ 是 $2\times3$，$H_{x_{ij}}$ 是 $2\times(15+6N)$（IMU 状态 15 维 + N 个相机位姿各 6 维）。把特征点 $f_j$ 被所有相机观测到的残差叠起来：</p>
+<p>$$<br>
+r_j = H_{x_j}\tilde{x} + H_{f_j}\tilde{f}_j + n_j<br>
+$$</p>
+<p>$H_{f_j}$ 现在是 $2M \times 3$（$M$ 是这个特征被看到的次数）。关键一步：求 $H_{f_j}$ 的左零空间 $V$（$V^T H_{f_j} = 0$），左乘上去：</p>
+<p>$$<br>
+V^T r_j = V^T H_{x_j}\tilde{x} + V^T n_j<br>
+$$</p>
+<p>特征点 $\tilde{f}_j$ 被消掉了，只剩状态 $\tilde{x}$。$V$ 一般用 Givens 旋转或 QR 分解算，是 $2M \times (2M-3)$ 的矩阵。把所有特征投影后的残差堆起来，就得到只含状态的观测方程，直接做标准 EKF 更新。</p>
+<p>这就是 MSCKF 的「约束」：它不估计特征点，却用特征点在多帧之间的几何一致性来约束相机位姿。</p>
+<h2 id="粒子滤波：把分布换成一堆「粒子」">粒子滤波：把分布换成一堆「粒子」</h2>
+<p>前面所有卡尔曼系的方法，都假设分布是高斯、系统近似线性。粒子滤波（PF）彻底换了个思路：<strong>用一堆带权重的随机样本（粒子）来近似任意概率分布</strong>，不管它高不高斯、单峰还是多峰。</p>
+<p>流程是经典的「序贯重要性重采样」（SIR）：</p>
+<ol>
+<li><strong>预测</strong>：每个粒子按运动模型各自乱走一步，$x_k^{(i)} \sim p(x_k \mid x_{k-1}^{(i)})$。</li>
+<li><strong>更新</strong>：根据观测给每个粒子算权重 $w^{(i)} = p(z_k \mid x_k^{(i)})$，和观测越像，权重越高，然后归一化。</li>
+<li><strong>重采样</strong>：按权重重新抽粒子，权重高的多复制，低的淘汰，把粒子重新变成等权重的。</li>
+</ol>
+<p>粒子滤波擅长的是「全局定位」这种强非线性、多峰的问题——比如机器人被抱起来放到一个陌生位置，用粒子滤波重新找回自己在哪，这就是经典的蒙特卡洛定位（MCL）。</p>
+<p>但它有个致命伤：<strong>维数诅咒</strong>。状态维度一高，要覆盖分布所需的粒子数指数级增长。姿态 + 速度 + 位置这种十几维的问题，粒子滤波直接不划算。所以姿态估计里很少用 PF，它更多用在 2D 定位、目标跟踪这类低维问题上。</p>
+<h2 id="四足机器人的辅助校正：光有滤波器不够">四足机器人的辅助校正：光有滤波器不够</h2>
+<p>滤波器是「融合」的工具，但它得有「观测」可融合。四足机器人上，姿态以外的观测往往来自这些辅助手段。</p>
+<p><strong>腿部里程计（Leg Odometry）</strong>。四足没有轮子，但每条腿都有关节编码器。利用正运动学算出足端位置，再假设「支撑相足端相对地面不动」，就能反推机身速度。</p>
+<p>设足端位置 $p_{foot} = f(q)$，对它求导得到足端速度：</p>
+<p>$$<br>
+\dot{p}_{foot} = J(q),\dot{q}<br>
+$$</p>
+<p>$J$ 是足端雅可比。支撑相足端不动，即 $\dot{p}_{foot} = 0$ 相对世界系，反推出机身速度：</p>
+<p>$$<br>
+v_{body} = -J(q),\dot{q}<br>
+$$</p>
+<p>这个速度带噪声（地面会滑、接触点会变），但它是四足上最现成的速度观测，和 IMU 的角速度/加速度一起喂给 EKF，就能估计出线速度和位置。</p>
+<p><strong>接触检测（Contact Detection）</strong>。腿部里程计的「支撑足不动」假设，前提是你知道哪只脚着地。可靠做法是用足端力传感器，或者退而求其次用运动学推断（足端高度 + 触地瞬间的冲击）。接触状态错了，里程计直接废。</p>
+<p><strong>零速更新（ZUPT）</strong>。机器人停下来（比如趴着不动）时，「速度为零」就是一个强观测，可以拿来校正速度漂移。判断「真的停下来了」本身也要靠 IMU 和接触检测。</p>
+<p><strong>零偏在线估计</strong>。陀螺零偏随温度漂，加速度计零偏影响姿态和速度。把零偏放进 EKF 的状态向量里一起估，是标准做法。</p>
+<p>这些辅助算法本质上都是在「制造观测」，滤波器负责把观测和 IMU 融合。我的四足 V1 当时只用了 Mahony 估姿态，没有做腿部里程计 + EKF 的线速度融合，结果 Sim-to-Real 到真机上，线速度观测缺失、状态估计有误差，机器人走得就不如仿真里自然。后来回头看，缺的那块就是这一节讲的东西。</p>
+<h2 id="怎么选：一张图理清">怎么选：一张图理清</h2>
+<p>把上面这些算法按「传感器」和「目标」对号入座：</p>
+<ul>
+<li><strong>只要姿态（单 IMU）</strong>：Mahony 或 Madgwick，轻量、够用。</li>
+<li><strong>姿态 + 速度 + 零偏（IMU + 编码器/里程计）</strong>：EKF 或 UKF。</li>
+<li><strong>视觉 + IMU 定位（VIO）</strong>：MSCKF。</li>
+<li><strong>强非线性、低维全局定位</strong>：粒子滤波。</li>
+<li><strong>维度高、还想要最优</strong>：别硬上粒子滤波，回到卡尔曼系。</li>
+</ul>
+<p>没有银弹，只有「传感器能给你什么观测」决定「你该用哪个滤波器」。</p>
+<h2 id="写在最后">写在最后</h2>
+<p>这一排算法的演进，其实是一条很清晰的线：</p>
+<ul>
+<li>互补滤波：把两个传感器拼起来，朴素但有效；</li>
+<li>Mahony / Madgwick：四元数版的互补滤波，一个 PI、一个梯度下降；</li>
+<li>KF：线性高斯下的最优估计，把噪声显式建模、增益推导出来；</li>
+<li>EKF / UKF：把 KF 搬到非线性系统，一个线性化、一个采样；</li>
+<li>MSCKF：VIO 里的工程解，用滑动窗口和零空间投影避开维度爆炸；</li>
+<li>PF：换一种分布表示，专治强非线性、多峰，但怕高维。</li>
+</ul>
+<p>理解这条线，比背一堆公式有用得多。下次再看到一个新名字，先问它「在解决非线性吗、在解决高维吗、有没有视觉」，基本就能猜到它属于哪一档。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz/2026/09/23/attitude_state_estimation/">https://zhxylabflow.xyz/2026/09/23/attitude_state_estimation/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zhxylabflow.xyz" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%8A%B6%E6%80%81%E4%BC%B0%E8%AE%A1/">状态估计</a><a class="post-meta__tags" href="/tags/IMU/">IMU</a><a class="post-meta__tags" href="/tags/Mahony/">Mahony</a><a class="post-meta__tags" href="/tags/EKF/">EKF</a><a class="post-meta__tags" href="/tags/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/">卡尔曼滤波</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层"><img class="cover" src="https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">通信协议名词，都该归到 OSI 的哪一层</div></div><div class="info-2"><div class="info-item-1">通信协议名词，都该归到 OSI 的哪一层 学通信最烦的就是名词多。UART、SPI、I2C、CAN、RS485、TCP、UDP、HTTP、MQTT……每一个都眼熟,但真让你说清楚「它是什么、在哪一层、跟旁边的什么关系」,经常就卡住了。 单片机的总线和计算机网络的协议,看起来是两个世界,其实能塞进同一套坐标系里:OSI 分层模型。这篇文章就把这些名词挨个归位,顺便说说它们是怎么串成一条链的。 先立一个坐标系 分层这件事,不用把七层背得滚瓜烂熟,记住一条主线就够了: 数据要传出去,得解决「怎么在线上表示 0 和 1」(物理层),「怎么把 0 和 1 组成有意义的帧、发给谁」(数据链路层),「怎么跨网络找到目的地」(网络层),「怎么保证传对、传稳」(传输层),「上面跑的具体业务」(应用层)。 而单片机里的那堆总线——UART、SPI、I2C、CAN、RS485——绝大多数只干到物理层 + 数据链路层就停了。计网里的 IP、TCP、HTTP 这些,才往网络层、传输层、应用层走。这就是为什么它们平时看起来像两个世界:一个在底层管「位」,一个在上层管「包」和「业务」。 下面分开看。 单片机侧...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">嵌入式与机器人运动控制 | STM32/FreeRTOS · 四足机器人 · 强化学习 · 状态估计</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">44</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E7%90%86%E6%B8%85%EF%BC%9A%E7%8A%B6%E6%80%81%E4%BC%B0%E8%AE%A1%E5%88%B0%E5%BA%95%E5%9C%A8%E4%BC%B0%E4%BB%80%E4%B9%88"><span class="toc-number">1.1.</span> <span class="toc-text">先理清：状态估计到底在估什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%92%E8%A1%A5%E6%BB%A4%E6%B3%A2%EF%BC%9A%E6%8A%8A%E4%B8%A4%E4%B8%AA%E4%BC%A0%E6%84%9F%E5%99%A8%E3%80%8C%E6%8B%BC%E3%80%8D%E8%B5%B7%E6%9D%A5"><span class="toc-number">1.2.</span> <span class="toc-text">互补滤波：把两个传感器「拼」起来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mahony%EF%BC%9A%E5%9B%9B%E5%85%83%E6%95%B0%E7%89%88%E7%9A%84%E4%BA%92%E8%A1%A5%E6%BB%A4%E6%B3%A2"><span class="toc-number">1.3.</span> <span class="toc-text">Mahony：四元数版的互补滤波</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AF%E5%B7%AE%E6%80%8E%E4%B9%88%E6%9D%A5"><span class="toc-number">1.3.1.</span> <span class="toc-text">误差怎么来</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PI-%E4%BF%AE%E6%AD%A3"><span class="toc-number">1.3.2.</span> <span class="toc-text">PI 修正</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E5%85%83%E6%95%B0%E6%9B%B4%E6%96%B0"><span class="toc-number">1.3.3.</span> <span class="toc-text">四元数更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mahony-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%94%B6%E6%95%9B%EF%BC%9A%E4%B8%80%E4%B8%AA-Lyapunov-%E8%A7%86%E8%A7%92"><span class="toc-number">1.3.4.</span> <span class="toc-text">Mahony 为什么收敛：一个 Lyapunov 视角</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Madgwick%EF%BC%9A%E7%94%A8%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B1%82%E5%9B%9B%E5%85%83%E6%95%B0"><span class="toc-number">1.4.</span> <span class="toc-text">Madgwick：用梯度下降求四元数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%EF%BC%9A%E4%BB%8E%E3%80%8C%E5%90%AF%E5%8F%91%E5%BC%8F%E3%80%8D%E5%88%B0%E3%80%8C%E6%9C%80%E4%BC%98%E4%BC%B0%E8%AE%A1%E3%80%8D"><span class="toc-number">1.5.</span> <span class="toc-text">卡尔曼滤波：从「启发式」到「最优估计」</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E5%81%87%E8%AE%BE"><span class="toc-number">1.5.1.</span> <span class="toc-text">模型假设</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%84%E6%B5%8B"><span class="toc-number">1.5.2.</span> <span class="toc-text">预测</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E4%B8%8E%E5%A2%9E%E7%9B%8A%E7%9A%84%E6%8E%A8%E5%AF%BC"><span class="toc-number">1.5.3.</span> <span class="toc-text">更新与增益的推导</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A2%9E%E7%9B%8A%E7%9A%84%E7%9B%B4%E8%A7%89"><span class="toc-number">1.5.4.</span> <span class="toc-text">增益的直觉</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EKF%EF%BC%9A%E6%8A%8A%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2%E6%90%AC%E5%88%B0%E9%9D%9E%E7%BA%BF%E6%80%A7%E7%B3%BB%E7%BB%9F%E4%B8%8A"><span class="toc-number">1.6.</span> <span class="toc-text">EKF：把卡尔曼滤波搬到非线性系统上</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E5%AE%8C%E6%95%B4%E7%9A%84%E5%A7%BF%E6%80%81-EKF-%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.6.1.</span> <span class="toc-text">一个完整的姿态 EKF 实例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UKF%EF%BC%9A%E5%88%AB%E7%BA%BF%E6%80%A7%E5%8C%96%E4%BA%86%EF%BC%8C%E7%9B%B4%E6%8E%A5%E9%87%87%E6%A0%B7"><span class="toc-number">1.7.</span> <span class="toc-text">UKF：别线性化了，直接采样</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sigma-%E7%82%B9%E7%9A%84%E9%80%89%E5%8F%96"><span class="toc-number">1.7.1.</span> <span class="toc-text">sigma 点的选取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%A0%E6%92%AD"><span class="toc-number">1.7.2.</span> <span class="toc-text">传播</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EKF-%E5%92%8C-UKF-%E5%88%B0%E5%BA%95%E5%B7%AE%E5%A4%9A%E5%B0%91"><span class="toc-number">1.7.3.</span> <span class="toc-text">EKF 和 UKF 到底差多少</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MSCKF%EF%BC%9A%E8%A7%86%E8%A7%89%E6%83%AF%E6%80%A7%E9%87%8C%E7%A8%8B%E8%AE%A1%EF%BC%88VIO%EF%BC%89%E7%9A%84%E6%A0%B8%E5%BF%83"><span class="toc-number">1.8.</span> <span class="toc-text">MSCKF：视觉惯性里程计（VIO）的核心</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%AE%83"><span class="toc-number">1.8.1.</span> <span class="toc-text">为什么需要它</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%B9%E5%BE%81%E7%82%B9%E7%9A%84%E7%BA%A6%E6%9D%9F"><span class="toc-number">1.8.2.</span> <span class="toc-text">特征点的约束</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E9%87%8F%E6%A8%A1%E5%9E%8B%E5%92%8C%E9%9B%B6%E7%A9%BA%E9%97%B4%E6%8A%95%E5%BD%B1%EF%BC%8C%E7%BB%86%E7%9C%8B"><span class="toc-number">1.8.3.</span> <span class="toc-text">测量模型和零空间投影，细看</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B2%92%E5%AD%90%E6%BB%A4%E6%B3%A2%EF%BC%9A%E6%8A%8A%E5%88%86%E5%B8%83%E6%8D%A2%E6%88%90%E4%B8%80%E5%A0%86%E3%80%8C%E7%B2%92%E5%AD%90%E3%80%8D"><span class="toc-number">1.9.</span> <span class="toc-text">粒子滤波：把分布换成一堆「粒子」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E8%B6%B3%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%9A%84%E8%BE%85%E5%8A%A9%E6%A0%A1%E6%AD%A3%EF%BC%9A%E5%85%89%E6%9C%89%E6%BB%A4%E6%B3%A2%E5%99%A8%E4%B8%8D%E5%A4%9F"><span class="toc-number">1.10.</span> <span class="toc-text">四足机器人的辅助校正：光有滤波器不够</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E9%80%89%EF%BC%9A%E4%B8%80%E5%BC%A0%E5%9B%BE%E7%90%86%E6%B8%85"><span class="toc-number">1.11.</span> <span class="toc-text">怎么选：一张图理清</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E"><span class="toc-number">1.12.</span> <span class="toc-text">写在最后</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"><img src="https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</a><time datetime="2026-09-22T19:00:00.000Z" title="发表于 2026-09-23 03:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层"><img src="https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="通信协议名词，都该归到 OSI 的哪一层"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层">通信协议名词，都该归到 OSI 的哪一层</a><time datetime="2026-09-22T18:00:00.000Z" title="发表于 2026-09-23 02:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"><img src="https://img.cdn1.vip/i/6ab2c3da84f46_1790100442.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看</a><time datetime="2026-09-22T17:30:00.000Z" title="发表于 2026-09-23 01:30:00">2026-09-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/07/policy_gradient_theorem/" title="策略梯度定理推导">策略梯度定理推导</a><time datetime="2026-08-06T16:00:00.000Z" title="发表于 2026-08-07 00:00:00">2026-08-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/17/blectr_app_development/" title="给机器人写了个安卓蓝牙遥控 App">给机器人写了个安卓蓝牙遥控 App</a><time datetime="2026-06-16T18:49:52.279Z" title="发表于 2026-06-17 02:49:52">2026-06-17</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>

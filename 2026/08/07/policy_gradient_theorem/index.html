@@ -1,0 +1,570 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>策略梯度定理推导 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="策略梯度定理推导 这篇东西是我自己推导策略梯度定理时顺手记下来的。网上关于这个定理的资料不少，但大多数要么跳步太厉害，要么在关键的地方语焉不详——比如那个&quot;交叉项等于零&quot;到底为什么等于零，比如 $P_\theta(s_t&#x3D;s)$ 到底能不能提到梯度外面。所以我把每一步都写了下来，主要是给自己看的，顺便整理成一篇能读的东西。 前置设定 无限时域折扣 MDP，老规矩：  状态空间">
+<meta property="og:type" content="article">
+<meta property="og:title" content="策略梯度定理推导">
+<meta property="og:url" content="https://zhxylabflow.xyz/2026/08/07/policy_gradient_theorem/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="策略梯度定理推导 这篇东西是我自己推导策略梯度定理时顺手记下来的。网上关于这个定理的资料不少，但大多数要么跳步太厉害，要么在关键的地方语焉不详——比如那个&quot;交叉项等于零&quot;到底为什么等于零，比如 $P_\theta(s_t&#x3D;s)$ 到底能不能提到梯度外面。所以我把每一步都写了下来，主要是给自己看的，顺便整理成一篇能读的东西。 前置设定 无限时域折扣 MDP，老规矩：  状态空间">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6958d73347225_1767429939.webp">
+<meta property="article:published_time" content="2026-08-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-06T22:47:20.430Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="强化学习">
+<meta property="article:tag" content="数学">
+<meta property="article:tag" content="策略梯度">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6958d73347225_1767429939.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "策略梯度定理推导",
+  "url": "https://zhxylabflow.xyz/2026/08/07/policy_gradient_theorem/",
+  "image": "https://img.cdn1.vip/i/6958d73347225_1767429939.webp",
+  "datePublished": "2026-08-06T16:00:00.000Z",
+  "dateModified": "2026-08-06T22:47:20.430Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "https://zhxylabflow.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/2026/08/07/policy_gradient_theorem/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '策略梯度定理推导',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">44</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">策略梯度定理推导</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">策略梯度定理推导</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-06T16:00:00.000Z" title="发表于 2026-08-07 00:00:00">2026-08-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-06T22:47:20.430Z" title="更新于 2026-08-07 06:47:20">2026-08-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>策略梯度定理推导</h1>
+<p>这篇东西是我自己推导策略梯度定理时顺手记下来的。网上关于这个定理的资料不少，但大多数要么跳步太厉害，要么在关键的地方语焉不详——比如那个&quot;交叉项等于零&quot;到底为什么等于零，比如 $P_\theta(s_t=s)$ 到底能不能提到梯度外面。所以我把每一步都写了下来，主要是给自己看的，顺便整理成一篇能读的东西。</p>
+<h2 id="前置设定">前置设定</h2>
+<p>无限时域折扣 MDP，老规矩：</p>
+<ul>
+<li>状态空间 $\mathcal{S}$，动作空间 $\mathcal{A}$</li>
+<li>环境状态转移核：$P(s’|s,a)$（环境动力学，<strong>与策略参数 $\theta$ 无关</strong>）</li>
+<li>参数化策略：$\pi_\theta(a|s)$</li>
+<li>折扣因子：$\gamma\in[0,1)$</li>
+<li>轨迹：$\tau=(s_0,a_0,s_1,a_1,\dots)$</li>
+<li>单步奖励：$r(s_t,a_t)$</li>
+<li>回报（从时刻 $t$ 开始）：</li>
+</ul>
+<p>$$<br>
+G_t = \sum_{k=t}^{\infty}\gamma^{k-t}r(s_k,a_k)<br>
+$$</p>
+<p>这里顺便提一下两种常见的目标函数定义——后面会看到，选哪个会影响最终公式前面有没有那个 $\frac{1}{1-\gamma}$ 的系数。</p>
+<p>定义1（原始无归一）：</p>
+<p>$$<br>
+J(\theta)=\mathbb{E}<em>{\tau\sim p</em>\theta(\tau)}\left[\sum_{t=0}^{\infty}\gamma^t r(s_t,a_t)\right]<br>
+$$</p>
+<p>定义2（归一化目标，教材里最常用的那个紧凑形式就是从这来的）：</p>
+<p>$$<br>
+J(\theta)=(1-\gamma)\mathbb{E}<em>{\tau\sim p</em>\theta(\tau)}\left[\sum_{t=0}^{\infty}\gamma^t r(s_t,a_t)\right]<br>
+$$</p>
+<p>轨迹分布：</p>
+<p>$$<br>
+p_\theta(\tau)=p(s_0)\prod_{k=0}^{\infty}\pi_\theta(a_k|s_k)P(s_{k+1}|s_k,a_k)<br>
+$$</p>
+<h2 id="一、似然比引理——整个推导里唯一真正用到-求导-的地方">一、似然比引理——整个推导里唯一真正用到&quot;求导&quot;的地方</h2>
+<p>这个引理是整件事的核心工具。对任意可积函数 $F(\tau)$：</p>
+<p>$$<br>
+\nabla_\theta \mathbb{E}<em>{\tau\sim p</em>\theta}[F(\tau)]<br>
+=\mathbb{E}<em>{\tau\sim p</em>\theta}\big[F(\tau)\cdot\nabla_\theta\log p_\theta(\tau)\big]<br>
+$$</p>
+<p>乍一看有点魔法，但其实就是把期望里的积分号和求导号交换了一下，然后用 $\nabla \log f = \frac{\nabla f}{f}$ 这个恒等式。本质上是一个&quot;对数导数技巧&quot;。</p>
+<p>对轨迹分布取对数梯度：</p>
+<p>$$<br>
+\log p_\theta(\tau)=\log p(s_0)+\sum_{k=0}^\infty\log\pi_\theta(a_k|s_k)+\sum_{k=0}^\infty\log P(s_{k+1}|s_k,a_k)<br>
+$$</p>
+<p>注意环境转移项 $P(s’|s,a)$ 不含参数 $\theta$，求导直接消失，干净利落：</p>
+<p>$$<br>
+\nabla_\theta\log p_\theta(\tau)=\sum_{t=0}^{\infty}\nabla_\theta\log\pi_\theta(a_t|s_t)<br>
+$$</p>
+<p>这一步其实已经揭示了策略梯度方法的一个本质特征：<strong>你不需要知道环境模型</strong>。转移概率在梯度里消失了，你只需要对策略本身求导。这也是为什么 policy gradient 是 model-free 方法。</p>
+<h2 id="二、开始求目标梯度（使用无归一目标-J-theta-）">二、开始求目标梯度（使用无归一目标 $J(\theta)$）</h2>
+<p>从原始目标出发：</p>
+<p>$$<br>
+\nabla_\theta J(\theta)<br>
+=\nabla_\theta \mathbb{E}<em>{\tau\sim p</em>\theta}\left[\sum_{k=0}^{\infty}\gamma^k r(s_k,a_k)\right]<br>
+$$</p>
+<p>套用似然比引理：</p>
+<p>$$<br>
+\nabla_\theta J(\theta)<br>
+=\mathbb{E}<em>{\tau\sim p</em>\theta}\left[<br>
+\left(\sum_{k=0}^{\infty}\gamma^k r(s_k,a_k)\right)<br>
+\left(\sum_{t=0}^{\infty}\nabla_\theta\log\pi_\theta(a_t|s_t)\right)<br>
+\right]<br>
+$$</p>
+<p>现在梯度里面有两坨求和：一坨是回报的折扣和，一坨是策略对数梯度的和。交换求和顺序：</p>
+<p>$$<br>
+\nabla_\theta J(\theta)<br>
+=\sum_{t=0}^{\infty}\mathbb{E}<em>{\tau\sim p</em>\theta}\left[<br>
+\nabla_\theta\log\pi_\theta(a_t|s_t)\sum_{k=0}^{\infty}\gamma^k r(s_k,a_k)<br>
+\right]<br>
+$$</p>
+<p>接下来是一个关键操作：把内层的 $\sum_{k=0}^\infty \gamma^k r_k$ 拆成&quot;时刻 $t$ 之后&quot;和&quot;时刻 $t$ 之前&quot;两段：</p>
+<p>$$<br>
+\sum_{k=0}^\infty\gamma^k r(s_k,a_k)<br>
+=\gamma^t\sum_{k=t}^{\infty}\gamma^{k-t}r(s_k,a_k)+\sum_{k=0}^{t-1}\gamma^k r(s_k,a_k)<br>
+=\gamma^t G_t + \sum_{k=0}^{t-1}\gamma^k r(s_k,a_k)<br>
+$$</p>
+<p>代入期望：</p>
+<p>$$<br>
+\begin{aligned}<br>
+\nabla_\theta J(\theta)<br>
+&amp;=\sum_{t=0}^\infty\mathbb{E}<em>{\tau}\Big[\nabla</em>\theta\log\pi_\theta(a_t|s_t)\cdot \gamma^t G_t\Big]\<br>
+&amp;\quad+\sum_{t=0}^\infty\mathbb{E}<em>{\tau}\Big[\nabla</em>\theta\log\pi_\theta(a_t|s_t)\sum_{k=0}^{t-1}\gamma^k r(s_k,a_k)\Big]<br>
+\end{aligned}<br>
+$$</p>
+<p><strong>交叉项等于零</strong>，这是整个推导里最容易让人&quot;嗯？&quot;一下的地方。理由是：</p>
+<p>$\nabla_\theta\log\pi_\theta(a_t|s_t)$ 只依赖 $(s_t,a_t)$，而 $\sum_{k=0}^{t-1}\gamma^k r(s_k,a_k)$ 只依赖 $t$ 时刻之前的轨迹。给定 $s_t$ 的条件下，这两者是条件独立的——过去已经发生了，不会因为你将来在 $s_t$ 处用什么策略而改变。所以交叉期望拆成条件期望的乘积，其中一项的期望为零（对数概率梯度的期望恒为零），整个交叉项就消掉了。</p>
+<p>于是得到策略梯度的中间形式：</p>
+<p>$$<br>
+\boxed{<br>
+\nabla_\theta J(\theta)<br>
+=\sum_{t=0}^{\infty}\gamma^t,\mathbb{E}<em>{\tau\sim p</em>\theta}\Big[\nabla_\theta\log\pi_\theta(a_t|s_t),G_t\Big]<br>
+}<br>
+$$</p>
+<blockquote>
+<p>⚠️ 一个重要的心理标记：$\nabla_\theta$ 求导运算到这里<strong>已经全部完成</strong>。接下来所有操作只是纯代数重排、调换求和次序、封装分布——不再出现新的梯度运算。这个分界线如果不划清楚，后面看到 $P_\theta$ 被移来移去的时候很容易犯迷糊。</p>
+</blockquote>
+<h2 id="三、把轨迹期望转化成状态-动作期望">三、把轨迹期望转化成状态-动作期望</h2>
+<p>上面那个形式虽然正确，但期望是对整条轨迹取的，不方便做理论分析。我们想要一个在状态-动作空间上的期望。</p>
+<p>引入动作价值函数：</p>
+<p>$$<br>
+Q^{\pi_\theta}(s,a)\triangleq\mathbb{E}\big[G_t,\big|,s_t=s,a_t=a\big]<br>
+$$</p>
+<p>对固定时刻 $t$：</p>
+<p>$$<br>
+\mathbb{E}<em>{\tau}\Big[\nabla</em>\theta\log\pi_\theta(a_t|s_t),G_t\Big]<br>
+=\sum_{s,a} P_\theta(s_t=s),\pi_\theta(a|s)\cdot\nabla_\theta\log\pi_\theta(a|s),Q^{\pi_\theta}(s,a)<br>
+$$</p>
+<p>代入梯度表达式：</p>
+<p>$$<br>
+\nabla_\theta J(\theta)<br>
+=\sum_{t=0}^{\infty}\gamma^t<br>
+\sum_{s,a} P_\theta(s_t=s),\pi_\theta(a|s),\nabla_\theta\log\pi_\theta(a|s),Q^{\pi_\theta}(s,a)<br>
+$$</p>
+<p>交换求和次序 $\sum_t\sum_{s,a}\rightarrow\sum_{s,a}\sum_t$——反正都是正项级数，随便换：</p>
+<p>$$<br>
+\nabla_\theta J(\theta)<br>
+=\sum_{s,a}<br>
+\Big(\sum_{t=0}^{\infty}\gamma^t P_\theta(s_t=s)\Big)<br>
+\pi_\theta(a|s),\nabla_\theta\log\pi_\theta(a|s),Q^{\pi_\theta}(s,a)<br>
+$$</p>
+<h2 id="四、折扣状态访问分布——一个纯形式工具">四、折扣状态访问分布——一个纯形式工具</h2>
+<p>到这里我们需要一个东西把 $\sum_t \gamma^t P_\theta(s_t=s)$ 包装成一个概率分布。定义：</p>
+<p>$$<br>
+\rho^{\pi_\theta}(s)\triangleq (1-\gamma)\sum_{t=0}^{\infty}\gamma^t P_\theta(s_t=s)<br>
+$$</p>
+<p>乘以 $(1-\gamma)$ 是为了让它归一化，变成一个合法的概率分布 $\sum_s \rho^{\pi_\theta}(s)=1$。没有这个系数的话，它是所有时间步带折扣权重的累加，不是一个分布。</p>
+<p>于是：</p>
+<p>$$<br>
+\sum_{t=0}^{\infty}\gamma^t P_\theta(s_t=s)=\frac{\rho^{\pi_\theta}(s)}{1-\gamma}<br>
+$$</p>
+<p>再定义联合状态-动作访问分布：</p>
+<p>$$<br>
+\mu^{\pi_\theta}(s,a)=\rho^{\pi_\theta}(s),\pi_\theta(a|s)<br>
+$$</p>
+<p>代回梯度，无归一目标下的形式为：</p>
+<p>$$<br>
+\nabla_\theta J(\theta)<br>
+=\frac{1}{1-\gamma}\sum_{s,a}\mu^{\pi_\theta}(s,a),\nabla_\theta\log\pi_\theta(a|s),Q^{\pi_\theta}(s,a)<br>
+$$</p>
+<p>写成期望：</p>
+<p>$$<br>
+\nabla_\theta J(\theta)<br>
+=\frac{1}{1-\gamma},\mathbb{E}<em>{(s,a)\sim\mu^{\pi</em>\theta}}<br>
+\Big[\nabla_\theta\log\pi_\theta(a|s),Q^{\pi_\theta}(s,a)\Big]<br>
+$$</p>
+<h2 id="五、归一化目标下的最简形式">五、归一化目标下的最简形式</h2>
+<p>如果你从一开始就采用带 $(1-\gamma)$ 归一的目标函数，两边同乘这个系数，$\frac{1}{1-\gamma}$ 就消掉了，得到教材里最常出现的那个干净版本：</p>
+<p>$$<br>
+\boxed{<br>
+\nabla_\theta J(\theta)<br>
+=\mathbb{E}<em>{(s,a)\sim\mu^{\pi</em>\theta}}<br>
+\Big[\nabla_\theta\log\pi_\theta(a|s),Q^{\pi_\theta}(s,a)\Big]<br>
+}<br>
+$$</p>
+<h2 id="六、几个容易踩的坑">六、几个容易踩的坑</h2>
+<p>推导本身其实不长，但有几个地方特别容易让人想岔，我在这里标出来：</p>
+<ol>
+<li>
+<p><strong>&quot;把 $P_\theta(s_t=s)$ 提到梯度外面&quot;这件事根本没发生。</strong> 梯度 $\nabla_\theta$ 在交换求和次序之前就已经算完了。后面所有的操作都是在处理一串已经定下来的实数级数，不涉及新的求导。这个次序很重要——要是反过来，先把 $\sum_t P_\theta$ 提出来再求导，结果就错了。</p>
+</li>
+<li>
+<p><strong>$P_\theta(s_t=s)$ 不是&quot;与 $\theta$ 无关&quot;，只是简写。</strong> 完整记法是 $P_\theta(s_t=s)$，它当然依赖策略参数——轨迹是 $\pi_\theta$ 生成的嘛。真正与 $\theta$ 无关的只有环境转移核 $P(s’|s,a)$。推导中写得简略不代表没有依赖。</p>
+</li>
+<li>
+<p><strong>$\rho^{\pi_\theta}$ 不是马尔可夫链的平稳分布。</strong> 它是人为构造的折扣加权访问分布，唯一目的就是把时间维度的求和封装进一个期望采样分布里，让最终的表达式变得紧凑。不要把平稳分布的概念套在这上面。</p>
+</li>
+<li>
+<p><strong>紧凑单行形式只适用于无限时域理论证明。</strong> REINFORCE、A2C 这些实际算法跑的是有限长度轨迹片段，代码里用的还是带 $\sum_{t=0}^T$ 的时间求和形式。单行期望在纸上是好看的，但不能直接翻译成代码。</p>
+</li>
+</ol>
+<hr>
+<p>写到这里基本就完了。策略梯度定理的推导本身不长，但中间那个&quot;交叉项为零&quot;的论证和 $P_\theta$ 能不能动的疑问，我第一次看的时候也卡了好一会儿。后来想明白了就发现其实就两件事：<strong>似然比引理把求导变成对数梯度</strong>，然后<strong>因果性让过去和将来条件独立</strong>。剩下的全是代数整理。</p>
+<p>如果这篇对你也有帮助，那挺好。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz/2026/08/07/policy_gradient_theorem/">https://zhxylabflow.xyz/2026/08/07/policy_gradient_theorem/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zhxylabflow.xyz" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a><a class="post-meta__tags" href="/tags/%E6%95%B0%E5%AD%A6/">数学</a><a class="post-meta__tags" href="/tags/%E7%AD%96%E7%95%A5%E6%A2%AF%E5%BA%A6/">策略梯度</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"><img class="cover" src="https://img.cdn1.vip/i/6ab2c3da84f46_1790100442.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post" loading='lazy'><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看</div></div><div class="info-2"><div class="info-item-1">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看 操作系统课上的东西,很多都是干巴巴的文字:进程和线程的区别、PV 操作、死锁的四个必要条件。背的时候能背下来,但总觉得隔着一层——“到底什么时候会用到?” 直到我开始用 FreeRTOS 写四足机器人的固件,才发现这些东西根本不是课本里的抽象概念,而是每天都在代码里撞见的东西。这篇文章就把进程、同步互斥、死锁这三块,挨个搬到 FreeRTOS 里看一遍。 进程和线程,FreeRTOS 里只有一个 task 课本上最经典的一组概念:进程是资源分配的基本单位,有独立的地址空间;线程是调度的基本单位,共享所属进程的地址空间。 放到 FreeRTOS 里,这组概念会直接塌缩成一个东西:task。 原因很简单,FreeRTOS 跑在裸机 MCU 上,没有 MMU、没有虚拟内存,整个系统就一个地址空间。每个 task 有自己的栈和 TCB(Task Control Block),但所有 task 共享同一块全局内存。所以:  它像线程——独立执行流、独立栈、统一调度; 但它不是进程——没有地址空间隔离,一个 task 写坏内存,可能...</div></div></div></a><a class="pagination-related" href="/2026/06/17/blectr_app_development/" title="给机器人写了个安卓蓝牙遥控 App"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">给机器人写了个安卓蓝牙遥控 App</div></div><div class="info-2"><div class="info-item-1">从零写一个安卓蓝牙遥控 App——USB 串口、UVC 图传与自定义通信协议 前阵子为了控制一台机器人底盘，我需要一个手机遥控 App。市面上能搜到的蓝牙遥控器 App 要么功能过于简陋（就几个方向按钮），要么图传方案和自己用的不匹配。与其改别人的代码，不如自己写一个，反正需求也不算复杂：  通过 USB 串口（或者蓝牙 SPP）与机器人通信 通过 OTG 接入 UVC 视频采集卡显示 5.8G 模拟图传画面 支持摇杆、按键和矩阵操作，能切换多种工作模式 通信协议自己定，灵活扩展  这篇文章就记录一下这个 App 的完整设计与实现过程。  1. 整体架构 项目使用 Kotlin + Jetpack 全家桶，没有引入复杂的架构框架。核心模块就四个文件： app/src/main/java/com/ek/blectr/├── MainActivity.kt          # 主界面 + 控制逻辑├── UsbSerialController.kt   # USB 串口通信封装├── UvcPreviewController.kt  # UVC 图传预览封装├── Joystick...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/06/05/rl_algorithm_design_aesthetics/" title="从 Bellman 到 PPO，RL 为什么这么设计"><img class="cover" src="https://img.cdn1.vip/i/6ab2c3de6003e_1790100446.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-05</div><div class="info-item-2">从 Bellman 到 PPO，RL 为什么这么设计</div></div><div class="info-2"><div class="info-item-1">强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径 前面两篇我们聊了损失函数和优化器的设计哲学。但有一个领域的损失函数和优化器设计，比监督学习更&quot;绕&quot;——强化学习。 在监督学习中，你的标签是上帝给的，错了就是错了。但在强化学习中，你只有一个延迟的、嘈杂的、稀疏的标量奖励信号。更麻烦的是：你在用当前策略收集的数据来更新这个策略本身，更新完你又拿新策略去跑数据——你的训练数据一直在变。 这种&quot;自己给自己出题，自己又去解题&quot;的循环，使得 RL 的算法设计比监督学习多了一层曲折。这篇博客会沿着 RL 的算法演进路径，拆解每个关键设计背后的直觉——不是为了列公式，而是为了理解为什么一个问题被反复用不同方式解决。  1. 核心难题：状态价值和动作价值 先确立两个基本概念。 在 RL 中，智能体需要回答的根本问题是：在某个状态下，做哪个动作最好？ 但&quot;好&quot;的定义是模糊的——好的动作会带来即时奖励，也可能带来长期回报。于是我们定义了两种价值函数：  状态价值 $V(s)$：从这个状态出发，按当前策略 $ \pi $，未...</div></div></div></a><a class="pagination-related" href="/2026/05/09/dqn_algorithm_tutorial/" title="从 Q-learning 到 DQN，一步步推演"><img class="cover" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-09</div><div class="info-item-2">从 Q-learning 到 DQN，一步步推演</div></div><div class="info-2"><div class="info-item-1">DQN 算法超详尽教程——从 Q-table 到深度强化学习 如果说 Q-learning 是强化学习的&quot;Hello World&quot;，那 DQN（Deep Q-Network）就是深度强化学习真正走出实验室、进入公众视野的里程碑。2013 年，DeepMind 的 Mnih 等人在 NIPS 发表 Playing Atari with Deep Reinforcement Learning，用一个卷积神经网络直接从原始像素输入学到了 Atari 2600 平台上 6 款游戏（后来扩展到 49 款）中超越人类专业玩家水平的控制策略。这篇工作的冲击力在于：它首次干净利落地证明了，深度神经网络可以在强化学习框架下进行稳定训练，而不需要任何手工特征工程。两年后，这篇论文的改进版登上了 Nature，标题只有三个词：Human-level control through deep reinforcement learning。从此，深度强化学习进入了爆发期。 DQN 之所以经典，不在于它用了多复杂的数学工具，而在于它用两个看似简单的工程技巧——经验回放（Experienc...</div></div></div></a><a class="pagination-related" href="/2026/06/01/loss_function_philosophy/" title="为什么回归用 MSE、分类用交叉熵"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-01</div><div class="info-item-2">为什么回归用 MSE、分类用交叉熵</div></div><div class="info-2"><div class="info-item-1">损失函数的设计哲学——从直觉理解为什么损失函数要长这样 如果你写过几个 PyTorch 训练脚本，大概已经对 nn.MSELoss 和 nn.CrossEntropyLoss 这两个名字烂熟于心。你可能也知道&quot;回归用 MSE，分类用 CrossEntropy&quot;这条经验法则，甚至背过交叉熵的公式： $$ \mathcal{L}{CE} = -\sum{c} y_c \log(p_c) $$ 但你有没有停下来想过——为什么？ 为什么回归不直接用绝对误差（L1），非要用平方（L2）？为什么分类不用 MSE 做损失？为什么交叉熵里的那个 $\log$ 恰到好处，换成别的就不行？ 这些问题背后不是拍脑袋的巧合。每一种损失函数的设计，都是对人类认知目标的一种数学建模。这篇博客想做的，就是把几个最常用的损失函数从设计动机到数学形式拆一遍——不是为了背公式，而是为了理解如果换你来设计，你也会这么想。  1. 先想清楚：损失函数到底在做什么 在说具体函数之前，先明确一个最基础的问题。 训练一个模型，本质是一个 优化问题： $$ \theta^* = \arg\min_\thet...</div></div></div></a><a class="pagination-related" href="/2026/05/21/ppo_for_quadruped/" title="四足 RL 调参实录：PPO 那些让人抓狂的参数"><img class="cover" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-21</div><div class="info-item-2">四足 RL 调参实录：PPO 那些让人抓狂的参数</div></div><div class="info-2"><div class="info-item-1">PPO 在四足机器人控制中的应用——从理论到调参实战 如果你已经看过前面的 rsl_rl 源码解析，应该对 PPO 的工程实现有了清晰的了解。但那篇文章的重点是&quot;代码怎么写&quot;，本文则回答另一个问题：PPO 在四足机器人 locomotion 中到底是怎么工作的、参数怎么调、坑在哪里？ 如果你跑过四足 RL 训练，大概率遇到过这些场景：  训练两小时，loss 曲线看着很漂亮，结果机器人原地抽搐了一下就趴了 换了一组 reward 权重，PPO 就不收敛了，明明之前跑得好好的 试着把 clip range 从 0.2 调到 0.1，方差是小了，但怎么跑也跑不快 明明 GAE lambda 从 0.95 改到 0.99，步态反而更差了  这些都不是 bug，是 PPO 在连续控制问题——尤其是 locomotion——中的特有现象。本文从 locomotion 的视角重新理解 PPO 的每个组件，然后给出实战调参指南。  1. 重新理解 PPO——从 locomotion 的视角 PPO 的核心公式大家都很熟悉了： $$ L^{CLIP}(\theta) = \m...</div></div></div></a><a class="pagination-related" href="/2026/03/15/rsl_rl_source_analysis/" title="拆解 rsl_rl 源码"><img class="cover" src="https://img.cdn1.vip/i/69b969a8a421f_1773758888.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-15</div><div class="info-item-2">拆解 rsl_rl 源码</div></div><div class="info-2"><div class="info-item-1">很多人第一次看 rsl_rl，会以为它只是“又一个 PPO 仓库”。但如果把源码真正拆开，你会发现它的核心价值并不只是实现了 PPO，而是把 模型结构、观测组织、采样存储、训练更新、蒸馏部署 这些环节统一进了一套非常清晰的接口里。 对于足式机器人来说，这种设计尤其重要。原因很简单：机器人强化学习不是只写一个 policy(obs) 就结束了。真实工程里你常常会同时面对这些问题：  actor 和 critic 看到的观测不一样； 训练时可以用 privileged information，部署时却不能用； 有些任务只需要 MLP，有些任务要加 CNN 或 RNN； 训练时要高效支持并行环境、PPO、多卡同步，部署时又要能导出 JIT / ONNX。  而这组源码恰好把这些问题都落到了具体实现里。 本文会围绕你给出的几个核心文件，从 理论公式 和 工程实现 两条线同时解读 rsl_rl：  MLP / MLPModel 如何构成整套模型抽象； CNNModel 和 RNNModel 如何复用这套接口； PPO 的采样、GAE、裁剪目标、KL 自适应学习率如何映射到代码； Disti...</div></div></div></a><a class="pagination-related" href="/2026/03/17/isaaclab_prj/" title="IsaacLab 入门踩坑记录"><img class="cover" src="https://img.cdn1.vip/i/6ab2c32171526_1790100257.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-17</div><div class="info-item-2">IsaacLab 入门踩坑记录</div></div><div class="info-2"><div class="info-item-1">Isaac Lab External 项目完整工作流 本教程面向已经配置好Isaaclab强化学习环境的新手玩家 项目仓库：https://github.com/Leggedsys/legged_train/tree/main 第一次新建一个空的IsaacLab外部项目，除了跑一跑倒立摆的示例，我也不知道下一步要做什么。仓库是新的，我的目标是训练一条机器狗，下一步要干啥？：先放URDF ？写 env ？先写 PPO 配置？还是去啃官方教程？本人想做一篇文档教程作为参考，把训练一台机器狗这个事，完整记录一下。 整个过程其实比较简单：先把项目变成一个能被IsaacLab 识别的Python扩展，再把机器人资产接进来，然后围绕这台机器人写配置、场景、环境和奖励，最后再接上PPO训练与回放脚本。难点从来不在于某一步特别神秘，我们第一次做isaaclab项目时，大概已经知道我要做的无非就这些事，但不知道从何开始，也不知道这些文件到底是干啥的。只要这条线理顺了，后面想加入平地gait、rough terrain、抗扰动或者sim-to-real 扩展，其实都会顺很多。 项目环境准备 我的项目...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">嵌入式与机器人运动控制 | STM32/FreeRTOS · 四足机器人 · 强化学习 · 状态估计</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">44</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">策略梯度定理推导</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E7%BD%AE%E8%AE%BE%E5%AE%9A"><span class="toc-number">1.1.</span> <span class="toc-text">前置设定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BC%BC%E7%84%B6%E6%AF%94%E5%BC%95%E7%90%86%E2%80%94%E2%80%94%E6%95%B4%E4%B8%AA%E6%8E%A8%E5%AF%BC%E9%87%8C%E5%94%AF%E4%B8%80%E7%9C%9F%E6%AD%A3%E7%94%A8%E5%88%B0-%E6%B1%82%E5%AF%BC-%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">1.2.</span> <span class="toc-text">一、似然比引理——整个推导里唯一真正用到&quot;求导&quot;的地方</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%BC%80%E5%A7%8B%E6%B1%82%E7%9B%AE%E6%A0%87%E6%A2%AF%E5%BA%A6%EF%BC%88%E4%BD%BF%E7%94%A8%E6%97%A0%E5%BD%92%E4%B8%80%E7%9B%AE%E6%A0%87-J-theta-%EF%BC%89"><span class="toc-number">1.3.</span> <span class="toc-text">二、开始求目标梯度（使用无归一目标 $J(\theta)$）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%8A%8A%E8%BD%A8%E8%BF%B9%E6%9C%9F%E6%9C%9B%E8%BD%AC%E5%8C%96%E6%88%90%E7%8A%B6%E6%80%81-%E5%8A%A8%E4%BD%9C%E6%9C%9F%E6%9C%9B"><span class="toc-number">1.4.</span> <span class="toc-text">三、把轨迹期望转化成状态-动作期望</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%8A%98%E6%89%A3%E7%8A%B6%E6%80%81%E8%AE%BF%E9%97%AE%E5%88%86%E5%B8%83%E2%80%94%E2%80%94%E4%B8%80%E4%B8%AA%E7%BA%AF%E5%BD%A2%E5%BC%8F%E5%B7%A5%E5%85%B7"><span class="toc-number">1.5.</span> <span class="toc-text">四、折扣状态访问分布——一个纯形式工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%BD%92%E4%B8%80%E5%8C%96%E7%9B%AE%E6%A0%87%E4%B8%8B%E7%9A%84%E6%9C%80%E7%AE%80%E5%BD%A2%E5%BC%8F"><span class="toc-number">1.6.</span> <span class="toc-text">五、归一化目标下的最简形式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%87%A0%E4%B8%AA%E5%AE%B9%E6%98%93%E8%B8%A9%E7%9A%84%E5%9D%91"><span class="toc-number">1.7.</span> <span class="toc-text">六、几个容易踩的坑</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"><img src="https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</a><time datetime="2026-09-22T19:00:00.000Z" title="发表于 2026-09-23 03:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层"><img src="https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="通信协议名词，都该归到 OSI 的哪一层"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层">通信协议名词，都该归到 OSI 的哪一层</a><time datetime="2026-09-22T18:00:00.000Z" title="发表于 2026-09-23 02:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"><img src="https://img.cdn1.vip/i/6ab2c3da84f46_1790100442.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看</a><time datetime="2026-09-22T17:30:00.000Z" title="发表于 2026-09-23 01:30:00">2026-09-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/07/policy_gradient_theorem/" title="策略梯度定理推导">策略梯度定理推导</a><time datetime="2026-08-06T16:00:00.000Z" title="发表于 2026-08-07 00:00:00">2026-08-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/17/blectr_app_development/" title="给机器人写了个安卓蓝牙遥控 App">给机器人写了个安卓蓝牙遥控 App</a><time datetime="2026-06-16T18:49:52.279Z" title="发表于 2026-06-17 02:49:52">2026-06-17</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>

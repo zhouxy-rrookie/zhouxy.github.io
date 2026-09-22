@@ -1,0 +1,312 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>星语的博客 - 嵌入式 · 机器人 · 强化学习</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="嵌入式与机器人运动控制 | STM32&#x2F;FreeRTOS · 四足机器人 · 强化学习 · 状态估计">
+<meta property="og:type" content="website">
+<meta property="og:title" content="星语的博客">
+<meta property="og:url" content="https://zhxylabflow.xyz/page/2/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="嵌入式与机器人运动控制 | STM32&#x2F;FreeRTOS · 四足机器人 · 强化学习 · 状态估计">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6958d73347225_1767429939.webp">
+<meta property="article:author" content="zhxy">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6958d73347225_1767429939.webp"><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/page/2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '星语的博客',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">44</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">星语的博客</h1><div id="site_social_icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="post_cover left"><a href="/2026/05/17/aigc_art_styles_guide/" title="30 种 AIGC 视觉风格速查"><img class="post-bg" src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="30 种 AIGC 视觉风格速查" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/2026/05/17/aigc_art_styles_guide/" title="30 种 AIGC 视觉风格速查">30 种 AIGC 视觉风格速查</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-05-16T17:04:17.727Z" title="发表于 2026-05-17 01:04:17">2026-05-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%AE%BE%E8%AE%A1/">设计</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/AIGC/">AIGC</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E7%BE%8E%E6%9C%AF%E9%A3%8E%E6%A0%BC/">美术风格</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E8%AE%BE%E8%AE%A1/">设计</a></span></div><div class="content">  田野指南 30种AIGC视觉语言  全图豆包AI生成 · 2026   01 · 半调网点   1873 年，德国人 Georg Meisenbach 用一块刻满细密网格的玻璃屏把照片拆成了大小不一的圆点——本 来只是报纸印刷的一种妥协：油墨只能印纯色，要么黑要么白。Lichtenstein 在 1961 年把这个妥协放 大成了波普的视觉基因。那些本该藏在印刷品底层的网点突然变成了主角。此后你看到网点就想到印刷 品——这就是风格的形成。halftone dot pattern, Ben-Day dots, comic book style, bold primary colors, screen printing texture, Lichtenstein inspired, misregistration effect --ar 2:3   02 · 颗粒噪点   数码相机工程师花了几十年消灭噪点，胶片摄影师却花了一辈子迷恋它。Tri-X 400 的黑白颗粒里有 整个二十世纪的街头——Robert Frank 的美国人、森山大道的东京。清晰是一种谎言。噪点是反完美的 宣言；...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2026/05/12/quadruped_reward_design/" title="奖励函数才是四足 RL 的灵魂"><img class="post-bg" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="奖励函数才是四足 RL 的灵魂" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/2026/05/12/quadruped_reward_design/" title="奖励函数才是四足 RL 的灵魂">奖励函数才是四足 RL 的灵魂</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-05-12T04:36:46.416Z" title="发表于 2026-05-12 12:36:46">2026-05-12</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%8E%A7%E5%88%B6/">控制</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%A5%96%E5%8A%B1%E5%87%BD%E6%95%B0/">奖励函数</a></span></div><div class="content">四足机器人 Locomotion 奖励函数设计——从步行到奔跑，每一分奖励的来龙去脉 如果你已经搭好了 Isaac Lab 环境、写好了 PPO 训练脚本、加载好了四足机器人的 URDF，然后满怀期待地敲下 python scripts/train.py，等着机器狗走出来——结果它要么原地抽搐，要么侧翻在地，要么转圈像个陀螺——恭喜你，欢迎来到奖励函数设计的世界。 强化学习社区有一句老话：“Reward is the hypothesis of the designer.” 在四足 locomotion 这个任务上，这句话格外准确。机器狗的策略网络可以有上百万参数，但决定它最终学会什么行为的，归根结底是你写在 compute_reward() 函数里的那几行代码。同样的网络结构、同样的超参数、同样的仿真环境，换一套权重系数，学出来的步态可能截然不同——有的沉稳如波士顿动力的 Spot，有的则像喝醉了的柯基。 然而，关于奖励函数的内容，大多数教程要么一笔带过（“我们使用了一组精心设计的奖励项，详见论文附录”），要么只给出最终公式而不解释为什么这么设。这篇博客的目标是把奖励函数的每个...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2026/05/09/dqn_algorithm_tutorial/" title="从 Q-learning 到 DQN，一步步推演"><img class="post-bg" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从 Q-learning 到 DQN，一步步推演" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/2026/05/09/dqn_algorithm_tutorial/" title="从 Q-learning 到 DQN，一步步推演">从 Q-learning 到 DQN，一步步推演</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-05-09T11:11:40.887Z" title="发表于 2026-05-09 19:11:40">2026-05-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/DQN/">DQN</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E7%AE%97%E6%B3%95/">算法</a></span></div><div class="content">DQN 算法超详尽教程——从 Q-table 到深度强化学习 如果说 Q-learning 是强化学习的&quot;Hello World&quot;，那 DQN（Deep Q-Network）就是深度强化学习真正走出实验室、进入公众视野的里程碑。2013 年，DeepMind 的 Mnih 等人在 NIPS 发表 Playing Atari with Deep Reinforcement Learning，用一个卷积神经网络直接从原始像素输入学到了 Atari 2600 平台上 6 款游戏（后来扩展到 49 款）中超越人类专业玩家水平的控制策略。这篇工作的冲击力在于：它首次干净利落地证明了，深度神经网络可以在强化学习框架下进行稳定训练，而不需要任何手工特征工程。两年后，这篇论文的改进版登上了 Nature，标题只有三个词：Human-level control through deep reinforcement learning。从此，深度强化学习进入了爆发期。 DQN 之所以经典，不在于它用了多复杂的数学工具，而在于它用两个看似简单的工程技巧——经验回放（Experienc...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2026/03/29/publicity_group/" title="运营组成长计划"><img class="post-bg" src="https://img.cdn1.vip/i/69c8c30b2d8c3_1774764811.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="运营组成长计划" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/2026/03/29/publicity_group/" title="运营组成长计划">运营组成长计划</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-03-29T06:11:09.397Z" title="发表于 2026-03-29 14:11:09">2026-03-29</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E7%AE%A1%E7%90%86/">管理</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E7%AE%A1%E7%90%86/">管理</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E8%BF%90%E8%90%A5/">运营</a></span></div><div class="content">机器人战队运营组成长计划 一、写在前面 我们队伍的运营组不是打杂组的，也不是可有可无的附属品 。 对于一支长期参赛的机器人战队来说，技术组决定机器人能不能跑起来，运营组决定战队能不能稳定传承、持续招新、形成影响力、积累文化，并在校内外建立清晰、可信、可传播的形象。比赛成绩当然重要，所有人都看重比分和名次，但真正让一支队伍走得更远的，往往是组织能力、内容能力、活动能力与对外沟通能力的长期积累。 ROBOCON 与其他机器人竞赛一样，具有明显的赛季性、项目制、强协作、高投入特点。赛场上能被看见的，是机器人、队员和结果；赛场外真正维系队伍正常运转的，是纳新、培训、活动策划、宣传、对外交流、资料积累与文化传承。 运营组的成员，不应该只是单纯的能发推文，或者能剪视频，还应该具有下面的能力：  能了解战队运行规则、与队员建立良好沟通 能独立承接宣传与活动任务 能与技术组高效协同 能与其他学校、企业加强交流   二、运营组的定位 运营组是做什么的 在我们战队中，运营组主要承担以下职责：   宣传 负责战队在校内外平台的整体形象塑造与内容发布，以及文创队服等特色周边制作。   策划 负责招新宣讲...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2026/03/28/h7_dma/" title="H723 上 DMA 读不到数据？查 D-Cache 和内存域"><img class="post-bg" src="https://img.cdn1.vip/i/69c8c42418811_1774765092.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="H723 上 DMA 读不到数据？查 D-Cache 和内存域" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/2026/03/28/h7_dma/" title="H723 上 DMA 读不到数据？查 D-Cache 和内存域">H723 上 DMA 读不到数据？查 D-Cache 和内存域</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-03-28T13:42:14.079Z" title="发表于 2026-03-28 21:42:14">2026-03-28</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/STM32/">STM32</a></span></div><div class="content">H723 上 DMA 读不到数据？查 D-Cache 和内存域 在 STM32H723 上写 DMA,几乎每个人都会撞上同一堵墙:HAL_UART_Receive_DMA() 明明正常返回,缓冲区里的数据却纹丝不动;ADC 采回来的值一会儿全 0,一会儿又&quot;好了&quot;;更诡异的是,把数组改成全局变量、加个 static、甚至换个大小,症状居然跟着变。 这几种现象凑在一起,基本能排除&quot;外设时序配错了&quot;这条路,矛头指向同一个方向:H7 的内存架构。 Cortex-M7 带 32KB I-Cache 和 32KB D-Cache,内部又按 D1/D2/D3 分成三个域,SRAM 散落在不同总线上,还留了 DTCM/ITCM 这种 CPU 私有的快速内存。所以&quot; DMA 不工作&quot;背后,通常就三类问题:  Buffer 放进了 DMA 根本够不着的内存区(最常见是 DTCM) Buffer 位置没错,但 D-Cache 让 CPU 和 DMA 看到的是两份数据 多个主设备真在抢总线带宽  下面按排查顺序展开,而不是按理论顺序。 先记住...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/03/18/quadruped_control_theory_cn/" title="四足机器人控制理论（公式推导汇总）">四足机器人控制理论（公式推导汇总）</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-03-17T16:46:40.298Z" title="发表于 2026-03-18 00:46:40">2026-03-18</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%8E%A7%E5%88%B6/">控制</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/MPC/">MPC</a></span></div><div class="content">四足机器人控制统一技术文档（公式推导版）  目标：给出一套从单腿运动学 → 全身动力学 → MPC / WBC / RL 的统一数学体系。 采用对象：主流 12 自由度串联四足（浮动基座 + 4 条 3 自由度腿）。 说明：若你的本体是 8 自由度并联腿或五连杆腿，只需要替换“单腿几何闭环、雅可比、单腿惯性”部分；从浮动基座动力学、状态估计、MPC、WBC 到 RL 的整体框架不变。   0. 总体建模对象与控制链 四足机器人广义坐标选为 $$ q = \begin{bmatrix} p_B \ \Theta_B \ q_j \end{bmatrix} \in \mathbb{R}^{6+n}, \qquad n=12, $$ 其中  $p_B\in\mathbb{R}^3$：机身质心位置； $\Theta_B$：机身姿态参数（欧拉角或四元数最小参数）； $q_j\in\mathbb{R}^{12}$：12 个关节角； 浮动基速度更适合写成 $$ \nu = \begin{bmatrix} v_B \ \omega_B \ \dot q_j \end{bmatrix}\in\ma...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2026/03/17/isaaclab_prj/" title="IsaacLab 入门踩坑记录"><img class="post-bg" src="https://img.cdn1.vip/i/6ab2c32171526_1790100257.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="IsaacLab 入门踩坑记录" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/2026/03/17/isaaclab_prj/" title="IsaacLab 入门踩坑记录">IsaacLab 入门踩坑记录</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-03-17T14:31:28.438Z" title="发表于 2026-03-17 22:31:28">2026-03-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%9C%BA%E5%99%A8%E4%BA%BA/">机器人</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%8E%A7%E5%88%B6/">控制</a></span></div><div class="content">Isaac Lab External 项目完整工作流 本教程面向已经配置好Isaaclab强化学习环境的新手玩家 项目仓库：https://github.com/Leggedsys/legged_train/tree/main 第一次新建一个空的IsaacLab外部项目，除了跑一跑倒立摆的示例，我也不知道下一步要做什么。仓库是新的，我的目标是训练一条机器狗，下一步要干啥？：先放URDF ？写 env ？先写 PPO 配置？还是去啃官方教程？本人想做一篇文档教程作为参考，把训练一台机器狗这个事，完整记录一下。 整个过程其实比较简单：先把项目变成一个能被IsaacLab 识别的Python扩展，再把机器人资产接进来，然后围绕这台机器人写配置、场景、环境和奖励，最后再接上PPO训练与回放脚本。难点从来不在于某一步特别神秘，我们第一次做isaaclab项目时，大概已经知道我要做的无非就这些事，但不知道从何开始，也不知道这些文件到底是干啥的。只要这条线理顺了，后面想加入平地gait、rough terrain、抗扰动或者sim-to-real 扩展，其实都会顺很多。 项目环境准备 我的项目...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2026/03/16/quadruped_mpc_math_qp/" title="四足机器人 MPC 的数学建模与 QP 推导"><img class="post-bg" src="https://img.cdn1.vip/i/69b969f530f1b_1773758965.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足机器人 MPC 的数学建模与 QP 推导" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/2026/03/16/quadruped_mpc_math_qp/" title="四足机器人 MPC 的数学建模与 QP 推导">四足机器人 MPC 的数学建模与 QP 推导</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-03-16T09:54:29.375Z" title="发表于 2026-03-16 17:54:29">2026-03-16</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%8E%A7%E5%88%B6/">控制</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/MPC/">MPC</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E4%BC%98%E5%8C%96/">优化</a></span></div><div class="content">四足机器人 MPC 的数学建模与 QP 推导 很多关于四足机器人 MPC 的文章，要么停留在“模型预测控制很适合动态 locomotion”的概念层面，要么直接从论文里搬出一组矩阵，读者知道符号长什么样，却不知道这些矩阵为什么会这样出现。真正做开发时，最难的部分并不是把现成公式抄进代码，而是要把几个问题真正想清楚：为什么整机建模时通常从单刚体模型开始，而不是直接从全身动力学开始；为什么优化变量通常选足端接触力，而不是关节力矩；连续时间动力学怎样走到离散时间模型；离散预测模型怎样进一步变成一个标准的二次规划问题；摩擦锥、摆动腿零力和法向力上下限这些约束又是怎样写进 QP 的。 这篇文章就只做一件事：把四足机器人 MPC 里最核心的数学链条，从建模一路推到 QP。它不是一篇 broad overview，也不是一篇以工程经验为主的调参手册，而是偏理论和可实现之间的那一层。写完这一篇之后，你至少应该能够回答下面几个关键问题。第一，MPC 在四足机器人中控制的对象到底是什么。第二，单刚体模型的状态变量和输入变量该怎样选。第三，为什么预测控制问题最终会落成一个 QP，而不是一堆看不出结构的...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2026/03/16/c_function_pointer_vtable_blog/" title="用函数指针在 C 里模拟虚函数表"><img class="post-bg" src="https://img.cdn1.vip/i/69b967e9d0aa8_1773758441.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="用函数指针在 C 里模拟虚函数表" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/2026/03/16/c_function_pointer_vtable_blog/" title="用函数指针在 C 里模拟虚函数表">用函数指针在 C 里模拟虚函数表</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-03-15T16:36:33.656Z" title="发表于 2026-03-16 00:36:33">2026-03-16</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%9C%BA%E5%99%A8%E4%BA%BA/">机器人</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/C%E8%AF%AD%E8%A8%80/">C语言</a></span></div><div class="content">C语言中的函数指针与虚函数表模拟 在C语言模拟面向对象的技巧里，函数指针和虚函数表风格的操作表，是最核心的一层机制。当系统开始管理越来越多的设备、模块和控制逻辑时，单纯依靠一堆分散的函数和条件分支，代码会越来越难维护。 在嵌入式系统中，如何用 C 语言的函数指针模拟“对象方法”，再进一步模拟“虚函数表”和“多态调用”？  一、为什么普通 C 写法会越来越难维护 先看最朴素的写法。假设我们有两类电机：  DJI 电机 DM 电机  一开始也许只需要做“使能”： if (motor_type == DJI_MOTOR) &#123;    dji_motor_enable();&#125; else if (motor_type == DM_MOTOR) &#123;    dm_motor_enable();&#125; 后来需求变多了，还要设置目标值、解析反馈、执行控制更新： if (motor_type == DJI_MOTOR) &#123;    dji_motor_enable();    dji_motor_set_ref(ref);    dji_motor_deco...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2026/03/16/c_language_oop_robotics_blog/" title="在 C 语言里玩面向对象"><img class="post-bg" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="在 C 语言里玩面向对象" loading='lazy'></a></div><div class="recent-post-info"><a class="article-title" href="/2026/03/16/c_language_oop_robotics_blog/" title="在 C 语言里玩面向对象">在 C 语言里玩面向对象</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-03-15T16:22:54.915Z" title="发表于 2026-03-16 00:22:54">2026-03-16</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="content">C语言模拟面向对象 很多人第一次看到这种代码风格时，都会有一个问题：“用 C 语言写出面向对象的样子，是不是显得更专业” 我的看法是：专业不在于“像不像 C++”，而在于这套写法能不能真正解决工程问题。 对于机器人嵌入式控制系统来说，系统里往往同时存在底盘、电机、升降机构、武器机构、CAN 通信、PID 控制、任务调度等多个层次。如果继续用“满地全局变量 + 一堆 switch-case + 到处散落的初始化函数”去组织代码，随着功能变多，系统很快就会变得难以维护。 这时候，C 语言里的几个经典手段——结构体封装、函数指针、组合关系、统一初始化接口、对象注册——就能模拟出一套足够实用的“面向对象”风格。 这篇文章就结合一套机器人电机控制代码，聊聊：  为什么嵌入式系统里要用 C 模拟面向对象 你的这套代码到底“对象化”在什么地方 这种写法在机器人控制系统里有什么实际价值 这种设计什么时候值得用，什么时候会过度设计 基于现有代码，还能做哪些工程上的改进   1. 为什么 C 语言也要“对象化”？ 在桌面开发里，大家很容易直接想到 C++、Rust 这类更现代的语言；但在嵌入式世界，...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/#content-inner">3</a><a class="extend next" rel="next" href="/page/3/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">嵌入式与机器人运动控制 | STM32/FreeRTOS · 四足机器人 · 强化学习 · 状态估计</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">44</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"><img src="https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</a><time datetime="2026-09-22T19:00:00.000Z" title="发表于 2026-09-23 03:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层"><img src="https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="通信协议名词，都该归到 OSI 的哪一层"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层">通信协议名词，都该归到 OSI 的哪一层</a><time datetime="2026-09-22T18:00:00.000Z" title="发表于 2026-09-23 02:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"><img src="https://img.cdn1.vip/i/6ab2c3da84f46_1790100442.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看</a><time datetime="2026-09-22T17:30:00.000Z" title="发表于 2026-09-23 01:30:00">2026-09-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/07/policy_gradient_theorem/" title="策略梯度定理推导">策略梯度定理推导</a><time datetime="2026-08-06T16:00:00.000Z" title="发表于 2026-08-07 00:00:00">2026-08-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/17/blectr_app_development/" title="给机器人写了个安卓蓝牙遥控 App">给机器人写了个安卓蓝牙遥控 App</a><time datetime="2026-06-16T18:49:52.279Z" title="发表于 2026-06-17 02:49:52">2026-06-17</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%8D%8A%E5%AF%BC%E4%BD%93/"><span class="card-category-list-name">半导体</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/"><span class="card-category-list-name">嵌入式</span><span class="card-category-list-count">7</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/"><span class="card-category-list-name">强化学习</span><span class="card-category-list-count">8</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"><span class="card-category-list-name">机器学习</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E7%AE%A1%E7%90%86/"><span class="card-category-list-name">管理</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%AE%BE%E8%AE%A1/"><span class="card-category-list-name">设计</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/"><span class="card-category-list-name">足式机器人</span><span class="card-category-list-count">4</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/%E5%A5%96%E5%8A%B1%E5%87%BD%E6%95%B0/" style="font-size: 1.1em; color: #999">奖励函数</a> <a href="/tags/IMU/" style="font-size: 1.1em; color: #999">IMU</a> <a href="/tags/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/" style="font-size: 1.44em; color: #99a7ba">足式机器人</a> <a href="/tags/AIGC/" style="font-size: 1.1em; color: #999">AIGC</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 1.16em; color: #999b9e">机器学习</a> <a href="/tags/%E6%8E%A7%E5%88%B6/" style="font-size: 1.39em; color: #99a4b4">控制</a> <a href="/tags/FreeRTOS/" style="font-size: 1.1em; color: #999">FreeRTOS</a> <a href="/tags/%E5%BE%AE%E7%94%B5%E5%AD%90/" style="font-size: 1.1em; color: #999">微电子</a> <a href="/tags/%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/" style="font-size: 1.1em; color: #999">通信协议</a> <a href="/tags/%E6%95%B0%E5%AD%A6/" style="font-size: 1.27em; color: #99a0a9">数学</a> <a href="/tags/EKF/" style="font-size: 1.1em; color: #999">EKF</a> <a href="/tags/STM32/" style="font-size: 1.16em; color: #999b9e">STM32</a> <a href="/tags/Mahony/" style="font-size: 1.1em; color: #999">Mahony</a> <a href="/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/" style="font-size: 1.1em; color: #999">操作系统</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 1.21em; color: #999ea4">深度学习</a> <a href="/tags/%E8%AE%BE%E8%AE%A1/" style="font-size: 1.1em; color: #999">设计</a> <a href="/tags/PPO/" style="font-size: 1.1em; color: #999">PPO</a> <a href="/tags/%E4%BC%98%E5%8C%96/" style="font-size: 1.1em; color: #999">优化</a> <a href="/tags/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/" style="font-size: 1.1em; color: #999">卡尔曼滤波</a> <a href="/tags/DQN/" style="font-size: 1.1em; color: #999">DQN</a> <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" style="font-size: 1.5em; color: #99a9bf">强化学习</a> <a href="/tags/Android/" style="font-size: 1.1em; color: #999">Android</a> <a href="/tags/%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/" style="font-size: 1.1em; color: #999">算法设计</a> <a href="/tags/%E7%8A%B6%E6%80%81%E4%BC%B0%E8%AE%A1/" style="font-size: 1.1em; color: #999">状态估计</a> <a href="/tags/%E7%BE%8E%E6%9C%AF%E9%A3%8E%E6%A0%BC/" style="font-size: 1.1em; color: #999">美术风格</a> <a href="/tags/python/" style="font-size: 1.1em; color: #999">python</a> <a href="/tags/C%E8%AF%AD%E8%A8%80/" style="font-size: 1.1em; color: #999">C语言</a> <a href="/tags/%E8%BF%9B%E7%A8%8B/" style="font-size: 1.1em; color: #999">进程</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 1.1em; color: #999">损失函数</a> <a href="/tags/%E4%BC%98%E5%8C%96%E5%99%A8/" style="font-size: 1.1em; color: #999">优化器</a> <a href="/tags/RTOS/" style="font-size: 1.16em; color: #999b9e">RTOS</a> <a href="/tags/%E8%BF%90%E8%90%A5/" style="font-size: 1.1em; color: #999">运营</a> <a href="/tags/%E8%93%9D%E7%89%99/" style="font-size: 1.1em; color: #999">蓝牙</a> <a href="/tags/OSI/" style="font-size: 1.1em; color: #999">OSI</a> <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/" style="font-size: 1.33em; color: #99a2af">嵌入式</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E4%BA%BA/" style="font-size: 1.27em; color: #99a0a9">机器人</a> <a href="/tags/%E7%AE%A1%E7%90%86/" style="font-size: 1.1em; color: #999">管理</a> <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" style="font-size: 1.1em; color: #999">计算机网络</a> <a href="/tags/DRL/" style="font-size: 1.1em; color: #999">DRL</a> <a href="/tags/%E7%AD%96%E7%95%A5%E6%A2%AF%E5%BA%A6/" style="font-size: 1.1em; color: #999">策略梯度</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/09/">
+            <span class="card-archive-list-date">
+              九月 2026
+            </span>
+            <span class="card-archive-list-count">3</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/08/">
+            <span class="card-archive-list-date">
+              八月 2026
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/06/">
+            <span class="card-archive-list-date">
+              六月 2026
+            </span>
+            <span class="card-archive-list-count">4</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/05/">
+            <span class="card-archive-list-date">
+              五月 2026
+            </span>
+            <span class="card-archive-list-count">5</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/03/">
+            <span class="card-archive-list-date">
+              三月 2026
+            </span>
+            <span class="card-archive-list-count">9</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/02/">
+            <span class="card-archive-list-date">
+              二月 2026
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/01/">
+            <span class="card-archive-list-date">
+              一月 2026
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">24</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-09-22T18:14:53.538Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>

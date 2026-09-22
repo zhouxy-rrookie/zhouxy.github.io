@@ -1,0 +1,504 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>通信协议名词，都该归到 OSI 的哪一层 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="通信协议名词，都该归到 OSI 的哪一层 学通信最烦的就是名词多。UART、SPI、I2C、CAN、RS485、TCP、UDP、HTTP、MQTT……每一个都眼熟,但真让你说清楚「它是什么、在哪一层、跟旁边的什么关系」,经常就卡住了。 单片机的总线和计算机网络的协议,看起来是两个世界,其实能塞进同一套坐标系里:OSI 分层模型。这篇文章就把这些名词挨个归位,顺便说说它们是怎么串成一条链的。 先立一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="通信协议名词，都该归到 OSI 的哪一层">
+<meta property="og:url" content="https://zhxylabflow.xyz/2026/09/23/communication_protocols_layers/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="通信协议名词，都该归到 OSI 的哪一层 学通信最烦的就是名词多。UART、SPI、I2C、CAN、RS485、TCP、UDP、HTTP、MQTT……每一个都眼熟,但真让你说清楚「它是什么、在哪一层、跟旁边的什么关系」,经常就卡住了。 单片机的总线和计算机网络的协议,看起来是两个世界,其实能塞进同一套坐标系里:OSI 分层模型。这篇文章就把这些名词挨个归位,顺便说说它们是怎么串成一条链的。 先立一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp">
+<meta property="article:published_time" content="2026-09-22T18:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-22T18:14:34.947Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="通信协议">
+<meta property="article:tag" content="计算机网络">
+<meta property="article:tag" content="单片机">
+<meta property="article:tag" content="OSI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "通信协议名词，都该归到 OSI 的哪一层",
+  "url": "https://zhxylabflow.xyz/2026/09/23/communication_protocols_layers/",
+  "image": "https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp",
+  "datePublished": "2026-09-22T18:00:00.000Z",
+  "dateModified": "2026-09-22T18:14:34.947Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "https://zhxylabflow.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/2026/09/23/communication_protocols_layers/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '通信协议名词，都该归到 OSI 的哪一层',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">44</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">通信协议名词，都该归到 OSI 的哪一层</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">通信协议名词，都该归到 OSI 的哪一层</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-22T18:00:00.000Z" title="发表于 2026-09-23 02:00:00">2026-09-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-22T18:14:34.947Z" title="更新于 2026-09-23 02:14:34">2026-09-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>通信协议名词，都该归到 OSI 的哪一层</h1>
+<p>学通信最烦的就是名词多。UART、SPI、I2C、CAN、RS485、TCP、UDP、HTTP、MQTT……每一个都眼熟,但真让你说清楚「它是什么、在哪一层、跟旁边的什么关系」,经常就卡住了。</p>
+<p>单片机的总线和计算机网络的协议,看起来是两个世界,其实能塞进同一套坐标系里:OSI 分层模型。这篇文章就把这些名词挨个归位,顺便说说它们是怎么串成一条链的。</p>
+<h2 id="先立一个坐标系">先立一个坐标系</h2>
+<p>分层这件事,不用把七层背得滚瓜烂熟,记住一条主线就够了:</p>
+<p>数据要传出去,得解决「<strong>怎么在线上表示 0 和 1</strong>」(物理层),「<strong>怎么把 0 和 1 组成有意义的帧、发给谁</strong>」(数据链路层),「<strong>怎么跨网络找到目的地</strong>」(网络层),「<strong>怎么保证传对、传稳</strong>」(传输层),「<strong>上面跑的具体业务</strong>」(应用层)。</p>
+<p>而单片机里的那堆总线——UART、SPI、I2C、CAN、RS485——绝大多数只干到<strong>物理层 + 数据链路层</strong>就停了。计网里的 IP、TCP、HTTP 这些,才往网络层、传输层、应用层走。这就是为什么它们平时看起来像两个世界:一个在底层管「位」,一个在上层管「包」和「业务」。</p>
+<p>下面分开看。</p>
+<h2 id="单片机侧-那些-总线-其实是底层">单片机侧:那些&quot;总线&quot;其实是底层</h2>
+<p><strong>UART</strong>,最朴素的异步串行。两根线,TX 和 RX,约定好波特率,靠起始位和停止位框出一帧。它只有电气和时序(物理层),帧格式得你自己定——数据位几位、要不要校验位。所以 UART 的「协议」其实是「你俩商量好就行」,这也解释了为什么同一个 UART,不同设备要配对波特率。</p>
+<p><strong>SPI</strong>,同步串行,四根线:时钟 SCLK、主机出从机进 MOSI、主机进从机出 MISO、片选 CS。因为带时钟,速度快,适合板内高速器件——比如我给四足机器人读 BMI088 陀螺仪,走的就是 SPI。</p>
+<p><strong>I2C</strong>,也是同步串行,但只要两根线:SDA 数据、SCL 时钟。比 SPI 省线,而且靠地址区分从机,一条总线上能挂多个器件,还带 ACK 应答。速度不如 SPI,但省引脚。</p>
+<p><strong>CAN</strong>,汽车和机器人里最常见的差分总线。它特殊在:物理层和帧格式都是标准化的,还带仲裁(谁 ID 优先级高谁先发)和 CRC 校验,多主通信。我 RoboCon 底盘上的 8 个舵轮电机,就是挂 CAN 总线控制的。</p>
+<p><strong>RS232 / RS485</strong>,严格说只是<strong>电气标准</strong>,不是协议。RS232 点对点,RS485 差分、能挂多点、抗干扰强,四足机器人的 12 路伺服就走双 RS485。RS485 上面跑什么帧格式,依然是你自己定的——它给了你一根可靠的「线」,没给你「语言」。</p>
+<p>这几样东西有个共同点:<strong>它们解决的是「位怎么传」,不解决「数据怎么走网络」</strong>。所以它们都在物理层和数据链路层,这也是为什么嵌入式里聊通信,和计网里聊通信,感觉像两个话题。</p>
+<p>把这几个总线放一起比,区别就清楚了:</p>
+<table>
+<thead>
+<tr>
+<th>总线</th>
+<th>线数</th>
+<th>典型速度</th>
+<th>距离</th>
+<th>拓扑</th>
+<th>双工</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UART</td>
+<td>2(TX/RX)</td>
+<td>几十 kbps~几 Mbps</td>
+<td>短(板内/数米)</td>
+<td>点对点</td>
+<td>全双工</td>
+</tr>
+<tr>
+<td>SPI</td>
+<td>4+(片选)</td>
+<td>几十 Mbps</td>
+<td>短(板内)</td>
+<td>一主多从</td>
+<td>全双工</td>
+</tr>
+<tr>
+<td>I2C</td>
+<td>2(SDA/SCL)</td>
+<td>100k/400k/1M</td>
+<td>短(板内)</td>
+<td>多主多从</td>
+<td>半双工</td>
+</tr>
+<tr>
+<td>CAN</td>
+<td>2(CANH/CANL)</td>
+<td>最高 1M(经典)</td>
+<td>几十米~上千米</td>
+<td>多主</td>
+<td>半双工</td>
+</tr>
+<tr>
+<td>RS485</td>
+<td>2(A/B)</td>
+<td>最高约 10M(短距)</td>
+<td>上千米</td>
+<td>一主多从/多点</td>
+<td>半双工</td>
+</tr>
+</tbody>
+</table>
+<p>几个记忆点:线越少越省,但通常越慢或越复杂(I2C 两根线换来了寻址和 ACK);距离越远越要差分(CAN、RS485 都是差分);UART/SPI 全双工,I2C/CAN/RS485 半双工。</p>
+<h2 id="计网侧-往上走-开始管-包-和-业务">计网侧:往上走,开始管&quot;包&quot;和&quot;业务&quot;</h2>
+<p>再往上,就到了计网熟悉的那些词。</p>
+<p><strong>IP</strong>,网络层。干一件事:给设备一个地址,把包从源地址送到目的地址。它不保证送到、不保证顺序,只负责「寻址和路由」。</p>
+<p><strong>ARP</strong>,网络层的辅助,把 IP 地址翻译成 MAC 地址(局域网里真正用来寻址的)。</p>
+<p><strong>ICMP</strong>,网络层,ping 用的就是它,用来探测网络通不通。</p>
+<p><strong>TCP</strong>,传输层。在 IP 这个「不靠谱的邮差」上面,加了可靠传输:三次握手、确认重传、流量控制。代价是延迟和开销。适合不能丢数据的场景——文件、网页、MQTT 这种。</p>
+<p>可靠传输靠几个机制扛着:<strong>三次握手</strong>建连接(双方都确认能收发)、<strong>四次挥手</strong>断开、<strong>滑动窗口</strong>做流量控制、<strong>超时重传</strong>兑底。这就是课本传输层那一章的核心——TCP 用一堆机制,把 IP 这个「尽力而为」的底层,包装成「看起来可靠」的通道。</p>
+<p><strong>UDP</strong>,传输层,和 TCP 相反:无连接、不重传、低延迟。适合实时性优先、丢几帧没关系的场景——视频流、游戏、机器人实时遥测。</p>
+<p><strong>HTTP / HTTPS</strong>,应用层。跑在 TCP 之上,浏览器和服务器之间传网页、传接口数据。HTTPS 多一层 TLS 加密。</p>
+<p><strong>DNS</strong>,应用层,把域名翻译成 IP。你输 <code>zhxylabflow.xyz</code>,先得靠它找到对应 IP。</p>
+<p><strong>DHCP</strong>,应用层,设备接入网络时自动分 IP。</p>
+<p><strong>MQTT</strong>,应用层,物联网里最常用的发布/订阅协议,跑在 TCP 上。设备往「主题」上发消息,谁订阅了这个主题谁收到,适合海量设备、低带宽。</p>
+<p><strong>WebSocket</strong>,应用层,在 HTTP 基础上建立的<strong>全双工</strong>通道,服务器能主动推消息给客户端,不像 HTTP 只能客户端问一句、服务器答一句。</p>
+<p>注意到没:计网这一套,和单片机那套是<strong>接着往上盖</strong>的。CAN 把数据从电机送到 MCU,这是底层;MCU 要把数据发到云端,才轮到 IP、TCP、MQTT 出场。</p>
+<h2 id="数据是怎么套娃的">数据是怎么套娃的</h2>
+<p>每个词都归了层,还有个东西值得单独说:数据从应用层往下走,每一层都会给它套一个「头」,这就是<strong>封装</strong>。</p>
+<p>发送时:应用数据 → 加 TCP 头(传输层)→ 加 IP 头(网络层)→ 加以太网帧头(链路层)→ 变成电平(物理层)。接收时反过来,一层层扒掉头,就是<strong>解封装</strong>。</p>
+<p>理解这套套娃,就懂了分层的精髓:每层只关心自己那一层的头和字段,上层数据对它来说就是个「载荷」。</p>
+<h2 id="再补几个常见的">再补几个常见的</h2>
+<p>上面是最常用的一批,实际还会碰到这些:</p>
+<ul>
+<li><strong>Modbus-RTU</strong>:工业里跑在 RS485 上的老牌协议,主从轮询、读寄存器。记住 Modbus 是应用层,RS485 是物理层,别搞混。</li>
+<li><strong>WiFi / 蓝牙 / Zigbee / LoRa / NB-IoT</strong>:无线通信技术,替代的是那根「线」(物理层+链路层),上面照样跑 TCP/IP 或 MQTT。</li>
+<li><strong>WebSocket</strong>:应用层全双工,服务器能主动推消息给客户端。</li>
+</ul>
+<h2 id="一条链把它们串起来">一条链把它们串起来</h2>
+<p>把这两拨名词接起来看,一条完整的链路大概是这样的——就用我项目里的真实情况举例:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">传感器芯片(IMU) ──SPI──▶ MCU            ← 板内,物理+链路层</span><br><span class="line">伺服电机/舵轮  ──RS485 / CAN──▶ MCU      ← 设备总线,物理+链路层</span><br><span class="line">上位机(MPC)   ──USB虚拟串口──▶ MCU       ← USB 上模拟 UART</span><br><span class="line">MCU/上位机    ──TCP + MQTT──▶ 云服务器    ← 传输层+应用层</span><br><span class="line">云服务器      ──HTTP/HTTPS──▶ 手机/网页   ← 应用层</span><br></pre></td></tr></table></figure>
+<p>从最底下到最顶上,每一段用的是哪一层的协议,一眼就清楚了。这也顺便回答了那个经典困惑:为什么嵌入式还要学计网?因为设备迟早要联网,数据迟早要从 RS485 那根线上,一路走到云端去。</p>
+<h2 id="一句话收尾">一句话收尾</h2>
+<p>分层模型不是用来背的,是用来给名词「定位」的。下次再看到一个陌生通信名词,先问一句「它在哪一层」,它和别的东西的关系,基本就出来了。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz/2026/09/23/communication_protocols_layers/">https://zhxylabflow.xyz/2026/09/23/communication_protocols_layers/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zhxylabflow.xyz" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE/">通信协议</a><a class="post-meta__tags" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a><a class="post-meta__tags" href="/tags/%E5%8D%95%E7%89%87%E6%9C%BA/">单片机</a><a class="post-meta__tags" href="/tags/OSI/">OSI</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"><img class="cover" src="https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post" loading='lazy'><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</div></div><div class="info-2"><div class="info-item-1">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波 做机器人，尤其是四足、无人机这类要「知道自己在哪、姿态什么样」的机器，状态估计是绕不过去的一关。 IMU 很便宜，但它给的是角速度和加速度，不是姿态、更不是速度。你想知道机身现在朝哪、在往哪动、走多快，都得靠「估」。于是就有了一整排算法：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波……名字一堆，经常分不清谁是谁、什么时候该用谁。 这篇文章把它们从头到尾捋一遍，讲清每个算法在解决什么问题、核心思想是什么、数学上怎么推出来的、彼此什么关系，最后落到四足机器人的实际场景。我自己在四足机器人上用 BMI088 做过 Mahony 姿态估计，互补滤波那部分会带上真实代码。 先理清：状态估计到底在估什么 以四足机器人为例，状态估计要回答三类问题：  姿态：机身当前的 roll / pitch / yaw，或者用四元数、旋转矩阵表示。 线速度 / 位置：机身往哪动、走多快、到哪了。 零偏：陀螺和加速度计都有零偏（bias），而且随温度漂移，得在线估出来，否则积分一下...</div></div></div></a><a class="pagination-related" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"><img class="cover" src="https://img.cdn1.vip/i/6ab2c3da84f46_1790100442.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看</div></div><div class="info-2"><div class="info-item-1">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看 操作系统课上的东西,很多都是干巴巴的文字:进程和线程的区别、PV 操作、死锁的四个必要条件。背的时候能背下来,但总觉得隔着一层——“到底什么时候会用到?” 直到我开始用 FreeRTOS 写四足机器人的固件,才发现这些东西根本不是课本里的抽象概念,而是每天都在代码里撞见的东西。这篇文章就把进程、同步互斥、死锁这三块,挨个搬到 FreeRTOS 里看一遍。 进程和线程,FreeRTOS 里只有一个 task 课本上最经典的一组概念:进程是资源分配的基本单位,有独立的地址空间;线程是调度的基本单位,共享所属进程的地址空间。 放到 FreeRTOS 里,这组概念会直接塌缩成一个东西:task。 原因很简单,FreeRTOS 跑在裸机 MCU 上,没有 MMU、没有虚拟内存,整个系统就一个地址空间。每个 task 有自己的栈和 TCB(Task Control Block),但所有 task 共享同一块全局内存。所以:  它像线程——独立执行流、独立栈、统一调度; 但它不是进程——没有地址空间隔离,一个 task 写坏内存,可能...</div></div></div></a></nav><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">嵌入式与机器人运动控制 | STM32/FreeRTOS · 四足机器人 · 强化学习 · 状态估计</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">44</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">通信协议名词，都该归到 OSI 的哪一层</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E7%AB%8B%E4%B8%80%E4%B8%AA%E5%9D%90%E6%A0%87%E7%B3%BB"><span class="toc-number">1.1.</span> <span class="toc-text">先立一个坐标系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%95%E7%89%87%E6%9C%BA%E4%BE%A7-%E9%82%A3%E4%BA%9B-%E6%80%BB%E7%BA%BF-%E5%85%B6%E5%AE%9E%E6%98%AF%E5%BA%95%E5%B1%82"><span class="toc-number">1.2.</span> <span class="toc-text">单片机侧:那些&quot;总线&quot;其实是底层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E7%BD%91%E4%BE%A7-%E5%BE%80%E4%B8%8A%E8%B5%B0-%E5%BC%80%E5%A7%8B%E7%AE%A1-%E5%8C%85-%E5%92%8C-%E4%B8%9A%E5%8A%A1"><span class="toc-number">1.3.</span> <span class="toc-text">计网侧:往上走,开始管&quot;包&quot;和&quot;业务&quot;</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%98%AF%E6%80%8E%E4%B9%88%E5%A5%97%E5%A8%83%E7%9A%84"><span class="toc-number">1.4.</span> <span class="toc-text">数据是怎么套娃的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%8D%E8%A1%A5%E5%87%A0%E4%B8%AA%E5%B8%B8%E8%A7%81%E7%9A%84"><span class="toc-number">1.5.</span> <span class="toc-text">再补几个常见的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%9D%A1%E9%93%BE%E6%8A%8A%E5%AE%83%E4%BB%AC%E4%B8%B2%E8%B5%B7%E6%9D%A5"><span class="toc-number">1.6.</span> <span class="toc-text">一条链把它们串起来</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%94%B6%E5%B0%BE"><span class="toc-number">1.7.</span> <span class="toc-text">一句话收尾</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"><img src="https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</a><time datetime="2026-09-22T19:00:00.000Z" title="发表于 2026-09-23 03:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层"><img src="https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="通信协议名词，都该归到 OSI 的哪一层"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层">通信协议名词，都该归到 OSI 的哪一层</a><time datetime="2026-09-22T18:00:00.000Z" title="发表于 2026-09-23 02:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"><img src="https://img.cdn1.vip/i/6ab2c3da84f46_1790100442.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看</a><time datetime="2026-09-22T17:30:00.000Z" title="发表于 2026-09-23 01:30:00">2026-09-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/07/policy_gradient_theorem/" title="策略梯度定理推导">策略梯度定理推导</a><time datetime="2026-08-06T16:00:00.000Z" title="发表于 2026-08-07 00:00:00">2026-08-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/17/blectr_app_development/" title="给机器人写了个安卓蓝牙遥控 App">给机器人写了个安卓蓝牙遥控 App</a><time datetime="2026-06-16T18:49:52.279Z" title="发表于 2026-06-17 02:49:52">2026-06-17</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>

@@ -1,0 +1,679 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>给机器人写了个安卓蓝牙遥控 App | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="从零写一个安卓蓝牙遥控 App——USB 串口、UVC 图传与自定义通信协议 前阵子为了控制一台机器人底盘，我需要一个手机遥控 App。市面上能搜到的蓝牙遥控器 App 要么功能过于简陋（就几个方向按钮），要么图传方案和自己用的不匹配。与其改别人的代码，不如自己写一个，反正需求也不算复杂：  通过 USB 串口（或者蓝牙 SPP）与机器人通信 通过 OTG 接入 UVC 视频采集卡显示 5.8G">
+<meta property="og:type" content="article">
+<meta property="og:title" content="给机器人写了个安卓蓝牙遥控 App">
+<meta property="og:url" content="https://zhxylabflow.xyz/2026/06/17/blectr_app_development/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="从零写一个安卓蓝牙遥控 App——USB 串口、UVC 图传与自定义通信协议 前阵子为了控制一台机器人底盘，我需要一个手机遥控 App。市面上能搜到的蓝牙遥控器 App 要么功能过于简陋（就几个方向按钮），要么图传方案和自己用的不匹配。与其改别人的代码，不如自己写一个，反正需求也不算复杂：  通过 USB 串口（或者蓝牙 SPP）与机器人通信 通过 OTG 接入 UVC 视频采集卡显示 5.8G">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6958d73347225_1767429939.webp">
+<meta property="article:published_time" content="2026-06-16T18:49:52.279Z">
+<meta property="article:modified_time" content="2026-09-22T16:46:11.344Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="机器人">
+<meta property="article:tag" content="蓝牙">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6958d73347225_1767429939.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "给机器人写了个安卓蓝牙遥控 App",
+  "url": "https://zhxylabflow.xyz/2026/06/17/blectr_app_development/",
+  "image": "https://img.cdn1.vip/i/6958d73347225_1767429939.webp",
+  "datePublished": "2026-06-16T18:49:52.279Z",
+  "dateModified": "2026-09-22T16:46:11.344Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "https://zhxylabflow.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/2026/06/17/blectr_app_development/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '给机器人写了个安卓蓝牙遥控 App',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">44</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">给机器人写了个安卓蓝牙遥控 App</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">给机器人写了个安卓蓝牙遥控 App</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-06-16T18:49:52.279Z" title="发表于 2026-06-17 02:49:52">2026-06-17</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-22T16:46:11.344Z" title="更新于 2026-09-23 00:46:11">2026-09-23</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>从零写一个安卓蓝牙遥控 App——USB 串口、UVC 图传与自定义通信协议</h1>
+<p>前阵子为了控制一台机器人底盘，我需要一个手机遥控 App。市面上能搜到的蓝牙遥控器 App 要么功能过于简陋（就几个方向按钮），要么图传方案和自己用的不匹配。与其改别人的代码，不如自己写一个，反正需求也不算复杂：</p>
+<ol>
+<li>通过 USB 串口（或者蓝牙 SPP）与机器人通信</li>
+<li>通过 OTG 接入 UVC 视频采集卡显示 5.8G 模拟图传画面</li>
+<li>支持摇杆、按键和矩阵操作，能切换多种工作模式</li>
+<li>通信协议自己定，灵活扩展</li>
+</ol>
+<p>这篇文章就记录一下这个 App 的完整设计与实现过程。</p>
+<hr>
+<h2 id="1-整体架构">1. 整体架构</h2>
+<p>项目使用 Kotlin + Jetpack 全家桶，没有引入复杂的架构框架。核心模块就四个文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">app/src/main/java/com/ek/blectr/</span><br><span class="line">├── MainActivity.kt          # 主界面 + 控制逻辑</span><br><span class="line">├── UsbSerialController.kt   # USB 串口通信封装</span><br><span class="line">├── UvcPreviewController.kt  # UVC 图传预览封装</span><br><span class="line">├── JoystickView.kt          # 遥杆控件（自定义 View）</span><br><span class="line">├── ThrottleSteeringView.kt  # 油门/转向双轴控件</span><br><span class="line">└── UpdateManager.kt         # 版本更新管理</span><br></pre></td></tr></table></figure>
+<p>从功能分层来看是这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">┌─────────────────────────────────────┐</span><br><span class="line">│  UI 层                              │</span><br><span class="line">│  (摇杆/按钮/切换开关/视频画面)       │</span><br><span class="line">├─────────────────────────────────────┤</span><br><span class="line">│  控制层                              │</span><br><span class="line">│  (摇杆值→指令帧→发送)               │</span><br><span class="line">├─────────────────────────────────────┤</span><br><span class="line">│  通信层                              │</span><br><span class="line">│  USB Serial → 机器人底盘             │</span><br><span class="line">│  UVC Preview → 图传画面              │</span><br><span class="line">└─────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+<p>控制层和 UI 层没有做严格的 MVVM 分离——这只是一个工具 App，不在手机上跑复杂状态机，保持简单即可。</p>
+<hr>
+<h2 id="2-USB-串口通信的实现">2. USB 串口通信的实现</h2>
+<h3 id="2-1-为什么用-USB-串口而不是经典蓝牙">2.1 为什么用 USB 串口而不是经典蓝牙</h3>
+<p>问题其实不是&quot;用哪个&quot;，而是&quot;能不能同时用&quot;。</p>
+<p>很多机器人使用 HC-05/HC-06 蓝牙模块通过串口通信，这是最常见的方式。但我的目标是：</p>
+<ol>
+<li>用 USB 有线连接更稳定，蓝牙 SPP 作为备选</li>
+<li>视频走单独的 5.8G 模拟图传链路</li>
+<li>控制链路单独走 USB 串口——不挤占带宽</li>
+</ol>
+<p>所以最终选择了 USB 串口作为主通信链路。USB 转串口芯片兼容性好，手机上用 OTG 线 + USB 转 TTL 模块就能连。</p>
+<h3 id="2-2-基于-usb-serial-for-android">2.2 基于 usb-serial-for-android</h3>
+<p>Android 的 USB 串口通信主要依赖 <code>com.github.mik3y:usb-serial-for-android</code> 这个库，它支持常见的 FTDI、CP2102、CH340、PL2303 等芯片。</p>
+<p><code>UsbSerialController</code> 的核心逻辑很直接：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UsbSerialController</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> activity: AppCompatActivity,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> onStatus: (String) -&gt; <span class="built_in">Unit</span>,</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> usbManager: UsbManager =</span><br><span class="line">        activity.getSystemService(Context.USB_SERVICE) <span class="keyword">as</span> UsbManager</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> serialPort: UsbSerialPort? = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getAvailableSerialDevices</span><span class="params">()</span></span>: List&lt;UsbDevice&gt; &#123;</span><br><span class="line">        <span class="keyword">val</span> allDrivers = UsbSerialProber.getDefaultProber().findAllDrivers(usbManager)</span><br><span class="line">        <span class="keyword">return</span> allDrivers</span><br><span class="line">            .map &#123; it.device &#125;</span><br><span class="line">            .filter &#123; !isVideoDevice(it) &#125;  <span class="comment">// 过滤掉 UVC 设备</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里有一个细节：<code>getAvailableSerialDevices()</code> 里做了视频设备过滤。因为同一个 USB 总线上可能同时接了串口模块和 UVC 采集卡，如果不过滤，设备选择列表里会出现混淆。</p>
+<p>连接过程其实就是三步：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">connectDevice</span><span class="params">(device: <span class="type">UsbDevice</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 1. 打开 USB 设备</span></span><br><span class="line">    <span class="keyword">val</span> connection = usbManager.openDevice(device)</span><br><span class="line">    <span class="comment">// 2. 找到对应的串口驱动</span></span><br><span class="line">    <span class="keyword">val</span> driver = UsbSerialProber.getDefaultProber()</span><br><span class="line">        .findAllDrivers(usbManager)</span><br><span class="line">        .firstOrNull &#123; it.device == device &#125;</span><br><span class="line">    <span class="keyword">val</span> port = driver.ports.first()</span><br><span class="line">    <span class="comment">// 3. 打开串口并配置参数</span></span><br><span class="line">    port.<span class="keyword">open</span>(connection)</span><br><span class="line">    port.setParameters(<span class="number">115200</span>, <span class="number">8</span>, STOPBITS_1, PARITY_NONE)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>数据发送就更简单了，直接从主线程的 ioExecutor 里调用：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">write</span><span class="params">(<span class="keyword">data</span>: <span class="type">ByteArray</span>)</span></span>: <span class="built_in">Boolean</span> &#123;</span><br><span class="line">    <span class="keyword">val</span> port = serialPort ?: <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">try</span> &#123;</span><br><span class="line">        port.write(<span class="keyword">data</span>, <span class="number">500</span>)</span><br><span class="line">        <span class="literal">true</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (e: IOException) &#123;</span><br><span class="line">        onStatus(<span class="string">&quot;USB 发送失败: <span class="subst">$&#123;e.message&#125;</span>&quot;</span>)</span><br><span class="line">        disconnect()</span><br><span class="line">        <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-USB-热插拔处理">2.3 USB 热插拔处理</h3>
+<p>用 BroadcastReceiver 监听 <code>UsbManager.ACTION_USB_DEVICE_DETACHED</code>，当设备拔出时自动断开连接：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">val</span> usbReceiver = <span class="keyword">object</span> : BroadcastReceiver() &#123;</span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onReceive</span><span class="params">(context: <span class="type">Context</span>, intent: <span class="type">Intent</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">when</span> (intent.action) &#123;</span><br><span class="line">            ACTION_USB_PERMISSION -&gt; &#123; <span class="comment">/* 权限结果处理 */</span> &#125;</span><br><span class="line">            UsbManager.ACTION_USB_DEVICE_DETACHED -&gt; &#123;</span><br><span class="line">                <span class="keyword">val</span> device = intent.getParcelableExtra&lt;UsbDevice&gt;(UsbManager.EXTRA_DEVICE)</span><br><span class="line">                <span class="keyword">if</span> (device != <span class="literal">null</span> &amp;&amp; device == connectedDevice) &#123;</span><br><span class="line">                    disconnect()</span><br><span class="line">                    onStatus(<span class="string">&quot;USB 设备已拔出&quot;</span>)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果不处理拔出事件，串口写入时会抛出 <code>IOException</code>，应用可能崩溃或无反应。</p>
+<hr>
+<h2 id="3-UVC-图传预览">3. UVC 图传预览</h2>
+<h3 id="3-1-为什么是-UVC">3.1 为什么是 UVC</h3>
+<p>现在的 5.8G 模拟图传接收机很多都是 AV 输出。要给手机用，需要一路：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">模拟图传接收机 → AV 输出 → UVC 视频采集卡 → OTG → 手机</span><br></pre></td></tr></table></figure>
+<p>UVC（USB Video Class）是 USB 视频设备的标准协议，市面上几十块钱的采集卡都支持。手机上通过 OTG 接入后，系统自动识别为摄像头设备。</p>
+<h3 id="3-2-使用-libusbCamera">3.2 使用 libusbCamera</h3>
+<p>图传预览用了 <code>org.uvccamera:lib</code> 这个库。核心是 <code>UvcPreviewController</code>，它封装了 UVC 设备的连接、预览启动和错误处理：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UvcPreviewController</span>(</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> activity: AppCompatActivity,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> textureView: TextureView,</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">val</span> onStatus: (String) -&gt; <span class="built_in">Unit</span>,</span><br><span class="line">) &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">getAvailableCameras</span><span class="params">()</span></span>: List&lt;UsbDevice&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> usbManager.deviceList.values</span><br><span class="line">            .filter &#123; isUvcDevice(it) &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">connectCamera</span><span class="params">(device: <span class="type">UsbDevice</span>)</span></span> &#123;</span><br><span class="line">        <span class="comment">// UVC 设备默认是 VIDEO 类型，不需要额外驱动</span></span><br><span class="line">        <span class="comment">// 直接从 USB Manager 打开即可</span></span><br><span class="line">        <span class="keyword">val</span> connection = usbManager.openDevice(device) ?: <span class="keyword">return</span></span><br><span class="line">        <span class="comment">// 启动预览</span></span><br><span class="line">        startPreview(connection)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意的是：</p>
+<ol>
+<li><strong>UVC 权限仍然是 USB 权限</strong>，与串口共用同一套权限机制</li>
+<li><strong>清晰度有限</strong>：模拟图传 5.8G 的典型分辨率是 480i（NTSC）或 576i（PAL），通过 UVC 采集后一般表现为 640×480 或 720×576，不要对画面清晰度有太高期待。对于遥控场景，看到画面轮廓和位置关系就够用了</li>
+<li><strong>延迟</strong>：模拟图传本身延迟极低（&lt;10ms），但 UVC 采集 + 显示链路会增加一些。实测在 40-80ms 范围，对于大多数机器人遥控来说是能接受的</li>
+</ol>
+<h3 id="3-3-视频-HUD-叠加">3.3 视频 HUD 叠加</h3>
+<p>视频画面本身是个 <code>TextureView</code>，在上面叠加了一层 HUD：</p>
+<ul>
+<li><strong>四角瞄准框</strong>：帮助判断画面中心</li>
+<li><strong>中央十字线</strong>：辅助瞄准</li>
+<li><strong>刻度尺</strong>：左侧垂直刻度，用于判断倾斜/高度</li>
+<li><strong>准心框架</strong>：多层嵌套方框，用于远距离瞄准参考</li>
+</ul>
+<p>这些 HUD 元素全部是 XML drawable 实现的，没有用自定义 View，方便调整样式。例如四角框是四个独立的 View，各自引用不同朝向的 <code>&lt;shape&gt;</code> 文件。</p>
+<hr>
+<h2 id="4-自定义通信协议">4. 自定义通信协议</h2>
+<h3 id="4-1-协议设计原则">4.1 协议设计原则</h3>
+<p>串口通信在机器人中非常普遍，但每家协议都不一样。我设计这套协议时遵循了这么几条原则：</p>
+<ol>
+<li><strong>定长帧</strong>：每帧固定 9 字节，解析时按帧头帧尾定位，不需要读不定长数据</li>
+<li><strong>连续发送</strong>：控制帧每 50ms 发送一次，不是&quot;按一下发一次&quot;，这样即使某一帧丢失，下一帧也在路上</li>
+<li><strong>帧头帧尾校验</strong>：避免串口丢字节导致错位</li>
+<li><strong>预留扩展位</strong>：每个字节的 bit 都有明确含义，但也留了保留位</li>
+</ol>
+<h3 id="4-2-控制帧格式">4.2 控制帧格式</h3>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[5B] [5B] [B2] [B3] [B4] [B5] [B6] [B7] [2B]</span><br></pre></td></tr></table></figure>
+<p><strong>Byte 0-1：帧头</strong> <code>0x5B 0x5B</code></p>
+<p><strong>Byte 2：矩阵按键 + 模式切换</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">高4位 [matrix:4bit] + 低4位 [mode:4bit]</span><br></pre></td></tr></table></figure>
+<p>矩阵值编码了三组不同的操作面板（称为&quot;区&quot;），类似一个数字键盘的物理布局；</p>
+<p>模式值编码了当前工作模式（底盘/任务、通道1/2、三个操作区），共 12 种组合。</p>
+<p><strong>Byte 3：功能按钮</strong></p>
+<p>8 个 bit 对应 8 个独立开关：气泵、夹取、固定、三路灯光、切换、锁定。</p>
+<p><strong>Byte 4-7：摇杆轴</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">B4: 油门   -100~100  (无死区)</span><br><span class="line">B5: 转向   -100~100  (±14 死区)</span><br><span class="line">B6: 横移   -100~100  (±14 死区)</span><br><span class="line">B7: 升降   -100~100  (±14 死区)</span><br></pre></td></tr></table></figure>
+<p>每个值用一个 signed byte 表示，<code>-100~100</code> 而不是 <code>-127~127</code>，因为用的是 <code>roundToInt().toByte()</code>，保留一点数值余量方便调试。</p>
+<p><strong>Byte 8：帧尾</strong> <code>0x2B</code></p>
+<h3 id="4-3-编码示例">4.3 编码示例</h3>
+<p>以&quot;一区 + 通道1 + 底盘模式&quot;为例，假设用户选择了&quot;取杆 + 抬升中 + 换杆空&quot;：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">takePos = 0, liftPos = 1, rodPos = 0</span><br><span class="line">matrixVal = 0 × 6 + 1 × 2 + 0 = 2</span><br><span class="line"></span><br><span class="line">mode = 0 × 4 + 0 × 2 + 0 = 0</span><br><span class="line"></span><br><span class="line">Byte2 = (2 &lt;&lt; 4) | 0 = 0x20</span><br></pre></td></tr></table></figure>
+<p>STM32 端解析：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">parse_control</span><span class="params">(<span class="type">tele_control_t</span> *c, <span class="type">const</span> <span class="type">uint8_t</span> *b)</span> &#123;</span><br><span class="line">    <span class="type">uint8_t</span> v = b[<span class="number">2</span>];</span><br><span class="line">    c-&gt;matrix_key = (v &gt;&gt; <span class="number">4</span>) &amp; <span class="number">0x0F</span>;</span><br><span class="line">    c-&gt;mode_zone  = ((v &amp; <span class="number">0x0F</span>) &gt;&gt; <span class="number">2</span>) &amp; <span class="number">0x03</span>;</span><br><span class="line">    c-&gt;mode_channel = ((v &amp; <span class="number">0x0F</span>) &gt;&gt; <span class="number">1</span>) &amp; <span class="number">0x01</span>;</span><br><span class="line">    c-&gt;mode_chassis = (v &amp; <span class="number">0x0F</span>) &amp; <span class="number">0x01</span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">uint8_t</span> f = b[<span class="number">3</span>];</span><br><span class="line">    c-&gt;btn_pump = (f &gt;&gt; <span class="number">0</span>) &amp; <span class="number">1</span>;</span><br><span class="line">    c-&gt;btn_grab = (f &gt;&gt; <span class="number">1</span>) &amp; <span class="number">1</span>;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    c-&gt;throttle = (<span class="type">int8_t</span>)b[<span class="number">4</span>];</span><br><span class="line">    c-&gt;steering = (<span class="type">int8_t</span>)b[<span class="number">5</span>];</span><br><span class="line">    c-&gt;strafe   = (<span class="type">int8_t</span>)b[<span class="number">6</span>];</span><br><span class="line">    c-&gt;lift     = (<span class="type">int8_t</span>)b[<span class="number">7</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-4-为什么要用-持续发送-而不是-事件驱动">4.4 为什么要用&quot;持续发送&quot;而不是&quot;事件驱动&quot;</h3>
+<p>这是很多第一次做遥控器的人容易纠结的问题。</p>
+<p>直觉上，按一次按钮发一次数据最节省带宽。但在实际机器人遥控中：</p>
+<ol>
+<li><strong>串口丢包是常态</strong>：尤其在干扰大的环境，单次发送可能丢帧而无人知晓</li>
+<li><strong>机器人需要&quot;最后一次有效指令&quot;</strong>：如果按键抬起时不发送停止信号，机器人可能一直执行上一个动作</li>
+<li><strong>状态同步</strong>：底盘端需要知道遥控器&quot;还在线&quot;，持续发送就是天然的心跳</li>
+</ol>
+<p>所以选择了 50ms 定频发送，即使所有摇杆归零也照发不误。底盘端如果在 200ms 内没收到有效帧，自动急停。</p>
+<hr>
+<h2 id="5-自定义控件的实现">5. 自定义控件的实现</h2>
+<p>整个 App 最花时间的部分可能是那两个自定义 View：摇杆控件和油门/转向控件。</p>
+<h3 id="5-1-JoystickView（遥杆控件）">5.1 JoystickView（遥杆控件）</h3>
+<p>这是一个圆形遥杆，在 Canvas 上从外到内画了多层结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">外圈发光 → 填充背景 → 外圈描边 → 同心环 → 十字准线 → 刻度线 → 象限标记 → 摇杆头(阴影→主体→高光) → 中心点</span><br></pre></td></tr></table></figure>
+<p>一共 11 层绘制，全部用 <code>Paint</code> 完成。颜色主题用了橙色系（<code>#EE781F</code>），配合深蓝背景（<code>#194779</code>），算是赛博朋克风。</p>
+<p>触摸逻辑的核心只有几个公式：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateKnob</span><span class="params">(x: <span class="type">Float</span>, y: <span class="type">Float</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> dx = x - centerX</span><br><span class="line">    <span class="keyword">val</span> dy = y - centerY</span><br><span class="line">    <span class="keyword">val</span> distance = hypot(dx, dy)</span><br><span class="line">    <span class="keyword">val</span> maxDistance = baseRadius - knobRadius</span><br><span class="line">    <span class="keyword">if</span> (distance &gt; maxDistance &amp;&amp; distance &gt; <span class="number">0f</span>) &#123;</span><br><span class="line">        <span class="keyword">val</span> scale = maxDistance / distance</span><br><span class="line">        knobX = centerX + dx * scale</span><br><span class="line">        knobY = centerY + dy * scale  <span class="comment">// 夹在圆形边界内</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        knobX = x</span><br><span class="line">        knobY = y</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">normalizedX</span><span class="params">()</span></span>: <span class="built_in">Float</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> ((knobX - centerX) / (baseRadius - knobRadius)).coerceIn(-<span class="number">1f</span>, <span class="number">1f</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>坐标归一化到 <code>[-1, 1]</code> 区间，再在 MainActivity 里转换成 <code>[-100, 100]</code>。</p>
+<h3 id="5-2-ThrottleSteeringView（油门-转向控件）">5.2 ThrottleSteeringView（油门/转向控件）</h3>
+<p>这个控件是纵向的，只允许左右转向 + 上下油门，比遥杆少一个自由度。设计为机器人底盘控制专用：</p>
+<ul>
+<li>左右：转向（Steering）</li>
+<li>上下：油门（Throttle）</li>
+</ul>
+<p>它有几点设计很有趣：</p>
+<ol>
+<li><strong>Y 轴做了阻尼</strong>：松手后会缓慢回到中位（而不是瞬间跳回），手感更平滑</li>
+</ol>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 在 onDraw 循环中逐渐逼近目标位置</span></span><br><span class="line">knobCenterY += (targetKnobY - knobCenterY) * <span class="number">0.22f</span></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>
+<p><strong>死区处理在 MainActivity 层</strong>：只有左右摇杆/转向轴才做 ±14 死区，油门轴不做。因为油门&quot;零位漂移&quot;比&quot;拧一点儿没反应&quot;更危险</p>
+</li>
+<li>
+<p><strong>刻度线配合阻尼</strong>：Y 轴上的刻度标记和阻尼配合，让操作者知道自己的推杆幅度</p>
+</li>
+</ol>
+<p>为什么油门/转向控件放弃死区而改用阻尼？因为在实际操作中，油门死区意味着小车在死区范围内无法微动，这在精准控制时很烦人。而阻尼 + 无死区 + 小比例映射的组合，既可以实现平滑起步，又可以在大偏移时达到全速。</p>
+<h3 id="5-3-触摸动画效果">5.3 触摸动画效果</h3>
+<p>所有可点击的按钮都加了一个&quot;按一下就缩小再弹回&quot;的动画效果：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">applyGamePadMotion</span><span class="params">(view: <span class="type">View</span>, pressedScale: <span class="type">Float</span>)</span></span> &#123;</span><br><span class="line">    view.setOnTouchListener &#123; touchedView, event -&gt;</span><br><span class="line">        <span class="keyword">when</span> (event.actionMasked) &#123;</span><br><span class="line">            MotionEvent.ACTION_DOWN -&gt; &#123;</span><br><span class="line">                touchedView.animate()</span><br><span class="line">                    .scaleX(pressedScale).scaleY(pressedScale).alpha(<span class="number">0.92f</span>)</span><br><span class="line">                    .setDuration(<span class="number">90</span>).start()</span><br><span class="line">            &#125;</span><br><span class="line">            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -&gt; &#123;</span><br><span class="line">                touchedView.animate()</span><br><span class="line">                    .scaleX(<span class="number">1f</span>).scaleY(<span class="number">1f</span>).alpha(<span class="number">1f</span>)</span><br><span class="line">                    .setDuration(<span class="number">110</span>).start()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>按下 90ms 缩到 0.96 倍，松手 110ms 弹回。虽然只是很小的细节，但能让界面反馈更接近游戏手柄的手感。</p>
+<hr>
+<h2 id="6-界面布局">6. 界面布局</h2>
+<h3 id="6-1-屏幕分区">6.1 屏幕分区</h3>
+<p>布局用 ConstraintLayout + Guideline 实现，基准线使用了百分比定位：</p>
+<table>
+<thead>
+<tr>
+<th>区域</th>
+<th>位置</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>视频层</td>
+<td>全屏</td>
+<td>UVC 相机预览 + HUD</td>
+</tr>
+<tr>
+<td>左侧边栏</td>
+<td>0~20%</td>
+<td>功能按钮：视频连接、串口连接、配置、协议查看</td>
+</tr>
+<tr>
+<td>右上信息区</td>
+<td>20%~54%</td>
+<td>矩阵按键面板 / 遥测数据面板</td>
+</tr>
+<tr>
+<td>左下半屏</td>
+<td>0~55%</td>
+<td>油门/转向双轴控件</td>
+</tr>
+<tr>
+<td>右下半屏</td>
+<td>55%~100%</td>
+<td>模式选择 + 右摇杆</td>
+</tr>
+<tr>
+<td>中缝</td>
+<td>—</td>
+<td>功能按钮列：切换/灯1/2/3 + 锁定/气泵/夹取/固定</td>
+</tr>
+</tbody>
+</table>
+<p>这种布局的核心思想是：<strong>大拇指够得到的地方放常用操作</strong>。下半屏的两个区域分别对应游戏手柄左右手的感觉，右摇杆在右下角便于拇指操作，左摇杆（油门/转向）在左下角使用拇指自然位置。</p>
+<p>右上角放信息面板，左上角放设置和连接操作。</p>
+<h3 id="6-2-响应式考虑">6.2 响应式考虑</h3>
+<p>大屏（<code>layout-sw720dp</code>）有独立的布局文件。在平板上，边栏和按钮间距适当放大，视频区域也更大。小屏手机上则是紧凑布局。</p>
+<p>这种&quot;手控对应&quot;的布局方式我改了好几轮才定下来。最初把所有按钮都集中在下半屏，结果发现手指点不到左侧的功能键——用手机遥控时通常是双手横握，拇指自然在屏幕下半区。因此把&quot;一次连接、永久使用&quot;类的按钮（选择设备、连接/断开、视频）移到了侧栏，最多在会话开始时操作一次。</p>
+<h3 id="6-3-侧边栏">6.3 侧边栏</h3>
+<p>侧边栏默认是收起的，点击侧栏按钮展开。这是一个简单的缩放动画：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">setSidebarExpanded</span><span class="params">(expanded: <span class="type">Boolean</span>)</span></span> &#123;</span><br><span class="line">    sidebarExpanded = expanded</span><br><span class="line">    panelSidebar.visibility = <span class="keyword">if</span> (expanded) View.VISIBLE <span class="keyword">else</span> View.GONE</span><br><span class="line">    <span class="keyword">val</span> params = guideLeftEnd.layoutParams <span class="keyword">as</span> ConstraintLayout.LayoutParams</span><br><span class="line">    params.guidePercent = <span class="keyword">if</span> (expanded) <span class="number">0.20f</span> <span class="keyword">else</span> <span class="number">0.03f</span></span><br><span class="line">    guideLeftEnd.layoutParams = params</span><br><span class="line">    btnSidebarToggle.text = <span class="keyword">if</span> (expanded) <span class="string">&quot;展开&quot;</span> <span class="keyword">else</span> <span class="string">&quot;收起&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意这里动了 Guideline 的百分比。展开时主内容区被压缩到右侧 80%，收起来时压缩到右侧 97%（留 3% 给侧栏按钮本体）。</p>
+<hr>
+<h2 id="7-矩阵按键面板">7. 矩阵按键面板</h2>
+<h3 id="7-1-三区设计">7.1 三区设计</h3>
+<p>矩阵按键面板是整个 App 最&quot;项目定制&quot;的部分。它服务于一个具体的机器人场景——操作杆/抓取机构，而不是通用方向控制。</p>
+<p>面板按操作场景分为三个区：</p>
+<ul>
+<li><strong>一区（取杆/抬升）</strong>：取杆(A/B) → 抬升高/中/低 → 换杆</li>
+<li><strong>二区（梅林区）</strong>：梅林低/中/高 → 回收 → 放回 → 越区</li>
+<li><strong>三区（攻击区）</strong>：R2高/低 + 攻击低/高 + 放块/捡块/放杆</li>
+</ul>
+<p>每次切换分区时，面板会完全重建：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">rebuildKeypad</span><span class="params">()</span></span> &#123;</span><br><span class="line">    keypadMatrix.removeAllViews()</span><br><span class="line">    keypadButtons.clear()</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">when</span> (switchZone) &#123;</span><br><span class="line">        <span class="number">0</span> -&gt; &#123; <span class="comment">/* 一区布局 */</span> &#125;</span><br><span class="line">        <span class="number">1</span> -&gt; &#123; <span class="comment">/* 二区布局 */</span> &#125;</span><br><span class="line">        <span class="number">2</span> -&gt; &#123; <span class="comment">/* 三区布局 */</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用的是 <code>removeAllViews()</code> 加重新 <code>addView()</code>，而不是 <code>View.GONE</code>/<code>View.VISIBLE</code>，因为三区布局的按钮数量和排列完全不同，用 visibility 控制不如直接重建干净。</p>
+<h3 id="7-2-换杆按钮的特殊处理">7.2 换杆按钮的特殊处理</h3>
+<p>一区中有一个&quot;换杆&quot;按钮是按下时激活、松开时恢复的（类似于扳机键），而不是普通的按一下切换状态。</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (switchZone == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">for</span> (kb <span class="keyword">in</span> btns) &#123;</span><br><span class="line">        <span class="keyword">if</span> (kb.cellIdx == <span class="number">6</span>) &#123;  <span class="comment">// &quot;换杆&quot;按钮</span></span><br><span class="line">            kb.btn.setOnTouchListener &#123; _, event -&gt;</span><br><span class="line">                <span class="keyword">when</span> (event.actionMasked) &#123;</span><br><span class="line">                    MotionEvent.ACTION_DOWN -&gt; &#123;</span><br><span class="line">                        cellStates[<span class="number">6</span>] = <span class="number">1</span></span><br><span class="line">                        cellStates[<span class="number">7</span>] = <span class="number">0</span></span><br><span class="line">                    &#125;</span><br><span class="line">                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -&gt; &#123;</span><br><span class="line">                        cellStates[<span class="number">6</span>] = <span class="number">0</span></span><br><span class="line">                        cellStates[<span class="number">7</span>] = <span class="number">1</span>  <span class="comment">// 自动回到&quot;换杆空&quot;</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这也体现在协议编码中：一区的 <code>rodPos</code> 有两种状态，按下换杆时 = 1，松开时自动恢复为 0。底盘端也应该按&quot;上升沿触发&quot;来响应这个动作。</p>
+<hr>
+<h2 id="8-配置帧和棋盘帧">8. 配置帧和棋盘帧</h2>
+<p>除了主控制帧，协议中还定义了两种辅助帧。</p>
+<h3 id="8-1-配置帧">8.1 配置帧</h3>
+<p>用于向底盘下发 12 格地图配置。每个格子的 2bit 表示四种状态（默认/R1/R2/OFF），3 个字节编码 12 个格子。</p>
+<p>用户在 App 里点击每个格子切换状态，每个格子有默认底色：</p>
+<ul>
+<li>默认绿色（暗绿/亮绿/黄绿 循环排布）</li>
+<li>点击后变为 红(R1) → 蓝(R2) → 灰(OFF) → 默认，循环切换</li>
+</ul>
+<p>视觉上通过红蓝方的区分，可以直接在屏幕上&quot;规划&quot;机器人的任务区域。发送时一次性打包成 9 字节帧：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">sendConfigPacket</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> payload = ByteArray(<span class="number">3</span>)</span><br><span class="line">    <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">0</span> until <span class="number">12</span>) &#123;</span><br><span class="line">        <span class="keyword">val</span> byteIdx = i / <span class="number">4</span></span><br><span class="line">        <span class="keyword">val</span> shift = (<span class="number">3</span> - (i % <span class="number">4</span>)) * <span class="number">2</span></span><br><span class="line">        payload[byteIdx] = (payload[byteIdx].toInt() or (cellStates[i] shl shift)).toByte()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> frame = ByteArray(<span class="number">9</span>)</span><br><span class="line">    frame[<span class="number">0</span>] = <span class="number">0x5C</span>; frame[<span class="number">1</span>] = <span class="number">0x5C</span></span><br><span class="line">    frame[<span class="number">2</span>] = payload[<span class="number">0</span>]; frame[<span class="number">3</span>] = payload[<span class="number">1</span>]; frame[<span class="number">4</span>] = payload[<span class="number">2</span>]</span><br><span class="line">    frame[<span class="number">5</span>] = <span class="number">0</span>; frame[<span class="number">6</span>] = <span class="number">0</span>; frame[<span class="number">7</span>] = <span class="number">0</span></span><br><span class="line">    frame[<span class="number">8</span>] = <span class="number">0x2C</span></span><br><span class="line">    <span class="comment">// 发送</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>帧头 0x5C 0x5C 与控制帧 0x5B 0x5B 错开，防止底盘端误识别。</p>
+<h3 id="8-2-棋盘帧">8.2 棋盘帧</h3>
+<p>这个功能属于&quot;锦上添花&quot;。机器人比赛中有一种操作是&quot;下棋&quot;——在一个 3×3 棋盘上放置红/蓝棋子。App 端做了一个九宫格面板，点选后发送棋盘状态。</p>
+<p>协议设计为每个格子 2bit（空白/红/蓝），压缩到 9 个格子 × 2bit = 18bit，分布在 3 个字节中。棋盘帧的帧头是 0x5D 0x5D。</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 格子0~7 的编码</span></span><br><span class="line"><span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">0</span> until <span class="number">8</span>) &#123;</span><br><span class="line">    <span class="keyword">val</span> byteIdx = <span class="keyword">if</span> (i &lt; <span class="number">4</span>) <span class="number">2</span> <span class="keyword">else</span> <span class="number">3</span></span><br><span class="line">    <span class="keyword">val</span> shift = (<span class="number">3</span> - (i % <span class="number">4</span>)) * <span class="number">2</span></span><br><span class="line">    <span class="keyword">val</span> bits = chessStates[i].coerceIn(<span class="number">0</span>, <span class="number">3</span>)</span><br><span class="line">    frame[byteIdx] = (frame[byteIdx].toInt() or (bits shl shift)).toByte()</span><br><span class="line">&#125;</span><br><span class="line">frame[<span class="number">4</span>] = (chessStates[<span class="number">8</span>].coerceIn(<span class="number">0</span>, <span class="number">3</span>) and <span class="number">0x03</span>).toByte()</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="9-版本更新与自动安装">9. 版本更新与自动安装</h2>
+<h3 id="9-1-OTA-更新">9.1 OTA 更新</h3>
+<p>App 内置了一个简单的版本更新模块 <code>UpdateManager</code>。它做三件事：</p>
+<ol>
+<li>从远程服务器获取最新版本信息（versionCode、versionName、releaseNotes、APK 下载链接）</li>
+<li>比对本地 versionCode，如果有更新则提示用户</li>
+<li>用户确认后，下载 APK 到应用专属目录，然后调用 <code>Intent</code> 安装：</li>
+</ol>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">downloadAndInstall</span><span class="params">(info: <span class="type">UpdateInfo</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 下载 APK 到 cache 目录</span></span><br><span class="line">    <span class="comment">// 触发系统安装 Intent</span></span><br><span class="line">    <span class="keyword">val</span> intent = Intent(Intent.ACTION_VIEW).apply &#123;</span><br><span class="line">        setDataAndType(</span><br><span class="line">            FileProvider.getUriForFile(context, <span class="string">&quot;<span class="subst">$&#123;context.packageName&#125;</span>.fileprovider&quot;</span>, apkFile),</span><br><span class="line">            <span class="string">&quot;application/vnd.android.package-archive&quot;</span></span><br><span class="line">        )</span><br><span class="line">        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION</span><br><span class="line">    &#125;</span><br><span class="line">    context.startActivity(intent)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意 Android 7.0+ 不能用 <code>file://</code> URI，必须用 FileProvider。</p>
+<h3 id="9-2-服务器端">9.2 服务器端</h3>
+<p>更新信息放在一个简单的 JSON 文件中，由 Web 服务器托管。App 启动时自动检查，也可以手动触发&quot;检查更新&quot;按钮。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;versionCode&quot;: 33,</span><br><span class="line">  &quot;versionName&quot;: &quot;1.10.9&quot;,</span><br><span class="line">  &quot;releaseNotes&quot;: &quot;...&quot;,</span><br><span class="line">  &quot;downloadUrl&quot;: &quot;https://...&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个设计很朴素，但在小团队项目中够用，比接入商店更新渠道省事得多。</p>
+<hr>
+<h2 id="10-关于自定义协议的一些思考">10. 关于自定义协议的一些思考</h2>
+<p>最后聊一点协议设计上的想法。</p>
+<p><strong>定长 VS 不定长</strong>：很多人喜欢用不定长帧，加一个 length 字段，灵活度高。但在我这个场景中，9 字节够用，定长帧解析更简单——STM32 上不需要 malloc，不需要链表，一个 <code>if (len == 9)</code> 再加帧头校验就完了。</p>
+<p><strong>位压缩 VS 字节对齐</strong>：矩阵键和模式共用了一个 Byte，用高低 4bit 分开。功能按钮用了 1 个 Byte 的 8 个 bit。这种位压缩在 115200 波特率下带来的带宽节省微乎其微，但它让协议语义更紧凑：一个 Byte 就是一个独立含义域。读的时候 <code>(b[2] &gt;&gt; 4) &amp; 0x0F</code> 取矩阵值，<code>b[2] &amp; 0x0F</code> 取模式值，干净利落。</p>
+<p><strong>配置帧的独立性</strong>：配置帧用独立的帧头帧尾，这很重要。如果配置帧和控制帧混淆，底盘端可能把配置数据当成摇杆值执行，后果就是机器人突然抽搐。独立的帧头帧尾 + STM32 端的状态机解析是必要的保险。</p>
+<hr>
+<h2 id="11-经验总结">11. 经验总结</h2>
+<p>写这个 App 花了不少精力，回头总结几条经验：</p>
+<ol>
+<li>
+<p><strong>自定义 View 的 Canvas 绘制性能</strong>：摇杆控件每帧要画 11 层 Paint，在 60fps 下流畅运行没问题。但不要在 <code>onDraw</code> 里 new 对象，所有 Paint 都在初始化时创建并复用。</p>
+</li>
+<li>
+<p><strong>数据发送不要在主线程</strong>：虽然 Android 不允许在主线程做网络/串口 IO，但 Handler 定时器跑在 UI 线程。串口写操作通过 <code>ioExecutor.execute &#123;&#125;</code> 挪到后台线程，避免写阻塞卡 UI。</p>
+</li>
+<li>
+<p><strong>串口线不要太长</strong>：实测 50cm 以上的 USB OTG 延长线开始出现断连。如果机器人需要长距离控制，考虑加 USB 信号放大器或者直接用无线串口模块（如 ESP32 转蓝牙中转）。</p>
+</li>
+<li>
+<p><strong>UVC 图传延迟的控制</strong>：TextureView 的缓存帧数、USB 传输的 buffer 大小都会影响延迟。<code>UvcPreviewController</code> 里要设置合适的 buffer 尺寸，不要用默认值。</p>
+</li>
+<li>
+<p><strong>协议文档一定要写</strong>：有 <code>PROTOCOL.md</code> 和懒得写但事后后悔的协议的差别，就是&quot;这是可以复用的设计&quot;和&quot;下个月就忘了怎么解析&quot;的差别。每次改协议字段时，顺手更新文档。</p>
+</li>
+</ol>
+<hr>
+<h2 id="12-下一步可以做的事">12. 下一步可以做的事</h2>
+<p>这个 App 目前是功能完整的，但有些方向可以进一步优化：</p>
+<ul>
+<li><strong>双向通信</strong>：目前只有手机→底盘的指令帧，没有底盘→手机的状态回传。加上遥测数据（电池电量、电机温度、IMU姿态）会很有价值</li>
+<li><strong>蓝牙 SPP 备选</strong>：虽然在用 USB 串口，但加一个蓝牙 SPP 模式做备选也不难，<code>android.bluetooth</code> 标准库就支持 SPP 连接</li>
+<li><strong>自定义按键映射</strong>：目前的矩阵按键布局是硬编码的，如果做成可配置的 XML 布局文件，可以适应更多机器人需求</li>
+<li><strong>游戏手柄支持</strong>：Android 原生支持 HID 游戏手柄，通过 <code>KeyEvent</code> 和 <code>MotionEvent</code> 可以接入蓝牙手柄，让操控更顺手</li>
+</ul>
+<p>不过就目前来说，它已经很好用了。</p>
+<p><a target="_blank" rel="noopener" href="http://PROTOCOL.md">PROTOCOL.md</a> 和代码都在仓库里，同一套协议也在 STM32 端跑着。如果你想做类似的遥控工具，欢迎参考。</p>
+<hr>
+<p><em>项目地址：<a target="_blank" rel="noopener" href="https://github.com/ek/blectr_app">https://github.com/ek/blectr_app</a> （如果我有空把它开源的话）</em></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz/2026/06/17/blectr_app_development/">https://zhxylabflow.xyz/2026/06/17/blectr_app_development/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zhxylabflow.xyz" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a><a class="post-meta__tags" href="/tags/Android/">Android</a><a class="post-meta__tags" href="/tags/%E6%9C%BA%E5%99%A8%E4%BA%BA/">机器人</a><a class="post-meta__tags" href="/tags/%E8%93%9D%E7%89%99/">蓝牙</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/08/07/policy_gradient_theorem/" title="策略梯度定理推导"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">策略梯度定理推导</div></div><div class="info-2"><div class="info-item-1">策略梯度定理推导 这篇东西是我自己推导策略梯度定理时顺手记下来的。网上关于这个定理的资料不少，但大多数要么跳步太厉害，要么在关键的地方语焉不详——比如那个&quot;交叉项等于零&quot;到底为什么等于零，比如 $P_\theta(s_t=s)$ 到底能不能提到梯度外面。所以我把每一步都写了下来，主要是给自己看的，顺便整理成一篇能读的东西。 前置设定 无限时域折扣 MDP，老规矩：  状态空间 $\mathcal{S}$，动作空间 $\mathcal{A}$ 环境状态转移核：$P(s’|s,a)$（环境动力学，与策略参数 $\theta$ 无关） 参数化策略：$\pi_\theta(a|s)$ 折扣因子：$\gamma\in[0,1)$ 轨迹：$\tau=(s_0,a_0,s_1,a_1,\dots)$ 单步奖励：$r(s_t,a_t)$ 回报（从时刻 $t$ 开始）：  $$ G_t = \sum_{k=t}^{\infty}\gamma^{k-t}r(s_k,a_k) $$ 这里顺便提一下两种常见的目标函数定义——后面会看到，选哪个会影响最终公式前面有没有那个 $\frac...</div></div></div></a><a class="pagination-related" href="/2026/06/05/rl_algorithm_design_aesthetics/" title="从 Bellman 到 PPO，RL 为什么这么设计"><img class="cover" src="https://img.cdn1.vip/i/6ab2c3de6003e_1790100446.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">从 Bellman 到 PPO，RL 为什么这么设计</div></div><div class="info-2"><div class="info-item-1">强化学习算法的设计美学——从 Bellman 到 PPO 的直觉路径 前面两篇我们聊了损失函数和优化器的设计哲学。但有一个领域的损失函数和优化器设计，比监督学习更&quot;绕&quot;——强化学习。 在监督学习中，你的标签是上帝给的，错了就是错了。但在强化学习中，你只有一个延迟的、嘈杂的、稀疏的标量奖励信号。更麻烦的是：你在用当前策略收集的数据来更新这个策略本身，更新完你又拿新策略去跑数据——你的训练数据一直在变。 这种&quot;自己给自己出题，自己又去解题&quot;的循环，使得 RL 的算法设计比监督学习多了一层曲折。这篇博客会沿着 RL 的算法演进路径，拆解每个关键设计背后的直觉——不是为了列公式，而是为了理解为什么一个问题被反复用不同方式解决。  1. 核心难题：状态价值和动作价值 先确立两个基本概念。 在 RL 中，智能体需要回答的根本问题是：在某个状态下，做哪个动作最好？ 但&quot;好&quot;的定义是模糊的——好的动作会带来即时奖励，也可能带来长期回报。于是我们定义了两种价值函数：  状态价值 $V(s)$：从这个状态出发，按当前策略 $ \pi $，未...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/16/c_function_pointer_vtable_blog/" title="用函数指针在 C 里模拟虚函数表"><img class="cover" src="https://img.cdn1.vip/i/69b967e9d0aa8_1773758441.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-16</div><div class="info-item-2">用函数指针在 C 里模拟虚函数表</div></div><div class="info-2"><div class="info-item-1">C语言中的函数指针与虚函数表模拟 在C语言模拟面向对象的技巧里，函数指针和虚函数表风格的操作表，是最核心的一层机制。当系统开始管理越来越多的设备、模块和控制逻辑时，单纯依靠一堆分散的函数和条件分支，代码会越来越难维护。 在嵌入式系统中，如何用 C 语言的函数指针模拟“对象方法”，再进一步模拟“虚函数表”和“多态调用”？  一、为什么普通 C 写法会越来越难维护 先看最朴素的写法。假设我们有两类电机：  DJI 电机 DM 电机  一开始也许只需要做“使能”： if (motor_type == DJI_MOTOR) &#123;    dji_motor_enable();&#125; else if (motor_type == DM_MOTOR) &#123;    dm_motor_enable();&#125; 后来需求变多了，还要设置目标值、解析反馈、执行控制更新： if (motor_type == DJI_MOTOR) &#123;    dji_motor_enable();    dji_motor_set_ref(ref);    dji_motor_deco...</div></div></div></a><a class="pagination-related" href="/2026/05/21/rtos_from_scratch_h723/" title="在 STM32H723 上手写一个 RTOS 内核"><img class="cover" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-21</div><div class="info-item-2">在 STM32H723 上手写一个 RTOS 内核</div></div><div class="info-2"><div class="info-item-1">从零写一个 RTOS 内核——在 STM32H723 上 市面上有很多 RTOS：FreeRTOS、RT-Thread、μC/OS、Zephyr……它们都很好用，但用久了总有种隔靴搔痒的感觉——你知道怎么调 API，但不知道进去之后到底发生了什么。 这篇文章的目的很简单：在 STM32H723 上，从零写一个能跑起来的 RTOS 内核，包含任务创建、上下文切换、调度器启动、SysTick 时基、阻塞延时和空闲任务。 不依赖任何第三方 RTOS 源码，只靠 ARM Cortex-M7 的硬件特性和纯粹的 C + 内联汇编。写完以后，你将对 RTOS 的底层机制有一个肌肉记忆级别的理解。  全文代码均在 STM32H723 上实测通过，工具链为 ARM GCC。   1. 设计目标 在动手之前，想清楚我们要做什么、不做什么是很有必要的。 要做的：  多任务并发（伪并行，单核分时） 基于优先级的抢占式调度 SysTick 提供时基 阻塞延时（delay_ms 而不是 HAL_Delay） 空闲任务（没有任务执行时 CPU 进入 WFI）  不做的（后续可以单独写）：  任务间同步（信号...</div></div></div></a><a class="pagination-related" href="/2026/03/28/h7_dma/" title="H723 上 DMA 读不到数据？查 D-Cache 和内存域"><img class="cover" src="https://img.cdn1.vip/i/69c8c42418811_1774765092.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-28</div><div class="info-item-2">H723 上 DMA 读不到数据？查 D-Cache 和内存域</div></div><div class="info-2"><div class="info-item-1">H723 上 DMA 读不到数据？查 D-Cache 和内存域 在 STM32H723 上写 DMA,几乎每个人都会撞上同一堵墙:HAL_UART_Receive_DMA() 明明正常返回,缓冲区里的数据却纹丝不动;ADC 采回来的值一会儿全 0,一会儿又&quot;好了&quot;;更诡异的是,把数组改成全局变量、加个 static、甚至换个大小,症状居然跟着变。 这几种现象凑在一起,基本能排除&quot;外设时序配错了&quot;这条路,矛头指向同一个方向:H7 的内存架构。 Cortex-M7 带 32KB I-Cache 和 32KB D-Cache,内部又按 D1/D2/D3 分成三个域,SRAM 散落在不同总线上,还留了 DTCM/ITCM 这种 CPU 私有的快速内存。所以&quot; DMA 不工作&quot;背后,通常就三类问题:  Buffer 放进了 DMA 根本够不着的内存区(最常见是 DTCM) Buffer 位置没错,但 D-Cache 让 CPU 和 DMA 看到的是两份数据 多个主设备真在抢总线带宽  下面按排查顺序展开,而不是按理论顺序。 先记住...</div></div></div></a><a class="pagination-related" href="/2026/02/18/mpc/" title="四足机器人的几条控制路线：运动学、WBC、MPC、RL"><img class="cover" src="https://img.cdn1.vip/i/695e79aadc30e_1767799210.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-02-18</div><div class="info-item-2">四足机器人的几条控制路线：运动学、WBC、MPC、RL</div></div><div class="info-2"><div class="info-item-1">四足机器人的技术路线全景：从运动学、WBC、MPC到强化学习 四足机器人自从宇树机器狗出圈后得到频繁讨论，原因在于足式机器人几乎把机器人领域里核心的、先进的问题都搬到了一台机器上，要面对机构设计，电机驱动，运动学，动力学，状态估计，轨迹规划，全身控制，强化学习以及仿真到实机的迁移。所以这类足式机器人给作为初学者的我造成不小的困扰,问题不在于技术的细节，路线很多，但它们之间的关系不那么清晰，如何做到力位混合控制？如何将学习策略和模型控制结合？我们常常缺少一条完整的技术脉络。 当你开始做机器人，最关键的不是先选一个最先进的策略，而是看你的目标任务是要跑一条结构化的赛道？或者跑通用的locomotion?还是要面对复杂的环境？层出不穷的技术路线不应该简单堆叠在一起,而是要回答一个更实际的问题：如果要把一台四足机器人从能站、能迈步，逐步做到稳定奔跑、跳跃越障、复杂地形适应，甚至进一步做到学习型 locomotion，那么中间到底要跨过哪些层次，每一层又解决什么问题。 四足机器人的发展可以理解成一条不断抬高控制层级的路线。最底层解决的是几何问题，也就是腿在哪里、足端在哪里、关节该转多少；再...</div></div></div></a><a class="pagination-related" href="/2026/03/17/isaaclab_prj/" title="IsaacLab 入门踩坑记录"><img class="cover" src="https://img.cdn1.vip/i/6ab2c32171526_1790100257.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-17</div><div class="info-item-2">IsaacLab 入门踩坑记录</div></div><div class="info-2"><div class="info-item-1">Isaac Lab External 项目完整工作流 本教程面向已经配置好Isaaclab强化学习环境的新手玩家 项目仓库：https://github.com/Leggedsys/legged_train/tree/main 第一次新建一个空的IsaacLab外部项目，除了跑一跑倒立摆的示例，我也不知道下一步要做什么。仓库是新的，我的目标是训练一条机器狗，下一步要干啥？：先放URDF ？写 env ？先写 PPO 配置？还是去啃官方教程？本人想做一篇文档教程作为参考，把训练一台机器狗这个事，完整记录一下。 整个过程其实比较简单：先把项目变成一个能被IsaacLab 识别的Python扩展，再把机器人资产接进来，然后围绕这台机器人写配置、场景、环境和奖励，最后再接上PPO训练与回放脚本。难点从来不在于某一步特别神秘，我们第一次做isaaclab项目时，大概已经知道我要做的无非就这些事，但不知道从何开始，也不知道这些文件到底是干啥的。只要这条线理顺了，后面想加入平地gait、rough terrain、抗扰动或者sim-to-real 扩展，其实都会顺很多。 项目环境准备 我的项目...</div></div></div></a><a class="pagination-related" href="/2026/03/16/c_language_oop_robotics_blog/" title="在 C 语言里玩面向对象"><img class="cover" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-16</div><div class="info-item-2">在 C 语言里玩面向对象</div></div><div class="info-2"><div class="info-item-1">C语言模拟面向对象 很多人第一次看到这种代码风格时，都会有一个问题：“用 C 语言写出面向对象的样子，是不是显得更专业” 我的看法是：专业不在于“像不像 C++”，而在于这套写法能不能真正解决工程问题。 对于机器人嵌入式控制系统来说，系统里往往同时存在底盘、电机、升降机构、武器机构、CAN 通信、PID 控制、任务调度等多个层次。如果继续用“满地全局变量 + 一堆 switch-case + 到处散落的初始化函数”去组织代码，随着功能变多，系统很快就会变得难以维护。 这时候，C 语言里的几个经典手段——结构体封装、函数指针、组合关系、统一初始化接口、对象注册——就能模拟出一套足够实用的“面向对象”风格。 这篇文章就结合一套机器人电机控制代码，聊聊：  为什么嵌入式系统里要用 C 模拟面向对象 你的这套代码到底“对象化”在什么地方 这种写法在机器人控制系统里有什么实际价值 这种设计什么时候值得用，什么时候会过度设计 基于现有代码，还能做哪些工程上的改进   1. 为什么 C 语言也要“对象化”？ 在桌面开发里，大家很容易直接想到 C++、Rust 这类更现代的语言；但在嵌入式世界，...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">嵌入式与机器人运动控制 | STM32/FreeRTOS · 四足机器人 · 强化学习 · 状态估计</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">24</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">44</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">从零写一个安卓蓝牙遥控 App——USB 串口、UVC 图传与自定义通信协议</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="toc-number">1.1.</span> <span class="toc-text">1. 整体架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-USB-%E4%B8%B2%E5%8F%A3%E9%80%9A%E4%BF%A1%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.</span> <span class="toc-text">2. USB 串口通信的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8-USB-%E4%B8%B2%E5%8F%A3%E8%80%8C%E4%B8%8D%E6%98%AF%E7%BB%8F%E5%85%B8%E8%93%9D%E7%89%99"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 为什么用 USB 串口而不是经典蓝牙</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E5%9F%BA%E4%BA%8E-usb-serial-for-android"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 基于 usb-serial-for-android</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-USB-%E7%83%AD%E6%8F%92%E6%8B%94%E5%A4%84%E7%90%86"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3 USB 热插拔处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-UVC-%E5%9B%BE%E4%BC%A0%E9%A2%84%E8%A7%88"><span class="toc-number">1.3.</span> <span class="toc-text">3. UVC 图传预览</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF-UVC"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 为什么是 UVC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E4%BD%BF%E7%94%A8-libusbCamera"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 使用 libusbCamera</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E8%A7%86%E9%A2%91-HUD-%E5%8F%A0%E5%8A%A0"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3 视频 HUD 叠加</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E8%87%AA%E5%AE%9A%E4%B9%89%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.4.</span> <span class="toc-text">4. 自定义通信协议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%8D%8F%E8%AE%AE%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 协议设计原则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E6%8E%A7%E5%88%B6%E5%B8%A7%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 控制帧格式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E7%BC%96%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3 编码示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E7%94%A8-%E6%8C%81%E7%BB%AD%E5%8F%91%E9%80%81-%E8%80%8C%E4%B8%8D%E6%98%AF-%E4%BA%8B%E4%BB%B6%E9%A9%B1%E5%8A%A8"><span class="toc-number">1.4.4.</span> <span class="toc-text">4.4 为什么要用&quot;持续发送&quot;而不是&quot;事件驱动&quot;</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.5.</span> <span class="toc-text">5. 自定义控件的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-JoystickView%EF%BC%88%E9%81%A5%E6%9D%86%E6%8E%A7%E4%BB%B6%EF%BC%89"><span class="toc-number">1.5.1.</span> <span class="toc-text">5.1 JoystickView（遥杆控件）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-ThrottleSteeringView%EF%BC%88%E6%B2%B9%E9%97%A8-%E8%BD%AC%E5%90%91%E6%8E%A7%E4%BB%B6%EF%BC%89"><span class="toc-number">1.5.2.</span> <span class="toc-text">5.2 ThrottleSteeringView（油门&#x2F;转向控件）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E8%A7%A6%E6%91%B8%E5%8A%A8%E7%94%BB%E6%95%88%E6%9E%9C"><span class="toc-number">1.5.3.</span> <span class="toc-text">5.3 触摸动画效果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%95%8C%E9%9D%A2%E5%B8%83%E5%B1%80"><span class="toc-number">1.6.</span> <span class="toc-text">6. 界面布局</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-%E5%B1%8F%E5%B9%95%E5%88%86%E5%8C%BA"><span class="toc-number">1.6.1.</span> <span class="toc-text">6.1 屏幕分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-%E5%93%8D%E5%BA%94%E5%BC%8F%E8%80%83%E8%99%91"><span class="toc-number">1.6.2.</span> <span class="toc-text">6.2 响应式考虑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-%E4%BE%A7%E8%BE%B9%E6%A0%8F"><span class="toc-number">1.6.3.</span> <span class="toc-text">6.3 侧边栏</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E7%9F%A9%E9%98%B5%E6%8C%89%E9%94%AE%E9%9D%A2%E6%9D%BF"><span class="toc-number">1.7.</span> <span class="toc-text">7. 矩阵按键面板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E4%B8%89%E5%8C%BA%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.7.1.</span> <span class="toc-text">7.1 三区设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E6%8D%A2%E6%9D%86%E6%8C%89%E9%92%AE%E7%9A%84%E7%89%B9%E6%AE%8A%E5%A4%84%E7%90%86"><span class="toc-number">1.7.2.</span> <span class="toc-text">7.2 换杆按钮的特殊处理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E9%85%8D%E7%BD%AE%E5%B8%A7%E5%92%8C%E6%A3%8B%E7%9B%98%E5%B8%A7"><span class="toc-number">1.8.</span> <span class="toc-text">8. 配置帧和棋盘帧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#8-1-%E9%85%8D%E7%BD%AE%E5%B8%A7"><span class="toc-number">1.8.1.</span> <span class="toc-text">8.1 配置帧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-2-%E6%A3%8B%E7%9B%98%E5%B8%A7"><span class="toc-number">1.8.2.</span> <span class="toc-text">8.2 棋盘帧</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E7%89%88%E6%9C%AC%E6%9B%B4%E6%96%B0%E4%B8%8E%E8%87%AA%E5%8A%A8%E5%AE%89%E8%A3%85"><span class="toc-number">1.9.</span> <span class="toc-text">9. 版本更新与自动安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#9-1-OTA-%E6%9B%B4%E6%96%B0"><span class="toc-number">1.9.1.</span> <span class="toc-text">9.1 OTA 更新</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-2-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF"><span class="toc-number">1.9.2.</span> <span class="toc-text">9.2 服务器端</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E5%85%B3%E4%BA%8E%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8D%8F%E8%AE%AE%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%80%83"><span class="toc-number">1.10.</span> <span class="toc-text">10. 关于自定义协议的一些思考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93"><span class="toc-number">1.11.</span> <span class="toc-text">11. 经验总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E4%B8%8B%E4%B8%80%E6%AD%A5%E5%8F%AF%E4%BB%A5%E5%81%9A%E7%9A%84%E4%BA%8B"><span class="toc-number">1.12.</span> <span class="toc-text">12. 下一步可以做的事</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"><img src="https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</a><time datetime="2026-09-22T19:00:00.000Z" title="发表于 2026-09-23 03:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层"><img src="https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="通信协议名词，都该归到 OSI 的哪一层"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层">通信协议名词，都该归到 OSI 的哪一层</a><time datetime="2026-09-22T18:00:00.000Z" title="发表于 2026-09-23 02:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"><img src="https://img.cdn1.vip/i/6ab2c3da84f46_1790100442.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看</a><time datetime="2026-09-22T17:30:00.000Z" title="发表于 2026-09-23 01:30:00">2026-09-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/07/policy_gradient_theorem/" title="策略梯度定理推导">策略梯度定理推导</a><time datetime="2026-08-06T16:00:00.000Z" title="发表于 2026-08-07 00:00:00">2026-08-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/06/17/blectr_app_development/" title="给机器人写了个安卓蓝牙遥控 App">给机器人写了个安卓蓝牙遥控 App</a><time datetime="2026-06-16T18:49:52.279Z" title="发表于 2026-06-17 02:49:52">2026-06-17</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
