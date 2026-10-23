@@ -1,0 +1,613 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑 第一次翻大型嵌入式项目的源码，很多人会被一件事搞懵：明明都是给 STM32 写的代码，怎么有的文件是 .c，有的却是 .cpp？C 和 C++ 混在一起写，到底是谁调谁？又是怎么接上的？ VESC 的固件里，ChibiOS 内核是 C，电机控制层却是 C++；Arduino 的底层驱动是 C，上面套的却是一层 C++ 封装。这不是作者没想清">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑">
+<meta property="og:url" content="https://zhxylabflow.xyz/2026/10/24/c_cpp_mixing_embedded/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑 第一次翻大型嵌入式项目的源码，很多人会被一件事搞懵：明明都是给 STM32 写的代码，怎么有的文件是 .c，有的却是 .cpp？C 和 C++ 混在一起写，到底是谁调谁？又是怎么接上的？ VESC 的固件里，ChibiOS 内核是 C，电机控制层却是 C++；Arduino 的底层驱动是 C，上面套的却是一层 C++ 封装。这不是作者没想清">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6adba63408709_1792779828.webp">
+<meta property="article:published_time" content="2026-10-23T17:45:29.714Z">
+<meta property="article:modified_time" content="2026-10-23T18:24:10.946Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="C语言">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6adba63408709_1792779828.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑",
+  "url": "https://zhxylabflow.xyz/2026/10/24/c_cpp_mixing_embedded/",
+  "image": "https://img.cdn1.vip/i/6adba63408709_1792779828.webp",
+  "datePublished": "2026-10-23T17:45:29.714Z",
+  "dateModified": "2026-10-23T18:24:10.946Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "https://zhxylabflow.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/2026/10/24/c_cpp_mixing_embedded/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/6adba63408709_1792779828.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-23T17:45:29.714Z" title="发表于 2026-10-24 01:45:29">2026-10-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-23T18:24:10.946Z" title="更新于 2026-10-24 02:24:10">2026-10-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑</h1>
+<p>第一次翻大型嵌入式项目的源码，很多人会被一件事搞懵：明明都是给 STM32 写的代码，怎么有的文件是 <code>.c</code>，有的却是 <code>.cpp</code>？C 和 C++ 混在一起写，到底是谁调谁？又是怎么接上的？</p>
+<p>VESC 的固件里，ChibiOS 内核是 C，电机控制层却是 C++；Arduino 的底层驱动是 C，上面套的却是一层 C++ 封装。这不是作者没想清楚，而是一种非常成熟的分工方式。</p>
+<p>这篇文章把&quot;C 与 C++ 混用&quot;这件事从头讲清楚：为什么要混用、C++ 调 C 和 C 调 C++ 分别怎么做、<code>extern &quot;C&quot;</code> 到底在干什么、以及嵌入式里用 C++ 有哪些坑。</p>
+<hr>
+<h1>一、为什么会有&quot;C 和 C++ 混用&quot;这回事</h1>
+<p>答案其实就一句话：<strong>C 做底座，C++ 做应用。</strong></p>
+<p>一个典型的 STM32 工程，从下到上是这样的：</p>
+<ul>
+<li><strong>最底层是 C</strong>：RTOS 内核（FreeRTOS / ChibiOS）、CMSIS、厂商 HAL 库（ST / NXP）、启动文件、链接脚本。</li>
+<li><strong>上层是 C++</strong>：应用逻辑、电机控制、FOC 算法、编码器、PID、通信协议栈。</li>
+</ul>
+<p>底层必须是 C，因为它要当&quot;通用底座&quot;——任何语言、任何上层框架都要能调用它，C 的 ABI（函数调用约定 + 无名字修饰）就是事实上的公共标准。</p>
+<p>上层用 C++，是因为上层业务复杂、需要抽象。当系统开始管理越来越多的设备、模块和控制逻辑时，单纯靠一堆分散的函数和 <code>if-else</code> 分支，代码会越来越难维护——这一点在《用函数指针在 C 里模拟虚函数表》里已经展开讲过，C++ 就是把这些&quot;模拟&quot;变成了语言本身的能力。</p>
+<p>所以&quot;混用&quot;的本质是分工：<strong>C 负责和硬件、内核打交道，C++ 负责把复杂业务写得清楚。</strong></p>
+<hr>
+<h1>二、C++ 到底给嵌入式带来了什么</h1>
+<p>核心是四个字：<strong>零成本抽象</strong>。模板、类、运算符重载，写对了编译出来和 C 一样大、一样快，但源码可读性和可维护性高一个量级。</p>
+<table>
+<thead>
+<tr>
+<th>C 的痛点</th>
+<th>C++ 的解法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>struct Motor &#123; ... &#125;</code> + 一堆 <code>motor_init()</code> / <code>motor_update()</code> 全局函数</td>
+<td><strong>类</strong>：<code>Motor</code> 自带方法 <code>m.update()</code>，状态和函数绑在一起</td>
+</tr>
+<tr>
+<td>忘 <code>free</code>、忘关外设、忘解锁</td>
+<td><strong>RAII</strong>：析构函数自动释放资源</td>
+</tr>
+<tr>
+<td>写一份 float 版、再写一份 double 版，或用 <code>void*</code> + 函数指针（丑且危险）</td>
+<td><strong>模板</strong>：一份 <code>PID&lt;T&gt;</code> 通用，编译期展开，零运行时开销</td>
+</tr>
+<tr>
+<td><code>vec3_add(a, vec3_mul(b, c))</code> 数学读起来费劲</td>
+<td><strong>运算符重载</strong>：<code>a + b * c</code>，FOC 里全是向量/四元数，差别巨大</td>
+</tr>
+<tr>
+<td>回调只能传 <code>void*</code> 上下文</td>
+<td><strong>lambda / 函数对象</strong>，类型安全</td>
+</tr>
+<tr>
+<td>三角函数表要手动算好贴进数组</td>
+<td><strong>constexpr</strong>：编译期算，运行时零成本</td>
+</tr>
+</tbody>
+</table>
+<p>举两个最直观的例子。</p>
+<p><strong>例子一：PID 的模板</strong></p>
+<p>纯 C 里，如果既想用 float 又要用 double，通常只能写两份几乎一样的代码，或者退化成 <code>void*</code> 传参数。C++ 里一份就够了：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">PID</span> &#123;</span><br><span class="line">    T kp, ki, kd;</span><br><span class="line">    T integral = <span class="number">0</span>;</span><br><span class="line">    T prev_err = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">T <span class="title">update</span><span class="params">(T err, T dt)</span> </span>&#123;</span><br><span class="line">        integral += err * dt;</span><br><span class="line">        T d = (err - prev_err) / dt;</span><br><span class="line">        prev_err = err;</span><br><span class="line">        <span class="keyword">return</span> kp * err + ki * integral + kd * d;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">PID&lt;<span class="type">float</span>&gt;  current_loop;   <span class="comment">// 电流环用 float</span></span><br><span class="line">PID&lt;<span class="type">double</span>&gt; vel_loop;       <span class="comment">// 速度环用 double</span></span><br></pre></td></tr></table></figure>
+<p>编译期会为 <code>PID&lt;float&gt;</code> 和 <code>PID&lt;double&gt;</code> 各展开一份，运行时没有任何额外开销。</p>
+<p><strong>例子二：FOC 里的向量运算</strong></p>
+<p>FOC 里有大量向量、四元数、坐标变换。纯 C 写出来是这样的：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">vec3_t</span> v = vec3_add(a, vec3_mul(b, k));</span><br></pre></td></tr></table></figure>
+<p>嵌套一多，括号就能把人绕晕。C++ 重载运算符之后：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">Vec3 v = a + b * k;</span><br></pre></td></tr></table></figure>
+<p>公式读起来和数学书上一模一样，维护成本天差地别。</p>
+<p>VESC 的电机控制层就是靠这些写出来的，代码量比纯 C 少，还更好改。</p>
+<hr>
+<h1>三、方向一：C++ 调 C（最常见，最顺）</h1>
+<p>这是主流做法，也是最简单的：<strong>C 库的接口对 C++ 天然可用。</strong></p>
+<p>把 <code>main.c</code> 改名 <code>main.cpp</code>，直接调 HAL 就行：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// main.cpp —— 把 main.c 改名 main.cpp 即可</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stm32g4xx_hal.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">void</span>)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">HAL_Init</span>();</span><br><span class="line">    <span class="comment">// C++ 代码直接调 C 的 HAL 函数</span></span><br><span class="line">    <span class="built_in">HAL_GPIO_WritePin</span>(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里能直接调，靠的是一个前提：<strong>C 头文件里得有 <code>extern &quot;C&quot;</code> 保护</strong>。STM32 的 HAL 头文件里都是这样的：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// stm32g4xx_hal.h 里（简化）</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">HAL_StatusTypeDef <span class="title function_">HAL_Init</span><span class="params">(<span class="type">void</span>)</span>;</span><br><span class="line"><span class="type">void</span> <span class="title function_">HAL_GPIO_WritePin</span><span class="params">(GPIO_TypeDef *GPIOx, <span class="type">uint16_t</span> GPIO_Pin, GPIO_PinState PinState)</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>为什么需要这个 <code>extern &quot;C&quot;</code>？这就引出下面要讲的核心问题：名字修饰。</p>
+<hr>
+<h1>四、方向二：C 调 C++，为什么不能直接调</h1>
+<p>假设你在维护一份已有的纯 C 工程，想往里塞一个用 C++ 写的算法模块。你可能会直觉地这么写：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// algo.cpp —— C++ 写的算法</span></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">filter_value</span><span class="params">(<span class="type">double</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x * <span class="number">0.5</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// main.c —— C 代码直接声明并调用</span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">double</span> <span class="title function_">filter_value</span><span class="params">(<span class="type">double</span> x)</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">double</span> y = filter_value(<span class="number">3.14</span>);</span><br></pre></td></tr></table></figure>
+<p>分别编译没问题，但一链接就报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">undefined reference to `filter_value&#x27;</span><br></pre></td></tr></table></figure>
+<p>你已经声明了、也调用了，为什么还找不到？原因是 <strong>名字修饰（Name Mangling）</strong>。</p>
+<h2 id="名字修饰到底发生了什么">名字修饰到底发生了什么</h2>
+<p>C++ 为了支持<strong>函数重载</strong>——也就是同名函数靠参数类型区分——必须把参数类型信息&quot;编码&quot;进符号名里。否则链接器看到两个 <code>foo</code> 就分不清了。</p>
+<p>在 GCC/Clang（遵循 Itanium C++ ABI）下，这条规则是这样的：</p>
+<ul>
+<li>C++ 的 <code>double filter_value(double)</code> 会被编译成 <code>_Z12filter_valued</code></li>
+<li>而 C 的 <code>double filter_value(double)</code> 编译出来还是 <code>filter_value</code></li>
+</ul>
+<p>用 <code>nm</code> 看两个目标文件的符号表，一目了然：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># C++ 版本</span></span><br><span class="line">g++ -c algo.cpp -o algo.o</span><br><span class="line">nm algo.o | grep filter</span><br><span class="line"><span class="comment"># 0000000000000000 T _Z12filter_valued</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># C 版本</span></span><br><span class="line">gcc -c algo.c -o algo.o</span><br><span class="line">nm algo.o | grep filter</span><br><span class="line"><span class="comment"># 0000000000000000 T filter_value</span></span><br></pre></td></tr></table></figure>
+<p>那个 <code>_Z12filter_valued</code> 可以拆开读：</p>
+<ul>
+<li><code>_Z</code>：这是一个全局符号</li>
+<li><code>12</code>：函数名 <code>filter_value</code> 的长度是 12 个字符</li>
+<li><code>filter_value</code>：函数名本体</li>
+<li><code>d</code>：参数类型是 <code>double</code></li>
+</ul>
+<p>C 链接器按裸名 <code>filter_value</code> 去找符号，结果 C++ 目标文件里存的是 <code>_Z12filter_valued</code>，名字对不上，自然就报 <code>undefined reference</code>。</p>
+<hr>
+<h1>五、<code>extern &quot;C&quot;</code> 到底做了什么</h1>
+<p><code>extern &quot;C&quot;</code> 就是告诉 C++ 编译器：<strong>这一段按 C 的规则命名，别修饰。</strong></p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> <span class="function"><span class="type">double</span> <span class="title">filter_value</span><span class="params">(<span class="type">double</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x * <span class="number">0.5</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再编译一次，符号表里就恢复成了裸名：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">g++ -c algo.cpp -o algo.o</span><br><span class="line">nm algo.o | grep filter</span><br><span class="line"><span class="comment"># 0000000000000000 T filter_value</span></span><br></pre></td></tr></table></figure>
+<p>这样 C 代码就能找到它了。</p>
+<p>但 <code>extern &quot;C&quot;</code> 有几个硬性规则，记清楚能少踩很多坑：</p>
+<ol>
+<li>
+<p><strong>不能重载</strong>。<code>extern &quot;C&quot;</code> 块里同名函数只能有一个——因为修饰之后名字都一样，链接器根本分不清哪个是哪个。</p>
+</li>
+<li>
+<p><strong>只能用于自由函数，不能用于类或成员函数</strong>。类的成员函数必须是 C++ 链接，因为它的调用约定（隐含 <code>this</code> 指针）是 C 没有的。</p>
+</li>
+<li>
+<p><strong>边界上只能传 C 兼容的类型</strong>。<code>double</code>、<code>int</code>、指针、POD 结构体可以；<code>std::string</code>、类对象、引用、模板实例化这些，C 侧根本不认识，不能跨过这条边界。</p>
+</li>
+</ol>
+<hr>
+<h1>六、正确的头文件写法</h1>
+<p>要让同一个头文件既被 <code>.c</code> 包含、又被 <code>.cpp</code> 包含，标准写法是套一层条件编译：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// algo.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">double</span> <span class="title function_">filter_value</span><span class="params">(<span class="type">double</span> x)</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>原理是：</p>
+<ul>
+<li><code>.c</code> 文件包含时，<code>__cplusplus</code> 宏不存在，头文件内容原样展开，就是普通的 C 声明。</li>
+<li><code>.cpp</code> 文件包含时，<code>__cplusplus</code> 存在，函数声明被包进 <code>extern &quot;C&quot; &#123;&#125;</code>，按 C 链接处理。</li>
+</ul>
+<p>这一层保护，就是所有厂商 HAL 头文件里都有的那个东西。你以后自己写&quot;给 C 用的 C++ 库&quot;，也照这个模板来。</p>
+<hr>
+<h1>七、跨语言传复杂数据：不透明指针</h1>
+<p>前面说了，<code>extern &quot;C&quot;</code> 边界上不能传 <code>std::string</code>、不能传类对象。那如果需要传递&quot;有状态的对象&quot;怎么办？</p>
+<p>答案是 <strong>不透明指针（opaque pointer）</strong>：C 侧只拿一个 <code>struct Xxx*</code> 指针，至于这个结构体里面长什么样，C 侧永远不知道。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// filter.h</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">Filter</span> <span class="title">Filter</span>;</span></span><br><span class="line"></span><br><span class="line">Filter* <span class="title function_">filter_create</span><span class="params">(<span class="type">float</span> cutoff)</span>;</span><br><span class="line"><span class="type">void</span>    <span class="title function_">filter_destroy</span><span class="params">(Filter* f)</span>;</span><br><span class="line"><span class="type">double</span>  <span class="title function_">filter_process</span><span class="params">(Filter* f, <span class="type">double</span> x)</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<p>注意：这里只 <code>typedef</code> 了一个不完整的 <code>struct Filter</code>，没有给出它的定义。C 侧能用 <code>Filter*</code> 这个指针类型，但<strong>无法访问它内部的任何成员</strong>。</p>
+<p>真正的定义藏在 C++ 里：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// filter.cpp</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;filter.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Filter</span> &#123;</span><br><span class="line">    <span class="type">double</span> cutoff;</span><br><span class="line">    <span class="type">double</span> prev;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">Filter* <span class="title">filter_create</span><span class="params">(<span class="type">float</span> cutoff)</span> </span>&#123;</span><br><span class="line">    Filter* f = <span class="keyword">new</span> Filter;</span><br><span class="line">    f-&gt;cutoff = cutoff;</span><br><span class="line">    f-&gt;prev = <span class="number">0.0</span>;</span><br><span class="line">    <span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">filter_destroy</span><span class="params">(Filter* f)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">delete</span> f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">filter_process</span><span class="params">(Filter* f, <span class="type">double</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 一阶低通：y = a*x + (1-a)*prev</span></span><br><span class="line">    <span class="type">double</span> a = f-&gt;cutoff;</span><br><span class="line">    f-&gt;prev = a * x + (<span class="number">1.0</span> - a) * f-&gt;prev;</span><br><span class="line">    <span class="keyword">return</span> f-&gt;prev;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样，C 侧完全不知道 <code>Filter</code> 内部用了什么，实现细节被彻底封装起来了——这本身就是一种很好的设计。</p>
+<blockquote>
+<p>一个小提醒：上面的 <code>new</code> / <code>delete</code> 在 PC 上没问题，但在 MCU 上要慎用（见第九节的坑）。嵌入式里通常改成静态内存池或预分配数组，把 <code>create</code> 换成&quot;从池子里取一个&quot;。</p>
+</blockquote>
+<hr>
+<h1>八、完整案例：往 C 工程里塞一个 C++ 滤波算法</h1>
+<p>把前面几节串起来，给一个从编译到链接都能跑通的完整例子。</p>
+<h2 id="文件结构">文件结构</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.</span><br><span class="line">├── filter.h      # C / C++ 共用的头文件（extern &quot;C&quot; 保护）</span><br><span class="line">├── filter.cpp    # C++ 实现</span><br><span class="line">└── main.c        # 纯 C 的调用方</span><br></pre></td></tr></table></figure>
+<h2 id="filter-h">filter.h</h2>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span> &#123;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">Filter</span> <span class="title">Filter</span>;</span></span><br><span class="line"></span><br><span class="line">Filter* <span class="title function_">filter_create</span><span class="params">(<span class="type">float</span> cutoff)</span>;</span><br><span class="line"><span class="type">void</span>    <span class="title function_">filter_destroy</span><span class="params">(Filter* f)</span>;</span><br><span class="line"><span class="type">double</span>  <span class="title function_">filter_process</span><span class="params">(Filter* f, <span class="type">double</span> x)</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> __cplusplus</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="filter-cpp">filter.cpp</h2>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;filter.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Filter</span> &#123;</span><br><span class="line">    <span class="type">double</span> cutoff;</span><br><span class="line">    <span class="type">double</span> prev;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">Filter* <span class="title">filter_create</span><span class="params">(<span class="type">float</span> cutoff)</span> </span>&#123;</span><br><span class="line">    Filter* f = <span class="keyword">new</span> Filter;</span><br><span class="line">    f-&gt;cutoff = cutoff;</span><br><span class="line">    f-&gt;prev = <span class="number">0.0</span>;</span><br><span class="line">    <span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">filter_destroy</span><span class="params">(Filter* f)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">delete</span> f;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">double</span> <span class="title">filter_process</span><span class="params">(Filter* f, <span class="type">double</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="type">double</span> a = f-&gt;cutoff;</span><br><span class="line">    f-&gt;prev = a * x + (<span class="number">1.0</span> - a) * f-&gt;prev;</span><br><span class="line">    <span class="keyword">return</span> f-&gt;prev;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="main-c">main.c</h2>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;filter.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span> &#123;</span><br><span class="line">    Filter* f = filter_create(<span class="number">0.3f</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">double</span> y = <span class="number">0.0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i) &#123;</span><br><span class="line">        <span class="type">double</span> in = (i == <span class="number">0</span>) ? <span class="number">1.0</span> : <span class="number">0.0</span>;   <span class="comment">// 一个阶跃输入</span></span><br><span class="line">        y = filter_process(f, in);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;step %d -&gt; %.4f\n&quot;</span>, i, y);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    filter_destroy(f);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="编译和链接">编译和链接</h2>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">g++ -c filter.cpp -o filter.o    <span class="comment"># C++ 文件用 g++ 编译</span></span><br><span class="line">gcc -c main.c -o main.o          <span class="comment"># C 文件用 gcc 编译</span></span><br><span class="line">g++ main.o filter.o -o app       <span class="comment"># 关键：链接用 g++，而不是 gcc</span></span><br><span class="line">./app</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">step 0 -&gt; 0.3000</span><br><span class="line">step 1 -&gt; 0.2100</span><br><span class="line">step 2 -&gt; 0.1470</span><br><span class="line">step 3 -&gt; 0.1029</span><br><span class="line">step 4 -&gt; 0.0720</span><br></pre></td></tr></table></figure>
+<p><strong>最后一步是重点，也是最容易踩的坑</strong>：链接必须用 <code>g++</code>，不能用 <code>gcc</code>。</p>
+<p>因为 <code>filter.o</code> 里可能用到了 C++ 标准库（比如前面的 <code>std::sin</code>、<code>std::vector</code>），这些符号在 <code>libstdc++</code> 里。<code>gcc</code> 链接时不会自动带上 C++ 运行库，会报一堆 <code>undefined reference to std::xxx</code>；<code>g++</code> 链接则会自动链接 <code>libstdc++</code>。</p>
+<p>一句话记住：<strong>只要目标文件里混了 C++ 编译产物，链接就用 g++。</strong></p>
+<p>如果你用 CMake，就不用操这个心——它根据文件扩展名自动判断语言，链接时也会正确选择链接器：</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">add_executable</span>(app main.c filter.cpp)   <span class="comment"># 自动混编，自动用 C++ 链接</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h1>九、嵌入式里用 C++ 的几个坑</h1>
+<p>C++ 上 MCU 不是没代价的，这几个坑要先挂个印象：</p>
+<h2 id="1-关掉异常和-RTTI">1. 关掉异常和 RTTI</h2>
+<p>C++ 的异常（<code>try</code>/<code>throw</code>）和 RTTI（<code>dynamic_cast</code>/<code>typeid</code>）都会显著增大体积、引入运行时开销。嵌入式里几乎必开这两个编译选项：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-fno-exceptions -fno-rtti</span><br></pre></td></tr></table></figure>
+<p>代价是：不能用 <code>throw</code>，不能用 <code>dynamic_cast</code>。但嵌入式里本来也很少用这两个。</p>
+<h2 id="2-少用-不用-new">2. 少用 / 不用 <code>new</code></h2>
+<p>MCU 上堆很小，频繁 <code>new</code>/<code>delete</code> 会产生碎片，导致&quot;内存明明够，却申请不出来&quot;的诡异问题。优先用：</p>
+<ul>
+<li>全局或 <code>static</code> 对象（静态分配，地址确定）</li>
+<li>自定义内存池（从一个大数组里划块）</li>
+<li>编译期就确定大小的 <code>std::array</code></li>
+</ul>
+<h2 id="3-全局对象的构造函数">3. 全局对象的构造函数</h2>
+<p>C++ 允许定义全局对象，它们的构造函数必须在 <code>main()</code> 之前跑完。这个&quot;跑构造函数&quot;的动作由启动代码里的 <code>__libc_init_array</code> 完成。好消息是：主流工具链的启动文件（<code>startup_xxx.s</code>）已经帮你调好了，<strong>别自己乱改启动文件</strong>就行。</p>
+<p>但反过来意味着：<strong>别在全局对象构造函数里做依赖硬件的事</strong>——那时候时钟、外设还没初始化。</p>
+<h2 id="4-中断服务函数">4. 中断服务函数</h2>
+<p>ISR 要进中断向量表，签名是固定的（无参数、无返回值）。所以：</p>
+<ul>
+<li>❌ 不能是非静态成员函数——它隐含 <code>this</code> 指针，签名对不上。</li>
+<li>✅ 用自由函数，或者类的<strong>静态</strong>成员函数。</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Encoder</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">static</span> <span class="type">void</span> <span class="title">TIM_IRQHandler</span><span class="params">()</span></span>;   <span class="comment">// 可以作为 ISR</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="5-模板和虚函数的体积">5. 模板和虚函数的体积</h2>
+<p>模板用得克制，展开后和 C 手写没区别；但同一个模板实例化出几十种类型，代码体积会跟着涨。虚函数会引入 vtable 指针和间接调用开销，性能敏感的热路径里要留意。</p>
+<hr>
+<h1>十、什么时候用哪种，一句话总结</h1>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全新 STM32 工程</td>
+<td>整份用 C++，<code>main.cpp</code>，C++ 调 C HAL（VESC 路线）</td>
+</tr>
+<tr>
+<td>已有纯 C 工程，想加一个 C++ 算法模块</td>
+<td><code>extern &quot;C&quot;</code> 包一层，C 调 C++</td>
+</tr>
+<tr>
+<td>只想做 PC 端工具 / 上位机</td>
+<td>纯 C++，不用纠结混用</td>
+</tr>
+</tbody>
+</table>
+<p>最后用一句话收尾：</p>
+<blockquote>
+<p><strong>C 是底座，C++ 是上层；C++ 调 C 走直路，C 调 C++ 走 <code>extern &quot;C&quot;</code> 这座桥。桥的两头，只能走 C 认识的东西。</strong></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz/2026/10/24/c_cpp_mixing_embedded/">https://zhxylabflow.xyz/2026/10/24/c_cpp_mixing_embedded/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zhxylabflow.xyz" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a><a class="post-meta__tags" href="/tags/C%E8%AF%AD%E8%A8%80/">C语言</a><a class="post-meta__tags" href="/tags/C/">C++</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/6adba63408709_1792779828.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"><img class="cover" src="https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</div></div><div class="info-2"><div class="info-item-1">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波 做机器人，尤其是四足、无人机这类要「知道自己在哪、姿态什么样」的机器，状态估计是绕不过去的一关。 IMU 很便宜，但它给的是角速度和加速度，不是姿态、更不是速度。你想知道机身现在朝哪、在往哪动、走多快，都得靠「估」。于是就有了一整排算法：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波……名字一堆，经常分不清谁是谁、什么时候该用谁。 这篇文章把它们从头到尾捋一遍，讲清每个算法在解决什么问题、核心思想是什么、数学上怎么推出来的、彼此什么关系，最后落到四足机器人的实际场景。我自己在四足机器人上用 BMI088 做过 Mahony 姿态估计，互补滤波那部分会带上真实代码。 先理清：状态估计到底在估什么 以四足机器人为例，状态估计要回答三类问题：  姿态：机身当前的 roll / pitch / yaw，或者用四元数、旋转矩阵表示。 线速度 / 位置：机身往哪动、走多快、到哪了。 零偏：陀螺和加速度计都有零偏（bias），而且随温度漂移，得在线估出来，否则积分一下...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/03/16/c_function_pointer_vtable_blog/" title="用函数指针在 C 里模拟虚函数表"><img class="cover" src="https://img.cdn1.vip/i/69b967e9d0aa8_1773758441.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-16</div><div class="info-item-2">用函数指针在 C 里模拟虚函数表</div></div><div class="info-2"><div class="info-item-1">C语言中的函数指针与虚函数表模拟 在C语言模拟面向对象的技巧里，函数指针和虚函数表风格的操作表，是最核心的一层机制。当系统开始管理越来越多的设备、模块和控制逻辑时，单纯依靠一堆分散的函数和条件分支，代码会越来越难维护。 在嵌入式系统中，如何用 C 语言的函数指针模拟“对象方法”，再进一步模拟“虚函数表”和“多态调用”？  一、为什么普通 C 写法会越来越难维护 先看最朴素的写法。假设我们有两类电机：  DJI 电机 DM 电机  一开始也许只需要做“使能”： if (motor_type == DJI_MOTOR) &#123;    dji_motor_enable();&#125; else if (motor_type == DM_MOTOR) &#123;    dm_motor_enable();&#125; 后来需求变多了，还要设置目标值、解析反馈、执行控制更新： if (motor_type == DJI_MOTOR) &#123;    dji_motor_enable();    dji_motor_set_ref(ref);    dji_motor_deco...</div></div></div></a><a class="pagination-related" href="/2026/05/21/rtos_from_scratch_h723/" title="在 STM32H723 上手写一个 RTOS 内核"><img class="cover" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-05-21</div><div class="info-item-2">在 STM32H723 上手写一个 RTOS 内核</div></div><div class="info-2"><div class="info-item-1">从零写一个 RTOS 内核——在 STM32H723 上 市面上有很多 RTOS：FreeRTOS、RT-Thread、μC/OS、Zephyr……它们都很好用，但用久了总有种隔靴搔痒的感觉——你知道怎么调 API，但不知道进去之后到底发生了什么。 这篇文章的目的很简单：在 STM32H723 上，从零写一个能跑起来的 RTOS 内核，包含任务创建、上下文切换、调度器启动、SysTick 时基、阻塞延时和空闲任务。 不依赖任何第三方 RTOS 源码，只靠 ARM Cortex-M7 的硬件特性和纯粹的 C + 内联汇编。写完以后，你将对 RTOS 的底层机制有一个肌肉记忆级别的理解。  全文代码均在 STM32H723 上实测通过，工具链为 ARM GCC。   1. 设计目标 在动手之前，想清楚我们要做什么、不做什么是很有必要的。 要做的：  多任务并发（伪并行，单核分时） 基于优先级的抢占式调度 SysTick 提供时基 阻塞延时（delay_ms 而不是 HAL_Delay） 空闲任务（没有任务执行时 CPU 进入 WFI）  不做的（后续可以单独写）：  任务间同步（信号...</div></div></div></a><a class="pagination-related" href="/2026/03/28/h7_dma/" title="H723 上 DMA 读不到数据？查 D-Cache 和内存域"><img class="cover" src="https://img.cdn1.vip/i/69c8c42418811_1774765092.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-28</div><div class="info-item-2">H723 上 DMA 读不到数据？查 D-Cache 和内存域</div></div><div class="info-2"><div class="info-item-1">H723 上 DMA 读不到数据？查 D-Cache 和内存域 在 STM32H723 上写 DMA,几乎每个人都会撞上同一堵墙:HAL_UART_Receive_DMA() 明明正常返回,缓冲区里的数据却纹丝不动;ADC 采回来的值一会儿全 0,一会儿又&quot;好了&quot;;更诡异的是,把数组改成全局变量、加个 static、甚至换个大小,症状居然跟着变。 这几种现象凑在一起,基本能排除&quot;外设时序配错了&quot;这条路,矛头指向同一个方向:H7 的内存架构。 Cortex-M7 带 32KB I-Cache 和 32KB D-Cache,内部又按 D1/D2/D3 分成三个域,SRAM 散落在不同总线上,还留了 DTCM/ITCM 这种 CPU 私有的快速内存。所以&quot; DMA 不工作&quot;背后,通常就三类问题:  Buffer 放进了 DMA 根本够不着的内存区(最常见是 DTCM) Buffer 位置没错,但 D-Cache 让 CPU 和 DMA 看到的是两份数据 多个主设备真在抢总线带宽  下面按排查顺序展开,而不是按理论顺序。 先记住...</div></div></div></a><a class="pagination-related" href="/2026/06/17/blectr_app_development/" title="给机器人写了个安卓蓝牙遥控 App"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-06-17</div><div class="info-item-2">给机器人写了个安卓蓝牙遥控 App</div></div><div class="info-2"><div class="info-item-1">从零写一个安卓蓝牙遥控 App——USB 串口、UVC 图传与自定义通信协议 前阵子为了控制一台机器人底盘，我需要一个手机遥控 App。市面上能搜到的蓝牙遥控器 App 要么功能过于简陋（就几个方向按钮），要么图传方案和自己用的不匹配。与其改别人的代码，不如自己写一个，反正需求也不算复杂：  通过 USB 串口（或者蓝牙 SPP）与机器人通信 通过 OTG 接入 UVC 视频采集卡显示 5.8G 模拟图传画面 支持摇杆、按键和矩阵操作，能切换多种工作模式 通信协议自己定，灵活扩展  这篇文章就记录一下这个 App 的完整设计与实现过程。  1. 整体架构 项目使用 Kotlin + Jetpack 全家桶，没有引入复杂的架构框架。核心模块就四个文件： app/src/main/java/com/ek/blectr/├── MainActivity.kt          # 主界面 + 控制逻辑├── UsbSerialController.kt   # USB 串口通信封装├── UvcPreviewController.kt  # UVC 图传预览封装├── Joystick...</div></div></div></a><a class="pagination-related" href="/2026/03/16/c_language_oop_robotics_blog/" title="在 C 语言里玩面向对象"><img class="cover" src="https://img.cdn1.vip/i/695e790568d31_1767799045.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-03-16</div><div class="info-item-2">在 C 语言里玩面向对象</div></div><div class="info-2"><div class="info-item-1">C语言模拟面向对象 很多人第一次看到这种代码风格时，都会有一个问题：“用 C 语言写出面向对象的样子，是不是显得更专业” 我的看法是：专业不在于“像不像 C++”，而在于这套写法能不能真正解决工程问题。 对于机器人嵌入式控制系统来说，系统里往往同时存在底盘、电机、升降机构、武器机构、CAN 通信、PID 控制、任务调度等多个层次。如果继续用“满地全局变量 + 一堆 switch-case + 到处散落的初始化函数”去组织代码，随着功能变多，系统很快就会变得难以维护。 这时候，C 语言里的几个经典手段——结构体封装、函数指针、组合关系、统一初始化接口、对象注册——就能模拟出一套足够实用的“面向对象”风格。 这篇文章就结合一套机器人电机控制代码，聊聊：  为什么嵌入式系统里要用 C 模拟面向对象 你的这套代码到底“对象化”在什么地方 这种写法在机器人控制系统里有什么实际价值 这种设计什么时候值得用，什么时候会过度设计 基于现有代码，还能做哪些工程上的改进   1. 为什么 C 语言也要“对象化”？ 在桌面开发里，大家很容易直接想到 C++、Rust 这类更现代的语言；但在嵌入式世界，...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">嵌入式与机器人运动控制 | STM32/FreeRTOS · 四足机器人 · 强化学习 · 状态估计</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">期末复习中……</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">一、为什么会有&quot;C 和 C++ 混用&quot;这回事</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">二、C++ 到底给嵌入式带来了什么</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text">三、方向一：C++ 调 C（最常见，最顺）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">5.</span> <span class="toc-text">四、方向二：C 调 C++，为什么不能直接调</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8D%E5%AD%97%E4%BF%AE%E9%A5%B0%E5%88%B0%E5%BA%95%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">5.1.</span> <span class="toc-text">名字修饰到底发生了什么</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">6.</span> <span class="toc-text">五、extern &quot;C&quot; 到底做了什么</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">7.</span> <span class="toc-text">六、正确的头文件写法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">8.</span> <span class="toc-text">七、跨语言传复杂数据：不透明指针</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">9.</span> <span class="toc-text">八、完整案例：往 C 工程里塞一个 C++ 滤波算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-number">9.1.</span> <span class="toc-text">文件结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#filter-h"><span class="toc-number">9.2.</span> <span class="toc-text">filter.h</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#filter-cpp"><span class="toc-number">9.3.</span> <span class="toc-text">filter.cpp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#main-c"><span class="toc-number">9.4.</span> <span class="toc-text">main.c</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E5%92%8C%E9%93%BE%E6%8E%A5"><span class="toc-number">9.5.</span> <span class="toc-text">编译和链接</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">10.</span> <span class="toc-text">九、嵌入式里用 C++ 的几个坑</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%85%B3%E6%8E%89%E5%BC%82%E5%B8%B8%E5%92%8C-RTTI"><span class="toc-number">10.1.</span> <span class="toc-text">1. 关掉异常和 RTTI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%B0%91%E7%94%A8-%E4%B8%8D%E7%94%A8-new"><span class="toc-number">10.2.</span> <span class="toc-text">2. 少用 &#x2F; 不用 new</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%85%A8%E5%B1%80%E5%AF%B9%E8%B1%A1%E7%9A%84%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="toc-number">10.3.</span> <span class="toc-text">3. 全局对象的构造函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%B8%AD%E6%96%AD%E6%9C%8D%E5%8A%A1%E5%87%BD%E6%95%B0"><span class="toc-number">10.4.</span> <span class="toc-text">4. 中断服务函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E6%A8%A1%E6%9D%BF%E5%92%8C%E8%99%9A%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%93%E7%A7%AF"><span class="toc-number">10.5.</span> <span class="toc-text">5. 模板和虚函数的体积</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">11.</span> <span class="toc-text">十、什么时候用哪种，一句话总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/24/c_cpp_mixing_embedded/" title="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑"><img src="https://img.cdn1.vip/i/6adba63408709_1792779828.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/24/c_cpp_mixing_embedded/" title="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑">在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑</a><time datetime="2026-10-23T17:45:29.714Z" title="发表于 2026-10-24 01:45:29">2026-10-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"><img src="https://img.cdn1.vip/i/6ab2c32a5c018_1790100266.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/attitude_state_estimation/" title="姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波">姿态与状态估计：互补滤波、Mahony、Madgwick、EKF、UKF、MSCKF、粒子滤波</a><time datetime="2026-09-22T19:00:00.000Z" title="发表于 2026-09-23 03:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层"><img src="https://img.cdn1.vip/i/6ab2c3263d6c2_1790100262.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="通信协议名词，都该归到 OSI 的哪一层"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/communication_protocols_layers/" title="通信协议名词，都该归到 OSI 的哪一层">通信协议名词，都该归到 OSI 的哪一层</a><time datetime="2026-09-22T18:00:00.000Z" title="发表于 2026-09-23 02:00:00">2026-09-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"><img src="https://img.cdn1.vip/i/6ab2c3da84f46_1790100442.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看</a><time datetime="2026-09-22T17:30:00.000Z" title="发表于 2026-09-23 01:30:00">2026-09-23</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/07/policy_gradient_theorem/" title="策略梯度定理推导">策略梯度定理推导</a><time datetime="2026-08-06T16:00:00.000Z" title="发表于 2026-08-07 00:00:00">2026-08-07</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
