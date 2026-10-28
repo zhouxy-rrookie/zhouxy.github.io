@@ -1,0 +1,809 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本篇说明 12 个宇树关节模组的控制方案，涵盖主控选型（DM-MC02 与 STM32H723）、IMU 选型与安装、2 路 × 6 关节 4 Mbps 的带宽核算、收发器与终端偏置，以及从短路检测到 12 关节全部在线的上电调试顺序。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线">
+<meta property="og:url" content="https://zhxylabflow.xyz/2026/09/22/05/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="本篇说明 12 个宇树关节模组的控制方案，涵盖主控选型（DM-MC02 与 STM32H723）、IMU 选型与安装、2 路 × 6 关节 4 Mbps 的带宽核算、收发器与终端偏置，以及从短路检测到 12 关节全部在线的上电调试顺序。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp">
+<meta property="article:published_time" content="2026-09-22T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-28T11:39:15.077Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="足式机器人">
+<meta property="article:tag" content="四足开发实战">
+<meta property="article:tag" content="STM32H7">
+<meta property="article:tag" content="RS485">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线",
+  "url": "https://zhxylabflow.xyz/2026/09/22/05/",
+  "image": "https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp",
+  "datePublished": "2026-09-22T04:00:00.000Z",
+  "dateModified": "2026-10-28T11:39:15.077Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "https://zhxylabflow.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/2026/09/22/05/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-22T04:00:00.000Z" title="发表于 2026-09-22 12:00:00">2026-09-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-28T11:39:15.077Z" title="更新于 2026-10-28 19:39:15">2026-10-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%9B%9B%E8%B6%B3%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/">四足开发实战</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>按系列第 3 篇（<a href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩">四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩</a>）选定 GO-M8010-6，并按第 4 篇（<a href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全">四足开发实战（四）：电源篇——6S 电池、配电与安全</a>）配好 6S 电池之后，剩余的问题即是如何指挥这 12 个关节。答案是使用一块 DM-MC02 主控、一颗惯性测量单元，以及两条 4 Mbps 的 RS485 总线。本篇依次说明主控选型、IMU 配置、带宽核算、总线连接与上电调试，完成之后 12 个关节即可全部在线，并明确每一根线的接法依据。</p>
+<p>动手之前应当先备齐工具与器件，以免焊接过程中因缺少端子而中断。工具清单包括：万用表、30 V/5 A 限流电源、支持 4 Mbps 的 USB-RS485 分析仪（<code>TODO(确认型号)</code>）、示波器（可选，但强烈建议）、压线钳、热缩管、M3 硅胶减振柱。主要工具各有分工：万用表用于测量短路与终端电阻，限流电源用于防止过流损坏，分析仪用于抓取总线帧，示波器用于观察边沿；缺少其中任意一项，都会在后续相应步骤受阻。器件按下表一次备齐：</p>
+<table>
+<thead>
+<tr>
+<th>器件</th>
+<th>数量</th>
+<th>用途</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DM-MC02</td>
+<td>1</td>
+<td>主控</td>
+<td>已购</td>
+</tr>
+<tr>
+<td>ICM42688P 模块</td>
+<td>1</td>
+<td>IMU</td>
+<td>SPI</td>
+</tr>
+<tr>
+<td>6S 8000 mAh 电池</td>
+<td>1</td>
+<td>电源</td>
+<td>XT60</td>
+</tr>
+<tr>
+<td>40 A 慢断保险丝</td>
+<td>1</td>
+<td>主回路保护</td>
+<td></td>
+</tr>
+<tr>
+<td>5 V/5 A DCDC</td>
+<td>1</td>
+<td>逻辑电源</td>
+<td>TPS54560 一类</td>
+</tr>
+<tr>
+<td>急停开关</td>
+<td>1</td>
+<td>安全</td>
+<td>常闭</td>
+</tr>
+<tr>
+<td>XT30 插头</td>
+<td>12 对</td>
+<td>关节供电</td>
+<td></td>
+</tr>
+<tr>
+<td>GH1.25 端子</td>
+<td>若干</td>
+<td>RS485/串口</td>
+<td>只走信号</td>
+</tr>
+</tbody>
+</table>
+<h2 id="为什么是-DM-MC02">为什么是 DM-MC02</h2>
+<p>本方案选用达妙 DM-MC02，核心为 STM32H723VGT6，主频 550 MHz、RAM 564 KB。该板卡在出厂时已集成两路 RS485（最高 10 Mbps，与宇树电机的 4 Mbps 总线匹配）和三路 FDCAN，并带有 24 MHz 晶振与调试口。使用 H743 开发板自行搭建虽然可行，但 H743 仅有两路 FDCAN、没有板载 RS485，需要另加两片高速收发器并自行实现 DE 方向控制电路，对第一台机器而言并不必要。不选 F4/F7 的原因在于：F4 仅有 192 KB RAM，无法容纳 12 个关节的状态、日志缓冲与 EKF 矩阵；F7 的 512 KB 勉强可用，但同样缺少板载双路 RS485。H723 的 550 MHz 与 564 KB 在 1 kHz 控制环下留有充分余量——按预算，控制 300 µs、两路 RS485 各 50 µs、IMU 30 µs、日志 20 µs，1 ms 内仅用去不到一半，剩余部分留给 MPC 与调试。</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>DM-MC02（H723VGT6）</th>
+<th>H743VI 开发板</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主频 / RAM</td>
+<td>550 MHz / 564 KB</td>
+<td>480 MHz / 1 MB</td>
+</tr>
+<tr>
+<td>RS485</td>
+<td>板载 2 路，最高 10 Mbps</td>
+<td>无，需外加收发器</td>
+</tr>
+<tr>
+<td>FDCAN</td>
+<td>3 路</td>
+<td>2 路</td>
+</tr>
+<tr>
+<td>适合</td>
+<td>直接上机</td>
+<td>学习验证，接线多</td>
+</tr>
+</tbody>
+</table>
+<p>此处顺带说明一个必然会遇到的问题：使用成品控制板还是自画底板。第一台机器宜直接采用成品板——画板、打样、调试每一项都需要两三周，而 DM-MC02 上电即可使用，时间应当投入让机器站立，而非修复自画的电源。定型之后再将核心板与收发器集成进自画底板，体积可按结构定制，但小批量打样成本反而更高，因此该项工作留待第二台机器。</p>
+<p>外设资源也应当一次核算清楚，以免后续开发中途发现不足。该板卡提供的资源如下：两路 RS485 用于电机总线，三路 FDCAN 留给上位机、遥控与扩展传感器，一路 SPI 接 IMU，一路 UART 接上位机，USB 留作日志导出，ADC 两通道采集母线电压与 NTC 温度，GPIO 至少六个（急停、两个 LED、蜂鸣器、继电器使能），另加独立时钟的 IWDG。核对要点列于下表，收到板卡后应首先照表验货。</p>
+<table>
+<thead>
+<tr>
+<th>外设</th>
+<th>数量</th>
+<th>用途</th>
+<th>核对要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RS485</td>
+<td>2</td>
+<td>电机总线 1/2，各 6 关节，4 Mbps</td>
+<td>板载收发器是否 ≥10 Mbps</td>
+</tr>
+<tr>
+<td>FDCAN</td>
+<td>3</td>
+<td>上位机/遥控/扩展传感器（可选）</td>
+<td>不接电机</td>
+</tr>
+<tr>
+<td>SPI</td>
+<td>1</td>
+<td>ICM42688P，8 MHz</td>
+<td>独立 CS</td>
+</tr>
+<tr>
+<td>UART</td>
+<td>1</td>
+<td>上位机链路，≥921600</td>
+<td>与调试串口分开</td>
+</tr>
+<tr>
+<td>USB OTG</td>
+<td>1</td>
+<td>日志导出</td>
+<td>与 RS485 无关</td>
+</tr>
+<tr>
+<td>ADC</td>
+<td>2 通道</td>
+<td>母线电压分压、NTC</td>
+<td>分压比 1:10 以上</td>
+</tr>
+<tr>
+<td>IWDG</td>
+<td>1</td>
+<td>看门狗</td>
+<td>独立时钟</td>
+</tr>
+</tbody>
+</table>
+<p>接口端子按功能分开：RS485-1/2 各为 A/B/GND 三芯端子，SPI 与 UART 使用排针，SWD 调试四针，USB 一个 Type-C。具体引脚号以 DM-MC02 原理图为准（<code>TODO(确认)</code>），不应照搬其他 H723 板卡的丝印——不同厂家的板卡引脚复用完全不同，照抄会导致硬件损坏。RAM 方面也给出预算参考：固件加 FreeRTOS 约占 300 KB Flash / 120 KB RAM，12 个关节状态 4 KB，EKF 矩阵缓存 8 KB，日志环形缓冲 256 KB（约 2.5 秒的 1 kHz 全量日志），任务栈合计 40 KB，564 KB 的容量仍有大量余量，足够后续扩展。</p>
+<p>收到板卡后应先核对三件事：RS485 收发器型号是否为 10 Mbps 级、两路 UART 是否真正独立、FDCAN 是否焊接了收发器（许多板卡仅留引脚）。若不符合要求应更换板卡，避免焊线完成之后才发现问题。外设分配如下：SPI 一路接 IMU，UART 一路接上位机，USB 留作日志导出，ADC 两通道采集母线电压与 NTC 温度，GPIO 将急停接入 EXTI，看门狗使用独立时钟的 IWDG。中断优先级方面，RS485 的 IDLE 与 TC 中断最高，SPI 数据就绪次之，上位机 UART 再次；中断内只搬运数据，CRC 与解析交由任务处理，这一习惯在后续调试中能避免大量问题。时钟方面，DM-MC02 的 24 MHz 晶振需经 PLL 倍频至 550 MHz，H7 的 VOS 档位与 Flash 等待周期必须随之调整，否则会随机触发 HardFault——应先使串口稳定输出，再处理 RS485 与 IMU，这是首日上电的正确顺序。</p>
+<p>三项核对的具体做法再作说明：收发器查看板卡丝印型号，查阅手册确认速率档是否达到 10 Mbps；两路 UART 各自短接 TX/RX 做回环，能同时自发自收才算真正独立；FDCAN 查找板上的八脚 CAN 收发器芯片，仅留引脚的板卡无法直接使用。若手边仅有 H743/H750 开发板：H743VI 的 2 MB Flash 可直接运行，H750 仅 128 KB Flash，程序需外挂 QSPI 走 XiP，链接脚本与调试都增加一层复杂度；两者还需外加两片 10 Mbps 收发器与 DE 控制电路，第一台机器不建议采用这种方式。DMA 与启动顺序也需提前确定：两路 RS485 各占一对 TX/RX DMA，SPI 接收占一路，上位机 UART 占一路；启动顺序为 HSI → 配置 PLL → 切换 SYSCLK → 开启 I/D Cache → 初始化外设。中断优先级按数值记忆：数值越小优先级越高，RS485 的 IDLE 与 TC 置于 5 左右，后续 SPI 与 UART 依次降级。Flash 预算方面，H723 片内 1 MB，按 300 KB 预算仅用不到三分之一，H743VI 的 2 MB 更为宽裕。1 kHz 时基使用高级定时器，SysTick 加 DWT 也可替代，但蜂鸣器这类需要 PWM 的引脚仍应占用一个定时器。</p>
+<p>IMU 选用 ICM42688P，不宜再使用 MPU6050 一代：后者无 SPI、噪声较大且已停产。与 BMI088 相比，ICM42688P 的陀螺噪声低一个量级（约 3 mdps/√Hz 对 14），SPI 可运行于更高时钟，单芯片结构在 8 MHz SPI、模式 3 下工作稳定。接线共六根：3.3 V、GND、SCLK、MOSI、MISO、CS，另加一根 INT1 数据就绪中断，CS 需上拉。上电后先读 WHO_AM_I 寄存器（0x75），ICM42688P 应返回 0x47，此步可排查虚焊、接反与假冒芯片三类问题；随后依次配置陀螺 ±2000 dps/1 kHz、加速度 ±16 g/1 kHz、推挽高有效中断，最后将电源管理写入低噪声模式。初始化序列应按顺序执行，不可跳过任一步骤：</p>
+<ol>
+<li>写 DEVICE_CONFIG（0x11）= 0x01 软复位，等 1 ms</li>
+<li>读 WHO_AM_I（0x75），确认返回 0x47</li>
+<li>写 GYRO_CONFIG0（0x4F）：±2000 dps、1 kHz</li>
+<li>写 ACCEL_CONFIG0（0x50）：±16 g、1 kHz</li>
+<li>写 INT_CONFIG（0x14）：推挽、高有效、数据就绪中断</li>
+<li>写 PWR_MGMT0（0x4E）= 0x0F，陀螺和加速度进低噪声模式</li>
+<li>读一次温度，确认芯片在工作</li>
+</ol>
+<p>量程不宜过小：摔倒磕碰瞬间角速度可能达到 1000 dps，±250 的小量程一次即饱和。采样使用 burst read 一次读取 14 字节（加速度 6 + 陀螺 6 + 温度 2），1 kHz 下仅 14 kB/s，但仍建议走 DMA，节省的 CPU 时间即为控制环的余量。</p>
+<p>滤波带宽也应一并配置：1 kHz 采样下陀螺带宽设为 200~400 Hz、加速度 100~200 Hz，使用片上 LPF，比在固件中做软件滤波更节省 CPU。接线方面有两个细节：VDDIO 接 3.3 V 而非 5 V，SPI 配置为 16 位、MSB first，CS 的上拉使用 10 kΩ。</p>
+<p>IMU 的安装比型号选择更为重要。它应靠近整机质心，安装在刚性碳板或金属板上，不能置于悬臂、打印支架或电池架上；固定使用四个 M3 硅胶减振柱，不宜使用整块软泡棉，否则会引入低频晃动。位置应远离 DCDC 电感与 RS485 差分线至少五厘米，丝印箭头指向机身正前方，安装完成后拍照存档。若芯片坐标系与机身坐标系不一致（机身系约定 x 前、y 左、z 上），应在配置中保存一个安装旋转矩阵，而非在代码中多处修改符号——实际开发中曾遇到&quot;一站立就前倾&quot;的问题，最终定位为姿态角符号相反，改用矩阵统一处理后未再出现。安装完成后应先验证再上整机：静止读取十秒，三轴陀螺零偏小于 0.5 dps；绕 z 轴手动旋转 90 度，偏航角变化在 90±3 度内；侧倾 30 度，横滚符号与实际方向一致。三项通过后再做正式标定：加速度使用六面法，每面静置十秒记录均值，解出零偏与标度；陀螺静止 60 秒取均值作为零偏。标定值写入 Flash，每更换一次安装位置就重新标定。</p>
+<p>另需一并避开电机的三相动力线，它与 IMU 同样保持五厘米以上的距离。装机时三相线贴机身外侧、信号线走内侧，不宜图省事扎成一束。旋转矩阵在固件中的形式如下，芯片坐标系与机身坐标系不一致时只修改此处：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* cfg/imu_cfg.h：单位阵表示芯片系 = 机身系 */</span></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="type">float</span> imu_mount_rot[<span class="number">3</span>][<span class="number">3</span>] = &#123;</span><br><span class="line">    &#123;<span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>&#125;,</span><br><span class="line">    &#123;<span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>&#125;,</span><br><span class="line">    &#123;<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>&#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="一条-4-Mbps-的总线装得下-6-个关节">一条 4 Mbps 的总线装得下 6 个关节</h2>
+<p>下面核算最关键的带宽：GO-M8010-6 每周期发送 17 字节控制帧、接收 16 字节反馈帧，单个电机共 33 字节。4 Mbps、8N1 下每字节 10 bit，因此每路 6 个电机每毫秒 198 字节，约 1.98 Mbps，占 4 Mbps 的 49.5%。反之，12 个电机全部挂接一路为 396 字节/毫秒、3.96 Mbps，占 99%，没有任何余量，一旦有干扰即全线错帧。因此拓扑固定为两路各 6 个电机、1 kHz 下发，单条总线最多 15 个电机（ID 0~14，15 为广播，广播没有返回，不用于单机测试）。此处还有半双工的时间核算：17 字节发送约 42.5 µs，16 字节接收约 40 µs，加上方向切换，单个电机一轮约 85 µs，6 个串行约 510 µs——两路并行，1 ms 内正好用去一半。轮询按固定顺序访问 0 到 5，不应随机乱序，这样丢帧时能立即定位到具体 ID；连续三次丢帧即标记该关节异常。</p>
+<p>两个边缘问题在此一并说明。广播 ID 15 并非装饰：它仅用于同时急停或整机标定这类全体动作，不参与常规轮询，也不用于单个电机测试。关于提高波特率并无意义——GO 官方锁定 4 Mbps，模组只识别这一速率，提高需要改动电机固件，线材与收发器成本随之上升，收益为零。</p>
+<table>
+<thead>
+<tr>
+<th>拓扑</th>
+<th>每周期字节数</th>
+<th>速率</th>
+<th>占 4 Mbps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2 路 × 6 电机（GO，17+16）</td>
+<td>6 × 33 = 198 B/ms</td>
+<td>1.98 Mbps</td>
+<td>49.5%</td>
+</tr>
+<tr>
+<td>2 路 × 6 电机（IM6014，20+26）</td>
+<td>6 × 46 = 276 B/ms</td>
+<td>2.76 Mbps</td>
+<td>69%</td>
+</tr>
+<tr>
+<td>12 电机挂一路（GO）</td>
+<td>12 × 33 = 396 B/ms</td>
+<td>3.96 Mbps</td>
+<td>99%，不可用</td>
+</tr>
+</tbody>
+</table>
+<p>拓扑结构为一条菊花链，两端各接一个终端电阻，中间节点不加任何元件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    H[&quot;DM-MC02&lt;br/&gt;RS485-1&quot;] --&gt; M1[&quot;电机 1&quot;]</span><br><span class="line">    M1 --&gt; M2[&quot;电机 2&quot;]</span><br><span class="line">    M2 --&gt; M3[&quot;电机 3&quot;]</span><br><span class="line">    M3 --&gt; M4[&quot;电机 4&quot;]</span><br><span class="line">    M4 --&gt; M5[&quot;电机 5&quot;]</span><br><span class="line">    M5 --&gt; M6[&quot;电机 6&quot;]</span><br><span class="line">    M6 --&gt; T[&quot;120Ω&quot;]</span><br><span class="line">    H --- T0[&quot;120Ω&quot;]</span><br></pre></td></tr></table></figure>
+<p>一组电气参数应当熟记，排障时均以此为依据：收发器共模范围 −7~+12 V，超出即错帧；差分输出 1.5~2 V（带 54 Ω 负载）；接收门限 ±200 mV，低于此值总线状态不定；现代收发器单位负载 1/8，理论上节点数较多，但协议仅允许 15 个；速率与距离成反比，4 Mbps 下总线尽量控制在 30 米内、支线小于 0.3 米。终端功耗也需核算：3.3 V 下两端 120 Ω 并联约 55 mA，加上偏置约 60 mA，收发器应选择驱动能力足够的型号，不宜使用弱驱动型。</p>
+<p>带宽是否足够与 4 Mbps 下能否稳定收发是两件事。先看收发器：MAX485 仅 2.5 Mbps，直接排除；MAX3485 为 10 Mbps，可用但接近极限，线长增加或干扰增大即错帧；推荐采用 THVD1450 这类 50 Mbps 级 3.3 V 半双工芯片，余量更大，DM-MC02 板载的收发器也应按此标准核对。终端电阻两端各一个 120 Ω，断电用万用表测量 A–B 应约为 60 Ω——120 Ω 说明只接了一个，40 Ω 说明有节点多焊了一个，多焊的那个会导致长线随机出现错误帧。空闲电平不确定时应加偏置：A 上拉 680 Ω、B 下拉 680 Ω，配合 120 Ω 终端，空闲差分约 0.27 V，稳定在接收门限之上。偏置电阻取值不宜过小，120 Ω 级的偏置与终端并联后总线负载过重，接满 6 个电机后幅值会下降。</p>
+<p>终端的安装方式也有要求：主控端的 120 Ω 直接焊接在 A/B 端子上，末端电机的 120 Ω 制作在插头内，中间四个节点不安装任何元件；安装完成后在总线两端各测量一次，读数均约为 60 Ω 才算正确。验收表中还需记录一条：空闲差分 0.2~0.3 V（有偏置时），与 60 Ω 终端电阻共同构成总线的静态度量。</p>
+<table>
+<thead>
+<tr>
+<th>型号</th>
+<th>速率</th>
+<th>供电</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>THVD1450</td>
+<td>50 Mbps</td>
+<td>3.3 V</td>
+<td>推荐，余量大</td>
+</tr>
+<tr>
+<td>MAX3485</td>
+<td>10 Mbps</td>
+<td>3.3 V</td>
+<td>能用但贴边</td>
+</tr>
+<tr>
+<td>MAX485</td>
+<td>2.5 Mbps</td>
+<td>5 V</td>
+<td>不够，不要用</td>
+</tr>
+</tbody>
+</table>
+<p>还有一处特别容易写错的细节是 CRC 的范围。GO 的 CRC16-CCITT 只计算前 15 字节（120 bit），最后 2 字节为校验值本身，且低字节在前；若写成&quot;算 16 字节&quot;或&quot;算 17 字节&quot;，或把字节序弄反，都会导致帧报错，且该错误在示波器上看起来一切正常。联调时应先以官方例程核对一帧，确认 CRC 结果一致后再继续，可避免大量无谓的排查时间。</p>
+<p>最容易出现问题的是共地。RS485 虽为差分信号，但接收器共模范围仅 −7~+12 V，若未接 GND，6 个电机工作时两地电位差随电流波动，反馈帧的 CRC 会随机出错——台面上单个电机正常、装机后出现异常，多半是此原因。因此要求 A/B/GND 三芯一起布线，整机地星形汇合到电源入口，屏蔽层仅在主控端单点接地，电机端悬空。如需隔离，应选 ADuM1201 加 10 Mbps 以上的收发器，配 B0505 隔离电源；不宜使用 ADM2483，其为 500 kbps 级，4 Mbps 下无法正常工作。接口处再加一个 SM712 这类 RS485 专用 TVS，地线短粗，在插拔频繁的场合可泄放大部分静电。</p>
+<p>若完整实现隔离，再补充两点：隔离电源使用 B0505S 这类 1 W 模块，两侧地完全分开；隔离对象主要是上位机 USB 与电池地之间——ADuM1201 隔离 UART 信号，B0505 为总线侧供电。不隔离时至少保证电机地与主控地在电源入口单点相连，地线与 A/B 同路径布线、线径不小于 0.5 mm²，避免电机电流流经信号地。长线或户外场景在 SM712 之外再加气体放电管。</p>
+<p>另有一个半双工的细节，属于不易察觉但必然引发故障的一类。发送时必须将总线切换为发送方向：DE 拉高发送、拉低接收，切换时机应等待 UART 的 TC（发送完成）标志而非 TXE——TXE 仅表示数据进入移位寄存器，切换过早会丢失最后一个字节。切到接收后再留一到两个位时间（约 0.5 µs）的保护间隔，且发送期间应关闭接收，否则发出的 17 字节回显会被截成 16 字节当作反馈帧，CRC 全错且长度恰好吻合，此类故障最具迷惑性。线材方面，4 Mbps 必须使用 120 Ω 特性阻抗的双绞屏蔽线，杜邦线在一米处即开始错帧；总线尽量控制在 30 米内、支线小于 0.3 米。关于为何不用 CAN：经典 CAN 一帧最多 8 字节，无法容纳 17 字节的控制帧，CAN FD 虽可容纳但宇树电机固件不支持，而 RS485 与官方协议原生匹配，因此该选择明确。</p>
+<p>硬件接法上，DE 与 /RE 并联、由同一个 GPIO 控制：置 1 发送、清 0 接收。软件在切换前先读 TC，硬件在切换后给足保护间隔，两端配合正确，半双工才不会出错。</p>
+<h2 id="电源链的细节">电源链的细节</h2>
+<p>电源链同样不应遗漏细节。上电时序为 22 V 母线先稳定、再 5 V、再 3.3 V，掉电顺序相反；22 V 母线配置 470 µF 低 ESR 电解电容加 10 µF 陶瓷电容，上电瞬间电容充电电流可达几十安，必须依靠预充电阻限流，否则保险丝与插头均无法承受。保险丝按持续电流的 1.5~2 倍选慢断、再按峰值电流的 1.2 倍校核，30 A 峰值、5 A 持续即定为 40 A 慢断；防反接使用低 Rds(on) 的 P-MOS，肖特基在 30 A 下 0.5 V 压降即产生 15 W 发热，不可使用。DCDC 选择输入耐压 60 V 的 TPS54560 一类同步 Buck，6S 满电 25.2 V 需留 20% 余量；轻载啸叫源于进入跳周期模式，可在输出加 5%~10% 假负载或换用固定频率型号。线径按 $A = \rho L I / \Delta V$ 计算，铜的电阻率取 0.0175 Ω·mm²/m、压降预算 0.1~0.2 V——30 A 峰值、0.3 米的主回路使用 12AWG 压降仅 0.05 V，单关节 16AWG 也足够，而 RS485 信号线只需双绞，线径并非关键。电池方面再核算 C 率：8000 mAh、25C 理论上可放 200 A，而峰值仅 30 A，实际只需 4C，余量充足；真正需要关注的是电压跌落，大电流下 6S 跌破 20 V 时，电机与主控都可能复位。</p>
+<p>保护回路再补充两个细节。缓启动给出具体参数：10 Ω/50 W 预充电阻配继电器，预充一秒后再吸合。急停使用常闭蘑菇头串接触器线圈，按下时同时拉低驱动器使能，动作时间控制在 100 ms 以内；急停只切断电机母线，逻辑电源从保险丝后直接取——急停之后主控仍保持运行，才能将故障现场写入日志。5 V 一级再补充 100 µF + 10 µF 储能，与 22 V 母线的 470 µF 分开计算，两级均不应省略。</p>
+<p>转换级的数据补充如下：TPS54560 一类 Buck 输入并联 100 µF + 10 µF、输出并联 220 µF；5 V 到 3.3 V 使用板载 LDO 或 AMS1117，压差 1.7 V、0.4 A 时耗散约 0.68 W，可以接受。效率按 85% 计算，5 V/1 A 输出时 DCDC 自身发热约 0.9 W，应固定在金属底板上散热，不宜用泡棉包裹。线径表再补两行：5 V 回路 1 A、0.3 米用 20AWG，压降仅 0.01 V；RS485 信号线毫安级用 26AWG 双绞即可。电流预算的两个小项也需记录：DM-MC02 加 IMU 加收发器典型 0.4 A、峰值 0.6 A，风扇、LED、蜂鸣器 0.2 A、峰值 0.3 A（示例值，<code>TODO(实测)</code>）。电池最后补三个数：满电 25.2 V、截止 19.8 V（单节 3.3 V），长期存放按单节 3.8 V；首次上电先用限流电源代替电池，待上电十步全部通过后再接入真实电池。</p>
+<p>布板层面有三条纪律同样重要：输入电容紧贴 Vin/GND，电感远离 IMU 与 RS485 差分线，开关节点的铜皮越小越好，反馈走线绕开电感正下方。功耗的实测数据也需记录——限流电源上电后分别记录待机、站立、行走三种电流，行走通常为待机的 3~5 倍，峰值按 6 倍预留，这组数据写入 BOM 备注，后续选电池与保险丝时均以此为依据。</p>
+<h2 id="上电：从测短路到-12-个关节在线">上电：从测短路到 12 个关节在线</h2>
+<p>硬件部分说明完毕，最后是上电顺序，此步骤的要点是&quot;逐级验证，不宜贪快&quot;：第一，断电测量短路，22 V 对地不导通；第二，限流电源 24 V/1 A 上电，空载电流应小于 50 mA，达到 1 A 应立即断电；第三，测量 5 V 与 3.3 V 的电压与纹波；第四，主控最小系统点灯、串口打印版本号；第五，将 UART 的 TX/RX 短接做内部回环，4 Mbps 发 17 字节收 17 字节；第六，接 USB-RS485 做外部回环，CRC 正确；第七，只接一个电机，发送 status=1 的零力矩帧，读回 16 字节反馈，观察温度与错误位；第八，按 0~14 逐个扫描 ID，记录在线表；第九，单关节以 0.05~0.1 的小 Kp 运行 ±0.2 rad 正弦，观察位置误差与温升；第十，两路各接 6 个，重复扫描，确认 12/12 在线。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    A[&quot;断电测短路&quot;] --&gt; B[&quot;限流 24V/1A 上电&lt;br/&gt;空载 &lt;50mA&quot;]</span><br><span class="line">    B --&gt; C[&quot;量 5V/3.3V 与纹波&quot;]</span><br><span class="line">    C --&gt; D[&quot;点灯 + 串口版本号&quot;]</span><br><span class="line">    D --&gt; E[&quot;UART 内部回环 4Mbps&quot;]</span><br><span class="line">    E --&gt; F[&quot;USB-RS485 外部回环&quot;]</span><br><span class="line">    F --&gt; G[&quot;单电机零力矩帧&lt;br/&gt;读回 16 字节反馈&quot;]</span><br><span class="line">    G --&gt; H[&quot;扫描 ID 0~14&lt;br/&gt;记录在线表&quot;]</span><br><span class="line">    H --&gt; I[&quot;单关节 ±0.2rad 正弦&lt;br/&gt;小 Kp&quot;]</span><br><span class="line">    I --&gt; J[&quot;两路各 6 个&lt;br/&gt;12/12 在线&quot;]</span><br></pre></td></tr></table></figure>
+<p>扫描失败按&quot;电源 → A/B → ID → 终端&quot;的顺序排查，80% 的问题位于前两步：先测量电机端电压，再对调 A/B——不同厂家的 A/B 标注不一致，接反后完全收不到反馈但器件不发热。ID 修改后必须断电重上电才生效，因此修改 ID 时一次只接一个电机。限流电源也是常见的误判来源：其默认 1 A 用于防过流，切换至站立瞬间启动电流冲击会触发&quot;复位&quot;，这并非电路故障，将限流调回 10 A 即可。</p>
+<p>十步中有几个数值需先记录。第一步除 22 V 对地不导通外，5 V 与 3.3 V 对地电阻也应大于 100 Ω（示例值）；第三步的允许范围为 5 V ±0.2 V、3.3 V ±0.1 V；第七步的帧应写为 status=1、力矩 0、Kp/Kd=0，读回的 16 字节反馈先查看温度字段与错误位；第九步正弦设为 0.5 Hz，除位置跟踪误差外，还应观察正反转力矩差小于 10%、五分钟内电机温度不超过 50 ℃，任一项异常都应先停机，不带着故障上整机；第十步两路同时上电时应先合逻辑电、再合动力电，顺序相反容易在启动瞬间使主控复位。</p>
+<p>线束与接口的规范应在布线之前确定。线色全机统一：红 22 V、黑 GND、黄 A、绿 B、白 5 V、蓝 3.3 V、橙急停；接插件按电流选择，XT30 约 30 A、XT60 约 60 A，GH1.25 仅走信号，不用于电机供电——三种插头互不兼容本身即构成防呆。若有示波器，还应多做三件事以省去大量猜测：观察 DE 上升沿到第一个起始位小于 1 µs；一帧 17 字节恰好约 42.5 µs，最后一个停止位结束后 DE 才下降；空闲时 A–B 停在 0.27 V 附近不漂移。连续发送一秒，若无明显振铃过冲，物理层基本验证完成。线束制作也有规范：每根线两端贴标签（J2-1、J2-2），排错时比颜色更可靠；A/B 双绞每 25 mm 一绞，绞完再压端子；22 V 功率线与 RS485 线分两侧布线，交叉处垂直通过；全部接好后用万用表逐根测量通断再上电。线序错误是最常见的硬件损坏原因，22 V 与 GND 接反、A/B 与电源接错，一次即可烧毁收发器——线束完成后先拍照存档，改线时对照，不应凭记忆操作。</p>
+<p>接口编号也固定下来，改线时对号入座：</p>
+<table>
+<thead>
+<tr>
+<th>连接器</th>
+<th>型号</th>
+<th>引脚</th>
+<th>线色</th>
+<th>信号</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>J1 电池</td>
+<td>XT60</td>
+<td>1 / 2</td>
+<td>红 / 黑</td>
+<td>+22.2 V / GND</td>
+<td>主电源</td>
+</tr>
+<tr>
+<td>J2 RS485-1</td>
+<td>GH1.25-3P</td>
+<td>1 / 2 / 3</td>
+<td>黄 / 绿 / 黑</td>
+<td>A / B / GND</td>
+<td>电机 1~6，双绞</td>
+</tr>
+<tr>
+<td>J3 RS485-2</td>
+<td>GH1.25-3P</td>
+<td>1 / 2 / 3</td>
+<td>黄 / 绿 / 黑</td>
+<td>A / B / GND</td>
+<td>电机 7~12</td>
+</tr>
+<tr>
+<td>J4 IMU</td>
+<td>2.54-7P</td>
+<td>1~7</td>
+<td>蓝 / 黑 / 黄 / 白 / 绿 / 橙 / —</td>
+<td>3V3 / GND / SCLK / MOSI / MISO / CS / INT</td>
+<td>&lt;10 cm</td>
+</tr>
+<tr>
+<td>J5 上位机</td>
+<td>GH1.25-3P</td>
+<td>1 / 2 / 3</td>
+<td>白 / 黄 / 黑</td>
+<td>TX / RX / GND</td>
+<td>交叉接</td>
+</tr>
+<tr>
+<td>J6 SWD</td>
+<td>2.54-4P</td>
+<td>1~4</td>
+<td>蓝 / 黑 / 白 / 灰</td>
+<td>3V3 / GND / SWDIO / SWCLK</td>
+<td>调试</td>
+</tr>
+<tr>
+<td>J7 急停</td>
+<td>XH2.54-2P</td>
+<td>1 / 2</td>
+<td>橙 / 橙</td>
+<td>NC / NC</td>
+<td>常闭</td>
+</tr>
+<tr>
+<td>J8 关节电源</td>
+<td>XT30 ×12</td>
+<td>1 / 2</td>
+<td>红 / 黑</td>
+<td>+22 V / GND</td>
+<td>每关节一路</td>
+</tr>
+<tr>
+<td>J9 USB</td>
+<td>Type-C</td>
+<td>—</td>
+<td>—</td>
+<td>USB FS</td>
+<td>日志</td>
+</tr>
+<tr>
+<td>J10 FDCAN</td>
+<td>GH1.25-3P</td>
+<td>1 / 2 / 3</td>
+<td>黄 / 绿 / 黑</td>
+<td>H / L / GND</td>
+<td>可选</td>
+</tr>
+</tbody>
+</table>
+<p>制作上再补充两条：线长按路径加 10% 富余，关节活动处留出至少五倍线径的弯折半径；线束每 50 mm 一个固定点，扎带不应勒破绝缘皮。功率线与信号线的间距至少 10 cm，交叉必须垂直——信号线走内侧、功率线走外侧，不应混成一束。</p>
+<p>验收时应记录完整数据，而非仅记录&quot;已接通&quot;：静态电流小于 80 mA，5 V 纹波小于 50 mVpp、3.3 V 小于 30 mVpp，带载差分幅值大于 1.5 V，两路总线占用均小于 60%，连续十分钟 CRC 错误与丢帧均小于 0.01%，IMU 静止 60 秒的陀螺零偏小于 0.1 dps、加速度模长落在 9.81±0.05 m/s²，单关节 ±0.2 rad 正弦跟踪误差小于 0.02 rad，急停按下到母线断开小于 100 ms。以上指标全部达标，第 5 章方可视为完成。</p>
+<h2 id="易错点与故障排查">易错点与故障排查</h2>
+<p>最后将本章最常见的几个易错点集中说明，它们在现象上均具有较强的伪装性。共地未接的症状是单个电机可通信、接满 6 个即随机 CRC 错误；A/B 接反的症状是收不到反馈但器件不发热；终端多焊一个的症状是短线可通信、长线随机错帧；ID 重复的症状是扫描少一个或控制 A 关节时 B 关节动作；修改 ID 后未断电的症状是新 ID 不生效；DE 一直为高的症状是能发不能收。前三者出在物理层，后三者出在操作流程，但排查顺序始终为先量电压、再对调 A/B、再查 ID、最后量总线电阻——按此顺序，八成故障可在前两步定位。四足的电控没有难以解释之处，只有尚未测量到的参数。</p>
+<p>再补充几个未提及的常见问题。收发器供电不足：空载正常、接满 6 个电机后差分幅值降至 1 V 以下，多半是 3.3 V 轨被其他负载拉低或收发器驱动能力弱，应为 485 单独配置一路 LDO，满载时测量 3.3 V 纹波。端子压接不良：台面测试正常，运行中震动即断连，多半是压接只夹到绝缘皮，应按线径选择端子、压接后做拉拔测试。一合电机电源主控即重启：大电容充电瞬间将母线拉低、5 V 随之跌落，应加缓启动预充、坚持先逻辑后动力。地线过长过细：电机一加速即 CRC 错误，应将地线与 A/B 同路径布线、线径加至 0.5 mm² 以上。最后一条是流程问题：跳过单电机与单关节直接装整机，单个故障会被 12 个节点放大到无法定位环节——应按上电十步逐级验证。还有 4 Mbps 线过长这一条：台面上正常、装机偶发错帧，多半是线材不达标，先降至 2 Mbps 验证链路本身，通过后再逐段缩短回 4 Mbps。</p>
+<p>至此，电子层的验收标准为：断电测量 A–B 约 60 Ω，12/12 在线，1 kHz 帧率下 CRC 错误小于 0.01%，单关节跟踪误差小于 0.02 rad，急停按下 100 ms 内切断母线。以上均通过后即可进入下一章。下一篇（<a href="/2026/09/27/06/" title="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构">四足开发实战（六）：固件篇——1 kHz 控制环与任务架构</a>）将这 12 个在线关节交由固件控制：FreeRTOS 任务表的划分、1 kHz 主循环的编写、半双工时序在代码中的实现，以及双缓冲与 seqlock 这两个关键细节。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz/2026/09/22/05/">https://zhxylabflow.xyz/2026/09/22/05/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zhxylabflow.xyz" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a><a class="post-meta__tags" href="/tags/%E5%9B%9B%E8%B6%B3%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/">四足开发实战</a><a class="post-meta__tags" href="/tags/STM32H7/">STM32H7</a><a class="post-meta__tags" href="/tags/RS485/">RS485</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/09/23/os_concepts_in_freertos/" title="把操作系统的进程、同步、死锁，放进 FreeRTOS 里看"><img class="cover" src="https://img.cdn1.vip/i/6ab2c3da84f46_1790100442.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post" loading='lazy'><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看</div></div><div class="info-2"><div class="info-item-1">把操作系统的进程、同步、死锁，放进 FreeRTOS 里看 操作系统课上的东西,很多都是干巴巴的文字:进程和线程的区别、PV 操作、死锁的四个必要条件。背的时候能背下来,但总觉得隔着一层——“到底什么时候会用到?” 直到我开始用 FreeRTOS 写四足机器人的固件,才发现这些东西根本不是课本里的抽象概念,而是每天都在代码里撞见的东西。这篇文章就把进程、同步互斥、死锁这三块,挨个搬到 FreeRTOS 里看一遍。 进程和线程,FreeRTOS 里只有一个 task 课本上最经典的一组概念:进程是资源分配的基本单位,有独立的地址空间;线程是调度的基本单位,共享所属进程的地址空间。 放到 F...</div></div></div></a><a class="pagination-related" href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">四足开发实战（四）：电源篇——6S 电池、配电与安全</div></div><div class="info-2"><div class="info-item-1">电机选定之后，如何设计供电系统？从 6S 电压平台、COT 功率估算到容量与倍率计算，再到预充、急停与上电顺序，完整配置 12 kg 四足的电源系统，并将锂电池安全守则整理为可执行的规范。</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-12</div><div class="info-item-2">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</div></div><div class="info-2"><div class="info-item-1">将第 7 篇的 URDF 转化为可在 MuJoCo 中站立、读取 IMU、被外部控制器驱动的模型：URDF 转 MJCF 的四个必改点、position 与 motor 两套执行器、接触参数的抖动成因、控制器在环的两种接法，以及 sim2real 的延迟、限幅与噪声桥接。</div></div></div></a><a class="pagination-related" href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-02</div><div class="info-item-2">四足开发实战（一）：需求与总体方案——先定需求，再买电机</div></div><div class="info-2"><div class="info-item-1">制作一台 12 kg 的教学四足，第一步并非采购电机，而是先确定需求。本文说明六项核心指标如何确定、指标之间的耦合关系，以及整机的三层架构与五个关键决策；后续的机械、选型、固件、控制均建立在需求书之上。</div></div></div></a><a class="pagination-related" href="/2026/09/07/02/" title="四足开发实战（二）：机械篇——一条腿的设计与刚度"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-07</div><div class="info-item-2">四足开发实战（二）：机械篇——一条腿的设计与刚度</div></div><div class="info-2"><div class="info-item-1">12 kg 的机器从 1.2 m 高度跌落时，首先承受冲击的不是控制算法，而是那条打印出来的腿。本文说明腿型如何选择、三个长度如何确定、方盒模组如何安装，以及一道决定腿部软硬程度的悬臂梁计算，并附一张截面变形对比表。</div></div></div></a><a class="pagination-related" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-12</div><div class="info-item-2">四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩</div></div><div class="info-2"><div class="info-item-1">12 公斤的四足需要多大关节扭矩？从静止站立、落地冲击到爬坡逐项反推，给出 GO-M8010-6 与 IM6014 的对比结论，并讲清宇树模组 17 字节 RS485 控制帧的三个易错点，附"先采购 1 个电机"的台架验收清单。</div></div></div></a><a class="pagination-related" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-02</div><div class="info-item-2">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</div></div><div class="info-2"><div class="info-item-1">用几何法从头推导一条三关节腿的正逆运动学，再说明写 URDF 时容易出错的默认值：rpy 顺序、mesh 单位、fusestatic 与 strippath 的默认反转，以及惯量如何从 CAD 迁移到仿真。</div></div></div></a><a class="pagination-related" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-17</div><div class="info-item-2">四足开发实战（十）：落地篇——强化学习、联调与迭代</div></div><div class="info-2"><div class="info-item-1">系列最后一篇：强化学习的适用性判断、Isaac Gym 弃用后 Isaac Lab 2.3.x 与 3.0 的选型、4060 8G 显存的三条出路，训练到部署的流水线，以及五阶段联调、故障树、指标测试和十八个月项目管理，将十篇串成一条完整开发线。</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">嵌入式与机器人运动控制｜四足 · RL · 状态估计</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">🐕《四足机器人开发实战》专栏已上线，12 篇从零做机器狗 → [点此阅读](/2026/08/28/series-index/)</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF-DM-MC02"><span class="toc-number">1.</span> <span class="toc-text">为什么是 DM-MC02</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%9D%A1-4-Mbps-%E7%9A%84%E6%80%BB%E7%BA%BF%E8%A3%85%E5%BE%97%E4%B8%8B-6-%E4%B8%AA%E5%85%B3%E8%8A%82"><span class="toc-number">2.</span> <span class="toc-text">一条 4 Mbps 的总线装得下 6 个关节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%B5%E6%BA%90%E9%93%BE%E7%9A%84%E7%BB%86%E8%8A%82"><span class="toc-number">3.</span> <span class="toc-text">电源链的细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8A%E7%94%B5%EF%BC%9A%E4%BB%8E%E6%B5%8B%E7%9F%AD%E8%B7%AF%E5%88%B0-12-%E4%B8%AA%E5%85%B3%E8%8A%82%E5%9C%A8%E7%BA%BF"><span class="toc-number">4.</span> <span class="toc-text">上电：从测短路到 12 个关节在线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%98%93%E9%94%99%E7%82%B9%E4%B8%8E%E6%95%85%E9%9A%9C%E6%8E%92%E6%9F%A5"><span class="toc-number">5.</span> <span class="toc-text">易错点与故障排查</span></a></li></ol></div></div><div class="card-widget card-post-series"><div class="item-headline"><i class="fa-solid fa-layer-group"></i><span>系列文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（十）：落地篇——强化学习、联调与迭代" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代">四足开发实战（十）：落地篇——强化学习、联调与迭代</a><time datetime="2026-10-17T04:00:00.000Z" title="发表于 2026-10-17 12:00:00">2026-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</a><time datetime="2026-10-12T04:00:00.000Z" title="发表于 2026-10-12 12:00:00">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（八）：步态篇——状态估计与 trot 行走" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走">四足开发实战（八）：步态篇——状态估计与 trot 行走</a><time datetime="2026-10-07T04:00:00.000Z" title="发表于 2026-10-07 12:00:00">2026-10-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（七）：建模篇——运动学与 URDF 从零写起" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</a><time datetime="2026-10-02T04:00:00.000Z" title="发表于 2026-10-02 12:00:00">2026-10-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/27/06/" title="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/27/06/" title="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构">四足开发实战（六）：固件篇——1 kHz 控制环与任务架构</a><time datetime="2026-09-27T04:00:00.000Z" title="发表于 2026-09-27 12:00:00">2026-09-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/22/05/" title="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/22/05/" title="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线">四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线</a><time datetime="2026-09-22T04:00:00.000Z" title="发表于 2026-09-22 12:00:00">2026-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（四）：电源篇——6S 电池、配电与安全" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全">四足开发实战（四）：电源篇——6S 电池、配电与安全</a><time datetime="2026-09-17T04:00:00.000Z" title="发表于 2026-09-17 12:00:00">2026-09-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩">四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩</a><time datetime="2026-09-12T04:00:00.000Z" title="发表于 2026-09-12 12:00:00">2026-09-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/07/02/" title="四足开发实战（二）：机械篇——一条腿的设计与刚度"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（二）：机械篇——一条腿的设计与刚度" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/07/02/" title="四足开发实战（二）：机械篇——一条腿的设计与刚度">四足开发实战（二）：机械篇——一条腿的设计与刚度</a><time datetime="2026-09-07T04:00:00.000Z" title="发表于 2026-09-07 12:00:00">2026-09-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（一）：需求与总体方案——先定需求，再买电机" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机">四足开发实战（一）：需求与总体方案——先定需求，再买电机</a><time datetime="2026-09-02T04:00:00.000Z" title="发表于 2026-09-02 12:00:00">2026-09-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/28/series-index/" title="四足机器人开发实战：从零做一台机器狗（系列导读）"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足机器人开发实战：从零做一台机器狗（系列导读）" loading='lazy'></a><div class="content"><a class="title" href="/2026/08/28/series-index/" title="四足机器人开发实战：从零做一台机器狗（系列导读）">四足机器人开发实战：从零做一台机器狗（系列导读）</a><time datetime="2026-08-28T04:00:00.000Z" title="发表于 2026-08-28 12:00:00">2026-08-28</time></div></div></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/24/c_cpp_mixing_embedded/" title="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑"><img src="https://img.cdn1.vip/i/6adba63408709_1792779828.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/24/c_cpp_mixing_embedded/" title="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑">在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑</a><time datetime="2026-10-23T17:45:29.714Z" title="发表于 2026-10-24 01:45:29">2026-10-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（十）：落地篇——强化学习、联调与迭代"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代">四足开发实战（十）：落地篇——强化学习、联调与迭代</a><time datetime="2026-10-17T04:00:00.000Z" title="发表于 2026-10-17 12:00:00">2026-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</a><time datetime="2026-10-12T04:00:00.000Z" title="发表于 2026-10-12 12:00:00">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（八）：步态篇——状态估计与 trot 行走"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走">四足开发实战（八）：步态篇——状态估计与 trot 行走</a><time datetime="2026-10-07T04:00:00.000Z" title="发表于 2026-10-07 12:00:00">2026-10-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</a><time datetime="2026-10-02T04:00:00.000Z" title="发表于 2026-10-02 12:00:00">2026-10-02</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>

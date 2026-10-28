@@ -1,0 +1,727 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="将第 7 篇的 URDF 转化为可在 MuJoCo 中站立、读取 IMU、被外部控制器驱动的模型：URDF 转 MJCF 的四个必改点、position 与 motor 两套执行器、接触参数的抖动成因、控制器在环的两种接法，以及 sim2real 的延迟、限幅与噪声桥接。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim">
+<meta property="og:url" content="https://zhxylabflow.xyz/2026/10/12/09/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="将第 7 篇的 URDF 转化为可在 MuJoCo 中站立、读取 IMU、被外部控制器驱动的模型：URDF 转 MJCF 的四个必改点、position 与 motor 两套执行器、接触参数的抖动成因、控制器在环的两种接法，以及 sim2real 的延迟、限幅与噪声桥接。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp">
+<meta property="article:published_time" content="2026-10-12T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-28T11:39:15.104Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="足式机器人">
+<meta property="article:tag" content="四足开发实战">
+<meta property="article:tag" content="MuJoCo">
+<meta property="article:tag" content="sim2sim">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim",
+  "url": "https://zhxylabflow.xyz/2026/10/12/09/",
+  "image": "https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp",
+  "datePublished": "2026-10-12T04:00:00.000Z",
+  "dateModified": "2026-10-28T11:39:15.104Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "https://zhxylabflow.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/2026/10/12/09/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-12T04:00:00.000Z" title="发表于 2026-10-12 12:00:00">2026-10-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-28T11:39:15.104Z" title="更新于 2026-10-28 19:39:15">2026-10-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%9B%9B%E8%B6%B3%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/">四足开发实战</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</h1>
+<p>将第七篇编写的 URDF 直接载入 MuJoCo 时，加载通常能够成功，但模型会固定在地板上纹丝不动，<code>nu</code> 为 0，没有 IMU，部分零件的尺寸甚至远超实际。这一现象并非 URDF 本身写错，而是 MuJoCo 读取 URDF 的过程只完成了前半部分：它能够解析这一格式，但解析结果距离「可用于仿真」还差四步改造。本文逐一说明这四步，随后继续展开执行器、接触、控制器在环与 sim2real 的桥接。</p>
+<p>在开始动手之前，应先明确仿真的用途。软件在环能够节省摔机成本、电机烧毁成本与反复拆装带来的调参时间：步态参数、起立逻辑、急停逻辑在仿真中验证，成本远低于在实机上验证，力矩饱和与堵转保护可以安全触发，改动一版固件后沿同一条轨迹运行即可形成回归测试。仿真无法替代的是另一批内容，这些内容值得逐条记录，而非笼统地表述为「仿真不准」：软接触模型不保证零速黏滞，摩擦与蠕变需要在实机实测；电机的摩擦、死区、饱和、温漂在仿真中不存在；总线仲裁与调度抖动在仿真中同样不存在；连杆被假设为刚体，结构柔性只能通过实机观察；电池压降、热、EMC 同样只存在于真机。这五条差距并非缺陷，而是一份清单，后续每一步都在逐项补齐这份清单。为此，应确定固定的仿真节奏：每改动一版控制代码，运行三个场景——站立 10 秒、单腿 ±0.2 rad 阶跃、trot 五米——记录同一组指标（漂移、超调、横向偏差），三个场景全部通过才允许上机；「看着还行」不构成通过标准。</p>
+<p>将上述差距整理为一张对照表，每一条「仿真中缺失的内容」对应一个实机现象：</p>
+<table>
+<thead>
+<tr>
+<th>差距</th>
+<th>仿真里的表现</th>
+<th>实机上的表现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>质量/惯量不准</td>
+<td>步频偏、站姿偏</td>
+<td>同样指令下电流偏大/偏小</td>
+</tr>
+<tr>
+<td>摩擦系数</td>
+<td>打滑或推不动</td>
+<td>草地/瓷砖差异巨大</td>
+</tr>
+<tr>
+<td>电机带宽</td>
+<td>力矩瞬间到位</td>
+<td>有力矩上升时间</td>
+</tr>
+<tr>
+<td>通信延迟</td>
+<td>无</td>
+<td>1 ms RS485 + 驱动器处理</td>
+</tr>
+<tr>
+<td>传感器噪声</td>
+<td>可设 0</td>
+<td>IMU 零偏、量化、振动</td>
+</tr>
+<tr>
+<td>接触模型</td>
+<td>点接触、软约束</td>
+<td>足端形变、多点接触</td>
+</tr>
+</tbody>
+</table>
+<p>「能省」一栏还应补充一条容易遗漏的内容：1 kHz 的 RS485 带宽与控制周期能否匹配，应先通过仿真计算清楚，成本远低于上机出现丢帧后再排查。表中每一行在后续各节中都有对应的补齐内容：摩擦与接触对应「接触抖动成因」一节，电机带宽与通信延迟对应执行器与控制器在环，噪声对应传感器；只有结构柔性与电池压降这两条无法由仿真补齐，只能保留在上机清单中。以上即为本文的结构。</p>
+<h2 id="转换只完成一半：URDF-进-MuJoCo-的四个必改点">转换只完成一半：URDF 进 MuJoCo 的四个必改点</h2>
+<p>环境要求较为简单：Python 3.10 加 MuJoCo 3.x 即可，纯 CPU 运行 12 自由度模型绰绰有余，无需显卡或 ROS。版本需要锁定在 3.x：2.x 时代的 <code>mujoco_py</code> 早已停止维护，网络上的大量旧教程仍使用它，其 API 与 3.x 完全不同，不应混用。安装命令如下，Windows 下将 <code>python3.10</code> 换成 <code>py -3.10</code>：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python3.10 -m venv .venv &amp;&amp; <span class="built_in">source</span> .venv/bin/activate</span><br><span class="line">pip install <span class="string">&quot;mujoco==3.2.*&quot;</span> numpy</span><br><span class="line">python -c <span class="string">&quot;import mujoco; print(mujoco.__version__)&quot;</span></span><br></pre></td></tr></table></figure>
+<p>目录按三层组织：<code>sim/mjcf</code>（存放 go1.urdf、转换产物 go1_raw.xml、手动修改后的 go1.xml）、<code>sim/meshes</code>（STL）、<code>sim/scripts</code>（自检脚本）；模型路径使用全英文，不应使用反斜杠。安装阶段最常见的四个问题应提前说明：<code>import mujoco</code> 报 DLL 加载失败，是 Windows 缺少 VC++ 运行库；没有 <code>mujoco.viewer</code> 模块，是安装了 2.x 版本；在服务器上打开 viewer 报 GL 错误，是因为无显示设备，训练与自检应走 headless；加载报路径错误，多半是使用了中文路径。</p>
+<p>实际工作流为：先用 <code>MjModel.from_xml_path</code> 读取 URDF，再用 <code>mj_saveLastXML</code> 将其另存为 MJCF，此后所有工程配置都在这份 MJCF 上修改，几何与惯量仍以 URDF 为源头，不再回头改动 URDF。读取操作仅完成了运动树的搭建，四个缺口仍需补齐。</p>
+<p>这一工作流有三个容易被跳过的细节。第一，转换产物保存为 go1_raw.xml 且设为只读——它是转换时刻的快照，改动出错时可随时重新转换，手动修改始终发生在 go1.xml 上；两份文件并存，通过 diff 即可看出做过哪些改动。第二，另存后应先检查 mesh 路径：CAD 导出的 URDF 常带有绝对路径，更换机器或移动目录后即加载失败，应将 file 统一改为 meshes/xxx.stl 这类相对路径再继续。第三，Windows 的 PowerShell 不支持 heredoc，应将转换脚本保存为 scripts/convert.py，再通过 python scripts/convert.py 运行，不应在命令行中使用 <code>&lt;&lt;</code> 语法。另一类做法也需说明：将 <code>&lt;mujoco&gt;</code> 块直接写入 URDF 的 <code>&lt;robot&gt;</code> 标签内，compiler、option、actuator、sensor 原样进入编译，menagerie 的官方模型均采用此做法；两类做法均正确，关键是编译器配置要显式写出、工作文件只能保留一份。</p>
+<p>在动手修改之前，应先理解 MuJoCo 的对象模型：MjModel 是编译后的模型，只读；MjData 是每一步都在变化的状态；mj_step 推进一步。若需要在运行过程中观察，可使用被动 viewer——<code>launch_passive</code> 打开后不阻塞主循环，主循环中每步调用一次 <code>viewer.sync()</code>、按 timestep 睡眠一次以锁定到实时，便于人工观察；这只是调试手段，训练与自检一律使用 headless。</p>
+<p>第一个缺口是浮动基座。URDF 中没有「在世界坐标系下自由运动的机器人」这一概念，根 link 转换后不带 joint，整机因此被固定在地面上。需要在根 body 中加入一行 <code>&lt;freejoint/&gt;</code>，加入后 <code>nq</code> 从 12 变为 19，多出的 7 维即位置姿态与四元数。第二个缺口是执行器，URDF 规范中本就没有 actuator，转换后 <code>nu=0</code>、<code>data.ctrl</code> 为空数组，12 个关节均无法运动。第三个缺口是传感器，IMU、关节角、触地信息均需自行补充，至少提供 <code>gyro</code>、<code>accelerometer</code>、<code>framequat</code>、<code>jointpos</code> 四类。</p>
+<p>第四个缺口最容易让人困惑，也是「一导入就散架」的主要成因：compiler 的默认值在 URDF 输入下与手写 MJCF 相反。手写 MJCF 时 <code>strippath</code> 与 <code>fusestatic</code> 默认 false，读取 URDF 时却默认 true——前者会把 mesh 路径剥离得只剩文件名，两个目录中同名的 STL 会相互混淆；后者会把没有自由度的固定 link 融进父 body，挂在 imu_link 上的坐标系随之消失。因此 compiler 必须显式写为 <code>strippath=&quot;false&quot; fusestatic=&quot;false&quot;</code>，同时把 <code>angle</code> 写为 radian——默认单位是度，关节限位若被当作度解释，关节一转就会撞到限位——再关闭 <code>discardvisual</code> 以保留外观，毫米单位导出的 CAD 网格需要加 <code>scale=&quot;0.001 0.001 0.001&quot;</code>，否则整机尺寸会是实际的 1000 倍。<code>balanceinertia</code> 建议保持 false：它为 true 时会静默配平不合法的惯量，模型能够编译，但动力学响应不再与 CAD 模型一致；编译报三角不等式错误时，应回 CAD 修正 <code>&lt;inertial&gt;</code>，仅在「先跑起来再说」时临时打开。</p>
+<p>完成上述四项修改后，用最小脚本自检，四个数字缺一不可：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np, mujoco</span><br><span class="line"></span><br><span class="line">m = mujoco.MjModel.from_xml_path(<span class="string">&quot;mjcf/go1.xml&quot;</span>)</span><br><span class="line">d = mujoco.MjData(m)</span><br><span class="line">m.opt.timestep = <span class="number">0.001</span>          <span class="comment"># 1 kHz 物理步长，与控制环同频</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;nq=<span class="subst">&#123;m.nq&#125;</span> nv=<span class="subst">&#123;m.nv&#125;</span> nu=<span class="subst">&#123;m.nu&#125;</span> nsensor=<span class="subst">&#123;m.nsensor&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;extent=<span class="subst">&#123;m.stat.extent:<span class="number">.3</span>f&#125;</span> m  mass=<span class="subst">&#123;m.body_mass.<span class="built_in">sum</span>():<span class="number">.2</span>f&#125;</span> kg&quot;</span>)</span><br><span class="line"><span class="keyword">assert</span> m.nq == <span class="number">19</span>, <span class="string">&quot;没加 freejoint&quot;</span></span><br><span class="line"><span class="keyword">assert</span> m.nu == <span class="number">12</span>, <span class="string">&quot;没加 actuator&quot;</span></span><br><span class="line"></span><br><span class="line">q0 = np.array([<span class="number">0.0</span>, <span class="number">0.5284</span>, <span class="number">1.0567</span>] * <span class="number">4</span>)   <span class="comment"># 站姿，以第 7 篇反解值为准</span></span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2000</span>):                      <span class="comment"># 2 秒</span></span><br><span class="line">    d.ctrl[:] = q0</span><br><span class="line">    mujoco.mj_step(m, d)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;base z =&quot;</span>, <span class="built_in">round</span>(<span class="built_in">float</span>(d.qpos[<span class="number">2</span>]), <span class="number">4</span>))</span><br></pre></td></tr></table></figure>
+<p>四个数字的判读方式如下：<code>nq=19</code> 说明浮动基座已添加；<code>nu=12</code> 说明执行器已添加；<code>stat.extent</code> 在 0.5~1.5 米之间说明 mesh 单位正确，若毫米被当作米会直接达到 1000 量级；<code>body_mass</code> 求和约 12 kg 说明质量与单位没有遗漏。同时需要区分两个函数：<code>mj_step</code> 会执行正运动学、动力学并积分推进时间；只需按当前 qpos 计算一遍位姿而不推进时间时，应使用 <code>mj_forward</code>，FK 自检使用它，不应混淆。另外两个高频易错点也需一并记录：碰撞体不应使用 CAD 导出的整机网格，数万面的凸包会使仿真慢到一帧一秒，腿杆改用 capsule、脚改用 sphere 是标准做法；固定 link 被 fuse 之后，原本挂在它上面的 site 要么改为挂在根 body 上，要么通过关闭 <code>fusestatic</code> 保留坐标系。查找根 body 的方法较为直接——将 body 全部打印，<code>parentid=0</code> 且 <code>jntnum=0</code> 的即为被固定的根，freejoint 加在它上面；再确认 12 个 joint 名称与对照表一致。</p>
+<p>还有一件事需要在编写代码前确定：关节名称的映射。网络模型的关节顺序通常是 FR/FL/RR/RL 乘 hip/thigh/calf，实机 SDK 的电机序号往往又是另一套，两者不一致时，仿真中看似正常的步态上机后就会表现为四条腿错乱。应先建立一张 name 到 index 的对照表，固件、仿真、Isaac 三处都引用这张表，这一步能省去后续所有「为什么左前腿接到了右后腿上」的排查时间。</p>
+<h2 id="两条执行器路线与抖动的成因">两条执行器路线与抖动的成因</h2>
+<p>执行器有两种写法，对应两条路线。教学与传统控制使用 position 伺服，PD 由引擎自行计算，代码量最少，修改 XML 即可观察响应曲线；RL 与 sim2real 路线使用 motor 加外部 PD，PD 在自身的控制回路中计算。两种写法的 XML 差异直观可见：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 路线 A：position 伺服，kp 单位 N·m/rad，dampratio=1 表示临界阻尼自动配 kv --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">actuator</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">position</span> <span class="attr">name</span>=<span class="string">&quot;FR_hip_pos&quot;</span>   <span class="attr">joint</span>=<span class="string">&quot;FR_hip_joint&quot;</span>  <span class="attr">kp</span>=<span class="string">&quot;80&quot;</span> <span class="attr">dampratio</span>=<span class="string">&quot;1&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">forcerange</span>=<span class="string">&quot;-15 15&quot;</span> <span class="attr">forcelimited</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- 髋 pitch / 膝按力矩限 forcerange=&quot;-25 25&quot;，其余 9 个关节同理 --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">actuator</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 路线 B：motor + 外部 PD，RL / sim2real 路线，控制侧软限 [12,15,20] 由代码 clamp --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">actuator</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">motor</span> <span class="attr">name</span>=<span class="string">&quot;FR_hip_tau&quot;</span> <span class="attr">joint</span>=<span class="string">&quot;FR_hip_joint&quot;</span> <span class="attr">gear</span>=<span class="string">&quot;1&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">ctrlrange</span>=<span class="string">&quot;-15 15&quot;</span> <span class="attr">ctrllimited</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">actuator</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>motor 路线下，PD 在自身的 1 kHz 回路中计算：$\tau = kp(q_{des}-q) - kd,\dot q$，再 clip 到软限幅。后者才是与实机对齐的路线，原因在于实机主控执行的正是这一操作——宇树模组的 MIT 模式接收位置、速度、kp、kd、前馈力矩五元组，仿真中每一拍打印 $\tau$，上机后每一拍都能对应，这比「引擎内部隐式计算 PD」可控得多。Go1 级常用的起步增益为 kp 20~40 N·m/rad、kd 0.5~1.0；position 伺服的 kp 可以达到 60~100，因为它同时承担保持姿态的刚度。两套执行器不能同时存在，否则 <code>nu</code> 变为 24，一半是目标角、一半是力矩，排查将十分困难。</p>
+<p>将两条路线放在一起比较，五点差别足以说明问题：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>position 伺服</th>
+<th>motor + 外部 PD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PD 在哪算</td>
+<td>引擎内部</td>
+<td>你的 Python / C 代码</td>
+</tr>
+<tr>
+<td>与实机对应</td>
+<td>弱（实机是 1 kHz 外部 PD，结构不同）</td>
+<td>强（同 MotorCmd 五元组）</td>
+</tr>
+<tr>
+<td>代码量</td>
+<td>少，改 XML 就见效</td>
+<td>多，要自己搭控制回路</td>
+</tr>
+<tr>
+<td>适合</td>
+<td>传统步态、教学演示、快速验模型</td>
+<td>RL、sim2sim、sim2real</td>
+</tr>
+<tr>
+<td>调试</td>
+<td>改 kp 看响应曲线</td>
+<td>每一拍都能打印 τ</td>
+</tr>
+</tbody>
+</table>
+<p>position 写法还有三个细节：<code>dampratio=&quot;1&quot;</code> 表示让引擎按临界阻尼自动配置 kv，自行编写 kv 时不应再写 dampratio，二者选其一；只要使用了 kv 或 dampratio，积分器就应换为 <code>implicitfast</code>，否则执行器阻尼按显式方式处理、容易发散；它还支持 <code>inheritrange</code>，可将关节 range 直接作为目标角范围，省去重复手写。两条路线编译后都会展开为 general 执行器，差别仅在于「由谁计算 PD」，因此不应在二者之间混用属性。另外，官方文档给出提醒：四足关节不应使用 velocity 执行器做内环——其本质是给系统增加阻尼，增益一高即不稳定。</p>
+<p>两条路线的易错点也不应混淆。position 执行器必须写 <code>forcerange</code>，否则「目标角差 1 rad、kp=80」会瞬间算出 80 N·m，仿真中蹬得动、实机蹬不动，策略因此被带偏；<code>ctrlrange</code> 与 <code>forcerange</code> 一个限制控制输入、一个限制输出力，并非同一含义。力矩口径以第三篇定稿为准：执行器上限 ±23.7 N·m，控制侧软限 [12, 15, 20] N·m，依次为髋 roll、髋 pitch、膝。另有一个值得保留为习惯的小自检：给单个关节 +0.1 rad 目标，观察 qpos 增大的方向是否与实机一致，不一致则修改 URDF 的 joint axis——FK/IK 也依赖它，仅在 actuator 上翻转 gear 符号会留下「仿真对、解算错」的隐患。</p>
+<p>将上述区别进一步说明：<code>ctrlrange</code> 限制的是控制输入，motor 下即为力矩上限（N·m），position 下则是目标角范围（rad）；<code>forcerange</code> 钳制的是执行器输出力，position 下即堵转力矩上限。motor 下两者基本等价，position 下则是两个量纲完全不同的量，混写的结果是「以为限制了力矩，实际限制的是角度」。compiler 的 <code>autolimits</code> 能够从关节 range 推断 limited 标志，但显式写出 <code>ctrllimited</code>/<code>forcelimited</code> 始终更稳妥。</p>
+<p>模型能够运动之后，第二个问题随之出现：站不住，高频抖动。应先记住接触的五个默认值——<code>solref=&quot;0.02 1&quot;</code> 表示接触时间常数 20 ms、临界阻尼，<code>friction=&quot;1 0.005 0.0001&quot;</code> 是滑动、扭转、滚动三档摩擦，<code>condim=3</code> 只有法向加两个切向。抖动的因果链通常如下：接触恢复使用 20 ms 的软弹簧，而位置环是 kp=80 的硬弹簧，脚陷入地面一点，位置环即大幅增加力矩，机身被弹起，脚离地，再次陷入，从而形成一个 5~20 Hz 的极限环。再加上方形脚掌四个角轮流接触、法向力在角点间跳变，<code>condim=3</code> 又没有扭转摩擦，脚还会绕法向自转，行走时如同踩在冰面上。</p>
+<p>解决办法比调参更直接：脚一律换成球或胶囊，与地面写显式接触对——<code>&lt;pair geom1=&quot;floor&quot; geom2=&quot;FL_foot&quot; solref=&quot;0.005 1&quot; friction=&quot;0.8 0.02 0.001&quot;/&gt;</code>，四只脚各写一条——接触对中将 <code>solref</code> 收紧到 0.005 左右。经此修改，接触数从几十降到 4，步进速度常常快一个数量级，代价只是失去自碰撞，教学阶段完全可接受。若需细调，应按顺序进行：先 <code>timestep=0.001</code> 配 <code>implicitfast</code> 积分器，再换脚和接触对，再收 <code>solref</code>，再调 <code>solimp</code>，到了需要精确摩擦的斜坡场景，才切换到椭圆锥加 Newton 求解器。出现抖动时不应急于修改参数，应先查看「谁和谁在接触、陷入多深」——打印 <code>d.ncon</code> 与每条接触的两个 geom 名、穿透距离，站立时接触数应为 4，突然变为 8 以上说明腿或机身也在接触；穿透超过 5 mm 说明接触过软或质量偏大。另有一个能够解答多数疑问的结论：软接触模型不保证零速黏滞，脚在地面缓慢蠕变是模型设计使然，不应当作 bug 去调整摩擦。</p>
+<p>这一顺序并非随意安排，每一步都在处理上一步遗留的问题。timestep 与积分器首先保证数值稳定：0.001 的步长下，0.02 s 的默认接触时间常数有 20 步可用于恢复穿透，足够使用；只把 timeconst 调小却不改步长，等于每步都在过冲。换脚与接触对将接触数从几十压到 4，是后续所有调参的基础——接触点一多，任何调整都会分摊到一批错误的接触上。solref 向下收敛处理的是站姿下陷，接触越硬陷入越浅；solimp 的五个数（dmin、dmax、width、midpoint、power）控制约束阻抗随穿透深度变化的软硬曲线，dmax 提到 0.99、width 调小，接触整体变硬，用于处理 solref 收紧后的残余抖动；solref 也可以写负值直接给定刚度和阻尼，两种格式不应在同一处混用。</p>
+<table>
+<thead>
+<tr>
+<th>顺序</th>
+<th>动作</th>
+<th>观察</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>timestep=0.001、integrator=“implicitfast”</td>
+<td>不炸、步进耗时</td>
+</tr>
+<tr>
+<td>2</td>
+<td>脚换球/胶囊 + 显式 pair</td>
+<td>ncon、抖动幅度</td>
+</tr>
+<tr>
+<td>3</td>
+<td>solref 从 0.02 1 收到 0.005 1</td>
+<td>站立 10 s 的高度波动</td>
+</tr>
+<tr>
+<td>4</td>
+<td>solimp 的 dmax → 0.99、width 调小</td>
+<td>残余抖动</td>
+</tr>
+<tr>
+<td>5</td>
+<td>需要精确摩擦再切椭圆锥 + impratio 调大 + Newton</td>
+<td>斜坡站立、打滑</td>
+</tr>
+</tbody>
+</table>
+<p>换脚的原理需要单独说明：MuJoCo 对网格碰撞一律使用凸包近似，脚掌的真实弧面无法表达，而球与平面的碰撞有解析解，法向始终光滑；网格脚在边缘处法向突变，力矩尖峰即为抖动的直接来源。若希望连 pair 都不写，可使用 <code>contype</code>/<code>conaffinity</code> 位掩码——在 <code>&lt;default&gt;</code> 中把 geom 的 contype、conaffinity 设为 0，仅将 foot 这个 class 打开为 1，于是只有四只脚能接触物体，自碰撞也一并省去。condim 保持 3；在需要抗脚掌自转的上斜坡场景，再开 condim=4，并把 friction 第二项从默认的 0.005 提到 0.02。</p>
+<p>反过来说，出现抖动后也不应随意修改参数，排查有固定顺序：先检查是否有关节撞到限位（jnt_limited 置位，限位软约束过硬会直接触发震颤），再看 qacc 是否存在 1e6 量级的尖峰，然后才轮到 ncon 与穿透深度那一套排查，最后才调整 solref——这一顺序能把相当一部分难以解释的抖动定位到具体对象上。</p>
+<p>传感器这一层也一并确定。<code>gyro</code> 与 <code>accelerometer</code> 输出的是 site 坐标系下的量，不是世界系；加速度计包含重力，静止时读到 +9.81，控制器若需要纯线加速度则需自行减去重力分量。<code>touch</code> 输出一维标量，工程上仅用它做「触地/离地」二值判断，不把它当作精确三轴力，需要三轴力时使用 <code>force</code>。噪声统一在代码侧添加、量级采用实机静止数据的标准差，因为引擎自带的 <code>noise</code> 每次步进独立采样，既不可复现也不能按训练进度退火，只有代码侧添加的噪声才能与观测构造一同管理；MJCF 中的 <code>cutoff</code> 仅用于近似实机模拟电路的低通。</p>
+<p>补充两个实操细节：代码侧噪声添加在构造观测向量的那一行，固定随机种子即可复现，也才能按训练进度做课程式退火；量级应按传感器分别取值，而非一刀切，示例为 gyro 0.005 rad/s、加速度计 0.05 m/s²、四元数 0.001，最终以实机静止 60 秒的标准差为准。MJCF 的 <code>noise</code> 属性是零均值高斯的标准差、默认 0，适合快速观察鲁棒性，训练与 sim2sim 不应使用。</p>
+<p>读取传感器还有一条纪律：按名称取值、不应记数组下标。模型一旦修改，sensor 的地址和维度就可能变动，应编写一张 name 到 index 的映射表，用 <code>sensor_adr</code> 加 <code>sensor_dim</code> 切片取值，代码中不应出现裸下标，jointpos 与 jointvel 同样处理。</p>
+<h2 id="控制器在环：同一份代码，两种接法">控制器在环：同一份代码，两种接法</h2>
+<p>仿真中最应避免的是一套控制代码用于仿真、另一套用于实机。让同一份代码在两端运行有两种接法。第一种将控制核心编成 C 共享库（<code>.so</code>/<code>.dll</code>），Python 用 ctypes 调用——<code>ctrl_step(q, dq, q_des, kp, kd, tau, n)</code> 一个函数进出，同进程微秒级延迟，最适合单机快速迭代，代价是数组必须是 float64、C 连续，结构体布局需与固件使用同一个头文件。第二种是主控板真机在环：主控通过 UDP 或串口收发定长帧，上行一帧可定为 <code>seq(4B) + t(8B) + q[12] + dq[12] + tau[12]</code> 共 300 字节，仿真进程收帧、步进、回包，适合将真实主控接入测试，代价是 0.1~1 ms 的序列化延迟需要计入控制回路。</p>
+<p>选型时应先明确一个问题：需要运行的是同一份代码，还是同一块板子？前者使用 ctypes 即可，后者必须使用 UDP。取舍如下：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>ctypes 共享库</th>
+<th>UDP / 串口</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>延迟</td>
+<td>微秒级（同进程）</td>
+<td>0.1~1 ms（序列化 + 网络栈）</td>
+</tr>
+<tr>
+<td>复用</td>
+<td>同一份 C 控制代码</td>
+<td>同一份协议，跨语言/跨机器</td>
+</tr>
+<tr>
+<td>调试</td>
+<td>单进程，gdb 直接跟</td>
+<td>两端独立，抓包方便</td>
+</tr>
+<tr>
+<td>适合</td>
+<td>单机 SIL、快速迭代</td>
+<td>HIL、主控真机在环</td>
+</tr>
+</tbody>
+</table>
+<p>两种接法的数据流完全一致，时基对齐是共同的核心：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    POL[&quot;策略 50 Hz&quot;] --&gt;|&quot;q_des&quot;| CTL[&quot;控制 1 kHz&lt;br/&gt;PD / 步态&quot;]</span><br><span class="line">    CTL --&gt;|&quot;tau 指令&lt;br/&gt;RS485 1 kHz（保持 1 ms）&quot;| SIM[&quot;MuJoCo mj_step 1 kHz&quot;]</span><br><span class="line">    SIM --&gt;|&quot;q, dq, IMU&quot;| CTL</span><br><span class="line">    SIM --&gt;|&quot;观测 50 Hz&quot;| POL</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>频率</th>
+<th>每个仿真步执行</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>物理 <code>mj_step</code></td>
+<td>1 kHz</td>
+<td>1</td>
+</tr>
+<tr>
+<td>控制（PD / 步态）</td>
+<td>1 kHz</td>
+<td>1</td>
+</tr>
+<tr>
+<td>RS485 指令</td>
+<td>1 kHz</td>
+<td>1</td>
+</tr>
+<tr>
+<td>策略推理</td>
+<td>50 Hz</td>
+<td>20</td>
+</tr>
+</tbody>
+</table>
+<p>50 Hz 策略的动作需要零阶保持 20 ms，不应在仿真中逐步刷新动作，否则策略会学到「指令瞬间生效」，上机后即存在 20 ms 的相位差。实现上就是一个整除判断：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">m.opt.timestep = <span class="number">0.001</span></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> <span class="built_in">range</span>(N):</span><br><span class="line">    <span class="keyword">if</span> k % <span class="number">20</span> == <span class="number">0</span>:                 <span class="comment"># 50 Hz：跑一次策略，动作保持 20 ms</span></span><br><span class="line">        cmd = action_to_q_des(policy(obs))</span><br><span class="line">    tau = np.clip(kp * (cmd - q) - kd * dq, -tau_max, tau_max)</span><br><span class="line">    d.ctrl[:] = tau</span><br><span class="line">    mujoco.mj_step(m, d)</span><br></pre></td></tr></table></figure>
+<p>RS485 这一层在 1 kHz 下与控制同拍、每 1 ms 一帧保持 1 ms，仿真中不需要 decimation；真正需要补齐的是 1 ms 传输加驱动器处理的延迟，这属于 sim2real 桥接中动作队列的内容。仿真跑得比实时快是优点，RL 采样正依赖于此；但硬件在环必须锁定到墙钟，主控板不会等待慢放的仿真。锁钟的方法较为简单：每步之后计算仿真时间与真实时间的差，超前时通过 sleep 补偿该差值。另外，Python 主循环的抖动在 0.1~1 ms 量级，1 kHz 下已占掉一个周期，对时序敏感的实验应将控制律放入 C 共享库，先统计 1000 次循环的 p99，超过 0.5 ms 就不应在 Python 中做 1 kHz 控制。</p>
+<h2 id="从-sim2sim-到-sim2real：非理想因素的逐项补回">从 sim2sim 到 sim2real：非理想因素的逐项补回</h2>
+<p>进入 sim2sim 阶段，同一份策略在两个引擎中跑出不同结果，九成原因是七项内容没有对齐：关节顺序、单位、PD 增益、初始姿态、观测归一化、动作缩放、控制频率。两个引擎的 body 与 joint 字典序几乎不可能一致，因此一切按名称取用、按名称重排，不应按数组下标——编写一个 <code>reorder(src, names_src, names_dst)</code> 的小函数，一行索引即可解决。观测同样需要在两边各打印一帧 47 维 obs 逐位对比，重点查看上电第一帧，<code>gravity</code> 与 <code>last_action</code> 最容易错位。整条 sim2sim 的流程如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    U[&quot;第 7 篇 URDF&quot;] --&gt; MJ[&quot;MuJoCo go1.xml&lt;br/&gt;站立 / 阶跃 / trot 验证&quot;]</span><br><span class="line">    U --&gt; IS[&quot;Isaac 侧重新建模&lt;br/&gt;训练 RL 策略&quot;]</span><br><span class="line">    IS --&gt; P[&quot;policy.onnx + norm.json&quot;]</span><br><span class="line">    P --&gt; V[&quot;回 MuJoCo 按 policy_io.yaml 复验&lt;br/&gt;sim2sim 七项对比&quot;]</span><br><span class="line">    V --&gt;|&quot;±10% 口径通过&quot;| R[&quot;实机部署&lt;br/&gt;sim2real 四补丁&quot;]</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>检查项</th>
+<th>要求</th>
+<th>常见错法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>关节顺序</td>
+<td>两边都是 FR/FL/RR/RL × hip/thigh/calf</td>
+<td>Isaac 侧按字典序，MuJoCo 侧按 XML 顺序</td>
+</tr>
+<tr>
+<td>单位</td>
+<td>米、千克、秒、弧度</td>
+<td>一边用度一边用弧度</td>
+</tr>
+<tr>
+<td>执行器模型</td>
+<td>两边都是 motor + 外部 PD</td>
+<td>MuJoCo 用 position，Isaac 用隐式执行器</td>
+</tr>
+<tr>
+<td>PD 增益</td>
+<td>同一组 kp/kd，逐关节对齐</td>
+<td>仿真调过、部署没同步</td>
+</tr>
+<tr>
+<td>初始姿态</td>
+<td>同一 q_default、同一站高</td>
+<td>一个 0.40 m，一个 0.38 m</td>
+</tr>
+<tr>
+<td>观测归一化</td>
+<td>均值/方差、裁剪范围一致</td>
+<td>训练用 running mean，部署写死 0</td>
+</tr>
+<tr>
+<td>控制频率</td>
+<td>策略 50 Hz、物理 1 kHz、decimation 乘积 20 ms</td>
+<td>一边 50 Hz，一边 100 Hz</td>
+</tr>
+</tbody>
+</table>
+<p>判定通过的标准是同一策略运行 10 秒 trot：是否摔倒是一票否决项，其余看平均速度 ±10%、机身高度 ±2 cm、姿态 RMS ±3°、关节力矩 RMS ±15%，超出范围时按「关节顺序→单位→PD→初始姿态→观测」的顺序排查，不应一开始就调整增益。对齐也不应从 trot 开始，应先让两边静止姿态一致，再对齐单腿阶跃，然后才跑五米——一开始就跑五米，出错位置将无法判断。</p>
+<p>为第十篇预留的接口此时就应确定，更换引擎只更换训练侧、不更换接口：观测 47 维的构成为 base_ang_vel(3) + gravity(3) + cmd(3) + q(12) + dq(12) + last_action(12) + phase(2)，动作是关节位置偏移，action_scale 0.25 rad，PD 统一 kp=30、kd=0.6，力矩软限 [12, 15, 20] N·m。这些数值写入一份 policy_io.yaml，MuJoCo、Isaac、固件三处都读取它；任何一处另行复制一份，即成为下一次 sim2sim 对不上的根源。</p>
+<p>sim2real 还需补齐四项非理想因素：执行器延迟用动作队列实现——一个先入先出的 buffer 存放前几个周期的指令，每周期 push 新值、pop 旧值，扫描 0/1/2/4 个控制周期，观察策略在哪一档开始不稳，实机的实际延迟需要落在扫描区间内才算有裕度，只测一个值等于没有测量；力矩限幅对齐实机软限，<code>ctrlrange</code> ±23.7 N·m、代码侧 [12, 15, 20] N·m，不存在「仿真专用」的放大；观测滤波使用与实机相同的截止频率，不应出现仿真多滤一道、实机少滤一道的情况；噪声按实测标准差注入，静止 60 秒的方差两边需要一致。归一化参数需要与权重一同迁移——只迁移 <code>.pt</code> 不迁移归一化，是「训练能跑、部署失效」的最主要原因。</p>
+<p>四个补丁之外，还有三件常被问到「是否需要补齐」的事，此处一并说明：关节摩擦与死区，用 joint 的 frictionloss、damping、armature 三件套补齐，armature 代表减速箱折算惯量，量级同样采用实测值；电机带宽，用 general 执行器的 <code>dyntype=&quot;filter&quot;</code> 加一阶滞后，dynprm 给定时间常数，比在指令上做延迟更接近真实电机；编码器量化，放在观测侧处理，不应写入 MJCF——传感器输出本就应在构造观测时处理。动作队列还有一个小细节：起步前用当前指令将队列填满预热，否则前几个周期没有延迟，等于补丁半路才生效。</p>
+<p>上机前的检查表归根结底只有一条原则：仿真中的每个数字，都要能在实机上找到同一个来源。逐条核对：<code>q_default</code> 与实机站立姿态逐关节一致（误差 &lt; 0.02 rad）；12 个关节的 kp/kd 与实机 SDK 下发值一致；观测顺序与训练时逐位一致，尤其 gravity 与四元数不应混淆；注入 1~2 周期延迟后策略仍稳定。首次上机还需准备三样：吊架、限速 0.3 m/s、急停在手。</p>
+<p>验收以四项收尾：模型按站姿 q=(0, 0.5284, 1.0567) 保持 10 秒，漂移小于 1 cm、高度波动小于 5 mm；随机 20 组关节角对比 FK，足端误差小于 1 mm，超出时先核对三组静态姿态再检查随机姿态；膝关节 0.2 rad 阶跃，超调小于 15%、调节时间小于 0.15 秒；再跑 trot 五米不摔，横向偏差小于 0.3 m。站立这一项不应依赖肉眼观察 viewer，应编写脚本自动判定：跑完 10 秒输出水平漂移、高度波动与机身朝向的垂直度，机身 z 轴在世界 z 上的投影低于 0.8 即视为失败。漂移一路单向增大时，先检查地面是否水平、<code>solref</code> 是否过软，再看摩擦；接触蠕变本身只会带来毫米级漂移，超过 1 cm 即不属于正常范围。四项全部通过后，本章交付的即是一台在仿真中可控的机器狗——一个唯一的 go1.xml、一个结构自检脚本、一个站立判定脚本、一张 name↔index 对照表和一份填写完成的 sim2sim 对比记录。下一篇将讨论策略的真正训练与部署：Isaac Lab 与 Isaac Gym 如何选择，4060 的 8 G 显存如何处理，答案在第十篇。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz/2026/10/12/09/">https://zhxylabflow.xyz/2026/10/12/09/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zhxylabflow.xyz" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a><a class="post-meta__tags" href="/tags/%E5%9B%9B%E8%B6%B3%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/">四足开发实战</a><a class="post-meta__tags" href="/tags/MuJoCo/">MuJoCo</a><a class="post-meta__tags" href="/tags/sim2sim/">sim2sim</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post" loading='lazy'><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">四足开发实战（十）：落地篇——强化学习、联调与迭代</div></div><div class="info-2"><div class="info-item-1">系列最后一篇：强化学习的适用性判断、Isaac Gym 弃用后 Isaac Lab 2.3.x 与 3.0 的选型、4060 8G 显存的三条出路，训练到部署的流水线，以及五阶段联调、故障树、指标测试和十八个月项目管理，将十篇串成一条完整开发线。</div></div></div></a><a class="pagination-related" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">四足开发实战（八）：步态篇——状态估计与 trot 行走</div></div><div class="info-2"><div class="info-item-1">从 Mahony 姿态估计、腿部里程计到接触检测，再到 trot 相位与落脚点，最后给出从站立阻抗到行走的整定顺序；并说明 MPC/WBC 在何种条件下才值得采用。</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-02</div><div class="info-item-2">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</div></div><div class="info-2"><div class="info-item-1">用几何法从头推导一条三关节腿的正逆运动学，再说明写 URDF 时容易出错的默认值：rpy 顺序、mesh 单位、fusestatic 与 strippath 的默认反转，以及惯量如何从 CAD 迁移到仿真。</div></div></div></a><a class="pagination-related" href="/2026/09/22/05/" title="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-22</div><div class="info-item-2">四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线</div></div><div class="info-2"><div class="info-item-1">本篇说明 12 个宇树关节模组的控制方案，涵盖主控选型（DM-MC02 与 STM32H723）、IMU 选型与安装、2 路 × 6 关节 4 Mbps 的带宽核算、收发器与终端偏置，以及从短路检测到 12 关节全部在线的上电调试顺序。</div></div></div></a><a class="pagination-related" href="/2026/09/27/06/" title="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-27</div><div class="info-item-2">四足开发实战（六）：固件篇——1 kHz 控制环与任务架构</div></div><div class="info-2"><div class="info-item-1">在上一篇完成 12 个关节的总线接入之后，本篇将其交由软件控制，涵盖 FreeRTOS 十任务架构、1 kHz 主循环的时间预算、RS485 半双工时序的代码实现、电机抽象层接口，以及状态机与保护体系。</div></div></div></a><a class="pagination-related" href="/2026/09/07/02/" title="四足开发实战（二）：机械篇——一条腿的设计与刚度"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-07</div><div class="info-item-2">四足开发实战（二）：机械篇——一条腿的设计与刚度</div></div><div class="info-2"><div class="info-item-1">12 kg 的机器从 1.2 m 高度跌落时，首先承受冲击的不是控制算法，而是那条打印出来的腿。本文说明腿型如何选择、三个长度如何确定、方盒模组如何安装，以及一道决定腿部软硬程度的悬臂梁计算，并附一张截面变形对比表。</div></div></div></a><a class="pagination-related" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-12</div><div class="info-item-2">四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩</div></div><div class="info-2"><div class="info-item-1">12 公斤的四足需要多大关节扭矩？从静止站立、落地冲击到爬坡逐项反推，给出 GO-M8010-6 与 IM6014 的对比结论，并讲清宇树模组 17 字节 RS485 控制帧的三个易错点，附"先采购 1 个电机"的台架验收清单。</div></div></div></a><a class="pagination-related" href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-17</div><div class="info-item-2">四足开发实战（四）：电源篇——6S 电池、配电与安全</div></div><div class="info-2"><div class="info-item-1">电机选定之后，如何设计供电系统？从 6S 电压平台、COT 功率估算到容量与倍率计算，再到预充、急停与上电顺序，完整配置 12 kg 四足的电源系统，并将锂电池安全守则整理为可执行的规范。</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">嵌入式与机器人运动控制｜四足 · RL · 状态估计</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">🐕《四足机器人开发实战》专栏已上线，12 篇从零做机器狗 → [点此阅读](/2026/08/28/series-index/)</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%AC%E6%8D%A2%E5%8F%AA%E5%AE%8C%E6%88%90%E4%B8%80%E5%8D%8A%EF%BC%9AURDF-%E8%BF%9B-MuJoCo-%E7%9A%84%E5%9B%9B%E4%B8%AA%E5%BF%85%E6%94%B9%E7%82%B9"><span class="toc-number">1.1.</span> <span class="toc-text">转换只完成一半：URDF 进 MuJoCo 的四个必改点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%A4%E6%9D%A1%E6%89%A7%E8%A1%8C%E5%99%A8%E8%B7%AF%E7%BA%BF%E4%B8%8E%E6%8A%96%E5%8A%A8%E7%9A%84%E6%88%90%E5%9B%A0"><span class="toc-number">1.2.</span> <span class="toc-text">两条执行器路线与抖动的成因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%99%A8%E5%9C%A8%E7%8E%AF%EF%BC%9A%E5%90%8C%E4%B8%80%E4%BB%BD%E4%BB%A3%E7%A0%81%EF%BC%8C%E4%B8%A4%E7%A7%8D%E6%8E%A5%E6%B3%95"><span class="toc-number">1.3.</span> <span class="toc-text">控制器在环：同一份代码，两种接法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E-sim2sim-%E5%88%B0-sim2real%EF%BC%9A%E9%9D%9E%E7%90%86%E6%83%B3%E5%9B%A0%E7%B4%A0%E7%9A%84%E9%80%90%E9%A1%B9%E8%A1%A5%E5%9B%9E"><span class="toc-number">1.4.</span> <span class="toc-text">从 sim2sim 到 sim2real：非理想因素的逐项补回</span></a></li></ol></li></ol></div></div><div class="card-widget card-post-series"><div class="item-headline"><i class="fa-solid fa-layer-group"></i><span>系列文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（十）：落地篇——强化学习、联调与迭代" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代">四足开发实战（十）：落地篇——强化学习、联调与迭代</a><time datetime="2026-10-17T04:00:00.000Z" title="发表于 2026-10-17 12:00:00">2026-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</a><time datetime="2026-10-12T04:00:00.000Z" title="发表于 2026-10-12 12:00:00">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（八）：步态篇——状态估计与 trot 行走" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走">四足开发实战（八）：步态篇——状态估计与 trot 行走</a><time datetime="2026-10-07T04:00:00.000Z" title="发表于 2026-10-07 12:00:00">2026-10-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（七）：建模篇——运动学与 URDF 从零写起" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</a><time datetime="2026-10-02T04:00:00.000Z" title="发表于 2026-10-02 12:00:00">2026-10-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/27/06/" title="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/27/06/" title="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构">四足开发实战（六）：固件篇——1 kHz 控制环与任务架构</a><time datetime="2026-09-27T04:00:00.000Z" title="发表于 2026-09-27 12:00:00">2026-09-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/22/05/" title="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/22/05/" title="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线">四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线</a><time datetime="2026-09-22T04:00:00.000Z" title="发表于 2026-09-22 12:00:00">2026-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（四）：电源篇——6S 电池、配电与安全" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全">四足开发实战（四）：电源篇——6S 电池、配电与安全</a><time datetime="2026-09-17T04:00:00.000Z" title="发表于 2026-09-17 12:00:00">2026-09-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩">四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩</a><time datetime="2026-09-12T04:00:00.000Z" title="发表于 2026-09-12 12:00:00">2026-09-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/07/02/" title="四足开发实战（二）：机械篇——一条腿的设计与刚度"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（二）：机械篇——一条腿的设计与刚度" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/07/02/" title="四足开发实战（二）：机械篇——一条腿的设计与刚度">四足开发实战（二）：机械篇——一条腿的设计与刚度</a><time datetime="2026-09-07T04:00:00.000Z" title="发表于 2026-09-07 12:00:00">2026-09-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（一）：需求与总体方案——先定需求，再买电机" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机">四足开发实战（一）：需求与总体方案——先定需求，再买电机</a><time datetime="2026-09-02T04:00:00.000Z" title="发表于 2026-09-02 12:00:00">2026-09-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/28/series-index/" title="四足机器人开发实战：从零做一台机器狗（系列导读）"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足机器人开发实战：从零做一台机器狗（系列导读）" loading='lazy'></a><div class="content"><a class="title" href="/2026/08/28/series-index/" title="四足机器人开发实战：从零做一台机器狗（系列导读）">四足机器人开发实战：从零做一台机器狗（系列导读）</a><time datetime="2026-08-28T04:00:00.000Z" title="发表于 2026-08-28 12:00:00">2026-08-28</time></div></div></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/24/c_cpp_mixing_embedded/" title="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑"><img src="https://img.cdn1.vip/i/6adba63408709_1792779828.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/24/c_cpp_mixing_embedded/" title="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑">在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑</a><time datetime="2026-10-23T17:45:29.714Z" title="发表于 2026-10-24 01:45:29">2026-10-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（十）：落地篇——强化学习、联调与迭代"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代">四足开发实战（十）：落地篇——强化学习、联调与迭代</a><time datetime="2026-10-17T04:00:00.000Z" title="发表于 2026-10-17 12:00:00">2026-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</a><time datetime="2026-10-12T04:00:00.000Z" title="发表于 2026-10-12 12:00:00">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（八）：步态篇——状态估计与 trot 行走"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走">四足开发实战（八）：步态篇——状态估计与 trot 行走</a><time datetime="2026-10-07T04:00:00.000Z" title="发表于 2026-10-07 12:00:00">2026-10-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</a><time datetime="2026-10-02T04:00:00.000Z" title="发表于 2026-10-02 12:00:00">2026-10-02</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>

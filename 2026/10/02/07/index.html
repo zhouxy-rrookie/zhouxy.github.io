@@ -1,0 +1,565 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>四足开发实战（七）：建模篇——运动学与 URDF 从零写起 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="用几何法从头推导一条三关节腿的正逆运动学，再说明写 URDF 时容易出错的默认值：rpy 顺序、mesh 单位、fusestatic 与 strippath 的默认反转，以及惯量如何从 CAD 迁移到仿真。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="四足开发实战（七）：建模篇——运动学与 URDF 从零写起">
+<meta property="og:url" content="https://zhxylabflow.xyz/2026/10/02/07/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="用几何法从头推导一条三关节腿的正逆运动学，再说明写 URDF 时容易出错的默认值：rpy 顺序、mesh 单位、fusestatic 与 strippath 的默认反转，以及惯量如何从 CAD 迁移到仿真。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp">
+<meta property="article:published_time" content="2026-10-02T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-28T11:39:15.090Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="足式机器人">
+<meta property="article:tag" content="四足开发实战">
+<meta property="article:tag" content="运动学">
+<meta property="article:tag" content="URDF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "四足开发实战（七）：建模篇——运动学与 URDF 从零写起",
+  "url": "https://zhxylabflow.xyz/2026/10/02/07/",
+  "image": "https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp",
+  "datePublished": "2026-10-02T04:00:00.000Z",
+  "dateModified": "2026-10-28T11:39:15.090Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "https://zhxylabflow.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/2026/10/02/07/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '四足开发实战（七）：建模篇——运动学与 URDF 从零写起',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-02T04:00:00.000Z" title="发表于 2026-10-02 12:00:00">2026-10-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-28T11:39:15.090Z" title="更新于 2026-10-28 19:39:15">2026-10-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%9B%9B%E8%B6%B3%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/">四足开发实战</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>给定一条腿的三个关节角，求解足端在世界系中的位置，是运动学建模的第一步。该问题一旦出现符号错误，后续的仿真、步态与强化学习都将随之出错。实际开发中常见的情形是：模型在 MuJoCo 中导入后仿真表现正常，固件运行后四条腿却朝反方向摆动，排查后确认问题来自 URDF 中一个 <code>axis</code> 的负号。本文先将运动学推导到无歧义的程度，再说明如何将正确的模型写入文件并验证到可以信赖。</p>
+<p>在开始之前，先梳理整条运动链。运动学中一共涉及六个坐标系，它们之间的父子关系即后续 URDF 中的 link 树；每个坐标系的位姿由关节角逐级叠加得到，任何一层出错都会波及全部结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart LR</span><br><span class="line">    W[world&lt;br/&gt;世界系] --&gt;|floating joint&lt;br/&gt;机身位姿| B[base_link&lt;br/&gt;机身系]</span><br><span class="line">    B --&gt;|q1 髋roll| HR[FL_hip_link&lt;br/&gt;髋]</span><br><span class="line">    HR --&gt;|q2 髋pitch| HP[FL_thigh_link&lt;br/&gt;大腿]</span><br><span class="line">    HP --&gt;|q3 膝| KN[FL_shank_link&lt;br/&gt;小腿]</span><br><span class="line">    KN --&gt;|fixed| FO[FL_foot_link&lt;br/&gt;足端]</span><br></pre></td></tr></table></figure>
+<h2 id="一条腿的几何：余弦定理即可求解">一条腿的几何：余弦定理即可求解</h2>
+<p>首先需要明确坐标系定义，后续公式均以此为前提。世界系与机身系均为 x 轴朝前、y 轴朝左、z 轴朝上的右手系，髋、大腿、小腿、足端依次串联为一条链，共六个坐标系，与 URDF 中的 link 树一一对应。参考设计中大腿与小腿各长 0.22 m，髋相对机身中线的侧向偏置为 0.08 m，前后髋距为 0.20 m，足端为半径 0.02 m 的球体，站立高度为 0.40 m。此处有一个容易混淆的细节：<code>L1 + L2</code> 度量到足端球心，而站立高度度量到接地点，二者恰好相差一个球半径。若少加或多加这个 0.02 m，站立高度将偏移 2 cm，IK 解出的膝角随之出错，落足规划也会整体受到影响。</p>
+<p>正运动学采用几何法推导，较记忆旋转矩阵更为直观。髋 pitch 角 <code>q2</code> 使大腿在矢状面内向前抬起，膝关节 <code>q3</code> 使小腿相对大腿向后折叠，因此小腿相对竖直方向的绝对角度为 <code>q2 − q3</code>，两个角在同一平面内直接相减。两段连杆在矢状面内的投影可写为：足端相对髋的前后偏移为 <code>L1·sin q2 + L2·sin(q2 − q3)</code>，竖直长度为 <code>h = L1·cos q2 + L2·cos(q2 − q3)</code>。髋 roll 角 <code>q1</code> 的作用较为简单：它不改变这条腿的长度，只将这段长度为 <code>h</code> 的矢量由竖直方向转向侧面。综上，足端相对髋点的位置为</p>
+<p>$$<br>
+p = \begin{pmatrix} L_1\sin q_2 + L_2\sin(q_2-q_3) \ \text{side}\cdot h\sin q_1 \ -h\cos q_1 \end{pmatrix}, \qquad h = L_1\cos q_2 + L_2\cos(q_2-q_3)<br>
+$$</p>
+<p><code>side</code> 在左腿取 +1、右腿取 −1；若右腿符号出错，两条腿将朝同一侧摆动，机身被推着横向移动。该公式不含矩阵乘法，这是四足腿 3 自由度的简化之处；机械臂的 6/7 自由度才需要 DH 参数表与数值迭代。</p>
+<p>得到位置后，对其求一次偏导即可得到雅可比矩阵。雅可比的第 i 列表示“关节 i 以 1 rad/s 旋转时足端的速度”，因此 <code>v_foot = J·q̇</code>；反之它也是静力映射，足端需要输出力 <code>F</code> 时，关节力矩为 <code>τ = Jᵀ·F</code>——同一矩阵同时服务于速度与力。对上述 FK 逐项求偏导，注意 <code>h</code> 与 <code>q2</code>、<code>q3</code> 都相关，整理为 3×3 矩阵：</p>
+<p>$$<br>
+J = \begin{bmatrix} 0 &amp; h &amp; -L_2\cos(q_2-q_3) \ \text{side}\cdot c_1 h &amp; -\text{side}\cdot s_1 p_x &amp; \text{side}\cdot s_1 L_2\sin(q_2-q_3) \ s_1 h &amp; c_1 p_x &amp; -c_1 L_2\sin(q_2-q_3) \end{bmatrix},\qquad c_1=\cos q_1,\ s_1=\sin q_1,\ p_x=L_1\sin q_2+L_2\sin(q_2-q_3)<br>
+$$</p>
+<p>理解该矩阵的物理结构比机械记忆更有价值：第一列只有 y、z 分量，因为 <code>q1</code> 不改变腿长，只在侧向与竖直方向移动足端；后两列对应矢状面内两段连杆的摆动速度。二者共同决定奇异位形——行列式 <code>|det J| = L1·L2·h·sin q3</code>，当腿完全伸直（<code>q3→0</code>）或足端与髋同高（<code>h→0</code>）时退化为零。落实到实机可概括为：<strong>站立时膝角应保留 0.05 rad 余量，不应处于完全伸直位</strong>。靠近奇异区时 IK 对噪声极为敏感，1 mm 的传感器误差可放大为数度的关节角跳变。</p>
+<p>逆运动学按三步求解，结构清晰。已知足端相对髋点的坐标 <code>(x, y, z)</code>，第一步求解髋 roll：<code>q1 = atan2(side·y, −z)</code>，同时 <code>h = √(y²+z²)</code> 即腿在矢状面内的长度。第二步将问题简化为平面三角形：髋、膝、足三点，两边为 <code>L1</code>、<code>L2</code>，第三边为髋到足端的直线距离 <code>ρ = √(x²+h²)</code>。使用余弦定理时有一个容易出错的细节——膝的<strong>内角</strong>是 <code>π − q3</code> 而非 <code>q3</code>，因此 <code>cos(π − q3) = −cos q3</code>；等式中的正负号一旦反向，IK 将解出朝反方向弯曲的膝盖：</p>
+<p>$$<br>
+q_3 = \arccos\frac{\rho^2 - L_1^2 - L_2^2}{2L_1L_2}, \qquad q_2 = \operatorname{atan2}(x, h) + \operatorname{atan2}(L_2\sin q_3,\ L_1 + L_2\cos q_3)<br>
+$$</p>
+<p>第二项 <code>β</code> 的物理含义较为直接：膝盖弯曲多少，大腿就需向前补偿多少；<code>q3 = 0</code> 时该项归零，<code>q2</code> 即髋到足端连线本身的仰角。整段推导仅用到两次 atan2 与一次余弦定理，在主控中一个 <code>acosf</code> 加限幅即可实现为十几行 C 代码。下面这份骨架可直接使用，需要注意 <code>side</code> 参数贯穿始终，且 <code>acosf</code> 之前务必进行 clamp，越界目标应返回 <code>false</code>，而非输出 NaN 使后续控制环出错：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span> <span class="type">float</span> x, y, z; &#125; vec3;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span> <span class="type">float</span> q1, q2, q3; &#125; <span class="type">leg_ik_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* FK：关节角 -&gt; 足端（相对髋点）。side：左腿 +1，右腿 -1 */</span></span><br><span class="line">vec3 <span class="title function_">leg_fk</span><span class="params">(<span class="type">float</span> q1, <span class="type">float</span> q2, <span class="type">float</span> q3, <span class="type">float</span> side, <span class="type">float</span> L1, <span class="type">float</span> L2)</span> &#123;</span><br><span class="line">    <span class="type">float</span> h  = L1 * cosf(q2) + L2 * cosf(q2 - q3);</span><br><span class="line">    <span class="type">float</span> px = L1 * sinf(q2) + L2 * sinf(q2 - q3);</span><br><span class="line">    <span class="keyword">return</span> (vec3)&#123; px, side * h * sinf(q1), -h * cosf(q1) &#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* IK：足端 -&gt; 关节角。越界返回 false，绝不产出 NaN */</span></span><br><span class="line"><span class="type">bool</span> <span class="title function_">leg_ik</span><span class="params">(vec3 p, <span class="type">float</span> side, <span class="type">float</span> L1, <span class="type">float</span> L2, <span class="type">leg_ik_t</span> *out)</span> &#123;</span><br><span class="line">    <span class="type">float</span> h   = sqrtf(p.y * p.y + p.z * p.z);</span><br><span class="line">    <span class="type">float</span> rho = sqrtf(p.x * p.x + h * h);</span><br><span class="line">    <span class="keyword">if</span> (rho &gt; L1 + L2 - <span class="number">1e-3</span>f || rho &lt; fabsf(L1 - L2) + <span class="number">1e-3</span>f) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="type">float</span> c3 = (rho * rho - L1 * L1 - L2 * L2) / (<span class="number">2.0f</span> * L1 * L2);</span><br><span class="line">    c3 = fmaxf(<span class="number">-1.0f</span>, fminf(<span class="number">1.0f</span>, c3));           <span class="comment">/* 浮点误差安全垫 */</span></span><br><span class="line">    out-&gt;q1 = atan2f(side * p.y, -p.z);</span><br><span class="line">    out-&gt;q3 = acosf(c3);</span><br><span class="line">    out-&gt;q2 = atan2f(p.x, h) + atan2f(L2 * sinf(out-&gt;q3), L1 + L2 * cosf(out-&gt;q3));</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调试时应遵循一条顺序：<strong>先验证 FK，再验证 IK</strong>。FK 具有唯一解，符号错误会立即从足端坐标的数值中暴露；IK 的错误则更隐蔽——它可能解出镜像的膝，也可能在奇异区附近将 1 mm 的误差放大为数度。因此联调时应始终先用 FK 对比 CAD 量出的三个姿态，在 FK 验证通过之前，不应处理 IK 的 bug。</p>
+<p><code>arccos</code> 仅返回 <code>[0, π]</code>，但方程对 <code>±q3</code> 均成立，对应小腿向后折与向前折两组解。参考设计的机械限位只允许向后折，因此可直接排除向前折；若结构允许双向，则按连续性选择——取与上一拍更接近的那一支，否则摆动过程中膝盖会瞬间翻转，机器人当场失稳跌倒，这一冲击足以使减速器产生背隙。工作空间的边界同样由几何决定：腿完全伸直时 <code>ρ = L1+L2 = 0.44 m</code>，受膝限位约束的实际最远为 0.440 m、最近为 0.139 m；对越界目标，IK 必须返回错误码，而不是由 <code>acos</code> 输出 NaN。</p>
+<p>站立角同样可由余弦定理求出。站高 0.40 m、球半径 0.02 m，球心高度为 0.38 m，代入 <code>cos q3 = (0.38² − 2×0.22²)/(2×0.22²) = 0.4917</code>，解得 <code>q3 = 1.0567 rad</code>、<code>q2 = 0.5284 rad</code>。这组数值在后续反复使用。站立过直意味着 <code>q3</code> 逼近 0、进入奇异区，落地冲击会直接冲击关节限位；保留约 13% 的屈曲量，膝关节才有力矩余量用于缓冲。此处也可用雅可比验证一次选型——站立位单腿承重 29.43 N（12 kg 均分四腿），由 <code>τ = JᵀF</code> 计算仅膝盖输出 3.26 N·m，因为竖直力的作用线恰好穿过髋轴，只有膝到足端那 0.111 m 的水平力臂受力。该值乘以安全系数，即为减速器额定扭矩的选取依据。雅可比本身已用数值求导验证：<code>(fk(q+ε) − fk(q−ε))/2ε</code> 与解析式逐元素比较，最大偏差为 7.5e-10，符号与系数均正确。10 万组随机姿态经过 <code>q → fk → ik → q'</code> 往返测试，最大关节误差为 6.6e-15 rad，属纯浮点噪声，说明该组公式自洽。若真机髋部存在横向偏置、连杆不共面，解析解将产生数毫米系统误差，此时可用牛顿迭代 <code>q ← q + J⁻¹(p_target − fk(q))</code> 兜底，初值取上一拍的解，数次即可收敛，仅在标定与诊断时使用。更一般化的 DH 法与全身运动学推导见理论篇 <a href="/2026/03/18/quadruped_control_theory_cn/" title="四足机器人控制理论（公式推导汇总）">四足机器人控制理论（公式推导汇总）</a>，本文仅保留工程上日常使用的内容。</p>
+<h2 id="写-URDF：一半时间用于处理默认值">写 URDF：一半时间用于处理默认值</h2>
+<p>运动学公式确定后，将其翻译为 URDF 又会遇到一系列问题。URDF 的结构本身并不复杂：一个 <code>&lt;robot&gt;</code> 内直接列出 link 与 joint，四足 12 个关节即 17 个机体 link 加 13 个 joint（12 转动 + 1 浮动），再加一个 <code>world</code> 参考。浮动关节写作 <code>type=&quot;floating&quot;</code>，MuJoCo 会编译为 6 自由度的 free joint。以下先看一条腿的最小骨架，每个字段在后续逐一说明：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">robot</span> <span class="attr">name</span>=<span class="string">&quot;quadruped&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">mujoco</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">compiler</span> <span class="attr">angle</span>=<span class="string">&quot;radian&quot;</span> <span class="attr">fusestatic</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">              <span class="attr">strippath</span>=<span class="string">&quot;false&quot;</span> <span class="attr">discardvisual</span>=<span class="string">&quot;false&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">option</span> <span class="attr">timestep</span>=<span class="string">&quot;0.002&quot;</span> <span class="attr">integrator</span>=<span class="string">&quot;implicitfast&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">mujoco</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">&quot;world&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">joint</span> <span class="attr">name</span>=<span class="string">&quot;floating_base&quot;</span> <span class="attr">type</span>=<span class="string">&quot;floating&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span> <span class="attr">link</span>=<span class="string">&quot;world&quot;</span>/&gt;</span><span class="tag">&lt;<span class="name">child</span> <span class="attr">link</span>=<span class="string">&quot;base_link&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">joint</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">link</span> <span class="attr">name</span>=<span class="string">&quot;base_link&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">inertial</span>&gt;</span><span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">&quot;0 0 0&quot;</span>/&gt;</span><span class="tag">&lt;<span class="name">mass</span> <span class="attr">value</span>=<span class="string">&quot;8.4&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">inertia</span> <span class="attr">ixx</span>=<span class="string">&quot;0.03808&quot;</span> <span class="attr">ixy</span>=<span class="string">&quot;0&quot;</span> <span class="attr">ixz</span>=<span class="string">&quot;0&quot;</span> <span class="attr">iyy</span>=<span class="string">&quot;0.13356&quot;</span> <span class="attr">iyz</span>=<span class="string">&quot;0&quot;</span> <span class="attr">izz</span>=<span class="string">&quot;0.15148&quot;</span>/&gt;</span><span class="tag">&lt;/<span class="name">inertial</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">visual</span>&gt;</span><span class="tag">&lt;<span class="name">geometry</span>&gt;</span><span class="tag">&lt;<span class="name">box</span> <span class="attr">size</span>=<span class="string">&quot;0.21 0.10 0.06&quot;</span>/&gt;</span><span class="tag">&lt;/<span class="name">geometry</span>&gt;</span><span class="tag">&lt;/<span class="name">visual</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">collision</span>&gt;</span><span class="tag">&lt;<span class="name">geometry</span>&gt;</span><span class="tag">&lt;<span class="name">box</span> <span class="attr">size</span>=<span class="string">&quot;0.21 0.10 0.06&quot;</span>/&gt;</span><span class="tag">&lt;/<span class="name">geometry</span>&gt;</span><span class="tag">&lt;/<span class="name">collision</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">link</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">joint</span> <span class="attr">name</span>=<span class="string">&quot;FL_hip_roll_joint&quot;</span> <span class="attr">type</span>=<span class="string">&quot;revolute&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span> <span class="attr">link</span>=<span class="string">&quot;base_link&quot;</span>/&gt;</span><span class="tag">&lt;<span class="name">child</span> <span class="attr">link</span>=<span class="string">&quot;FL_hip_link&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">origin</span> <span class="attr">xyz</span>=<span class="string">&quot;0.10 0.08 0&quot;</span> <span class="attr">rpy</span>=<span class="string">&quot;0 0 0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">axis</span> <span class="attr">xyz</span>=<span class="string">&quot;1 0 0&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">limit</span> <span class="attr">lower</span>=<span class="string">&quot;-0.7&quot;</span> <span class="attr">upper</span>=<span class="string">&quot;0.7&quot;</span> <span class="attr">effort</span>=<span class="string">&quot;23.7&quot;</span> <span class="attr">velocity</span>=<span class="string">&quot;30&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">joint</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- FL_hip_pitch: axis 0 -1 0, limit -1.0~2.2; FL_knee: axis 0 1 0, limit 0.05~2.5;</span></span><br><span class="line"><span class="comment">       大腿/小腿/足端 link 与其余三条腿按镜像表补齐 --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">robot</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>joint</code> 的 <code>origin/xyz</code> 是子 link 原点在父 link 系中的位置（关节零位时），<code>axis</code> 在关节坐标系中会被归一化，写作 <code>0 -1 0</code> 与 <code>0 1 0</code> 即表示相反方向。参考设计的髋 pitch 特意使用 <code>-y</code> 轴，因为 +y 旋转会使足端向后（右手定则），而步态中“正角度 = 向前迈”更符合直觉，代价是 axis 中的负号不可遗漏。<code>limit</code> 中的 <code>effort/velocity</code> 取自第 3 篇定稿的峰值力矩与空载转速（23.7 N·m、30 rad/s），它们是仿真中执行器钳位的来源，并非装饰。</p>
+<p><code>origin</code> 中的 <code>rpy</code> 采用<strong>固定轴 X-Y-Z</strong> 顺序，等价于 <code>R = Rz(yaw)·Ry(pitch)·Rx(roll)</code>，矩阵从右往左乘；大部分 rpy 相关问题都源于将其理解为“绕自身轴依次旋转”。参考设计将四条腿的 <code>origin rpy</code> 全部写为 <code>0 0 0</code>，左右镜像仅通过 <code>axis</code> 的正负号实现，使 FK 公式对四条腿保持一致。也可将右腿整体旋转 180° 再修改 axis，两种镜像方式均可使用，但只能选择其一；混用会导致腿部朝异常方向摆动。另有一个反直觉的易错点：<code>box</code> 的 <code>size</code> 是<strong>半边长</strong>，0.42 × 0.20 × 0.12 m 的机身应写为 <code>0.21 0.10 0.06</code>；若写成全尺寸，模型会扩大一倍，质量与站立高度都不再匹配。mesh 的常见问题同样突出——CAD 导出单位为毫米，而 URDF 按米读取，若未写 <code>scale=&quot;0.001 0.001 0.001&quot;</code>，模型将放大一千倍；且 visual 与 collision 必须同步修改，否则会出现“视觉上为一米、碰撞上为一毫米”的不一致。碰撞体建议直接使用胶囊、球、盒等原语而非高模网格，因为网格被 MuJoCo 转换为凸包后接触法向会跳变，机器人落地时即会抖动。</p>
+<p>MuJoCo 直接加载 URDF 时，若干编译默认值与手写 MJCF <strong>相反</strong>，这是“模型一导入即散架”问题的最主要来源：</p>
+<table>
+<thead>
+<tr>
+<th>编译选项</th>
+<th>MJCF 默认</th>
+<th>URDF 输入时默认</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fusestatic</code></td>
+<td>false</td>
+<td>true</td>
+<td>设 false，否则足端的 fixed link 被融进小腿，<code>FL_foot_link</code> 直接消失</td>
+</tr>
+<tr>
+<td><code>strippath</code></td>
+<td>false</td>
+<td>true</td>
+<td>设 false，否则两个子目录里的同名 <code>thigh.stl</code> 会相互混淆</td>
+</tr>
+<tr>
+<td><code>discardvisual</code></td>
+<td>true</td>
+<td>true</td>
+<td>设 false，否则只剩碰撞体，看不见外观</td>
+</tr>
+</tbody>
+</table>
+<p>惯量是另一处常见问题所在。URDF 的 <code>inertial/origin</code> 是<strong>质心</strong>在 link 系中的位置，<code>inertia</code> 的六个分量是<strong>绕质心</strong>的惯量，而非绕关节。从 CAD 导出时常见三类错误：单位使用 kg·mm²（惯量比真值大 10⁶ 倍，机器人表现得异常沉重，仿真中轻微受力即倾倒）；惯量绕关节而非质心（关节响应异常、静止时也抖动）；镜像件的非对角项符号未同步变化（左右大腿外观一致，但 <code>ixy</code> 一正一负，直接复制即出错）。SolidWorks 中导出前应先将单位改为 kg/m、将惯性矩报告改为相对质心；FreeCAD 使用 FCInfo 宏或直接读取 <code>MatrixOfInertia</code>，注意其结果可能相对原点，写入 URDF 前需用平行轴定理转换到质心。完成后无需肉眼检查 XML，直接在 MuJoCo 中打印 <code>body_mass</code> 与 <code>body_inertia</code>，与 CAD 逐件核对：相差 10⁶ 是单位错误，相差数倍是取错零件，相差 1~2% 是圆角与螺纹被简化，可接受。该方法还可发现“某个 link 未填写质量”——质量填 0 在 MuJoCo 中会直接拒绝编译，但 0.05 kg 的小件也应给出示例值。</p>
+<h2 id="MJCF：补上-URDF-缺少的内容">MJCF：补上 URDF 缺少的内容</h2>
+<p>URDF 描述的是“机构”，执行器与传感器属于仿真侧，因此正确的转换方式为：MuJoCo 读入 URDF 之后，用 <code>mj_saveLastXML</code> 另存为 MJCF，后续修改均在 MJCF 上进行，不再回头修改 URDF。实测已确认：将 <code>&lt;actuator&gt;</code> 写入 URDF 的 <code>&lt;mujoco&gt;</code> 块<strong>不会生效</strong>（编译结果 <code>nu</code> 仍为 0），必须在另存的 MJCF 中补充。</p>
+<p>最小可用的 MJCF 如下——包含浮动基、原语碰撞、12 个执行器与 IMU 传感器：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mujoco</span> <span class="attr">model</span>=<span class="string">&quot;quadruped&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">compiler</span> <span class="attr">angle</span>=<span class="string">&quot;radian&quot;</span> <span class="attr">fusestatic</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">strippath</span>=<span class="string">&quot;false&quot;</span> <span class="attr">discardvisual</span>=<span class="string">&quot;false&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">option</span> <span class="attr">timestep</span>=<span class="string">&quot;0.002&quot;</span> <span class="attr">integrator</span>=<span class="string">&quot;implicitfast&quot;</span> <span class="attr">solver</span>=<span class="string">&quot;Newton&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">worldbody</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">geom</span> <span class="attr">name</span>=<span class="string">&quot;floor&quot;</span> <span class="attr">type</span>=<span class="string">&quot;plane&quot;</span> <span class="attr">size</span>=<span class="string">&quot;0 0 0.05&quot;</span> <span class="attr">friction</span>=<span class="string">&quot;0.8 0.02 0.001&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span> <span class="attr">name</span>=<span class="string">&quot;base_link&quot;</span> <span class="attr">pos</span>=<span class="string">&quot;0 0 0.40&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">freejoint</span> <span class="attr">name</span>=<span class="string">&quot;floating_base&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">site</span> <span class="attr">name</span>=<span class="string">&quot;imu&quot;</span> <span class="attr">pos</span>=<span class="string">&quot;0 0 0&quot;</span> <span class="attr">size</span>=<span class="string">&quot;0.01&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">geom</span> <span class="attr">type</span>=<span class="string">&quot;box&quot;</span> <span class="attr">size</span>=<span class="string">&quot;0.21 0.10 0.06&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">body</span> <span class="attr">name</span>=<span class="string">&quot;FL_hip_link&quot;</span> <span class="attr">pos</span>=<span class="string">&quot;0.10 0.08 0&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">joint</span> <span class="attr">name</span>=<span class="string">&quot;FL_hip_roll_joint&quot;</span> <span class="attr">type</span>=<span class="string">&quot;hinge&quot;</span> <span class="attr">axis</span>=<span class="string">&quot;1 0 0&quot;</span> <span class="attr">range</span>=<span class="string">&quot;-0.7 0.7&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">body</span> <span class="attr">name</span>=<span class="string">&quot;FL_thigh_link&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">joint</span> <span class="attr">name</span>=<span class="string">&quot;FL_hip_pitch_joint&quot;</span> <span class="attr">type</span>=<span class="string">&quot;hinge&quot;</span> <span class="attr">axis</span>=<span class="string">&quot;0 -1 0&quot;</span> <span class="attr">range</span>=<span class="string">&quot;-1.0 2.2&quot;</span>/&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">geom</span> <span class="attr">type</span>=<span class="string">&quot;capsule&quot;</span> <span class="attr">fromto</span>=<span class="string">&quot;0 0 -0.03 0 0 -0.19&quot;</span> <span class="attr">size</span>=<span class="string">&quot;0.03&quot;</span>/&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">body</span> <span class="attr">name</span>=<span class="string">&quot;FL_shank_link&quot;</span> <span class="attr">pos</span>=<span class="string">&quot;0 0 -0.22&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">joint</span> <span class="attr">name</span>=<span class="string">&quot;FL_knee_joint&quot;</span> <span class="attr">type</span>=<span class="string">&quot;hinge&quot;</span> <span class="attr">axis</span>=<span class="string">&quot;0 1 0&quot;</span> <span class="attr">range</span>=<span class="string">&quot;0.05 2.5&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">geom</span> <span class="attr">type</span>=<span class="string">&quot;capsule&quot;</span> <span class="attr">fromto</span>=<span class="string">&quot;0 0 -0.025 0 0 -0.195&quot;</span> <span class="attr">size</span>=<span class="string">&quot;0.025&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">body</span> <span class="attr">name</span>=<span class="string">&quot;FL_foot_link&quot;</span> <span class="attr">pos</span>=<span class="string">&quot;0 0 -0.22&quot;</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">geom</span> <span class="attr">type</span>=<span class="string">&quot;sphere&quot;</span> <span class="attr">size</span>=<span class="string">&quot;0.02&quot;</span> <span class="attr">friction</span>=<span class="string">&quot;0.8 0.02 0.001&quot;</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line">      <span class="comment">&lt;!-- FR / RL / RR 复制上面结构，只改 pos 的 y 与 roll 的 axis 符号 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">worldbody</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">actuator</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">position</span> <span class="attr">name</span>=<span class="string">&quot;FL_hip_roll&quot;</span>  <span class="attr">joint</span>=<span class="string">&quot;FL_hip_roll_joint&quot;</span>  <span class="attr">kp</span>=<span class="string">&quot;200&quot;</span> <span class="attr">dampratio</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">position</span> <span class="attr">name</span>=<span class="string">&quot;FL_hip_pitch&quot;</span> <span class="attr">joint</span>=<span class="string">&quot;FL_hip_pitch_joint&quot;</span> <span class="attr">kp</span>=<span class="string">&quot;200&quot;</span> <span class="attr">dampratio</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">position</span> <span class="attr">name</span>=<span class="string">&quot;FL_knee&quot;</span>      <span class="attr">joint</span>=<span class="string">&quot;FL_knee_joint&quot;</span>      <span class="attr">kp</span>=<span class="string">&quot;200&quot;</span> <span class="attr">dampratio</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 其余 9 个同理 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">actuator</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">sensor</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">gyro</span> <span class="attr">site</span>=<span class="string">&quot;imu&quot;</span> <span class="attr">noise</span>=<span class="string">&quot;0.005&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">accelerometer</span> <span class="attr">site</span>=<span class="string">&quot;imu&quot;</span> <span class="attr">noise</span>=<span class="string">&quot;0.05&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">sensor</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mujoco</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>该段中有两个细节值得单独说明。第一，<code>capsule</code> 的 <code>fromto</code> 表示轴线两端，实际总长 = 轴线长 + 2×半径：大腿 <code>0.16 + 2×0.03 = 0.22</code>，与 <code>L1</code> 一致，小腿同理——使用原语做碰撞，接触法向光滑，比网格更稳定。第二，执行器有两条路线：教学与慢速步态使用 <code>&lt;position kp=&quot;200&quot; dampratio=&quot;1&quot;/&gt;</code> 的位置伺服；运行 RL、对齐实机时使用 <code>&lt;motor ctrlrange=&quot;-23.7 23.7&quot;/&gt;</code> 的力矩执行器，并配合代码中的外部 PD——<code>ctrlrange</code> 必须采用实机力矩限，否则仿真中能输出、实机无法输出，策略一上机即失效。传感器至少应加入 <code>gyro</code>、<code>accelerometer</code> 与 12 个 <code>jointpos</code>，注意 gyro/accelerometer 输出在 site 自身坐标系中，不应与世界系的量混淆。</p>
+<p>加载后五行输出值得熟记：<code>nq=19</code>（有浮动基）、<code>nu=12</code>（执行器已补充）、<code>nbody=18</code>（没有 link 被合并）、<code>mass=12.0</code>、<code>extent</code> 处于 0.5~1.5 m 量级（并非毫米或百米），十秒的检查即可避免后续数小时的“无法稳定站立”排查。mesh 路径也应统一规范：CAD 的 STL 统一放置于 <code>meshes/</code>，URDF 中写相对路径，MJCF 中配置 <code>meshdir=&quot;meshes&quot;</code>；路径不应包含空格与中文，<code>scale</code> 只在 URDF 写一次，转为 MJCF 后需检查 <code>asset/mesh</code> 是否仍带有 <code>scale</code>，两处都写会导致重复缩放。</p>
+<p>三张编号表必须一一对应，否则“仿真正确、实机反向”会消耗大量排查时间：URDF 的 joint 名、固件中 <code>q[12]</code> 的数组下标、RS485 帧中的电机 ID。建议在固件中固定写入一张名字表与 <code>_Static_assert(J_COUNT == 12)</code>，更换腿部、电机或调整装配顺序时，先改表、再改 URDF、最后运行验证。该表需精确到轴符号——左右腿同名关节的 <code>axis</code> 正好相反，相差一个负号即会导致两条腿朝同侧摆动：</p>
+<table>
+<thead>
+<tr>
+<th>关节</th>
+<th>固件下标</th>
+<th>电机 ID【示例】</th>
+<th>轴符号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FL 髋 roll / pitch / 膝</td>
+<td>q[0…2]</td>
+<td>1 / 2 / 3</td>
+<td>+x / −y / +y</td>
+</tr>
+<tr>
+<td>FR 髋 roll / pitch / 膝</td>
+<td>q[3…5]</td>
+<td>4 / 5 / 6</td>
+<td>+x / +y / −y</td>
+</tr>
+<tr>
+<td>RL 髋 roll / pitch / 膝</td>
+<td>q[6…8]</td>
+<td>7 / 8 / 9</td>
+<td>+x / −y / +y</td>
+</tr>
+<tr>
+<td>RR 髋 roll / pitch / 膝</td>
+<td>q[9…11]</td>
+<td>10 / 11 / 12</td>
+<td>+x / +y / −y</td>
+</tr>
+</tbody>
+</table>
+<p>电机 ID 的分配以实际接线为准（两条 RS485 总线各接 6 个），但“先定该表、再写固件、再写 URDF”的顺序不可改变。该表可打印后贴于工作台旁，作为后续步态篇、仿真篇中调试的共同语言——“左前膝”的表述不明确，使用 <code>q[2]</code> 或 ID 3 则含义清晰。</p>
+<p>XML 本身的低级错误也值得单独说明，其报错往往不含定位信息。少写一个 <code>&lt;/link&gt;</code> 是解析错误，在编辑器中折叠 link 即可发现；<code>revolute</code> 关节漏写 <code>effort/velocity</code>，部分工具会静默按 0 处理；两个 link 重名会使转换后的关节引用错乱，可全局搜索去重；手填的惯量不满足三角不等式时会报 <code>inertia must satisfy A+B&gt;=C</code>，此时应回 CAD 重新计算，不应使用 <code>balanceinertia</code> 掩盖错误——它会代为修改物理量，并非无代价。</p>
+<h2 id="模型验证通过，才能继续推进">模型验证通过，才能继续推进</h2>
+<p>模型编写完成并不等于正确，本文用四项测试收束验证，而非仅凭肉眼判断。第一，FK 与 CAD 对比：将 CAD 中一条腿摆到零位、站立、前伸三个姿态，量取足端球心坐标并与代码输出比较，偏差应 ≤1 mm；若超标，先确认 <code>L1/L2</code> 度量的是轴心距而非零件长度。第二，IK 十万组往返，关节误差应 ≤1e-6 rad，越界目标返回错误码而不产生 NaN；边界测试专门选择 ρ 略超 0.44 与接近 0.139 的目标。第三，MuJoCo 站立测试：初始角设为站立位运行 10 秒，机身高度从 0.400 降至 0.39596 后不再变化（这 4 mm 是接触模型“软”特性的正常下陷，并非模型错误）、接触数恰为 4、四条腿法向力之和 117.72 N 等于 <code>mg</code>。第四，总质量 12.0 kg、质心偏离应 ≤30 mm——质心 x 向偏离 21 mm 是因为四条腿同向弯曲整体前移，属设计问题而非书写错误，可接受或用配重修正。</p>
+<p>模型并非编写完成后即固定不变，修改一个参数需要连带更新一系列参数：腿长 <code>L1/L2</code> 变化后，URDF 关节 origin、IK 限幅、站立角、步长上限均需重算；足端半径变化后，站立高度与抬腿高度随之变化；质量惯量变化后，站立 kp、力矩限与后续 MPC 的单刚体参数均需更新。最常见的错误是将 0.5284 / 1.0567 这两个站立角直接复制到已修改腿长的模型中——看似能够站立，实际上腿部处于弯曲状态，此后在步态篇中将在一个错误的模型上反复调试。反之，这套验证测试应在参数一变时即重跑一遍，其成本低到没有省略的理由。</p>
+<p>下一篇将讨论如何让可稳定站立的模型迈出第一步：状态估计与 trot 行走，从 Mahony 滤波到落脚点，说明机器人如何确定自身位置并规划下一步落点。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz/2026/10/02/07/">https://zhxylabflow.xyz/2026/10/02/07/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zhxylabflow.xyz" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a><a class="post-meta__tags" href="/tags/%E5%9B%9B%E8%B6%B3%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/">四足开发实战</a><a class="post-meta__tags" href="/tags/%E8%BF%90%E5%8A%A8%E5%AD%A6/">运动学</a><a class="post-meta__tags" href="/tags/URDF/">URDF</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post" loading='lazy'><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">四足开发实战（八）：步态篇——状态估计与 trot 行走</div></div><div class="info-2"><div class="info-item-1">从 Mahony 姿态估计、腿部里程计到接触检测，再到 trot 相位与落脚点，最后给出从站立阻抗到行走的整定顺序；并说明 MPC/WBC 在何种条件下才值得采用。</div></div></div></a><a class="pagination-related" href="/2026/09/27/06/" title="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">四足开发实战（六）：固件篇——1 kHz 控制环与任务架构</div></div><div class="info-2"><div class="info-item-1">在上一篇完成 12 个关节的总线接入之后，本篇将其交由软件控制，涵盖 FreeRTOS 十任务架构、1 kHz 主循环的时间预算、RS485 半双工时序的代码实现、电机抽象层接口，以及状态机与保护体系。</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/09/07/02/" title="四足开发实战（二）：机械篇——一条腿的设计与刚度"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-07</div><div class="info-item-2">四足开发实战（二）：机械篇——一条腿的设计与刚度</div></div><div class="info-2"><div class="info-item-1">12 kg 的机器从 1.2 m 高度跌落时，首先承受冲击的不是控制算法，而是那条打印出来的腿。本文说明腿型如何选择、三个长度如何确定、方盒模组如何安装，以及一道决定腿部软硬程度的悬臂梁计算，并附一张截面变形对比表。</div></div></div></a><a class="pagination-related" href="/2026/08/28/series-index/" title="四足机器人开发实战：从零做一台机器狗（系列导读）"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-28</div><div class="info-item-2">四足机器人开发实战：从零做一台机器狗（系列导读）</div></div><div class="info-2"><div class="info-item-1">《四足机器人开发实战》专栏导读：十篇文章，从需求定义、机械、选型、固件、建模、步态、仿真到强化学习与整机落地，一步步做出自己的 12 自由度机器狗。</div></div></div></a><a class="pagination-related" href="/2026/09/22/05/" title="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-22</div><div class="info-item-2">四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线</div></div><div class="info-2"><div class="info-item-1">本篇说明 12 个宇树关节模组的控制方案，涵盖主控选型（DM-MC02 与 STM32H723）、IMU 选型与安装、2 路 × 6 关节 4 Mbps 的带宽核算、收发器与终端偏置，以及从短路检测到 12 关节全部在线的上电调试顺序。</div></div></div></a><a class="pagination-related" href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-02</div><div class="info-item-2">四足开发实战（一）：需求与总体方案——先定需求，再买电机</div></div><div class="info-2"><div class="info-item-1">制作一台 12 kg 的教学四足，第一步并非采购电机，而是先确定需求。本文说明六项核心指标如何确定、指标之间的耦合关系，以及整机的三层架构与五个关键决策；后续的机械、选型、固件、控制均建立在需求书之上。</div></div></div></a><a class="pagination-related" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-07</div><div class="info-item-2">四足开发实战（八）：步态篇——状态估计与 trot 行走</div></div><div class="info-2"><div class="info-item-1">从 Mahony 姿态估计、腿部里程计到接触检测，再到 trot 相位与落脚点，最后给出从站立阻抗到行走的整定顺序；并说明 MPC/WBC 在何种条件下才值得采用。</div></div></div></a><a class="pagination-related" href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-17</div><div class="info-item-2">四足开发实战（四）：电源篇——6S 电池、配电与安全</div></div><div class="info-2"><div class="info-item-1">电机选定之后，如何设计供电系统？从 6S 电压平台、COT 功率估算到容量与倍率计算，再到预充、急停与上电顺序，完整配置 12 kg 四足的电源系统，并将锂电池安全守则整理为可执行的规范。</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">嵌入式与机器人运动控制｜四足 · RL · 状态估计</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">🐕《四足机器人开发实战》专栏已上线，12 篇从零做机器狗 → [点此阅读](/2026/08/28/series-index/)</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%9D%A1%E8%85%BF%E7%9A%84%E5%87%A0%E4%BD%95%EF%BC%9A%E4%BD%99%E5%BC%A6%E5%AE%9A%E7%90%86%E5%8D%B3%E5%8F%AF%E6%B1%82%E8%A7%A3"><span class="toc-number">1.</span> <span class="toc-text">一条腿的几何：余弦定理即可求解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%99-URDF%EF%BC%9A%E4%B8%80%E5%8D%8A%E6%97%B6%E9%97%B4%E7%94%A8%E4%BA%8E%E5%A4%84%E7%90%86%E9%BB%98%E8%AE%A4%E5%80%BC"><span class="toc-number">2.</span> <span class="toc-text">写 URDF：一半时间用于处理默认值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MJCF%EF%BC%9A%E8%A1%A5%E4%B8%8A-URDF-%E7%BC%BA%E5%B0%91%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-number">3.</span> <span class="toc-text">MJCF：补上 URDF 缺少的内容</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E9%AA%8C%E8%AF%81%E9%80%9A%E8%BF%87%EF%BC%8C%E6%89%8D%E8%83%BD%E7%BB%A7%E7%BB%AD%E6%8E%A8%E8%BF%9B"><span class="toc-number">4.</span> <span class="toc-text">模型验证通过，才能继续推进</span></a></li></ol></div></div><div class="card-widget card-post-series"><div class="item-headline"><i class="fa-solid fa-layer-group"></i><span>系列文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（十）：落地篇——强化学习、联调与迭代" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代">四足开发实战（十）：落地篇——强化学习、联调与迭代</a><time datetime="2026-10-17T04:00:00.000Z" title="发表于 2026-10-17 12:00:00">2026-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</a><time datetime="2026-10-12T04:00:00.000Z" title="发表于 2026-10-12 12:00:00">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（八）：步态篇——状态估计与 trot 行走" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走">四足开发实战（八）：步态篇——状态估计与 trot 行走</a><time datetime="2026-10-07T04:00:00.000Z" title="发表于 2026-10-07 12:00:00">2026-10-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（七）：建模篇——运动学与 URDF 从零写起" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</a><time datetime="2026-10-02T04:00:00.000Z" title="发表于 2026-10-02 12:00:00">2026-10-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/27/06/" title="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/27/06/" title="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构">四足开发实战（六）：固件篇——1 kHz 控制环与任务架构</a><time datetime="2026-09-27T04:00:00.000Z" title="发表于 2026-09-27 12:00:00">2026-09-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/22/05/" title="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/22/05/" title="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线">四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线</a><time datetime="2026-09-22T04:00:00.000Z" title="发表于 2026-09-22 12:00:00">2026-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（四）：电源篇——6S 电池、配电与安全" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全">四足开发实战（四）：电源篇——6S 电池、配电与安全</a><time datetime="2026-09-17T04:00:00.000Z" title="发表于 2026-09-17 12:00:00">2026-09-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩">四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩</a><time datetime="2026-09-12T04:00:00.000Z" title="发表于 2026-09-12 12:00:00">2026-09-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/07/02/" title="四足开发实战（二）：机械篇——一条腿的设计与刚度"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（二）：机械篇——一条腿的设计与刚度" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/07/02/" title="四足开发实战（二）：机械篇——一条腿的设计与刚度">四足开发实战（二）：机械篇——一条腿的设计与刚度</a><time datetime="2026-09-07T04:00:00.000Z" title="发表于 2026-09-07 12:00:00">2026-09-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（一）：需求与总体方案——先定需求，再买电机" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机">四足开发实战（一）：需求与总体方案——先定需求，再买电机</a><time datetime="2026-09-02T04:00:00.000Z" title="发表于 2026-09-02 12:00:00">2026-09-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/28/series-index/" title="四足机器人开发实战：从零做一台机器狗（系列导读）"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足机器人开发实战：从零做一台机器狗（系列导读）" loading='lazy'></a><div class="content"><a class="title" href="/2026/08/28/series-index/" title="四足机器人开发实战：从零做一台机器狗（系列导读）">四足机器人开发实战：从零做一台机器狗（系列导读）</a><time datetime="2026-08-28T04:00:00.000Z" title="发表于 2026-08-28 12:00:00">2026-08-28</time></div></div></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/24/c_cpp_mixing_embedded/" title="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑"><img src="https://img.cdn1.vip/i/6adba63408709_1792779828.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/24/c_cpp_mixing_embedded/" title="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑">在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑</a><time datetime="2026-10-23T17:45:29.714Z" title="发表于 2026-10-24 01:45:29">2026-10-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（十）：落地篇——强化学习、联调与迭代"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代">四足开发实战（十）：落地篇——强化学习、联调与迭代</a><time datetime="2026-10-17T04:00:00.000Z" title="发表于 2026-10-17 12:00:00">2026-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</a><time datetime="2026-10-12T04:00:00.000Z" title="发表于 2026-10-12 12:00:00">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（八）：步态篇——状态估计与 trot 行走"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走">四足开发实战（八）：步态篇——状态估计与 trot 行走</a><time datetime="2026-10-07T04:00:00.000Z" title="发表于 2026-10-07 12:00:00">2026-10-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</a><time datetime="2026-10-02T04:00:00.000Z" title="发表于 2026-10-02 12:00:00">2026-10-02</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>

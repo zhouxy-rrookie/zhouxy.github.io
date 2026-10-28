@@ -1,0 +1,661 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>四足开发实战（二）：机械篇——一条腿的设计与刚度 | 星语的博客</title><meta name="author" content="zhxy"><meta name="copyright" content="zhxy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="12 kg 的机器从 1.2 m 高度跌落时，首先承受冲击的不是控制算法，而是那条打印出来的腿。本文说明腿型如何选择、三个长度如何确定、方盒模组如何安装，以及一道决定腿部软硬程度的悬臂梁计算，并附一张截面变形对比表。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="四足开发实战（二）：机械篇——一条腿的设计与刚度">
+<meta property="og:url" content="https://zhxylabflow.xyz/2026/09/07/02/index.html">
+<meta property="og:site_name" content="星语的博客">
+<meta property="og:description" content="12 kg 的机器从 1.2 m 高度跌落时，首先承受冲击的不是控制算法，而是那条打印出来的腿。本文说明腿型如何选择、三个长度如何确定、方盒模组如何安装，以及一道决定腿部软硬程度的悬臂梁计算，并附一张截面变形对比表。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp">
+<meta property="article:published_time" content="2026-09-07T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-28T11:39:15.062Z">
+<meta property="article:author" content="zhxy">
+<meta property="article:tag" content="足式机器人">
+<meta property="article:tag" content="四足开发实战">
+<meta property="article:tag" content="机械设计">
+<meta property="article:tag" content="3D 打印">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "四足开发实战（二）：机械篇——一条腿的设计与刚度",
+  "url": "https://zhxylabflow.xyz/2026/09/07/02/",
+  "image": "https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp",
+  "datePublished": "2026-09-07T04:00:00.000Z",
+  "dateModified": "2026-10-28T11:39:15.062Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "zhxy",
+      "url": "https://zhxylabflow.xyz"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://zhxylabflow.xyz/2026/09/07/02/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!true && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '四足开发实战（二）：机械篇——一条腿的设计与刚度',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/cursors.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="cube-border cube-1"><div class="cube-core"></div></div><div class="cube-border cube-2"><div class="cube-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      if ($loadingBox.classList.contains('loaded')) return
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+
+  if (document.readyState === 'complete') {
+    preloader.endLoading()
+  } else {
+    window.addEventListener('load', preloader.endLoading)
+    document.addEventListener('DOMContentLoaded', preloader.endLoading)
+    // Add timeout protection: force end after 7 seconds
+    setTimeout(preloader.endLoading, 7000)
+  }
+
+  if (true) {
+    btf.addGlobalFn('pjaxSend', preloader.initLoading, 'preloader_init')
+    btf.addGlobalFn('pjaxComplete', preloader.endLoading, 'preloader_end')
+  }
+})()</script><div class="bg-animation" id="web_bg" style="background-image: url(https://img.cdn1.vip/i/695c962a40fe2_1767675434.webp);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">星语的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">四足开发实战（二）：机械篇——一条腿的设计与刚度</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">四足开发实战（二）：机械篇——一条腿的设计与刚度</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-07T04:00:00.000Z" title="发表于 2026-09-07 12:00:00">2026-09-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-28T11:39:15.062Z" title="更新于 2026-10-28 19:39:15">2026-10-28</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%9B%9B%E8%B6%B3%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/">四足开发实战</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>四足开发实战（二）：机械篇——一条腿的设计与刚度</h1>
+<p>将一台 12 kg 的机器从 1.2 m 高度跌落到软垫上时，首先承受冲击的不是控制算法，而是那条打印出来的腿。落地瞬间，单条腿承受的并非 3 kg 的静态分量，而是接近一倍体重的冲击，约 100 N。因此机械篇不急于绘制整机，而是先设计一条腿并进行弯曲验证：腿的刚度是否足够，直接决定后续控制算法是锦上添花还是勉力补救。机械是唯一“算错后无法靠软件挽救”的环节：电机选小尚可降低速度运行，腿部偏软则必然摔倒，没有折中状态。</p>
+<p>设计腿部之前应先备齐输入条件。上一篇的需求书（<a href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机">四足开发实战（一）：需求与总体方案——先定需求，再买电机</a>）已确定三件事：整机 12 kg、站高 0.40 m、越障 0.12 m。关节模组默认采用 GO-M8010-6，方盒外形 96.5 × 92.5 × 42.3 mm、重 530 g，动力自输出法兰输出，带有一圈螺栓孔；若第三篇的对比结论改为选用 IM6014（φ65 × 60 mm 圆柱形），本章的布置逻辑保持不变，仅安装方式改变。CAD 可选用 SolidWorks、Fusion 或 FreeCAD；材料方面，机身板采用 2~3 mm 的 3K 碳纤维板并以铝柱连接，腿与支架采用 PETG 或 PA12 打印，壁厚 4 mm、填充 60%，热熔螺母选用埋铜的 M3/M4，轴承统一为 68 系列深沟球，紧固件全部采用 12.9 级杯头。总体原则是全部规格化，避免混用。绘图之前再约定一条规则：任何打印件首次仅打样件，装上模组后校准孔位与轴孔，验证通过后再批量复制；四条腿加备件共十几份图纸，返工一次即需消耗较多时间。三个输入齐备后，开始绘图。</p>
+<h2 id="先确定腿型：前肘式还是后肘式">先确定腿型：前肘式还是后肘式</h2>
+<p>“肘”指膝盖的弯折方向，是整条腿的第一个决策，决定后续的对称性与零件数量。后肘式（与 Go1、Spot 相同）膝盖向后弯曲，腿收于机身下方，重心居中，前后完全对称，正走与倒走表现一致；前肘式膝盖向前弯曲，迈台阶时更有利，但前后不对称，倒走不便，落地时小腿还容易撞击机身；另有一种混合式，前腿采用前肘、后腿采用后肘，侧向最稳，代价是前后腿结构不同、零件数量加倍。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">后肘式（膝盖向后弯，Go1/Spot 同款）       前肘式（膝盖向前弯）</span><br><span class="line">        机身━━━━━━━                          机身━━━━━━━</span><br><span class="line">        |          |                         |          |</span><br><span class="line">       hip        hip                       hip        hip</span><br><span class="line">        |          |                         |          |</span><br><span class="line">      膝 ●──→ 向后弯                        膝 ●──← 向前弯</span><br><span class="line">       /                                     \</span><br><span class="line">     足端                                    足端</span><br></pre></td></tr></table></figure>
+<p>三种配置并排对比如下：</p>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th>优点</th>
+<th>缺点</th>
+<th>适合</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>后肘式（推荐）</td>
+<td>重心居中、前后对称、四条腿零件通用</td>
+<td>越障时膝盖朝后，高台阶要抬很高</td>
+<td>通用四足</td>
+</tr>
+<tr>
+<td>前肘式</td>
+<td>迈台阶时膝盖朝前“踏上”去</td>
+<td>前后不对称、倒走别扭、小腿易撞机身</td>
+<td>爬楼梯特化</td>
+</tr>
+<tr>
+<td>混合式</td>
+<td>侧向支撑面积最大</td>
+<td>前后腿两套零件、两份图纸</td>
+<td>窄机身</td>
+</tr>
+</tbody>
+</table>
+<p>教学机首先追求“稳定 + 对称 + 零件通用”，四条腿完全一致，打印件只需一份图纸，因此选择后肘式。其代价也应说明：越障时膝盖朝后，通过 0.12 m 台阶时需将整条腿抬得明显高于台阶本身，这一部分将在后一节的工作空间中校验。此外，混合式是窄机身机器的折中方案，前后腿朝不同方向弯曲，侧向支撑面积最大，代价是两套零件与两份图纸；制作 0.15 m 宽以内的窄机身机器时，可再考虑该方案。至于爬楼梯特化的机器，则应重新评估前肘式。</p>
+<h2 id="三个长度确定一条腿">三个长度确定一条腿</h2>
+<p>大腿 L1、小腿 L2、髋 roll 偏置三个数值决定一条腿的全部几何，每个均有依据。L1 = L2 = 0.22 m，由站高反推：0.22 + 0.22 = 0.44 m，略高于 0.40 m 的站高，多出的部分在站立时由弯曲的膝关节吸收；越障 0.12 m 要求将足端抬到 0.52 m 高，抬腿时小腿回收后可以完全达到。髋 roll 偏置 ±0.08 m 将腿平面外移，留出横滚角的转动空间；髋纵向偏置 ±0.10 m 使前后髋距达到 0.20 m，恰好支撑 0.42 m 长的机身。足端半径 0.02 m，做成球形，理由见后文。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>值</th>
+<th>依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>大腿 / 小腿</td>
+<td>0.22 m / 0.22 m</td>
+<td>站高 0.40 m，越障 0.12 m</td>
+</tr>
+<tr>
+<td>髋 roll 偏置（左右）</td>
+<td>±0.08 m</td>
+<td>腿平面外移，留出转角空间</td>
+</tr>
+<tr>
+<td>髋纵向偏置（前后）</td>
+<td>±0.10 m</td>
+<td>前后髋距 0.20 m，撑起机身</td>
+</tr>
+<tr>
+<td>机身</td>
+<td>0.42 × 0.20 × 0.12 m</td>
+<td>电池 + 主控 + 线束的安装面</td>
+</tr>
+<tr>
+<td>足端半径</td>
+<td>0.02 m</td>
+<td>球形足端</td>
+</tr>
+</tbody>
+</table>
+<p>这组数值并非随意设定，建模篇已据此核算工作空间：足端距髋 0.139~0.440 m。两个端点的含义明确：腿完全伸直为 0.44 m 加上足端半径的极限，膝盖弯曲到极限时收回到 0.139 m，这一区间即腿的工作半径，站高 0.40 m 落在其中且尚有余量。若要修改任意尺寸，应先运行运动学脚本，输出足端可达区域图，确认站高与越障高度均落在该区域内后再绘图，即先计算后绘图，顺序不可颠倒。跳过这一步骤的情况，多数在装配完成后才发现足端无法抬到目标台阶高度，只能拆解重做。</p>
+<p>另有一项容易被忽略的约定：膝盖角度的正方向。建模篇统一膝关节角范围为 0.05~2.5 rad、站立姿态 q=(0, 0.5284, 1.0567)×4，仿真与固件均按此口径执行，机械图纸上的限位挡块必须与之对齐：挡块阻挡的方向应与软件软限位方向一致，稍有偏差就会出现“仿真中可站立、实机上顶死”的典型故障。</p>
+<h2 id="方盒模组的三种安装方式">方盒模组的三种安装方式</h2>
+<p>GO-M8010-6 为方盒结构，输出轴从 92.5 × 96.5 的面上伸出，一条腿的三个关节如何布置，有三种常见做法。做法 A 将模组输出轴直接作为关节轴：髋 roll 模组横置，输出轴穿过 U 型支架连接机身，支架另一端加装一个轴承；髋 pitch 的输出轴直接连接大腿；膝盖模组固定在大腿上端，输出轴连接小腿。该做法最轻、零件最少，代价是装配时需要对中，装轴时需垫 0.1 mm 级垫片并用千分表测量端面跳动，此步骤不可省略。做法 B 将模组固定，用同步带把动力引至关节轴，多出一套带轮与张紧机构，重量更大且难以调整。做法 C 是 A 的加强版，在输出轴对侧再加一个轴承座形成两端支撑，刚度最高，代价是每个关节增重 0.1 kg、装配最繁。本方案选择 A，仅膝盖采用 C 的变体：膝盖是全机受冲击最大的关节，在模组法兰之外、小腿上再装一个对侧轴承形成两端支撑，增加的 0.1 kg 是值得的。</p>
+<table>
+<thead>
+<tr>
+<th>布置</th>
+<th>做法</th>
+<th>刚度</th>
+<th>重量</th>
+<th>装配</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A 输出轴直连（推荐）</td>
+<td>模组输出轴即关节轴，对侧加轴承</td>
+<td>中</td>
+<td>最轻</td>
+<td>中等（要对中）</td>
+</tr>
+<tr>
+<td>B 模组固定 + 同步带</td>
+<td>动力经同步带引到关节轴</td>
+<td>中</td>
+<td>重（带轮/张紧）</td>
+<td>繁</td>
+</tr>
+<tr>
+<td>C 双支撑（A 加强版）</td>
+<td>输出轴两端各一个轴承座</td>
+<td>高</td>
+<td>+0.1 kg/关节</td>
+<td>最繁</td>
+</tr>
+</tbody>
+</table>
+<p>有一项要点必须写入图纸检查单：模组壳体本身即受力件，不应让打印件单独承受全部弯矩，输出轴对侧必须设置支撑。单悬臂结构承受冲击的唯一结果是输出轴弯曲报废，其损失远大于重新打印。若改选 IM6014，腿部改为抱箍式安装，整体更紧凑，髋 roll 支架还可再窄 30 mm，上述 A/C 布置仍然成立。</p>
+<p>U 型支架本身也有要求：两侧壁厚从 4 mm 起步，轴孔处加筋，轴承外圈过盈压装、内圈用隔套顶住，压装时只敲外圈不敲内圈。支架是整条腿中最不起眼、却决定回差上限的零件：回差超过 1°，控制上就会出现关节角跳变，力矩闭环也无法补偿，因此不应在支架上省料。</p>
+<p>每个关节的机械限位应覆盖软件限位并留出缓冲：髋 roll 目标 ±30°，髋 pitch -60°~+90°，膝 0.05~2.5 rad。机械挡块比软件软限位多留 2°~3°，目的是在电机失速时由挡块硬停，而非由减速器硬停；挡块仅需数元，减速器则需数百元。</p>
+<h2 id="刚度：腿部可接受的变形程度">刚度：腿部可接受的变形程度</h2>
+<p>落地冲击约 100 N 施加在足端，这一数值约为体重的 1 倍：12 kg 乘以 9.8 得 118 N，取 100 N 便于计算，更剧烈的冲击倍数留待实机用 TODO(实测) 标定。将大腿近似为一根悬臂梁，末端变形为：</p>
+<p>$$<br>
+\delta = \frac{F L^3}{3 E I}, \qquad I = \frac{b h^3}{12}<br>
+$$</p>
+<p>通俗解释：变形随腿长三次方增大、随截面高度三次方减小；腿短一点、截面高一点，刚度收益呈立方级，这也是“减腿长”始终比“换材料”更经济的原因。代入 F = 100 N、L = 0.22 m，PETG 打印件杨氏模量 E ≈ 2 GPa，层间强度按七折取 1.4 GPa，几种截面的计算结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>截面（b × h，mm）</th>
+<th>I（mm⁴）</th>
+<th>δ（mm，E=1.4 GPa）</th>
+<th>判断</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12 × 20（实心）</td>
+<td>8000</td>
+<td>19</td>
+<td>太软，别用</td>
+</tr>
+<tr>
+<td>20 × 30（实心）</td>
+<td>45000</td>
+<td>3.4</td>
+<td>勉强，只够慢慢走</td>
+</tr>
+<tr>
+<td>25 × 35（实心）</td>
+<td>89000</td>
+<td>1.7</td>
+<td>达标</td>
+</tr>
+<tr>
+<td>碳管 φ18 × 2 外套打印壳</td>
+<td>~35000</td>
+<td>4.4（碳 E 高，实际 &lt;2）</td>
+<td>达标且最轻</td>
+</tr>
+</tbody>
+</table>
+<p>结论明确：腿杆要么采用 25 × 35 级实心打印，要么采用碳管套打印端盖。前者简单，后者每条腿轻 100 g；第一台选用打印实心，运行稳定后再换碳管。此处补充一项实测经验：碳管方案虽然在表格中计算达标，但打印端盖与碳管的胶接处是新的薄弱点，第一台不宜采用；待实心打印腿运行满 100 小时、摸清真实冲击量级后，再考虑换用碳管减重。材料选择上，PETG 价格较低且易于打印，PA12 更韧但打印门槛较高，第一台采用 PETG 将 25 × 35 的实心截面打印扎实。减重的顺序始终是先结构后材料：同样一份重量，截面形状的收益远大于更换塑料，不应过早使用碳纤维。打印方向有一条铁律：受弯的腿杆竖着打印，使层平面与长度方向平行，否则冲击会顺着层间将腿劈开；加强筋加在受压侧，不在受拉侧开槽。紧固件全部采用 12.9 级，加弹垫与中强度螺丝胶，模组固定螺丝扭矩打到 2~3 N·m 即可停止；冲击振动会把松动的螺丝变成最频繁出现的故障，也会把拧得过紧的螺丝变成代价最高的故障。螺丝胶选用紫色或蓝色的中强度类型，红色类型拆卸时需加热，不应用于模组安装孔；压装轴承若没有专用工具，可用同径套筒垫着外圈轻敲，敲击内圈会使滚道产生麻点，回差自使用之初即超标。</p>
+<h2 id="装配、BOM-与验收">装配、BOM 与验收</h2>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    A[&quot;单腿装配：髋 roll 支架 → 髋 pitch → 大腿 → 膝 → 小腿 → 足端&quot;] --&gt; B[&quot;每装一步手动转动查干涉&quot;]</span><br><span class="line">    B --&gt; C[&quot;四条腿并排比对，一眼看出装反的件&quot;]</span><br><span class="line">    C --&gt; D[&quot;机身碳板钻孔 → 铝柱 → 先前后腿再左右腿&quot;]</span><br><span class="line">    D --&gt; E[&quot;线束先走线，后固定&quot;]</span><br><span class="line">    E --&gt; F[&quot;受力螺丝 12.9 级 + 弹垫 + 螺丝胶（2~3 N·m）&quot;]</span><br><span class="line">    F --&gt; G[&quot;称重 → 回差/变形验收 → 1.2 m 软垫跌落&quot;]</span><br></pre></td></tr></table></figure>
+<p>其余事项按清单逐项处理。足端采用球形 R20 mm 的 TPU，任何落地角度均为点接触，力矩传递清晰；足端必须可更换、以螺丝紧固，不应与小腿一体打印，需要频繁更换的零件不值得连带更换整条腿。装配顺序为先单腿后整机：单腿每装一步转动一次检查干涉，四条腿并排比对，再安装机身碳板，线束先走线后固定，螺丝留待整机装配完成后再统一施加扭力。验收标准共四条：全行程无干涉、转动无轴向旷量；足端加 10 kg 静载变形小于 2 mm 且卸载后复位；回差（反转死区）小于 1°；整机称重 12 ± 1 kg、重心落在几何中心 ±20 mm 范围内，外加一次 1.2 m 高度软垫跌落，结构无裂纹、螺丝无松动。重量预算应提前明确：模组 12 × 0.53 = 6.4 kg，机身支架紧固件约 2.5 kg，电池 1.1 kg，主控线束 0.7 kg，预留 1.3 kg，合计恰为 12 kg；每装一个部件称重一次，不要等全部装完才上秤，超重的机器只能换电机或缩减零件，两者都不可取。采购时按习惯准备一份耗材：一条小腿、四个足端、一个模组，打印料两公斤，以备跌落更换。BOM 的骨架即上述内容：模组 12 个加 1 个备件，3 mm 碳板上下板与侧板一套，打印件一套，轴承按模组轴径配 8~12 个，热熔螺母与 12.9 级螺丝按 CAD 统计，TPU 足端 4 个加 4 个备件。采购单应在绘图完成后再生成，顺序不可颠倒：先绘图，再统计螺丝。</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>数量</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GO-M8010-6 模组</td>
+<td>12 + 1 备件</td>
+<td>型号以第 3 篇定稿为准</td>
+</tr>
+<tr>
+<td>3 mm 碳板（上下板 + 侧板）</td>
+<td>1 套</td>
+<td>按 CAD 出图</td>
+</tr>
+<tr>
+<td>3D 打印件（支架/腿杆/足端/电池仓）</td>
+<td>1 套</td>
+<td>PETG，约 2 kg 料</td>
+</tr>
+<tr>
+<td>轴承（按模组轴径）</td>
+<td>8~12</td>
+<td>对侧支撑</td>
+</tr>
+<tr>
+<td>M3/M4 热熔螺母 + 12.9 级螺丝 + 铝柱</td>
+<td>按 CAD 统计</td>
+<td>全部规格化</td>
+</tr>
+<tr>
+<td>TPU 足端</td>
+<td>4 + 4 备件</td>
+<td>球形 R20</td>
+</tr>
+</tbody>
+</table>
+<p>常见问题选择三个说明。腿一受冲击即从中间劈开，多半是打印方向不正确，受力垂直于层面；运行几次后螺丝松动，是未加弹垫与螺丝胶；抬腿时模组干涉机身，是绘图时只校验了足端工作空间、未在 CAD 中进行模组运动仿真，转角预留 5° 余量即可解决。还有两条为后续工作预留的提示：模组周围应留出散热间隙，打印件包裹过紧时，过热报警会先于结构问题出现；碳板孔位应为打印件留 0.2~0.3 mm 收缩补偿，先打样件试装，避免一整块碳板因孔距问题报废。机械与控制的接口也在本章确立：腿的回差与刚度直接决定后续力控可调到的精细程度，关节背驱性差时，再好的阻抗算法也难以发挥作用。因此机械篇的验收标准并非“能动”，而是“变形 2 mm 内、回差 1° 内”，这两个数值，固件篇会回来引用。</p>
+<p>一条腿设计至此，下一阶段是为其匹配驱动方案。下一篇选型篇将讨论：12 kg 的机器需要多大扭矩、20 N·m 级的峰值需求如何反推得出，以及 GO-M8010-6 与 IM6014 如何二选一，见<a href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩">四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩</a>。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz">zhxy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://zhxylabflow.xyz/2026/09/07/02/">https://zhxylabflow.xyz/2026/09/07/02/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://zhxylabflow.xyz" target="_blank">星语的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%B6%B3%E5%BC%8F%E6%9C%BA%E5%99%A8%E4%BA%BA/">足式机器人</a><a class="post-meta__tags" href="/tags/%E5%9B%9B%E8%B6%B3%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/">四足开发实战</a><a class="post-meta__tags" href="/tags/%E6%9C%BA%E6%A2%B0%E8%AE%BE%E8%AE%A1/">机械设计</a><a class="post-meta__tags" href="/tags/3D-%E6%89%93%E5%8D%B0/">3D 打印</a></div><div class="post-share"><div class="social-share" data-image="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post" loading='lazy'><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩</div></div><div class="info-2"><div class="info-item-1">12 公斤的四足需要多大关节扭矩？从静止站立、落地冲击到爬坡逐项反推，给出 GO-M8010-6 与 IM6014 的对比结论，并讲清宇树模组 17 字节 RS485 控制帧的三个易错点，附"先采购 1 个电机"的台架验收清单。</div></div></div></a><a class="pagination-related" href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post" loading='lazy'><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">四足开发实战（一）：需求与总体方案——先定需求，再买电机</div></div><div class="info-2"><div class="info-item-1">制作一台 12 kg 的教学四足，第一步并非采购电机，而是先确定需求。本文说明六项核心指标如何确定、指标之间的耦合关系，以及整机的三层架构与五个关键决策；后续的机械、选型、固件、控制均建立在需求书之上。</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-12</div><div class="info-item-2">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</div></div><div class="info-2"><div class="info-item-1">将第 7 篇的 URDF 转化为可在 MuJoCo 中站立、读取 IMU、被外部控制器驱动的模型：URDF 转 MJCF 的四个必改点、position 与 motor 两套执行器、接触参数的抖动成因、控制器在环的两种接法，以及 sim2real 的延迟、限幅与噪声桥接。</div></div></div></a><a class="pagination-related" href="/2026/08/28/series-index/" title="四足机器人开发实战：从零做一台机器狗（系列导读）"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-28</div><div class="info-item-2">四足机器人开发实战：从零做一台机器狗（系列导读）</div></div><div class="info-2"><div class="info-item-1">《四足机器人开发实战》专栏导读：十篇文章，从需求定义、机械、选型、固件、建模、步态、仿真到强化学习与整机落地，一步步做出自己的 12 自由度机器狗。</div></div></div></a><a class="pagination-related" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-12</div><div class="info-item-2">四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩</div></div><div class="info-2"><div class="info-item-1">12 公斤的四足需要多大关节扭矩？从静止站立、落地冲击到爬坡逐项反推，给出 GO-M8010-6 与 IM6014 的对比结论，并讲清宇树模组 17 字节 RS485 控制帧的三个易错点，附"先采购 1 个电机"的台架验收清单。</div></div></div></a><a class="pagination-related" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-17</div><div class="info-item-2">四足开发实战（十）：落地篇——强化学习、联调与迭代</div></div><div class="info-2"><div class="info-item-1">系列最后一篇：强化学习的适用性判断、Isaac Gym 弃用后 Isaac Lab 2.3.x 与 3.0 的选型、4060 8G 显存的三条出路，训练到部署的流水线，以及五阶段联调、故障树、指标测试和十八个月项目管理，将十篇串成一条完整开发线。</div></div></div></a><a class="pagination-related" href="/2026/09/22/05/" title="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-22</div><div class="info-item-2">四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线</div></div><div class="info-2"><div class="info-item-1">本篇说明 12 个宇树关节模组的控制方案，涵盖主控选型（DM-MC02 与 STM32H723）、IMU 选型与安装、2 路 × 6 关节 4 Mbps 的带宽核算、收发器与终端偏置，以及从短路检测到 12 关节全部在线的上电调试顺序。</div></div></div></a><a class="pagination-related" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img class="cover" src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" alt="cover" loading='lazy'><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-07</div><div class="info-item-2">四足开发实战（八）：步态篇——状态估计与 trot 行走</div></div><div class="info-2"><div class="info-item-1">从 Mahony 姿态估计、腿部里程计到接触检测，再到 trot 相位与落脚点，最后给出从站立阻抗到行走的整定顺序；并说明 MPC/WBC 在何种条件下才值得采用。</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="https://img.cdn1.vip/i/6958d73347225_1767429939.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/ loading='lazy'></div><div class="author-info-name">zhxy</div><div class="author-info-description">嵌入式与机器人运动控制｜四足 · RL · 状态估计</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">36</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zhouxy-rrookie"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/zhouxy-rrookie" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zxy0121001@163.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">🐕《四足机器人开发实战》专栏已上线，12 篇从零做机器狗 → [点此阅读](/2026/08/28/series-index/)</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">四足开发实战（二）：机械篇——一条腿的设计与刚度</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E7%A1%AE%E5%AE%9A%E8%85%BF%E5%9E%8B%EF%BC%9A%E5%89%8D%E8%82%98%E5%BC%8F%E8%BF%98%E6%98%AF%E5%90%8E%E8%82%98%E5%BC%8F"><span class="toc-number">1.1.</span> <span class="toc-text">先确定腿型：前肘式还是后肘式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E4%B8%AA%E9%95%BF%E5%BA%A6%E7%A1%AE%E5%AE%9A%E4%B8%80%E6%9D%A1%E8%85%BF"><span class="toc-number">1.2.</span> <span class="toc-text">三个长度确定一条腿</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E7%9B%92%E6%A8%A1%E7%BB%84%E7%9A%84%E4%B8%89%E7%A7%8D%E5%AE%89%E8%A3%85%E6%96%B9%E5%BC%8F"><span class="toc-number">1.3.</span> <span class="toc-text">方盒模组的三种安装方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9A%E5%BA%A6%EF%BC%9A%E8%85%BF%E9%83%A8%E5%8F%AF%E6%8E%A5%E5%8F%97%E7%9A%84%E5%8F%98%E5%BD%A2%E7%A8%8B%E5%BA%A6"><span class="toc-number">1.4.</span> <span class="toc-text">刚度：腿部可接受的变形程度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A3%85%E9%85%8D%E3%80%81BOM-%E4%B8%8E%E9%AA%8C%E6%94%B6"><span class="toc-number">1.5.</span> <span class="toc-text">装配、BOM 与验收</span></a></li></ol></li></ol></div></div><div class="card-widget card-post-series"><div class="item-headline"><i class="fa-solid fa-layer-group"></i><span>系列文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（十）：落地篇——强化学习、联调与迭代" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代">四足开发实战（十）：落地篇——强化学习、联调与迭代</a><time datetime="2026-10-17T04:00:00.000Z" title="发表于 2026-10-17 12:00:00">2026-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</a><time datetime="2026-10-12T04:00:00.000Z" title="发表于 2026-10-12 12:00:00">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（八）：步态篇——状态估计与 trot 行走" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走">四足开发实战（八）：步态篇——状态估计与 trot 行走</a><time datetime="2026-10-07T04:00:00.000Z" title="发表于 2026-10-07 12:00:00">2026-10-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（七）：建模篇——运动学与 URDF 从零写起" loading='lazy'></a><div class="content"><a class="title" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</a><time datetime="2026-10-02T04:00:00.000Z" title="发表于 2026-10-02 12:00:00">2026-10-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/27/06/" title="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/27/06/" title="四足开发实战（六）：固件篇——1 kHz 控制环与任务架构">四足开发实战（六）：固件篇——1 kHz 控制环与任务架构</a><time datetime="2026-09-27T04:00:00.000Z" title="发表于 2026-09-27 12:00:00">2026-09-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/22/05/" title="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/22/05/" title="四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线">四足开发实战（五）：电子篇——DM-MC02 主控与 RS485 总线</a><time datetime="2026-09-22T04:00:00.000Z" title="发表于 2026-09-22 12:00:00">2026-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（四）：电源篇——6S 电池、配电与安全" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/17/04/" title="四足开发实战（四）：电源篇——6S 电池、配电与安全">四足开发实战（四）：电源篇——6S 电池、配电与安全</a><time datetime="2026-09-17T04:00:00.000Z" title="发表于 2026-09-17 12:00:00">2026-09-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/12/03/" title="四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩">四足开发实战（三）：选型篇——12 公斤的狗需要多大扭矩</a><time datetime="2026-09-12T04:00:00.000Z" title="发表于 2026-09-12 12:00:00">2026-09-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/07/02/" title="四足开发实战（二）：机械篇——一条腿的设计与刚度"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（二）：机械篇——一条腿的设计与刚度" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/07/02/" title="四足开发实战（二）：机械篇——一条腿的设计与刚度">四足开发实战（二）：机械篇——一条腿的设计与刚度</a><time datetime="2026-09-07T04:00:00.000Z" title="发表于 2026-09-07 12:00:00">2026-09-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（一）：需求与总体方案——先定需求，再买电机" loading='lazy'></a><div class="content"><a class="title" href="/2026/09/02/01/" title="四足开发实战（一）：需求与总体方案——先定需求，再买电机">四足开发实战（一）：需求与总体方案——先定需求，再买电机</a><time datetime="2026-09-02T04:00:00.000Z" title="发表于 2026-09-02 12:00:00">2026-09-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/28/series-index/" title="四足机器人开发实战：从零做一台机器狗（系列导读）"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足机器人开发实战：从零做一台机器狗（系列导读）" loading='lazy'></a><div class="content"><a class="title" href="/2026/08/28/series-index/" title="四足机器人开发实战：从零做一台机器狗（系列导读）">四足机器人开发实战：从零做一台机器狗（系列导读）</a><time datetime="2026-08-28T04:00:00.000Z" title="发表于 2026-08-28 12:00:00">2026-08-28</time></div></div></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/24/c_cpp_mixing_embedded/" title="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑"><img src="https://img.cdn1.vip/i/6adba63408709_1792779828.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/24/c_cpp_mixing_embedded/" title="在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑">在嵌入式里混用 C 与 C++：为什么、怎么做、有哪些坑</a><time datetime="2026-10-23T17:45:29.714Z" title="发表于 2026-10-24 01:45:29">2026-10-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（十）：落地篇——强化学习、联调与迭代"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/17/10/" title="四足开发实战（十）：落地篇——强化学习、联调与迭代">四足开发实战（十）：落地篇——强化学习、联调与迭代</a><time datetime="2026-10-17T04:00:00.000Z" title="发表于 2026-10-17 12:00:00">2026-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/12/09/" title="四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim">四足开发实战（九）：仿真篇——MuJoCo 与 sim2sim</a><time datetime="2026-10-12T04:00:00.000Z" title="发表于 2026-10-12 12:00:00">2026-10-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（八）：步态篇——状态估计与 trot 行走"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/07/08/" title="四足开发实战（八）：步态篇——状态估计与 trot 行走">四足开发实战（八）：步态篇——状态估计与 trot 行走</a><time datetime="2026-10-07T04:00:00.000Z" title="发表于 2026-10-07 12:00:00">2026-10-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"><img src="https://img.cdn1.vip/i/6ae18dc82fb15_1793166792.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="四足开发实战（七）：建模篇——运动学与 URDF 从零写起"/ loading='lazy'></a><div class="content"><a class="title" href="/2026/10/02/07/" title="四足开发实战（七）：建模篇——运动学与 URDF 从零写起">四足开发实战（七）：建模篇——运动学与 URDF 从零写起</a><time datetime="2026-10-02T04:00:00.000Z" title="发表于 2026-10-02 12:00:00">2026-10-02</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By zhxy</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script><script>(() => {
+  const runMermaid = ele => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default'
+
+    ele.forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const config = mermaidSrc.dataset.config ? JSON.parse(mermaidSrc.dataset.config) : {}
+      if (!config.theme) {
+        config.theme = theme
+      }
+      const mermaidThemeConfig = `%%{init: ${JSON.stringify(config)}}%%\n`
+      const mermaidID = `mermaid-${index}`
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+      const renderMermaid = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      // mermaid v9 and v10 compatibility
+      typeof renderFn === 'string' ? renderMermaid(renderFn) : renderFn.then(({ svg }) => renderMermaid(svg))
+    })
+  }
+
+  const codeToMermaid = () => {
+    const codeMermaidEle = document.querySelectorAll('pre > code.mermaid')
+    if (codeMermaidEle.length === 0) return
+
+    codeMermaidEle.forEach(ele => {
+      const preEle = document.createElement('pre')
+      preEle.className = 'mermaid-src'
+      preEle.hidden = true
+      preEle.textContent = ele.textContent
+      const newEle = document.createElement('div')
+      newEle.className = 'mermaid-wrap'
+      newEle.appendChild(preEle)
+      ele.parentNode.replaceWith(newEle)
+    })
+  }
+
+  const loadMermaid = () => {
+    if (true) codeToMermaid()
+    const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+    if ($mermaid.length === 0) return
+
+    const runMermaidFn = () => runMermaid($mermaid)
+    btf.addGlobalFn('themeChange', runMermaidFn, 'mermaid')
+    window.loadMermaid ? runMermaidFn() : btf.getScript('https://cdn.jsdelivr.net/npm/mermaid@11.12.2/dist/mermaid.min.js').then(runMermaidFn)
+  }
+
+  btf.addGlobalFn('encrypt', loadMermaid, 'mermaid')
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
+
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark_dimmed' : 'light'
+
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
+    })
+    return ele
+  }
+
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
+
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'zhouxy-rrookie/zhouxy.github.io',
+      'data-repo-id': 'R_kgDOQZaaaw',
+      'data-category-id': 'DIC_kwDOQZaaa84C8pyW',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
+    }
+
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
+        }
+      }
+    }
+  }
+
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
+        }
+      }
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
+
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
+
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
+
+  if ('Giscus' === 'Giscus' || !true) {
+    if (true) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js" defer="defer"></script><script>document.addEventListener('DOMContentLoaded', () => {
+  const pjaxSelectors = ["meta[property=\"og:image\"]","meta[property=\"og:title\"]","meta[property=\"og:url\"]","meta[property=\"og:description\"]","link[rel=\"canonical\"]","head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+  window.pjax = new Pjax({
+    elements: 'a:not([target="_blank"])',
+    selectors: pjaxSelectors,
+    cacheBust: false,
+    analytics: false,
+    scrollRestoration: false
+  })
+
+  const triggerPjaxFn = (val) => {
+    if (!val) return
+    Object.values(val).forEach(fn => {
+      try {
+        fn()
+      } catch (err) {
+        console.debug('Pjax callback failed:', err)
+      }
+    })
+  }
+
+  document.addEventListener('pjax:send', () => {
+    // removeEventListener
+    btf.removeGlobalFnEvent('pjaxSendOnce')
+    btf.removeGlobalFnEvent('themeChange')
+
+    // reset readmode
+    const $bodyClassList = document.body.classList
+    if ($bodyClassList.contains('read-mode')) $bodyClassList.remove('read-mode')
+
+    triggerPjaxFn(window.globalFn.pjaxSend)
+  })
+
+  document.addEventListener('pjax:complete', () => {
+    btf.removeGlobalFnEvent('pjaxCompleteOnce')
+    document.querySelectorAll('script[data-pjax]').forEach(item => {
+      const newScript = document.createElement('script')
+      const content = item.text || item.textContent || item.innerHTML || ""
+      Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+      newScript.appendChild(document.createTextNode(content))
+      item.parentNode.replaceChild(newScript, item)
+    })
+
+    triggerPjaxFn(window.globalFn.pjaxComplete)
+  })
+
+  document.addEventListener('pjax:error', e => {
+    if (e.request.status === 404) {
+      false
+        ? pjax.loadUrl('/404.html')
+        : window.location.href = e.request.responseURL
+    }
+  })
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章" type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hibiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body></html>
